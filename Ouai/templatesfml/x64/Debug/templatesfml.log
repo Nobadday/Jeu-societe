@@ -1,0 +1,46 @@
+﻿  Binds.cpp
+D:\SVN\Eleves\template sfml 2.6\templatesfml\Common.hpp(26,9): warning C4005: 'FLT_MAX' : redéfinition de macro
+  (compiler le fichier source 'Binds.cpp')
+      C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\float.h(91,9):
+      voir la définition précédente de « FLT_MAX »
+  
+  Game.cpp
+D:\SVN\Eleves\template sfml 2.6\templatesfml\Common.hpp(26,9): warning C4005: 'FLT_MAX' : redéfinition de macro
+  (compiler le fichier source 'Game.cpp')
+      C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\float.h(91,9):
+      voir la définition précédente de « FLT_MAX »
+  
+  GameOver.cpp
+D:\SVN\Eleves\template sfml 2.6\templatesfml\Common.hpp(26,9): warning C4005: 'FLT_MAX' : redéfinition de macro
+  (compiler le fichier source 'GameOver.cpp')
+      C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\float.h(91,9):
+      voir la définition précédente de « FLT_MAX »
+  
+  GameState.cpp
+D:\SVN\Eleves\template sfml 2.6\templatesfml\Common.hpp(26,9): warning C4005: 'FLT_MAX' : redéfinition de macro
+  (compiler le fichier source 'GameState.cpp')
+      C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\float.h(91,9):
+      voir la définition précédente de « FLT_MAX »
+  
+  Menu.cpp
+D:\SVN\Eleves\template sfml 2.6\templatesfml\Common.hpp(26,9): warning C4005: 'FLT_MAX' : redéfinition de macro
+  (compiler le fichier source 'Menu.cpp')
+      C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\float.h(91,9):
+      voir la définition précédente de « FLT_MAX »
+  
+  NewMath.cpp
+D:\SVN\Eleves\template sfml 2.6\templatesfml\Common.hpp(26,9): warning C4005: 'FLT_MAX' : redéfinition de macro
+  (compiler le fichier source 'NewMath.cpp')
+      C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\float.h(91,9):
+      voir la définition précédente de « FLT_MAX »
+  
+  main.cpp
+D:\SVN\Eleves\template sfml 2.6\templatesfml\Common.hpp(26,9): warning C4005: 'FLT_MAX' : redéfinition de macro
+  (compiler le fichier source 'main.cpp')
+      C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\float.h(91,9):
+      voir la définition précédente de « FLT_MAX »
+  
+D:\SVN\Eleves\template sfml 2.6\templatesfml\main.cpp(202,2): warning C4065: l'instruction switch contient 'default' mais aucune étiquette 'case'
+D:\SVN\Eleves\template sfml 2.6\templatesfml\main.cpp(211,2): warning C4065: l'instruction switch contient 'default' mais aucune étiquette 'case'
+  Génération de code en cours...
+  templatesfml.vcxproj -> D:\SVN\Eleves\template sfml 2.6\x64\Debug\templatesfml.exe

@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33829.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "templatesfml", "templatesfml\templatesfml.vcxproj", "{ED6DC5D1-18D1-41D7-9ED7-DC5CF1C6C297}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ED6DC5D1-18D1-41D7-9ED7-DC5CF1C6C297}.Debug|x64.ActiveCfg = Debug|x64
+		{ED6DC5D1-18D1-41D7-9ED7-DC5CF1C6C297}.Debug|x64.Build.0 = Debug|x64
+		{ED6DC5D1-18D1-41D7-9ED7-DC5CF1C6C297}.Debug|x86.ActiveCfg = Debug|Win32
+		{ED6DC5D1-18D1-41D7-9ED7-DC5CF1C6C297}.Debug|x86.Build.0 = Debug|Win32
+		{ED6DC5D1-18D1-41D7-9ED7-DC5CF1C6C297}.Release|x64.ActiveCfg = Release|x64
+		{ED6DC5D1-18D1-41D7-9ED7-DC5CF1C6C297}.Release|x64.Build.0 = Release|x64
+		{ED6DC5D1-18D1-41D7-9ED7-DC5CF1C6C297}.Release|x86.ActiveCfg = Release|Win32
+		{ED6DC5D1-18D1-41D7-9ED7-DC5CF1C6C297}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {00E78FB3-78CB-4A58-92A2-1FB41AC20907}
+	EndGlobalSection
+EndGlobal
