@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="53">
+ <tileset firstgid="1" name="hrte" tilewidth="1" tileheight="1" tilecount="0" columns="0"/>
+ <tileset firstgid="1" name="whawhaubwunanwiaknbjnbplm" tilewidth="1164" tileheight="552" tilecount="1" columns="0">
+  <grid orientation="orthogonal" width="1" height="1"/>
+  <tile id="0">
+   <image source="whawhaubwunanwiaknbjnbplm.png" width="1164" height="552"/>
+  </tile>
+ </tileset>
+ <tileset firstgid="2" name="ynrncfd8x0rb1" tilewidth="146" tileheight="200" tilecount="1" columns="0">
+  <grid orientation="orthogonal" width="1" height="1"/>
+  <tile id="0">
+   <image source="ynrncfd8x0rb1.jpg" width="146" height="200"/>
+  </tile>
+ </tileset>
+ <layer id="1" name="Calque de Tuiles 1" width="30" height="20" visible="0">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="2" name="Map" locked="1">
+  <object id="1" gid="1" x="19" y="586" width="1164" height="552"/>
+ </objectgroup>
+ <objectgroup id="3" name="Interactions" locked="1">
+  <object id="2" x="99" y="204">
+   <point/>
+  </object>
+  <object id="3" x="180" y="342">
+   <point/>
+  </object>
+  <object id="4" x="299" y="472">
+   <point/>
+  </object>
+  <object id="5" x="414" y="309">
+   <point/>
+  </object>
+  <object id="6" x="327" y="161">
+   <point/>
+  </object>
+  <object id="7" x="493" y="113">
+   <point/>
+  </object>
+  <object id="8" x="624" y="308">
+   <point/>
+  </object>
+  <object id="9" x="593" y="451">
+   <point/>
+  </object>
+  <object id="10" x="484" y="557">
+   <point/>
+  </object>
+  <object id="11" x="795" y="544">
+   <point/>
+  </object>
+  <object id="12" x="932" y="380">
+   <point/>
+  </object>
+  <object id="13" x="1057" y="270">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="4" name="Foreground">
+  <object id="14" gid="2" x="628" y="653" width="146" height="200"/>
+  <object id="15" gid="2" x="138" y="563" width="146" height="200"/>
+  <object id="16" gid="2" x="-37" y="517" width="146" height="200"/>
+  <object id="17" gid="2" x="34" y="572" width="146" height="200"/>
+  <object id="18" gid="2" x="108" y="630" width="146" height="200"/>
+  <object id="19" gid="2" x="222" y="683" width="146" height="200"/>
+  <object id="20" gid="2" x="-4" y="669" width="146" height="200"/>
+  <object id="21" gid="2" x="285" y="703" width="146" height="200"/>
+  <object id="22" gid="2" x="516" y="713" width="146" height="200"/>
+  <object id="23" gid="2" x="603" y="677" width="146" height="200"/>
+  <object id="24" gid="2" x="720" y="737" width="146" height="200"/>
+  <object id="25" gid="2" x="828" y="720" width="146" height="200"/>
+  <object id="26" gid="2" x="879" y="675" width="146" height="200"/>
+  <object id="27" gid="2" x="925" y="618" width="146" height="200"/>
+  <object id="28" gid="2" x="975" y="681" width="146" height="200"/>
+  <object id="29" gid="2" x="1049" y="594" width="146" height="200"/>
+  <object id="30" gid="2" x="1136" y="524" width="146" height="200"/>
+  <object id="31" gid="2" x="1010" y="516" width="146" height="200"/>
+  <object id="32" gid="2" x="1060" y="668" width="146" height="200"/>
+  <object id="33" gid="2" x="1063" y="683" width="146" height="200"/>
+  <object id="34" gid="2" x="401" y="763" width="146" height="200"/>
+  <object id="35" gid="2" x="275" y="785" width="146" height="200"/>
+  <object id="36" gid="2" x="160" y="773" width="146" height="200"/>
+  <object id="37" gid="2" x="67" y="754" width="146" height="200"/>
+  <object id="38" gid="2" x="-38" y="738" width="146" height="200"/>
+  <object id="39" gid="2" x="-83" y="679" width="146" height="200"/>
+  <object id="40" gid="2" x="336" y="800" width="146" height="200"/>
+  <object id="41" gid="2" x="486" y="813" width="146" height="200"/>
+  <object id="42" gid="2" x="565" y="780" width="146" height="200"/>
+  <object id="43" gid="2" x="694" y="805" width="146" height="200"/>
+  <object id="44" gid="2" x="906" y="815" width="146" height="200"/>
+  <object id="45" gid="2" x="1044" y="760" width="146" height="200"/>
+  <object id="46" gid="2" x="1134" y="664" width="146" height="200"/>
+  <object id="47" gid="2" x="1159" y="598" width="146" height="200"/>
+  <object id="48" gid="2" x="-107" y="408" width="146" height="200"/>
+  <object id="49" gid="2" x="-84" y="517" width="146" height="200"/>
+  <object id="50" gid="2" x="-65" y="665" width="146" height="200"/>
+  <object id="51" gid="2" x="-13" y="748" width="146" height="200"/>
+  <object id="52" gid="2" x="1158" y="445" width="146" height="200"/>
+ </objectgroup>
+</map>
