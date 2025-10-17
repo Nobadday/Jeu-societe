@@ -14,6 +14,12 @@ public:
 
 	// Version contrôlée par va_list
 	static std::string VFormat(const char* _fmt, va_list _args);
+
+	static sf::Font& GetDefaultFont(void);
+	static void Load();
+	static void Unload();
+private:
+	static sf::Font* defaultFont;
 };
 
 #endif // STRINGFORMAT_HPP

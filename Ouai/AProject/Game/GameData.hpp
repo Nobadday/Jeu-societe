@@ -10,7 +10,6 @@
 class GameData
 {
 	private:
-		
 	public:
 		sf::RenderWindow* m_renderWindow;
 

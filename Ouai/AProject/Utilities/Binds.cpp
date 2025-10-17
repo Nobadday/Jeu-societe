@@ -7,7 +7,7 @@ sf::Keyboard::Key move3D[MAX_DIR_KEY_CODE];
 sf::Keyboard::Key debug[MAX_DEBUG_LIST_BIND];
 bool keyPreviouslyPressed[MAX_KEY_BIND_LIST] = { false };
 bool debugKeyPreviouslyPressed[MAX_DEBUG_LIST_BIND] = { false };
-bool gamePadPreviouslyPressed[MAX_GAMEPAD_BIND_LIST] = { false };
+static std::vector<std::vector<bool>> gamePadPreviouslyPressed( sf::Joystick::Count, std::vector<bool>(MAX_GAMEPAD_BIND_LIST, false) );
 
 Binds::Binds(void)
 {
@@ -126,28 +126,30 @@ bool GetBindPressed(const BindList _keyList)
 
 bool GetGamePadPressed(const GamePadBindList _bindList, unsigned int _id, bool _pressOneTime)
 {
+	if (_id >= sf::Joystick::Count) return false; // sécurité si _id hors limite
+
 	if (_pressOneTime)
 	{
 		if (sf::Joystick::isButtonPressed(_id, _bindList))
 		{
-			if (gamePadPreviouslyPressed[_bindList])
+			if (gamePadPreviouslyPressed[_id][_bindList])
 			{
 				return false;
 			}
 			else
 			{
-				gamePadPreviouslyPressed[_bindList] = true;
+				gamePadPreviouslyPressed[_id][_bindList] = true;
 				return true;
 			}
 		}
 		else
 		{
-			gamePadPreviouslyPressed[_bindList] = false;
+			gamePadPreviouslyPressed[_id][_bindList] = false;
 		}
 	}
 	else
 	{
-		if (sf::Joystick::isButtonPressed(_id, _bindList)) return true;
+		return sf::Joystick::isButtonPressed(_id, _bindList);
 	}
 	return false;
 }

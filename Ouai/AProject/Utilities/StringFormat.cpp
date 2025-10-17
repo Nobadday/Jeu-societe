@@ -1,5 +1,7 @@
 #include "StringFormat.hpp"
 
+sf::Font* StringFormat::defaultFont = nullptr;
+
 std::string StringFormat::VFormat(const char* _fmt, va_list _args)
 {
 	va_list tmp;
@@ -21,4 +23,21 @@ std::string StringFormat::Format(const char* _fmt, ...)
 	std::string s = VFormat(_fmt, args);
 	va_end(args);
 	return s;
+}
+
+sf::Font& StringFormat::GetDefaultFont(void)
+{
+	return *defaultFont;
+}
+
+void StringFormat::Load()
+{
+	defaultFont = new sf::Font();
+	defaultFont->loadFromFile("Assets/Font.ttf");
+}
+
+void StringFormat::Unload()
+{
+	delete defaultFont;
+	defaultFont = nullptr;
 }

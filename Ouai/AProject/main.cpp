@@ -6,9 +6,12 @@ typedef struct MainData
 	sf::RenderWindow renderWindow;
 	sf::Clock clock;
 	SceneHandler scenes;
+	SceneBase* armWrestlingScene;
 
 	GameData gameData;
 } MainData;
+
+Binds* binds = nullptr;
 
 
 int main(void);
@@ -22,11 +25,12 @@ void Draw(MainData& _mainData);
 
 int main(void)
 {
+	StringFormat::Load();
+	binds = new Binds();
 	random::SetSeedPID();
 	
 	MainData mainData;
 	MainDataLoad(mainData);
-
 
 	while (mainData.renderWindow.isOpen())
 	{
@@ -42,6 +46,9 @@ int main(void)
 		}
 	}
 
+	StringFormat::Unload();
+	delete binds;
+	binds = nullptr;
 	return EXIT_SUCCESS;
 }
 
@@ -50,6 +57,7 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "SFML", sf::Style::Close);
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
 
+	_mainData.scenes.AddScene(*(_mainData.armWrestlingScene = new ArmWrestling()), "ArmWrestling");
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 
 	// GAME DATA
@@ -99,4 +107,3 @@ void Draw(MainData& _mainData)
 
 	_mainData.renderWindow.display();
 }
-
