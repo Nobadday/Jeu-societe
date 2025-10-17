@@ -56,8 +56,8 @@ class DeltaClock
 		void operator+=(float _seconds);
 		void operator-=(float _seconds);
 		void operator=(float _seconds);
-		void operator+(float _seconds);
-		void operator-(float _seconds);
+		//void operator+(float _seconds);
+		//void operator-(float _seconds);
 
 		//void operator==(float _seconds);
 
@@ -79,7 +79,7 @@ class Timer : public DeltaClock
 		// Restarts the timer and apply the excess time as offset
 		void RestartOffsetExcessTime(void);
 
-		void SetTimeTarget(float _seconds);
+		void SetTimeTarget(float _seconds, bool _restart = false);
 		void End(void);
 
 		bool IsFinished(void);
@@ -102,3 +102,4 @@ class Timer : public DeltaClock
 };
 
 #endif
+// Timer & DeltaClock C++ v1.0

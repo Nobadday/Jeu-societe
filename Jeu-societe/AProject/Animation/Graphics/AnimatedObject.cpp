@@ -117,4 +117,10 @@ AnimationProperties* AnimatedObject::GetAnimationProperties(void)
 {
 	return this->m_texture->GetAnimation(this->m_animationSelected);
 }
-// AnimatedObject v1.0
+
+Animation& AnimatedObject::GetAnimationHandler(void)
+{
+	return this->m_animationHandler;
+}
+
+// AnimatedObject v1.1

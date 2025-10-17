@@ -172,9 +172,10 @@ void Timer::RestartOffsetExcessTime(void)
 	this->DeltaClock::Restart(this->GetExcessTime());
 }
 
-void Timer::SetTimeTarget(float _seconds)
+void Timer::SetTimeTarget(float _seconds, bool _restart)
 {
 	this->m_timeTarget = _seconds;
+	this->Restart();
 }
 
 void Timer::End(void)
@@ -241,3 +242,4 @@ float Timer::GetTimeTargetAccurate(void)
 	return 0.0f;
 }
 #pragma endregion
+// Timer & DeltaClock C++ v1.0

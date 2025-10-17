@@ -29,17 +29,22 @@ class AnimatedObject
 		// Set the animation of the sprite using the index
 		// If _resetAnimation is true, if the animation is already selected, resets that animation
 		void SetAnimation(int _animationIndex, bool _resetAnimation = true);
+		// Set the animation of the sprite using the name
+		// If _resetAnimation is true, if the animation is already selected, resets that animation
 		void SetAnimation(const std::string& _animationName, bool _resetAnimation = true);
 		void AddAnimation(int _value, bool _wrap = false, bool _resetAnimation = false);
 
 		void RestartAnimation(float _offset = 0.0f);
 
+		// Returns true if the current animation selected is valid
 		bool HasAnimation(void);
 
 		// Get the current animation properties
 		AnimationProperties* GetAnimationProperties(void);
 
+		// Please call UpdateFrame after modifying attributes of the animation
+		Animation& GetAnimationHandler(void);
 };
 
 #endif
-// AnimatedObject v1.0
+// AnimatedObject v1.1

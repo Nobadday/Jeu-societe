@@ -7,6 +7,7 @@ typedef struct MainData
 	sf::Clock clock;
 	SceneHandler scenes;
 
+
 	GameData gameData;
 } MainData;
 
@@ -54,7 +55,6 @@ void MainDataLoad(MainData& _mainData)
 
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
-	
 
 
 	//
