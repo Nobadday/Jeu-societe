@@ -7,12 +7,13 @@ sf::Keyboard::Key move3D[MAX_DIR_KEY_CODE];
 sf::Keyboard::Key debug[MAX_DEBUG_LIST_BIND];
 bool keyPreviouslyPressed[MAX_KEY_BIND_LIST] = { false };
 bool debugKeyPreviouslyPressed[MAX_DEBUG_LIST_BIND] = { false };
+bool gamePadPreviouslyPressed[MAX_GAMEPAD_BIND_LIST] = { false };
 
 Binds::Binds(void)
 {
-	keyCode[A_KEY] = sf::Keyboard::Key::A;
+	keyCode[ARMWRESTLINGR] = sf::Keyboard::Key::D;
 
-	keyCode[X_KEY] = sf::Keyboard::Key::X;
+	keyCode[ARMWRESTLINGL] = sf::Keyboard::Key::Q;
 
 	debug[DEBUG_KEY_1] = sf::Keyboard::Key::F1;
 
@@ -61,6 +62,32 @@ sf::Vector3f GetAxis3D(unsigned int _id)
 	return axis;
 }
 
+float GetLookAxis2D(unsigned int _id)
+{
+	float axis = 0.f;
+	const float deadZone = 0.2f;
+	if (ABS(sf::Joystick::getAxisPosition(_id, sf::Joystick::Axis::U) / 100.f) > deadZone)
+	{
+		axis = -sf::Joystick::getAxisPosition(_id, sf::Joystick::Axis::U) / 100.f;
+	}
+	return axis;
+}
+
+sf::Vector3f GetLookAxis3D(unsigned int _id)
+{
+	sf::Vector3f axis(0,0,0);
+	const float deadZone = 0.2f;
+	if (ABS(sf::Joystick::getAxisPosition(_id, sf::Joystick::Axis::U) / 100.f) > deadZone)
+	{
+		axis.y = -sf::Joystick::getAxisPosition(_id, sf::Joystick::Axis::U) / 100.f;
+	}
+	if (ABS(sf::Joystick::getAxisPosition(_id, sf::Joystick::Axis::V) / 100.f) > deadZone)
+	{
+		axis.x = -sf::Joystick::getAxisPosition(_id, sf::Joystick::Axis::V) / 100.f;
+	}
+	return axis;
+}
+
 bool GetBindPressed(const BindList _keyList, bool _pressOneTime)
 {
 	if (_pressOneTime)
@@ -95,6 +122,39 @@ bool GetBindPressed(const BindList _keyList, bool _pressOneTime)
 bool GetBindPressed(const BindList _keyList)
 {
 	return GetBindPressed(_keyList, false);
+}
+
+bool GetGamePadPressed(const GamePadBindList _bindList, unsigned int _id, bool _pressOneTime)
+{
+	if (_pressOneTime)
+	{
+		if (sf::Joystick::isButtonPressed(_id, _bindList))
+		{
+			if (gamePadPreviouslyPressed[_bindList])
+			{
+				return false;
+			}
+			else
+			{
+				gamePadPreviouslyPressed[_bindList] = true;
+				return true;
+			}
+		}
+		else
+		{
+			gamePadPreviouslyPressed[_bindList] = false;
+		}
+	}
+	else
+	{
+		if (sf::Joystick::isButtonPressed(_id, _bindList)) return true;
+	}
+	return false;
+}
+
+bool GetGamePadPressed(const GamePadBindList _bindList, unsigned int _id)
+{
+	return GetGamePadPressed(_bindList, _id, false);
 }
 
 bool GetBindDirectionPressed2D(const DirBindList _dir)

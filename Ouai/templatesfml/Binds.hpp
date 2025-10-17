@@ -5,8 +5,8 @@
 
 typedef enum BindList
 {
-	A_KEY,
-	X_KEY,
+	ARMWRESTLINGR,
+	ARMWRESTLINGL,
 	GAME_KEY,
 	GAME_OVER_KEY,
 	MAX_KEY_BIND_LIST
@@ -29,6 +29,21 @@ typedef enum DirBindList
 	MAX_DIR_KEY_CODE
 }DirBindList;
 
+typedef enum GamePadBindList
+{
+	GAMEPAD_A,
+	GAMEPAD_B,
+	GAMEPAD_X,
+	GAMEPAD_Y,
+	GAMEPAD_LB,
+	GAMEPAD_RB,
+	GAMEPAD_BACK,
+	GAMEPAD_START,
+	GMEPAD_LEFT_STICK,
+	GAMEPAD_RIGHT_STICK,
+	MAX_GAMEPAD_BIND_LIST
+}GamePadBindList;
+
 class Binds
 {
 public:
@@ -39,8 +54,12 @@ public:
 
 sf::Vector2f GetAxis2D(unsigned int _id);
 sf::Vector3f GetAxis3D(unsigned int _id);
+float GetLookAxis2D(unsigned int _id);
+sf::Vector3f GetLookAxis3D(unsigned int _id);
 bool GetBindPressed(const BindList _keyList, bool _pressOneTime);
 bool GetBindPressed(const BindList _keyList);
+bool GetGamePadPressed(const GamePadBindList _bindList, unsigned int _id, bool _pressOneTime);
+bool GetGamePadPressed(const GamePadBindList _bindList, unsigned int _id);
 bool GetBindDirectionPressed2D(const DirBindList _dir);
 bool GetBindDirectionPressed3D(const DirBindList _dir);
 bool GetBindDebugPressed(const DebugBindList _debugBind, bool _pressOneTime);

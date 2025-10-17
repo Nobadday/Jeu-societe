@@ -74,7 +74,7 @@ void PollEvent(sf::RenderWindow* const _renderWindow)
 		{
 			MousePressed(event.mouseButton, _renderWindow);
 		}
-		else if (event.type == sf::Event::MouseButtonPressed)
+		else if (event.type == sf::Event::MouseButtonReleased)
 		{
 			MouseReleased(event.mouseButton, _renderWindow);
 		}

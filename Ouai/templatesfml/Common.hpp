@@ -18,7 +18,11 @@
 #include <memory>
 #include "Binds.hpp"
 #include <vector>
+#include <cstdio>
+#include <string>
+#include <cstdarg>
 #include "SFML/OpenGL.hpp"
+#include "StringFormat.hpp"
 
 #define SCREEN_WIDTH 1024
 #define SCREEN_HEIGHT 738

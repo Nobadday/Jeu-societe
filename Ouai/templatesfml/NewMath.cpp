@@ -19,7 +19,7 @@ float RadiansToDegrees(float _radians)
 float GetLength3D(sf::Vector3f _vector)
 {
     // Retourne la longueur d'un vecteur 3D
-    return ABS(sqrtf(_vector.x * _vector.x + _vector.y * _vector.y + _vector.z * _vector.z));
+    return sqrtf(_vector.x * _vector.x + _vector.y * _vector.y + _vector.z * _vector.z);
 }
 
 float DistanceTo3D(sf::Vector3f _v1, sf::Vector3f _v2)
@@ -130,7 +130,7 @@ float Heuristic3D(sf::Vector3f _a, sf::Vector3f _b)
 float GetLength2D(sf::Vector2f _vector)
 {
     // Retourne la longueur d'un vecteur 2D
-    return ABS(sqrtf(_vector.x * _vector.x + _vector.y * _vector.y));
+    return sqrtf(_vector.x * _vector.x + _vector.y * _vector.y);
 }
 
 float DistanceTo2D(sf::Vector2f _v1, sf::Vector2f _v2)
@@ -173,7 +173,8 @@ sf::Vector2f Normalize2D(sf::Vector2f _vector)
 {
     // Normalise un vecteur 2D
     float length = GetLength2D(_vector);
-    if (length != 0) {
+    if (length != 0)
+    {
         _vector.x /= length;
         _vector.y /= length;
     }
@@ -270,19 +271,345 @@ sf::Vector3f ApplyQuaternionRotation(sf::Vector3f _v, Quaternion _q)
 Quaternion NormalizeQuaternion(Quaternion _q)
 {
     float _len = std::sqrt(_q.w * _q.w + _q.x * _q.x + _q.y * _q.y + _q.z * _q.z);
-    if (_len == 0) return { 1,0,0,0 };
+    if (_len == 0) return Quaternion{ 1,0,0,0 };
     return { _q.w / _len, _q.x / _len, _q.y / _len, _q.z / _len };
 }
 
-Matrix4x4 MultiplyMatrix4x4(const Matrix4x4 _a, const Matrix4x4 _b)
+Matrix4x4& MakeRotationY(float _angle)
 {
-    Matrix4x4 result;
+    // angle en radians
+    Matrix4x4 m = {};
+    m.m[0][0] = cosf(_angle);  m.m[0][1] = 0; m.m[0][2] = sinf(_angle); m.m[0][3] = 0;
+    m.m[1][0] = 0;            m.m[1][1] = 1; m.m[1][2] = 0;           m.m[1][3] = 0;
+    m.m[2][0] = -sinf(_angle); m.m[2][1] = 0; m.m[2][2] = cosf(_angle); m.m[2][3] = 0;
+    m.m[3][0] = 0;            m.m[3][1] = 0; m.m[3][2] = 0;           m.m[3][3] = 1;
+    return m;
+}
+
+sf::Vector3f ApplyMatrix3D(const Matrix3x3& _m, const sf::Vector3f& _v)
+{
+    // Multiplie un vecteur 3D par une matrice 3x3 (en ignorant la translation)
+    return sf::Vector3f(
+        _m.m[0][0] * _v.x + _m.m[0][1] * _v.y + _m.m[0][2] * _v.z,
+        _m.m[1][0] * _v.x + _m.m[1][1] * _v.y + _m.m[1][2] * _v.z,
+        _m.m[2][0] * _v.x + _m.m[2][1] * _v.y + _m.m[2][2] * _v.z
+    );
+}
+
+sf::Vector3f ApplyMatrix4D(const Matrix4x4& _m, const sf::Vector3f& _v)
+{
+    // Multiplie un vecteur 3D par une matrice 4x4 (en incluant la translation)
+    return sf::Vector3f(
+        _m.m[0][0] * _v.x + _m.m[0][1] * _v.y + _m.m[0][2] * _v.z + _m.m[0][3],
+        _m.m[1][0] * _v.x + _m.m[1][1] * _v.y + _m.m[1][2] * _v.z + _m.m[1][3],
+        _m.m[2][0] * _v.x + _m.m[2][1] * _v.y + _m.m[2][2] * _v.z + _m.m[2][3]
+	);
+}
+
+sf::Vector2f ApplyMatrix2D(const Matrix2x2& _m, const sf::Vector2f& _v)
+{
+    // Multiplie un vecteur 2D par une matrice 2x2 (en ignorant la translation)
+    return sf::Vector2f(
+        _m.m[0][0] * _v.x + _m.m[0][1] * _v.y,
+        _m.m[1][0] * _v.x + _m.m[1][1] * _v.y
+	);
+}
+
+Quaternion QuaternionFromAngleY(float _angle)
+{
+    // angle en radians
+    float half = _angle * 0.5f;
+    Quaternion q;
+    q.w = cosf(half);
+    q.x = 0.f;
+    q.y = sinf(half);
+    q.z = 0.f;
+    return q;
+}
+
+Quaternion QuaternionFromEuler(const sf::Vector3f& _euler)
+{
+    // Convertit des angles d'Euler (en degrés) en quaternion
+    float cy = cosf(DegreesToRadians(_euler.z) * 0.5f);
+    float sy = sinf(DegreesToRadians(_euler.z) * 0.5f);
+    float cp = cosf(DegreesToRadians(_euler.y) * 0.5f);
+    float sp = sinf(DegreesToRadians(_euler.y) * 0.5f);
+    float cr = cosf(DegreesToRadians(_euler.x) * 0.5f);
+    float sr = sinf(DegreesToRadians(_euler.x) * 0.5f);
+    Quaternion q;
+    q.w = cr * cp * cy + sr * sp * sy;
+    q.x = sr * cp * cy - cr * sp * sy;
+    q.y = cr * sp * cy + sr * cp * sy;
+    q.z = cr * cp * sy - sr * sp * cy;
+    return NormalizeQuaternion(q);
+}
+
+Quaternion Matrix3x3ToQuaternion(const Matrix3x3& _m)
+{
+    Quaternion q;
+    float trace = _m.m[0][0] + _m.m[1][1] + _m.m[2][2];
+    if (trace > 0) {
+        float s = 0.5f / sqrtf(trace + 1.0f);
+        q.w = 0.25f / s;
+        q.x = (_m.m[2][1] - _m.m[1][2]) * s;
+        q.y = (_m.m[0][2] - _m.m[2][0]) * s;
+        q.z = (_m.m[1][0] - _m.m[0][1]) * s;
+    }
+    else {
+        if (_m.m[0][0] > _m.m[1][1] && _m.m[0][0] > _m.m[2][2]) {
+            float s = 2.0f * sqrtf(1.0f + _m.m[0][0] - _m.m[1][1] - _m.m[2][2]);
+            q.w = (_m.m[2][1] - _m.m[1][2]) / s;
+            q.x = 0.25f * s;
+            q.y = (_m.m[0][1] + _m.m[1][0]) / s;
+            q.z = (_m.m[0][2] + _m.m[2][0]) / s;
+        }
+        else if (_m.m[1][1] > _m.m[2][2]) {
+            float s = 2.0f * sqrtf(1.0f + _m.m[1][1] - _m.m[0][0] - _m.m[2][2]);
+            q.w = (_m.m[0][2] - _m.m[2][0]) / s;
+            q.x = (_m.m[0][1] + _m.m[1][0]) / s;
+            q.y = 0.25f * s;
+            q.z = (_m.m[1][2] + _m.m[2][1]) / s;
+        }
+        else {
+			float s = 2.0f * sqrtf(1.0f + _m.m[2][2]
+                - _m.m[0][0] - _m.m[1][1]);
+            q.w = (_m.m[1][0] - _m.m[0][1]) / s;
+            q.x = (_m.m[0][2] + _m.m[2][0]) / s;
+            q.y = (_m.m[1][2] + _m.m[2][1]) / s;
+            q.z = 0.25f * s;
+        }
+    }
+	return NormalizeQuaternion(q);
+}
+
+sf::Vector3f EulerFormQuaternion(const Quaternion& _q)
+{
+    sf::Vector3f euler;
+    // Roll (X-axis rotation)
+    float sinr_cosp = 2 * (_q.w * _q.x + _q.y * _q.z);
+    float cosr_cosp = 1 - 2 * (_q.x * _q.x + _q.y * _q.y);
+    euler.x = RadiansToDegrees(atan2f(sinr_cosp, cosr_cosp));
+    // Pitch (Y-axis rotation)
+    float sinp = 2 * (_q.w * _q.y - _q.z * _q.x);
+    if (ABS(sinp) >= 1)
+        euler.y = RadiansToDegrees(copysignf(M_PI / 2, sinp)); // use 90 degrees if out of range
+    else
+        euler.y = RadiansToDegrees(asinf(sinp));
+    // Yaw (Z-axis rotation)
+    float siny_cosp = 2 * (_q.w * _q.z + _q.x * _q.y);
+    float cosy_cosp = 1 - 2 * (_q.y * _q.y + _q.z * _q.z);
+    euler.z = RadiansToDegrees(atan2f(siny_cosp, cosy_cosp));
+    return euler;
+}
+
+Quaternion LerpQuaternion(const Quaternion& _a, const Quaternion& _b, float _t)
+{
+    Quaternion result;
+    result.w = _a.w + (_b.w - _a.w) * _t;
+    result.x = _a.x + (_b.x - _a.x) * _t;
+    result.y = _a.y + (_b.y - _a.y) * _t;
+    result.z = _a.z + (_b.z - _a.z) * _t;
+    return NormalizeQuaternion(result);
+}
+
+Matrix4x4 Matrix4x4::CreateTranslation(const sf::Vector3f& _t)
+{
+    Matrix4x4 mat = {};
+    mat.m[0][0] = 1.f; mat.m[0][1] = 0.f; mat.m[0][2] = 0.f; mat.m[0][3] = _t.x;
+    mat.m[1][0] = 0.f; mat.m[1][1] = 1.f; mat.m[1][2] = 0.f; mat.m[1][3] = _t.y;
+    mat.m[2][0] = 0.f; mat.m[2][1] = 0.f; mat.m[2][2] = 1.f; mat.m[2][3] = _t.z;
+    mat.m[3][0] = 0.f; mat.m[3][1] = 0.f; mat.m[3][2] = 0.f; mat.m[3][3] = 1.f;
+    return mat;
+}
+
+Matrix4x4 Matrix4x4::CreateScale(const sf::Vector3f& _s)
+{
+    Matrix4x4 mat = {};
+    mat.m[0][0] = _s.x; mat.m[0][1] = 0.f; mat.m[0][2] = 0.f; mat.m[0][3] = 0.f;
+    mat.m[1][0] = 0.f; mat.m[1][1] = _s.y; mat.m[1][2] = 0.f; mat.m[1][3] = 0.f;
+    mat.m[2][0] = 0.f; mat.m[2][1] = 0.f; mat.m[2][2] = _s.z; mat.m[2][3] = 0.f;
+    mat.m[3][0] = 0.f; mat.m[3][1] = 0.f; mat.m[3][2] = 0.f; mat.m[3][3] = 1.f;
+    return mat;
+}
+
+Matrix4x4 Matrix4x4::CreateFromQuaternion(const Quaternion& _q)
+{
+    Matrix4x4 mat = {};
+    float xx = _q.x * _q.x;
+    float yy = _q.y * _q.y;
+    float zz = _q.z * _q.z;
+    float xy = _q.x * _q.y;
+    float xz = _q.x * _q.z;
+    float yz = _q.y * _q.z;
+    float wx = _q.w * _q.x;
+    float wy = _q.w * _q.y;
+    float wz = _q.w * _q.z;
+
+    mat.m[0][0] = 1.f - 2.f * (yy + zz);
+    mat.m[0][1] = 2.f * (xy - wz);
+    mat.m[0][2] = 2.f * (xz + wy);
+    mat.m[0][3] = 0.f;
+
+    mat.m[1][0] = 2.f * (xy + wz);
+    mat.m[1][1] = 1.f - 2.f * (xx + zz);
+    mat.m[1][2] = 2.f * (yz - wx);
+    mat.m[1][3] = 0.f;
+
+    mat.m[2][0] = 2.f * (xz - wy);
+    mat.m[2][1] = 2.f * (yz + wx);
+    mat.m[2][2] = 1.f - 2.f * (xx + yy);
+    mat.m[2][3] = 0.f;
+
+    mat.m[3][0] = 0.f;
+    mat.m[3][1] = 0.f;
+    mat.m[3][2] = 0.f;
+    mat.m[3][3] = 1.f;
+
+    return mat;
+}
+
+// Inverse d'une matrice 4x4 (méthode de Gauss-Jordan, adaptée pour les matrices de transformation)
+Matrix4x4 InverseMatrix4x4(const Matrix4x4& _mat)
+{
+    Matrix4x4 inv = {};
+    float m[16], invOut[16];
+    // Copie la matrice dans un tableau 1D
     for (int i = 0; i < 4; ++i)
         for (int j = 0; j < 4; ++j)
-        {
-            result.m[i][j] = 0;
-            for (int k = 0; k < 4; ++k)
-                result.m[i][j] += _a.m[i][k] * _b.m[k][j];
-        }
-    return result;
+            m[i * 4 + j] = _mat.m[i][j];
+
+    invOut[0] = m[5] * m[10] * m[15] -
+        m[5] * m[11] * m[14] -
+        m[9] * m[6] * m[15] +
+        m[9] * m[7] * m[14] +
+        m[13] * m[6] * m[11] -
+        m[13] * m[7] * m[10];
+
+    invOut[4] = -m[4] * m[10] * m[15] +
+        m[4] * m[11] * m[14] +
+        m[8] * m[6] * m[15] -
+        m[8] * m[7] * m[14] -
+        m[12] * m[6] * m[11] +
+        m[12] * m[7] * m[10];
+
+    invOut[8] = m[4] * m[9] * m[15] -
+        m[4] * m[11] * m[13] -
+        m[8] * m[5] * m[15] +
+        m[8] * m[7] * m[13] +
+        m[12] * m[5] * m[11] -
+        m[12] * m[7] * m[9];
+
+    invOut[12] = -m[4] * m[9] * m[14] +
+        m[4] * m[10] * m[13] +
+        m[8] * m[5] * m[14] -
+        m[8] * m[6] * m[13] -
+        m[12] * m[5] * m[10] +
+        m[12] * m[6] * m[9];
+
+    invOut[1] = -m[1] * m[10] * m[15] +
+        m[1] * m[11] * m[14] +
+        m[9] * m[2] * m[15] -
+        m[9] * m[3] * m[14] -
+        m[13] * m[2] * m[11] +
+        m[13] * m[3] * m[10];
+
+    invOut[5] = m[0] * m[10] * m[15] -
+        m[0] * m[11] * m[14] -
+        m[8] * m[2] * m[15] +
+        m[8] * m[3] * m[14] +
+        m[12] * m[2] * m[11] -
+        m[12] * m[3] * m[10];
+
+    invOut[9] = -m[0] * m[9] * m[15] +
+        m[0] * m[11] * m[13] +
+        m[8] * m[1] * m[15] -
+        m[8] * m[3] * m[13] -
+        m[12] * m[1] * m[11] +
+        m[12] * m[3] * m[9];
+
+    invOut[13] = m[0] * m[9] * m[14] -
+        m[0] * m[10] * m[13] -
+        m[8] * m[1] * m[14] +
+        m[8] * m[2] * m[13] +
+        m[12] * m[1] * m[10] -
+        m[12] * m[2] * m[9];
+
+    invOut[2] = m[1] * m[6] * m[15] -
+        m[1] * m[7] * m[14] -
+        m[5] * m[2] * m[15] +
+        m[5] * m[3] * m[14] +
+        m[13] * m[2] * m[7] -
+        m[13] * m[3] * m[6];
+
+    invOut[6] = -m[0] * m[6] * m[15] +
+        m[0] * m[7] * m[14] +
+        m[4] * m[2] * m[15] -
+        m[4] * m[3] * m[14] -
+        m[12] * m[2] * m[7] +
+        m[12] * m[3] * m[6];
+
+    invOut[10] = m[0] * m[5] * m[15] -
+        m[0] * m[7] * m[13] -
+        m[4] * m[1] * m[15] +
+        m[4] * m[3] * m[13] +
+        m[12] * m[1] * m[7] -
+        m[12] * m[3] * m[5];
+
+    invOut[14] = -m[0] * m[5] * m[14] +
+        m[0] * m[6] * m[13] +
+        m[4] * m[1] * m[14] -
+        m[4] * m[2] * m[13] -
+        m[12] * m[1] * m[6] +
+        m[12] * m[2] * m[5];
+
+    invOut[3] = -m[1] * m[6] * m[11] +
+        m[1] * m[7] * m[10] +
+        m[5] * m[2] * m[11] -
+        m[5] * m[3] * m[10] -
+        m[9] * m[2] * m[7] +
+        m[9] * m[3] * m[6];
+
+    invOut[7] = m[0] * m[6] * m[11] -
+        m[0] * m[7] * m[10] -
+        m[4] * m[2] * m[11] +
+        m[4] * m[3] * m[10] +
+        m[8] * m[2] * m[7] -
+        m[8] * m[3] * m[6];
+
+    invOut[11] = -m[0] * m[5] * m[11] +
+        m[0] * m[7] * m[9] +
+        m[4] * m[1] * m[11] -
+        m[4] * m[3] * m[9] -
+        m[8] * m[1] * m[7] +
+        m[8] * m[3] * m[5];
+
+    invOut[15] = m[0] * m[5] * m[10] -
+        m[0] * m[6] * m[9] -
+        m[4] * m[1] * m[10] +
+        m[4] * m[2] * m[9] +
+        m[8] * m[1] * m[6] -
+        m[8] * m[2] * m[5];
+
+    float det = m[0] * invOut[0] + m[1] * invOut[4] + m[2] * invOut[8] + m[3] * invOut[12];
+    if (det == 0.0f)
+        return Matrix4x4::CreateScale(sf::Vector3f(1.f, 1.f, 1.f)); // Identité si non inversible
+
+    det = 1.0f / det;
+    for (int i = 0; i < 16; ++i)
+        invOut[i] *= det;
+
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 4; ++j)
+            inv.m[i][j] = invOut[i * 4 + j];
+
+    return inv;
+}
+
+// Inverse d'un quaternion (conjugué / norme au carré)
+Quaternion InverseQuaternion(const Quaternion& _q)
+{
+    float normSq = _q.w * _q.w + _q.x * _q.x + _q.y * _q.y + _q.z * _q.z;
+    if (normSq == 0.0f)
+        return Quaternion{ 1.f, 0.f, 0.f, 0.f }; // Identité si non inversible
+    return Quaternion{ _q.w / normSq, -_q.x / normSq, -_q.y / normSq, -_q.z / normSq };
 }

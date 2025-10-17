@@ -27,6 +27,7 @@
     <ClInclude Include="GameState.hpp" />
     <ClInclude Include="Menu.hpp" />
     <ClInclude Include="NewMath.hpp" />
+    <ClInclude Include="StringFormat.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Binds.cpp" />
@@ -37,6 +38,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="NewMath.cpp" />
+    <ClCompile Include="StringFormat.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

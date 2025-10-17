@@ -14,9 +14,16 @@ public:
 	static void Draw(sf::RenderWindow* const _renderWindow);
 	static void KeyPressed(sf::Event::KeyEvent _key, sf::RenderWindow* _renderWindow);
 	static void KeyReleased(sf::Event::KeyEvent _key, sf::RenderWindow* _renderWindow);
+	static sf::Font& GetFont();
 private:
-	static sf::Sprite* backGround;
-
+	static sf::RectangleShape* barBack;
+	static sf::RectangleShape* barFrontR;
+	static sf::RectangleShape* barFrontL;
+	static short powerL;
+	static short powerR;
+	static sf::Font* font;
+	static sf::Text* Counter;
+	static float timeCounter;
 };
 
 #endif
