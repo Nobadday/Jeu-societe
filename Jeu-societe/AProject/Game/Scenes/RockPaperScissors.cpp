@@ -101,7 +101,7 @@ void RockPaperSizor::Update(float _deltaTime)
 	m_data->timer.Update(_deltaTime);
 
 	char buffer[20];
-	std::snprintf(buffer, 50, "%02f", m_data->timer.GetRemainingTime());
+	std::snprintf(buffer, 20, "%02f", m_data->timer.GetRemainingTime());
 	m_data->timerText.setString(buffer);
 
 	if (m_data->timer.IsFinished() && !m_data->isStarted && !m_data->timer.IsPaused())
@@ -126,11 +126,11 @@ void RockPaperSizor::Update(float _deltaTime)
 				|| m_data->player2Choice == RPS_SCISSORS && m_data->player1Choice == RPS_ROCK
 				|| m_data->player1Choice == RPS_PAPER && m_data->player2Choice == RPS_ROCK)
 			{
-				std::snprintf(buffer2, 50, "PLAYER 1 WIN");
+				std::snprintf(buffer2, 15, "PLAYER 1 WIN");
 			}
 			else
 			{
-				std::snprintf(buffer2, 50, "PLAYER 2 WIN");
+				std::snprintf(buffer2, 15, "PLAYER 2 WIN");
 			}
 
 			m_data->victoryText.setString(buffer2);

@@ -23,10 +23,10 @@ class RockPaperSizor : public SceneBase
 		sf::Sprite spriteTab[6];
 		sf::Texture textureTab[6];
 
-		RPS_Choice player1Choice;
+		RPS_Choice player1Choice = RPS_NONE;
 		sf::Sprite player1ChoiceSprite;
 
-		RPS_Choice player2Choice;
+		RPS_Choice player2Choice = RPS_NONE;
 		sf::Sprite player2ChoiceSprite;
 
 		Timer timer;
