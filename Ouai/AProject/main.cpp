@@ -1,4 +1,6 @@
 #include "Common.hpp"
+#include "Game/Scenes/ArmWrestling.hpp"
+#include "Game/Scenes/Basket.hpp"
 
 
 typedef struct MainData
@@ -7,6 +9,7 @@ typedef struct MainData
 	sf::Clock clock;
 	SceneHandler scenes;
 	SceneBase* armWrestlingScene;
+	SceneBase* basketScene;
 
 	GameData gameData;
 } MainData;
@@ -58,6 +61,8 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
 
 	_mainData.scenes.AddScene(*(_mainData.armWrestlingScene = new ArmWrestling()), "ArmWrestling");
+	_mainData.scenes.AddScene(*(_mainData.basketScene = new Basket()), "Basket");
+	_mainData.scenes.SelectScene("Basket",false);
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 
 	// GAME DATA

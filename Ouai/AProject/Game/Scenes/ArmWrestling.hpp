@@ -18,7 +18,6 @@ public:
 private:
 	short id;
 	short force;
-	short scale;
 	sf::RectangleShape* shape;
 	sf::Text* nameText;
 	void Update(float _dt);

@@ -613,3 +613,10 @@ Quaternion InverseQuaternion(const Quaternion& _q)
         return Quaternion{ 1.f, 0.f, 0.f, 0.f }; // Identité si non inversible
     return Quaternion{ _q.w / normSq, -_q.x / normSq, -_q.y / normSq, -_q.z / normSq };
 }
+
+float Rescale(float _value, float _min, float _max)
+{
+    if (_max == _min) return 0.f;
+    float t = (_value - _min) / (_max - _min);
+    return t;
+}

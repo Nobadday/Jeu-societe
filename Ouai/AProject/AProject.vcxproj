@@ -159,6 +159,7 @@
     <ClCompile Include="Animation\Graphics\TextureAtlas.cpp" />
     <ClCompile Include="Animation\Utilities\Bezier.cpp" />
     <ClCompile Include="Animation\Utilities\Math.cpp" />
+    <ClCompile Include="Game\Scenes\Basket.cpp" />
     <ClCompile Include="Game\Scenes\ArmWrestling.cpp" />
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Scenes\SceneHandler.cpp" />
@@ -191,6 +192,7 @@
     <ClInclude Include="Animation\Graphics\TextureAtlas.hpp" />
     <ClInclude Include="Animation\Utilities\Bezier.hpp" />
     <ClInclude Include="Animation\Utilities\Math.hpp" />
+    <ClInclude Include="Game\Scenes\Basket.hpp" />
     <ClInclude Include="Game\Scenes\ArmWrestling.hpp" />
     <ClInclude Include="Game\GameData.hpp" />
     <ClInclude Include="Scenes\Scene.hpp" />

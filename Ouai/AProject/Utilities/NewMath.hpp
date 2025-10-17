@@ -466,5 +466,11 @@ Matrix4x4 InverseMatrix4x4(const Matrix4x4& _mat);
 /// \brief Computes the inverse of a quaternion
 /// \param q Input quaternion
 Quaternion InverseQuaternion(const Quaternion& _q);
+/// \brief Rescale a scalar into [0,1] using the interval [min,max]
+/// \param value Value to rescale
+/// \param min Interval minimum
+/// \param max Interval maximum
+float Rescale(float _value, float _min, float _max);
+
 
 #endif // NEWMATH_H

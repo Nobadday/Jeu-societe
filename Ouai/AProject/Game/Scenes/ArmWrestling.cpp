@@ -76,7 +76,6 @@ ArmWrestlingPlayer::ArmWrestlingPlayer(sf::Vector2f _pos, sf::Color _color,float
 {
 	id = _id;
 	force = 1;
-	scale = _scale;
 	shape = new sf::RectangleShape(sf::Vector2f(100.0f, 30.0f));
 	shape->setFillColor(_color);
 	shape->setOrigin(shape->getSize().x / 2, shape->getSize().y / 2);
