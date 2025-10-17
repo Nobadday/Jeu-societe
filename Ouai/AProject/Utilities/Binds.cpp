@@ -24,7 +24,7 @@ Binds::Binds(void)
 
 Binds::~Binds(void)
 {
-	for (usi i = 0; i < MAX_KEY_BIND_LIST; i++)
+	for (short i = 0; i < MAX_KEY_BIND_LIST; i++)
 	{
 		keyCode[i] = sf::Keyboard::Key::Unknown;
 	}

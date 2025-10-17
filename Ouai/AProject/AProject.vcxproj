@@ -159,9 +159,11 @@
     <ClCompile Include="Animation\Graphics\TextureAtlas.cpp" />
     <ClCompile Include="Animation\Utilities\Bezier.cpp" />
     <ClCompile Include="Animation\Utilities\Math.cpp" />
+    <ClCompile Include="Game\Scenes\ArmWrestling.cpp" />
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Scenes\SceneHandler.cpp" />
     <ClCompile Include="Utilities\AssetManager.cpp" />
+    <ClCompile Include="Utilities\Binds.cpp" />
     <ClCompile Include="Utilities\Camera\Camera.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Utilities\Controller\Controller.cpp" />
@@ -170,7 +172,9 @@
     <ClCompile Include="Utilities\Lists\DynaList.cpp" />
     <ClCompile Include="Utilities\Lists\PyList.cpp" />
     <ClCompile Include="Utilities\MathPlus.cpp" />
+    <ClCompile Include="Utilities\NewMath.cpp" />
     <ClCompile Include="Utilities\Random.cpp" />
+    <ClCompile Include="Utilities\StringFormat.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation\Animation.hpp" />
@@ -187,11 +191,13 @@
     <ClInclude Include="Animation\Graphics\TextureAtlas.hpp" />
     <ClInclude Include="Animation\Utilities\Bezier.hpp" />
     <ClInclude Include="Animation\Utilities\Math.hpp" />
+    <ClInclude Include="Game\Scenes\ArmWrestling.hpp" />
     <ClInclude Include="Game\GameData.hpp" />
     <ClInclude Include="Scenes\Scene.hpp" />
     <ClInclude Include="Scenes\SceneHandler.hpp" />
     <ClInclude Include="Screen.hpp" />
     <ClInclude Include="Utilities\AssetManager.hpp" />
+    <ClInclude Include="Utilities\Binds.hpp" />
     <ClInclude Include="Utilities\Camera\Camera.hpp" />
     <ClInclude Include="Common.hpp" />
     <ClInclude Include="Utilities\Controller\Controller.hpp" />
@@ -200,7 +206,9 @@
     <ClInclude Include="Utilities\Lists\DynaList.hpp" />
     <ClInclude Include="Utilities\Lists\PyList.hpp" />
     <ClInclude Include="Utilities\MathPlus.hpp" />
+    <ClInclude Include="Utilities\NewMath.hpp" />
     <ClInclude Include="Utilities\Random.hpp" />
+    <ClInclude Include="Utilities\StringFormat.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

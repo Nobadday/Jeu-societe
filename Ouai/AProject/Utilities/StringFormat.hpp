@@ -1,7 +1,9 @@
 #ifndef STRINGFORMAT_H
 #define STRINGFORMAT_H
 
-#include "Common.hpp"
+#include "../Common.hpp"
+#include <cstdarg>
+#include <cstdio>
 
 class StringFormat
 {

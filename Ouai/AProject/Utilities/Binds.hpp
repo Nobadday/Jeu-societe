@@ -1,7 +1,7 @@
 #ifndef BIND_H
 #define BIND_H
 
-#include "Common.hpp"
+#include "../Common.hpp"
 
 typedef enum BindList
 {
