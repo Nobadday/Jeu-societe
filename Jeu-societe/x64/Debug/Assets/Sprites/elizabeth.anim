@@ -1,0 +1,35 @@
+{
+    "assetPath":"elizabeth-scared2.json",
+    "framerate": 24,
+	"animations": [
+        {
+            "name":"Idle",
+            "atlas":"Idle",
+            "loop": true
+        },
+        {
+            "name":"Sing_Left"
+        },
+        {
+            "name":"Sing_Up"
+        },
+        {
+            "name":"Sing_Down"
+        },
+        {
+            "name":"Sing_Right"
+        },
+        {
+            "name":"Miss_Right"
+        },
+        {
+            "name":"Miss_Left"
+        },
+        {
+            "name":"Miss_Up"
+        },
+        {
+            "name":"Miss_Down"
+        }
+    ]
+}

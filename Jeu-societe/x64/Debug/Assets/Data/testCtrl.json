@@ -1,0 +1,22 @@
+{
+    "default":0,
+    "functions":[
+        "confirm", "up"
+    ],
+    "maps":[
+        {
+            "controllers":[
+                "Name",
+                "Name2",
+                "Name3"
+            ],
+            "buttons":[
+                {
+                    "button":"A",
+                    "function":"confirm",
+                    "id":0
+                }
+            ] 
+        }
+    ]
+}
