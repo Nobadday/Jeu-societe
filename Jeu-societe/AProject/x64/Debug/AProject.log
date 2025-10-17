@@ -1,27 +1,2 @@
-﻿  AnimationEasing.cpp
-  AnimationHandler.cpp
-  Animator.cpp
-  Timer.cpp
-  AnimatedObject.cpp
-  GraphicAddons.cpp
-  SpriteAnimated.cpp
-  TextureAnimated.cpp
-  TextureAtlas.cpp
-  Bezier.cpp
-  Math.cpp
-  Scene.cpp
-  SceneHandler.cpp
-  AssetManager.cpp
-  Camera.cpp
-  main.cpp
-  Controller.cpp
-  FileTools.cpp
-  PyDict.cpp
-  DynaList.cpp
-  Génération de code en cours...
-  Compilation en cours...
-  PyList.cpp
-  MathPlus.cpp
-  Random.cpp
-  Génération de code en cours...
-  AProject.vcxproj -> D:\SVN\Eleves\ymelissejeanfrancois\Projet\Jeu-societe\x64\Debug\XBPlato.exe
+﻿  RockPaperScissors.cpp
+  AProject.vcxproj -> D:\SVN\Eleves\Kyllian Nurit\Projets\Jeu-societe\Jeu-societe\x64\Debug\XBPlato.exe
