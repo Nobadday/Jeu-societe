@@ -58,3 +58,5 @@
 *.pgc
 *.pgd
 *.rsp
+
+*.vs
