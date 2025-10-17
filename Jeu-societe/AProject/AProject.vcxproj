@@ -159,6 +159,7 @@
     <ClCompile Include="Animation\Graphics\TextureAtlas.cpp" />
     <ClCompile Include="Animation\Utilities\Bezier.cpp" />
     <ClCompile Include="Animation\Utilities\Math.cpp" />
+    <ClCompile Include="Scenes\RandCard\RandCard.cpp" />
     <ClCompile Include="Scenes\RussianRoulette\RussianRoulette.cpp" />
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Scenes\SceneHandler.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="Animation\Utilities\Bezier.hpp" />
     <ClInclude Include="Animation\Utilities\Math.hpp" />
     <ClInclude Include="Game\GameData.hpp" />
+    <ClInclude Include="Scenes\RandCard\RandCard.hpp" />
     <ClInclude Include="Scenes\RussianRoulette\RussianRoulette.hpp" />
     <ClInclude Include="Scenes\Scene.hpp" />
     <ClInclude Include="Scenes\SceneHandler.hpp" />

@@ -1,5 +1,6 @@
 #include "Common.hpp"
 #include "./Scenes/RussianRoulette/RussianRoulette.hpp"
+#include "./Scenes/RandCard/RandCard.hpp"
 
 
 typedef struct MainData
@@ -9,6 +10,7 @@ typedef struct MainData
 	SceneHandler scenes;
 
 	RussianRoulette sceneRussianRoulette;
+	RandCard randCard;
 	GameData gameData;
 } MainData;
 
@@ -57,9 +59,10 @@ void MainDataLoad(MainData& _mainData)
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
 	
-	_mainData.scenes.AddScene(_mainData.sceneRussianRoulette, "RussianRoulette");
+	//_mainData.scenes.AddScene(_mainData.sceneRussianRoulette, "RussianRoulette");
+	_mainData.scenes.AddScene(_mainData.randCard, "RandCard");
 
-	//
+	
 
 	_mainData.clock.restart();
 }

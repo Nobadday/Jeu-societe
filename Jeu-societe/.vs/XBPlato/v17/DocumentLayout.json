@@ -3,28 +3,24 @@
   "WorkspaceRootPath": "C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\RandCard\\RandCard.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Scenes\\RandCard\\RandCard.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\RussianRoulette\\RussianRoulette.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Scenes\\RussianRoulette\\RussianRoulette.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\RandCard\\RandCard.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Scenes\\RandCard\\RandCard.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\RussianRoulette\\RussianRoulette.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Scenes\\RussianRoulette\\RussianRoulette.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\SceneHandler.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Scenes\\SceneHandler.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Game\\GameData.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Game\\GameData.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\Scene.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Scenes\\Scene.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Common.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Common.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -33,89 +29,76 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 326,
-          "SelectedChildIndex": 0,
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "RussianRoulette.cpp",
-              "DocumentMoniker": "C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\RussianRoulette\\RussianRoulette.cpp",
-              "RelativeDocumentMoniker": "AProject\\Scenes\\RussianRoulette\\RussianRoulette.cpp",
-              "ToolTip": "C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\RussianRoulette\\RussianRoulette.cpp",
-              "RelativeToolTip": "AProject\\Scenes\\RussianRoulette\\RussianRoulette.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 1,
+              "Title": "main.cpp",
+              "DocumentMoniker": "C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\main.cpp",
+              "RelativeDocumentMoniker": "AProject\\main.cpp",
+              "ToolTip": "C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\main.cpp",
+              "RelativeToolTip": "AProject\\main.cpp",
+              "ViewState": "AgIAAC0AAAAAAAAAAAAAAD4AAAAtAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-10-17T08:37:24.364Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Scene.hpp",
-              "DocumentMoniker": "C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\Scene.hpp",
-              "RelativeDocumentMoniker": "AProject\\Scenes\\Scene.hpp",
-              "ToolTip": "C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\Scene.hpp",
-              "RelativeToolTip": "AProject\\Scenes\\Scene.hpp",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAAEYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-10-17T08:21:29.341Z",
+              "WhenOpened": "2025-10-17T15:05:41.956Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "SceneHandler.cpp",
-              "DocumentMoniker": "C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\SceneHandler.cpp",
-              "RelativeDocumentMoniker": "AProject\\Scenes\\SceneHandler.cpp",
-              "ToolTip": "C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\SceneHandler.cpp",
-              "RelativeToolTip": "AProject\\Scenes\\SceneHandler.cpp",
-              "ViewState": "AgIAAFYAAAAAAAAAAAAiwH4AAAAAAAAAAAAAAA==",
+              "Title": "RussianRoulette.cpp",
+              "DocumentMoniker": "C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\RussianRoulette\\RussianRoulette.cpp",
+              "RelativeDocumentMoniker": "AProject\\Scenes\\RussianRoulette\\RussianRoulette.cpp",
+              "ToolTip": "C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\RussianRoulette\\RussianRoulette.cpp",
+              "RelativeToolTip": "AProject\\Scenes\\RussianRoulette\\RussianRoulette.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-10-17T07:55:30.428Z",
+              "WhenOpened": "2025-10-17T14:40:34.855Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Common.hpp",
-              "DocumentMoniker": "C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Common.hpp",
-              "RelativeDocumentMoniker": "AProject\\Common.hpp",
-              "ToolTip": "C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Common.hpp",
-              "RelativeToolTip": "AProject\\Common.hpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-10-17T07:35:54.875Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "GameData.hpp",
-              "DocumentMoniker": "C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Game\\GameData.hpp",
-              "RelativeDocumentMoniker": "AProject\\Game\\GameData.hpp",
-              "ToolTip": "C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Game\\GameData.hpp",
-              "RelativeToolTip": "AProject\\Game\\GameData.hpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-10-17T07:31:52.689Z",
+              "DocumentIndex": 0,
+              "Title": "RandCard.cpp",
+              "DocumentMoniker": "C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\RandCard\\RandCard.cpp",
+              "RelativeDocumentMoniker": "AProject\\Scenes\\RandCard\\RandCard.cpp",
+              "ToolTip": "C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\RandCard\\RandCard.cpp",
+              "RelativeToolTip": "AProject\\Scenes\\RandCard\\RandCard.cpp",
+              "ViewState": "AgIAABgAAAAAAAAAAAAAAB8AAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-10-17T14:36:33.05Z",
               "EditorCaption": ""
             }
           ]
         },
         {
-          "DockedWidth": 137,
+          "DockedWidth": 263,
           "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
+              "Title": "RandCard.hpp",
+              "DocumentMoniker": "C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\RandCard\\RandCard.hpp",
+              "RelativeDocumentMoniker": "AProject\\Scenes\\RandCard\\RandCard.hpp",
+              "ToolTip": "C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\RandCard\\RandCard.hpp",
+              "RelativeToolTip": "AProject\\Scenes\\RandCard\\RandCard.hpp",
+              "ViewState": "AgIAABsAAAAAAAAAAAAUwCYAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-10-17T14:36:26.34Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "RussianRoulette.hpp",
               "DocumentMoniker": "C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\RussianRoulette\\RussianRoulette.hpp",
               "RelativeDocumentMoniker": "AProject\\Scenes\\RussianRoulette\\RussianRoulette.hpp",
               "ToolTip": "C:\\Users\\Etudiant3\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\RussianRoulette\\RussianRoulette.hpp",
               "RelativeToolTip": "AProject\\Scenes\\RussianRoulette\\RussianRoulette.hpp",
-              "ViewState": "AgIAABYAAAAAAAAAAAAwwCgAAAARAAAAAAAAAA==",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAgwCgAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2025-10-17T08:30:56.797Z",
               "EditorCaption": ""
