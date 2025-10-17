@@ -1,6 +1,6 @@
 #pragma once
 #ifndef ROCKPAPERSIZOR_HPP
-#define ROCKPAPERSIZOR_HPP
+#define ROCKPAPERSCISSORS_HPP
 
 #include "../../Common.hpp"
 #include "../../Scenes/Scene.hpp"

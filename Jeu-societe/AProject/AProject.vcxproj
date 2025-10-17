@@ -159,6 +159,7 @@
     <ClCompile Include="Animation\Graphics\TextureAtlas.cpp" />
     <ClCompile Include="Animation\Utilities\Bezier.cpp" />
     <ClCompile Include="Animation\Utilities\Math.cpp" />
+    <ClCompile Include="Game\Scenes\FlagMiniGame.cpp" />
     <ClCompile Include="Game\Scenes\RockPaperScissors.cpp" />
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Scenes\SceneHandler.cpp" />
@@ -188,6 +189,7 @@
     <ClInclude Include="Animation\Graphics\TextureAtlas.hpp" />
     <ClInclude Include="Animation\Utilities\Bezier.hpp" />
     <ClInclude Include="Animation\Utilities\Math.hpp" />
+    <ClInclude Include="Game\Scenes\FlagMiniGame.hpp" />
     <ClInclude Include="Game\GameData.hpp" />
     <ClInclude Include="Game\Scenes\RockPaperScissors.hpp" />
     <ClInclude Include="Scenes\Scene.hpp" />
