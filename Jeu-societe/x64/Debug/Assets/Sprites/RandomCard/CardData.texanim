@@ -1,0 +1,24 @@
+{
+    "filePath":"CardData.texsheet",
+    "fileType":0,
+	"animations": [
+        {
+            "animationName":"OFF",
+            "texName":"OFF",
+            "loop": true,
+            "fps": 10
+        },
+        {
+            "animationName":"BOMB",
+            "texName":"BOMB",
+            "loop": false,
+            "fps": 2
+        },
+        {
+            "animationName":"NORMAL",
+            "texName":"NORMAL",
+            "loop": false,
+            "fps": 2
+        }
+    ]
+}

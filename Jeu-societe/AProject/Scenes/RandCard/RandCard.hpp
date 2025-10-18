@@ -9,57 +9,62 @@
 
 class RandCard : public SceneBase
 {
-private:
-	enum GameState
-	{
-		//Wait for input
-		CHOOSE_CARD,
-		//Animation 
-		ANIMATION
-	};
-	enum CardType
-	{
-		NORMAL,
-		BOMB
-	};
-	struct SceneData
-	{
-		sf::Texture backgroundTex;
-		sf::Sprite backgroundSpr;
+	private:
 
-		sf::Texture staticCardTex;
-		sf::Sprite staticCardSpr;
-		TextureAnimated cardTexAnim;
-		SpriteAnimated cardSprAnim;
+		//DEBUG, REMOVE WHEN PLAYER STRUCT FROM GAMEDATA COMME
+		struct Player
+		{
+			std::string name;
+		};
 
-		int currentNbOfCards = -1;	//Change it
-		std::vector<CardType> cards;
+		enum GameState
+		{
+			//Wait for input
+			CHOOSE_CARD,
+			//Animation 
+			ANIMATION
+		};
+		enum CardType
+		{
+			NORMAL,
+			BOMB
+		};
+		struct SceneData
+		{
+			sf::Texture backgroundTex;
+			sf::Sprite backgroundSpr;
 
-
-		GameState gameState = CHOOSE_CARD;
-
-
-		//DEBUG
-		int currentPlayer = 0;
-		int nbOfPlayers = 4;
-		sf::Font font;
-		sf::Text text;
-
-	};
-	SceneData* m_data;
-
-public:
-	virtual void Load(void);
-	virtual void Unload(void);
+			sf::Texture staticCardTex;
+			sf::Sprite staticCardSpr;
 
 
-	virtual void PollEvent(sf::Event& _event);
-	virtual void Update(float _deltaTime);
-	virtual void Draw(sf::RenderWindow& _renderWindow);
+			TextureAnimated cardTexAnim;
+			SpriteAnimated cardSprAnim;
+
+			std::vector<CardType> cards;
+			std::vector<Player> players;
+
+
+			GameState gameState = CHOOSE_CARD;
+			int cardChosen = 0;
+
+			//DEBUG
+			int currentPlayer = 0;
+			sf::Font font;
+			sf::Text text;
+
+		};
+		SceneData* m_data;
+		void PrintCards(sf::RenderWindow& _renderWindow);
+
+	public:
+		virtual void Load(void);
+		virtual void Unload(void);
+
+
+		virtual void PollEvent(sf::Event& _event);
+		virtual void Update(float _deltaTime);
+		virtual void Draw(sf::RenderWindow& _renderWindow);
 };
 
 #endif // _INC_RAND_CARD_HPP
-
-
-//Idée : un sprite normal pour afficher les cartes sans animation (sauf déplacement),
-// et un sprite animé pour les effets spéciaux (explosion, la retourner, etc)
