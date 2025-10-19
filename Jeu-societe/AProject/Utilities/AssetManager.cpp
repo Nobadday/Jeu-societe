@@ -6,8 +6,18 @@
 #define DEBUG_PRINT //
 #endif
 
-#define DEFAULT_MANIFEST ""
+#define DEFAULT_CONTAINER ""
 
+const char* AssetPlaceholders[AssetManager::AssetType::ASSET_TYPES] =
+{
+	"PLACEHOLDER:Image",
+	"PLACEHOLDER:Texture",
+	"PLACEHOLDER:Font",
+	"PLACEHOLDER:Sound Buffer",
+	"PLACEHOLDER:Music",
+	"PLACEHOLDER:Texture Atlas",
+	"PLACEHOLDER:Texture Animated"
+};
 const char* AssetTypeName[AssetManager::AssetType::ASSET_TYPES] =
 {
 	"Image",
@@ -18,19 +28,79 @@ const char* AssetTypeName[AssetManager::AssetType::ASSET_TYPES] =
 	"Texture Atlas",
 	"Texture Animated"
 };
-
 const char* AssetManager::GetAssetTypeName(AssetType _type)
 {
+	if (_type < 0 || _type >= AssetManager::AssetType::ASSET_TYPES)
+	{
+		return "Unknown";
+	}
 	return AssetTypeName[_type];
 }
 
 
-
-int AssetManager::FindManifestIndex(const std::string& _name)
+AssetManager::Container::Container(void)
 {
-	for (int i = 0; i < this->m_manifests.size(); i++)
+	this->m_name = "";
+}
+AssetManager::Container::~Container(void)
+{
+	this->m_assets.clear();
+	this->m_assets.shrink_to_fit();
+}
+
+void AssetManager::Container::AddAsset(const std::string& _name, void* _object, AssetType _type)
+{
+	if (!this->AssetExists(_name, _type))
 	{
-		if (this->m_manifests[i].m_name == _name)
+		size_t index = this->m_assets.size();
+		this->m_assets.resize(index + 1);
+		Asset& asset = this->m_assets[index];
+		asset.name = _name;
+		asset.object = _object;
+		asset.type = _type;
+	}
+	else
+	{
+		DEBUG_PRINT("[WARNING] Asset Manager : Name conflict with \"%s\" of type \"%s\"\n", _name.c_str(), AssetManager::GetAssetTypeName(_type));
+	}
+}
+
+int AssetManager::Container::FindAssetIndex(const std::string& _name, AssetType _type)
+{
+	for (int i = 0; i < this->m_assets.size(); i++)
+	{
+		Asset& asset = this->m_assets[i];
+		if ((asset.name == _name) && ((asset.type == _type) || (_type == AssetType::UNKNOWN)))
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+bool AssetManager::Container::AssetExists(const std::string& _name, AssetType _type)
+{
+	return this->FindAssetIndex(_name, _type) != -1;
+}
+
+AssetManager::Asset& AssetManager::Container::GetAssetWrap(int _index)
+{
+	return this->m_assets[_index];
+}
+
+void*& AssetManager::Container::GetAsset(int _index)
+{
+	return this->GetAssetWrap(_index).object;
+}
+void*& AssetManager::Container::GetAsset(const std::string& _name, AssetType _type)
+{
+	return this->GetAsset(this->FindAssetIndex(_name, _type));
+}
+
+int AssetManager::FindContainerIndex(const std::string& _name)
+{
+	for (int i = 0; i < this->m_containers.size(); i++)
+	{
+		if (this->m_containers[i].m_name == _name)
 		{
 			return i;
 		}
@@ -38,32 +108,32 @@ int AssetManager::FindManifestIndex(const std::string& _name)
 	return -1;
 }
 
-bool AssetManager::UnloadManifest(int _index, bool _secured)
+bool AssetManager::UnloadContainer(int _index, bool _secured)
 {
 	if (_secured && (_index == 0))
 	{
 		return false;
 	}
 
-	Containers& manif = this->m_manifests[_index];
+	Container& manif = this->m_containers[_index];
 	
 	
 	return true;
 }
 bool AssetManager::ContainerExists(const std::string& _name)
 {
-	return FindManifestIndex(_name) != -1;
+	return FindContainerIndex(_name) != -1;
 }
 bool AssetManager::ContainerExists(int _index)
 {
-	return (_index >= 0) && (_index < this->m_manifests.size());
+	return (_index >= 0) && (_index < this->m_containers.size());
 }
 
 
 
 AssetManager::AssetManager(void)
 {
-	this->CreateContainer(DEFAULT_MANIFEST);
+	this->CreateContainer(DEFAULT_CONTAINER);
 }
 
 AssetManager::~AssetManager(void)
@@ -72,14 +142,14 @@ AssetManager::~AssetManager(void)
 
 int AssetManager::CreateContainer(const std::string& _name)
 {
-	if (!this->ContainerExists(_name))
+	int index = this->FindContainerIndex(_name);
+	if (index == -1)
 	{
-		size_t index = this->m_manifests.size();
-		this->m_manifests.resize(index + 1);
-		this->m_manifests[index].m_name = _name;
-		return (int)index;
+		index = (int)this->m_containers.size();
+		this->m_containers.resize(index + 1);
+		this->m_containers[index].m_name = _name;
 	}
-	return -1;
+	return index;
 }
 
 
@@ -89,7 +159,7 @@ int AssetManager::CreateContainer(const std::string& _name)
 
 int AssetManager::FindAssetIndex(int _manifIndex, const std::string& _name, AssetType _type)
 {
-	for (int i = ((int)this->m_manifests[_manifIndex].m_assets.size())-1; i >= 0; i--)
+	for (int i = ((int)this->m_containers[_manifIndex].m_assets.size())-1; i >= 0; i--)
 	{
 		
 	}
@@ -97,26 +167,7 @@ int AssetManager::FindAssetIndex(int _manifIndex, const std::string& _name, Asse
 	return -1;
 }
 
-AssetManager::Containers::Containers(void)
-{
-	this->m_name = "";
-}
 
-int AssetManager::Containers::FindAssetIndex(const std::string& _name, AssetType _type)
-{
-	for (int i = 0; i < this->m_assets.size(); i++)
-	{
-		Asset& asset = this->m_assets[i];
-		if ((asset.name == _name) && ((asset.type == _type) || _type == AssetType::UNKNOWN))
-		{
-			return i;
-		}
-	}
-	return -1;
-}
-bool AssetManager::Containers::AssetExists(const std::string& _name, AssetType _type)
-{
-	return this->FindAssetIndex(_name, _type) != -1;
-}
+
 
 // Asset Manager C++ v1.0
