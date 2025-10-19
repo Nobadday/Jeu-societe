@@ -31,10 +31,10 @@ void RandCard::Load(void)
 	m_data = new SceneData;
 
 	//DEBUG
+	m_data->players.push_back({ "Player0"});
 	m_data->players.push_back({ "Player1"});
 	m_data->players.push_back({ "Player2"});
 	m_data->players.push_back({ "Player3"});
-	m_data->players.push_back({ "Player4"});
 
 	//Font
 	m_data->font.loadFromFile("Assets/Fonts/Platinum Sign.ttf");
@@ -122,7 +122,7 @@ void RandCard::PollEvent(sf::Event& _event)
 				m_data->cardChosen = (m_data->cardChosen - 1 < 0) ? int(m_data->cards.size()) : m_data->cardChosen - 1;
 			}
 			//Confirm choice
-			if (_event.key.code == sf::Keyboard::Enter)
+			if (_event.key.code == sf::Keyboard::Enter && m_data->cardChosen != -1)
 			{
 				CardType cardType = m_data->cards[m_data->cardChosen];
 				switch (cardType)
@@ -145,11 +145,11 @@ void RandCard::PollEvent(sf::Event& _event)
 }
 void RandCard::Update(float _deltaTime)
 {
-	std::cout << "Card Vector size : " << m_data->cards.size() << std::endl;
-	std::cout << "Player Vector size : " << m_data->players.size() << std::endl;
+	//std::cout << "Card Vector size : " << m_data->cards.size() << std::endl;
+	//std::cout << "Player Vector size : " << m_data->players.size() << std::endl;
 
 
-	switch (m_data->gameState)
+	switch (m_data->gameState) 
 	{
 		case CHOOSE_CARD:
 
@@ -163,38 +163,71 @@ void RandCard::Update(float _deltaTime)
 			m_data->cardSprAnim.Update(_deltaTime);
 			if (m_data->cardSprAnim.GetAn().IsFinished())
 			{
+
+				std::cout << "Current player : " << m_data->currentPlayer << std::endl;
+				//std::cout << "Card Vector size : " << m_data->cards.size() << std::endl;
+				std::cout << "Player Vector size : " << m_data->players.size() << std::endl;
+
+
 				if (m_data->cards[m_data->cardChosen] == BOMB)
 				{
 					//DEBUG
-					std::cout << "Player " << m_data->players[m_data->currentPlayer].name << " lost !" << std::endl;
+					std::cout << "Player " << m_data->players[m_data->currentPlayer].name << " lost !" << std::endl << std::endl;
 					m_data->players.erase(m_data->players.begin() + m_data->currentPlayer);
+
+					//Check if only one player left
+					if (m_data->players.size() <= 1)
+					{
+						//DEBUG
+						std::cout << "Player " << m_data->players[m_data->currentPlayer].name << " is the winner !" << std::endl;
+						m_data->gameState = END;
+						return;
+					}
+					//Check if the current player was the last in the vector 
+					else if (m_data->currentPlayer == m_data->players.size())
+					{
+						m_data->cards.erase(m_data->cards.begin() + m_data->cardChosen);
+						m_data->currentPlayer = 0;
+						m_data->cardChosen = -1;
+						m_data->gameState = CHOOSE_CARD;
+					}
+					//Next player
+					else
+					{
+						//m_data->currentPlayer++;
+						m_data->cards.erase(m_data->cards.begin() + m_data->cardChosen);
+						m_data->cardChosen = -1;
+						m_data->gameState = CHOOSE_CARD;
+					}
 				}
 				else
 				{
 					//DEBUG
-					std::cout << "Player " << m_data->players[m_data->currentPlayer].name << " survived !" << std::endl;
+					std::cout << "Player " << m_data->players[m_data->currentPlayer].name << " survived !" << std::endl << std::endl;
+					m_data->cards.erase(m_data->cards.begin() + m_data->cardChosen);
+
+
+					if (m_data->currentPlayer + 1 >= m_data->players.size())
+					{
+						m_data->currentPlayer = 0;
+					}
+					else
+					{
+						m_data->currentPlayer++;
+					}
+
+					//m_data->currentPlayer = (m_data->currentPlayer >= m_data->players.size()) ? 0 : m_data->currentPlayer++;
+
+
+					//m_data->currentPlayer++;
+					m_data->cardChosen = -1;
+					m_data->gameState = CHOOSE_CARD;
 				}
 
-				m_data->cards.erase(m_data->cards.begin() + m_data->cardChosen);
-				m_data->cardChosen = -1;
-
-				if (m_data->players.size() == 0)
-				{
-					//DEBUG
-					std::cout << "Player " << m_data->players[m_data->currentPlayer].name << " is the winner !" << std::endl;
-				}
-
-				if (m_data->currentPlayer == m_data->players.size())
-				{
-					m_data->currentPlayer = 0;
-				}
-				else
-				{
-					m_data->currentPlayer++;
-				}
 
 
-				m_data->gameState = CHOOSE_CARD;
+
+				
 			}
 			break;
 	}

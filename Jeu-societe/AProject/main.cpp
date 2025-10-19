@@ -59,8 +59,8 @@ void MainDataLoad(MainData& _mainData)
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
 	
-	//_mainData.scenes.AddScene(_mainData.sceneRussianRoulette, "RussianRoulette");
-	_mainData.scenes.AddScene(_mainData.randCard, "RandCard");
+	_mainData.scenes.AddScene(_mainData.sceneRussianRoulette, "RussianRoulette");
+	//_mainData.scenes.AddScene(_mainData.randCard, "RandCard");
 
 	
 

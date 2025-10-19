@@ -1,2 +1,29 @@
-﻿  RandCard.cpp
+﻿  AnimationEasing.cpp
+  AnimationHandler.cpp
+  Animator.cpp
+  Timer.cpp
+  AnimatedObject.cpp
+  GraphicAddons.cpp
+  SpriteAnimated.cpp
+  TextureAnimated.cpp
+  TextureAtlas.cpp
+  Bezier.cpp
+  Math.cpp
+  RandCard.cpp
+  RussianRoulette.cpp
+  Scene.cpp
+  SceneHandler.cpp
+  AssetManager.cpp
+  Camera.cpp
+  main.cpp
+  Controller.cpp
+  FileTools.cpp
+  Génération de code en cours...
+  Compilation en cours...
+  PyDict.cpp
+  DynaList.cpp
+  PyList.cpp
+  MathPlus.cpp
+  Random.cpp
+  Génération de code en cours...
   AProject.vcxproj -> C:\Users\Benoi\Documents\GitHub\Jeu-societe\Jeu-societe\x64\Debug\XBPlato.exe

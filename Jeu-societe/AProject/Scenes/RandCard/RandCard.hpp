@@ -22,7 +22,8 @@ class RandCard : public SceneBase
 			//Wait for input
 			CHOOSE_CARD,
 			//Animation 
-			ANIMATION
+			ANIMATION,
+			END
 		};
 		enum CardType
 		{
