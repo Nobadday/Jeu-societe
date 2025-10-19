@@ -11,12 +11,12 @@
       "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Scenes\\RussianRoulette\\RussianRoulette.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Benoi\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\RandCard\\RandCard.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Scenes\\RandCard\\RandCard.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Benoi\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\RandCard\\RandCard.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Scenes\\RandCard\\RandCard.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Benoi\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\RandCard\\RandCard.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Scenes\\RandCard\\RandCard.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Benoi\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -88,22 +88,23 @@
               "RelativeDocumentMoniker": "AProject\\Scenes\\RussianRoulette\\RussianRoulette.cpp",
               "ToolTip": "C:\\Users\\Benoi\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\RussianRoulette\\RussianRoulette.cpp",
               "RelativeToolTip": "AProject\\Scenes\\RussianRoulette\\RussianRoulette.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAZAAAAAAAAAA==",
+              "ViewState": "AgIAADQAAAAAAAAAAAAQwEQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-10-17T14:40:34.855Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "RandCard.cpp",
               "DocumentMoniker": "C:\\Users\\Benoi\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\RandCard\\RandCard.cpp",
               "RelativeDocumentMoniker": "AProject\\Scenes\\RandCard\\RandCard.cpp",
               "ToolTip": "C:\\Users\\Benoi\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\RandCard\\RandCard.cpp",
               "RelativeToolTip": "AProject\\Scenes\\RandCard\\RandCard.cpp",
-              "ViewState": "AgIAAF0AAAAAAAAAAAAAAIsAAAADAAAAAAAAAA==",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAACEAAAAsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-10-17T14:36:33.05Z"
+              "WhenOpened": "2025-10-17T14:36:33.05Z",
+              "EditorCaption": ""
             }
           ]
         },
@@ -113,15 +114,16 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "RandCard.hpp",
               "DocumentMoniker": "C:\\Users\\Benoi\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\RandCard\\RandCard.hpp",
               "RelativeDocumentMoniker": "AProject\\Scenes\\RandCard\\RandCard.hpp",
               "ToolTip": "C:\\Users\\Benoi\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\RandCard\\RandCard.hpp",
               "RelativeToolTip": "AProject\\Scenes\\RandCard\\RandCard.hpp",
-              "ViewState": "AgIAAAIAAAAAAAAAAAAAwA4AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAB0AAAAAAAAAAAAAwC0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-10-17T14:36:26.34Z"
+              "WhenOpened": "2025-10-17T14:36:26.34Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -131,7 +133,7 @@
               "RelativeDocumentMoniker": "AProject\\Scenes\\RussianRoulette\\RussianRoulette.hpp",
               "ToolTip": "C:\\Users\\Benoi\\Documents\\GitHub\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\RussianRoulette\\RussianRoulette.hpp",
               "RelativeToolTip": "AProject\\Scenes\\RussianRoulette\\RussianRoulette.hpp",
-              "ViewState": "AgIAAA8AAAAAAAAAAAArwCYAAAATAAAAAAAAAA==",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAAC0AAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2025-10-17T08:30:56.797Z",
               "EditorCaption": ""

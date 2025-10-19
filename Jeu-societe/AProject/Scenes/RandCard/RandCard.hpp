@@ -15,8 +15,8 @@ class RandCard : public SceneBase
 		struct Player
 		{
 			std::string name;
+			short id;
 		};
-
 		enum GameState
 		{
 			//Wait for input

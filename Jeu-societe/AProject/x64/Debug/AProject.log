@@ -11,6 +11,7 @@
   Math.cpp
   RandCard.cpp
   RussianRoulette.cpp
+C:\Users\Benoi\Documents\GitHub\Jeu-societe\Jeu-societe\AProject\Scenes\RussianRoulette\RussianRoulette.cpp(251,33): warning C4477: 'snprintf' : la chaîne de format '%s' nécessite un argument de type 'char *', mais l'argument variadique 1 est de type 'std::string'
   Scene.cpp
   SceneHandler.cpp
   AssetManager.cpp

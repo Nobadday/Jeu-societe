@@ -31,10 +31,10 @@ void RandCard::Load(void)
 	m_data = new SceneData;
 
 	//DEBUG
-	m_data->players.push_back({ "Player0"});
-	m_data->players.push_back({ "Player1"});
-	m_data->players.push_back({ "Player2"});
-	m_data->players.push_back({ "Player3"});
+	m_data->players.push_back({ "Player0", 0});
+	m_data->players.push_back({ "Player1", 1});
+	m_data->players.push_back({ "Player2", 2});
+	m_data->players.push_back({ "Player3", 3});
 
 	//Font
 	m_data->font.loadFromFile("Assets/Fonts/Platinum Sign.ttf");

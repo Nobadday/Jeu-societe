@@ -10,6 +10,14 @@
 class RussianRoulette : public SceneBase
 {
 	private:
+
+		//DEBUG, REMOVE WHEN PLAYER STRUCT FROM GAMEDATA COMME
+		struct Player
+		{
+			std::string name;
+			short id;
+			bool isAlive = true;
+		};
 		enum GameState
 		{
 			//Wait for input
@@ -35,6 +43,7 @@ class RussianRoulette : public SceneBase
 
 			//DEBUG
 			int currentPlayer = 0;
+			std::vector<Player> players;
 			int nbOfPlayers = 4;
 			int playerKilled = -1;
 			sf::Font font;
