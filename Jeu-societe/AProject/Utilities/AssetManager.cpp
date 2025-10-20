@@ -108,17 +108,15 @@ int AssetManager::FindContainerIndex(const std::string& _name)
 	return -1;
 }
 
-bool AssetManager::UnloadContainer(int _index, bool _secured)
+void AssetManager::UnloadContainer(int _index, bool _secured)
 {
-	if (_secured && (_index == 0))
-	{
-		return false;
-	}
+	Container& container = this->m_containers[_index];
+	container.Clear();
 
-	Container& manif = this->m_containers[_index];
-	
-	
-	return true;
+	if (!_secured && (_index != 0))
+	{
+		this->m_containers.erase(this->m_containers.begin()+_index);
+	}
 }
 bool AssetManager::ContainerExists(const std::string& _name)
 {
@@ -152,20 +150,6 @@ int AssetManager::CreateContainer(const std::string& _name)
 	return index;
 }
 
-
-
-
-
-
-int AssetManager::FindAssetIndex(int _manifIndex, const std::string& _name, AssetType _type)
-{
-	for (int i = ((int)this->m_containers[_manifIndex].m_assets.size())-1; i >= 0; i--)
-	{
-		
-	}
-
-	return -1;
-}
 
 
 

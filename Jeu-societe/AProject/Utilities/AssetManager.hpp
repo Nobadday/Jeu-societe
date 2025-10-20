@@ -57,7 +57,10 @@ class AssetManager
 				void*& GetAsset(int _index);
 				void*& GetAsset(const std::string& _name, AssetType _type);
 
+				
 				void DeleteAsset(int _index);
+				void Clear(void);
+
 		};
 
 	private:
@@ -70,7 +73,8 @@ class AssetManager
 		int FindContainerIndex(const std::string& _name);
 		
 		// Unloads and destroys a container
-		bool UnloadContainer(int _index, bool _secured);
+		// If secured, doesnt destroy main container
+		void UnloadContainer(int _index, bool _secured);
 		
 		Container& GetContainer(const std::string& _name);
 		Container& GetContainer(int _index);
@@ -114,11 +118,6 @@ class AssetManager
 		//// <Temp : GLOBAL>
 		//void CreateAsset(const std::string& _name, const std::string& _filePath, AssetType _type);
 
-		int FindAssetIndex(int _manifIndex, const std::string& _name, AssetType _type);
-
-		// Gets the ID of the first asset found with the given name and type
-		// Returns -1 if it wasnt found
-		int FindAssetIndex(const std::string& _name, AssetType _type);
 
 
 		// Returns true if the assets exits
@@ -126,7 +125,7 @@ class AssetManager
 
 
 		void* GetAsset(int _manifIndex, int _assetIndex, AssetType _type);
-
+		
 
 	private:
 		std::vector<Container> m_containers;
