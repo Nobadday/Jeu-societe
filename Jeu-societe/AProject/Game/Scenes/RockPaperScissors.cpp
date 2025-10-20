@@ -20,6 +20,11 @@ void RockPaperSizor::Load()
 	m_data->spriteTab[4].setTexture(m_data->textureTab[4]);
 	m_data->spriteTab[5].setTexture(m_data->textureTab[5]);
 
+	//a supprimer
+	m_data->player1ID = 0;
+	m_data->player2ID = 1;
+
+
 	m_data->player1Choice = RPS_NONE;
 	m_data->player2Choice = RPS_NONE;
 
@@ -58,31 +63,31 @@ void RockPaperSizor::PollEvent(sf::Event& _event)
 				{
 				case 0:
 					//Changer valeurs brute par id manettes joueurs
-					if (_event.joystickButton.joystickId == 0)
+					if (_event.joystickButton.joystickId == m_data->player1ID)
 					{
 						m_data->player1Choice = RPS_SCISSORS;
 					}
-					else if (_event.joystickButton.joystickId == 1)
+					else if (_event.joystickButton.joystickId == m_data->player2ID)
 					{
 						m_data->player2Choice = RPS_SCISSORS;
 					}
 					break;
 				case 1:
-					if (_event.joystickButton.joystickId == 0)
+					if (_event.joystickButton.joystickId == m_data->player1ID)
 					{
 						m_data->player1Choice = RPS_PAPER;
 					}
-					else if (_event.joystickButton.joystickId == 1)
+					else if (_event.joystickButton.joystickId == m_data->player2ID)
 					{
 						m_data->player2Choice = RPS_PAPER;
 					}
 					break;
 				case 2:
-					if (_event.joystickButton.joystickId == 0)
+					if (_event.joystickButton.joystickId == m_data->player1ID)
 					{
 						m_data->player1Choice = RPS_ROCK;
 					}
-					else if (_event.joystickButton.joystickId == 1)
+					else if (_event.joystickButton.joystickId == m_data->player2ID)
 					{
 						m_data->player2Choice = RPS_ROCK;
 					}

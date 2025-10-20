@@ -23,9 +23,11 @@ class RockPaperSizor : public SceneBase
 		sf::Sprite spriteTab[6];
 		sf::Texture textureTab[6];
 
+		int player1ID;
 		RPS_Choice player1Choice = RPS_NONE;
 		sf::Sprite player1ChoiceSprite;
 
+		int player2ID;
 		RPS_Choice player2Choice = RPS_NONE;
 		sf::Sprite player2ChoiceSprite;
 
