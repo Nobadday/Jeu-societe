@@ -1,6 +1,9 @@
 #include "RockPaperScissors.hpp"
 #include "../../Utilities/Random.hpp"
 
+#define INIT_TIME 2
+#define PLAY_TIME 5
+
 void RockPaperSizor::Load()
 {
 	m_data = new SceneData;
@@ -20,15 +23,14 @@ void RockPaperSizor::Load()
 	m_data->spriteTab[4].setTexture(m_data->textureTab[4]);
 	m_data->spriteTab[5].setTexture(m_data->textureTab[5]);
 
-	//a supprimer
+	//a supprimer/changer pour recup les bons ID de joueurs
 	m_data->player1ID = 0;
 	m_data->player2ID = 1;
-
 
 	m_data->player1Choice = RPS_NONE;
 	m_data->player2Choice = RPS_NONE;
 
-	m_data->timer.SetTimeTarget(2.f);
+	m_data->timer.SetTimeTarget(INIT_TIME);
 
 	m_data->font.loadFromFile("Assets/RockPaperSizor/Impact.ttf");
 	m_data->timerText.setFont(m_data->font);
@@ -56,13 +58,11 @@ void RockPaperSizor::PollEvent(sf::Event& _event)
 	switch (_event.type)
 	{
 		case sf::Event::JoystickButtonPressed:
-			
-			if (m_data->isStarted && !m_data->timer.IsPaused())
+			if (m_data->timer.GetTimeTarget() == PLAY_TIME && sf::Joystick::isConnected(m_data->player1ID) && sf::Joystick::isConnected(m_data->player2ID))
 			{
 				switch (_event.joystickButton.button)
 				{
 				case 0:
-					//Changer valeurs brute par id manettes joueurs
 					if (_event.joystickButton.joystickId == m_data->player1ID)
 					{
 						m_data->player1Choice = RPS_SCISSORS;
@@ -106,39 +106,51 @@ void RockPaperSizor::Update(float _deltaTime)
 	m_data->timer.Update(_deltaTime);
 
 	char buffer[20];
-	std::snprintf(buffer, 20, "%02f", m_data->timer.GetRemainingTime());
+	std::snprintf(buffer, 20, "%02.2f", m_data->timer.GetRemainingTime());
 	m_data->timerText.setString(buffer);
 
-	if (m_data->timer.IsFinished() && !m_data->isStarted && !m_data->timer.IsPaused())
+	if (!sf::Joystick::isConnected(m_data->player1ID) || !sf::Joystick::isConnected(m_data->player2ID))
 	{
-		m_data->isStarted = true;
-		m_data->timer.SetTimeTarget(5.f);
-		m_data->timer.Restart();
-
-		m_data->player1Choice = (RPS_Choice)random::RandomInt(0,2);
-		m_data->player2Choice = (RPS_Choice)random::RandomInt(0, 2);
+		//std::cout << "oulala la manette elle a ff" << std::endl;
+		m_data->timer.SetPause(true);
 	}
-	else if (m_data->timer.IsFinished() && m_data->isStarted)
+	else
 	{
-		m_data->isStarted = false;
-		if (m_data->player1Choice != m_data->player2Choice)
+		m_data->timer.SetPause(false);
+		if (m_data->timer.IsFinished() && m_data->timer.GetTimeTarget() == INIT_TIME)
 		{
-			m_data->timer.TogglePause();
-
-			char buffer2[15];
-
-			if (m_data->player1Choice == RPS_SCISSORS && m_data->player2Choice == RPS_PAPER
-				|| m_data->player2Choice == RPS_SCISSORS && m_data->player1Choice == RPS_ROCK
-				|| m_data->player1Choice == RPS_PAPER && m_data->player2Choice == RPS_ROCK)
+			//fin du warm up
+			m_data->timer.SetTimeTarget(PLAY_TIME);
+			m_data->timer.Restart();
+		}
+		else if (m_data->timer.IsFinished() && m_data->timer.GetTimeTarget() == PLAY_TIME)
+		{
+			//fin du temps de jeu
+			if (m_data->player1Choice != m_data->player2Choice)
 			{
-				std::snprintf(buffer2, 15, "PLAYER 1 WIN");
+				char buffer2[15];
+				if (m_data->player1Choice == RPS_SCISSORS && m_data->player2Choice == RPS_PAPER
+					|| m_data->player2Choice == RPS_SCISSORS && m_data->player1Choice == RPS_ROCK
+					|| m_data->player1Choice == RPS_PAPER && m_data->player2Choice == RPS_ROCK)
+				{
+					std::snprintf(buffer2, 15, "PLAYER 1 WIN");
+				}
+				else
+				{
+					std::snprintf(buffer2, 15, "PLAYER 2 WIN");
+				}
+				m_data->timer.SetTimeTarget(0);
+				m_data->timer.SetPause(true);
+				m_data->victoryText.setString(buffer2);
 			}
 			else
 			{
-				std::snprintf(buffer2, 15, "PLAYER 2 WIN");
-			}
+				m_data->player1Choice = (RPS_Choice)random::RandomInt(0, 2);
+				m_data->player2Choice = (RPS_Choice)random::RandomInt(0, 2);
+				m_data->timer.Restart();
 
-			m_data->victoryText.setString(buffer2);
+				//retourner le gagnant
+			}
 		}
 	}
 }

@@ -20,14 +20,14 @@ class RockPaperSizor : public SceneBase
 	private:
 	struct SceneData
 	{
-		sf::Sprite spriteTab[6];
+		sf::Sprite spriteTab[6];                                                                                                                             
 		sf::Texture textureTab[6];
 
-		int player1ID;
+		int player1ID = 0;
 		RPS_Choice player1Choice = RPS_NONE;
 		sf::Sprite player1ChoiceSprite;
 
-		int player2ID;
+		int player2ID = 0;
 		RPS_Choice player2Choice = RPS_NONE;
 		sf::Sprite player2ChoiceSprite;
 
@@ -35,7 +35,6 @@ class RockPaperSizor : public SceneBase
 
 		sf::Text timerText;
 		sf::Font font;
-		bool isStarted = false;
 
 		sf::Text victoryText;
 	};

@@ -7,7 +7,7 @@ typedef struct MainData
 	sf::Clock clock;
 	SceneHandler scenes;
 
-	RockPaperSizor rockPaperSizorScene;
+	//RockPaperSizor rockPaperSizorScene;
 
 	GameData gameData;
 } MainData;
@@ -56,8 +56,8 @@ void MainDataLoad(MainData& _mainData)
 
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
-	
-	_mainData.scenes.AddScene(_mainData.rockPaperSizorScene, "rockPaperSizor");
+	RockPaperSizor rockPaperSizorScene;
+	_mainData.scenes.AddScene(rockPaperSizorScene, "rockPaperSizor");
 
 	_mainData.clock.restart();
 }
