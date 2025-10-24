@@ -7,10 +7,6 @@
       "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Game\\Scenes\\Board.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Utilities\\Camera\\Camera.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Utilities\\Camera\\Camera.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\Scenes\\Board.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Game\\Scenes\\Board.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
@@ -21,32 +17,12 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 137,
-          "SelectedChildIndex": 0,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Camera.hpp",
-              "DocumentMoniker": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Utilities\\Camera\\Camera.hpp",
-              "RelativeDocumentMoniker": "AProject\\Utilities\\Camera\\Camera.hpp",
-              "ToolTip": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Utilities\\Camera\\Camera.hpp",
-              "RelativeToolTip": "AProject\\Utilities\\Camera\\Camera.hpp",
-              "ViewState": "AgIAACcAAAAAAAAAAAAAAEIAAAAbAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-10-24T12:01:06.462Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            }
-          ]
-        },
-        {
-          "DockedWidth": 263,
+          "DockedWidth": 173,
           "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "Board.hpp",
               "DocumentMoniker": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\Scenes\\Board.hpp",
               "RelativeDocumentMoniker": "AProject\\Game\\Scenes\\Board.hpp",
@@ -65,7 +41,7 @@
               "RelativeDocumentMoniker": "AProject\\Game\\Scenes\\Board.cpp",
               "ToolTip": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\Scenes\\Board.cpp",
               "RelativeToolTip": "AProject\\Game\\Scenes\\Board.cpp",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAAACwAAAAgAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-10-24T09:45:46.672Z",
               "EditorCaption": ""

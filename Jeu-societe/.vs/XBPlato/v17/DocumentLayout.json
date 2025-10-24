@@ -3,12 +3,24 @@
   "WorkspaceRootPath": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\Scenes\\Board.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Game\\Scenes\\Board.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\Scenes\\Board.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Game\\Scenes\\Board.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\Scenes\\Board.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Game\\Scenes\\Board.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\PlayerData.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Game\\PlayerData.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\GameData.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Game\\GameData.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\PlayerData.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Game\\PlayerData.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,30 +30,69 @@
       "DocumentGroups": [
         {
           "DockedWidth": 173,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "Board.hpp",
               "DocumentMoniker": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\Scenes\\Board.hpp",
               "RelativeDocumentMoniker": "AProject\\Game\\Scenes\\Board.hpp",
               "ToolTip": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\Scenes\\Board.hpp",
               "RelativeToolTip": "AProject\\Game\\Scenes\\Board.hpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-10-24T09:46:12.883Z",
+              "WhenOpened": "2025-10-24T14:04:11.737Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 4,
+              "Title": "PlayerData.cpp",
+              "DocumentMoniker": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\PlayerData.cpp",
+              "RelativeDocumentMoniker": "AProject\\Game\\PlayerData.cpp",
+              "ToolTip": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\PlayerData.cpp",
+              "RelativeToolTip": "AProject\\Game\\PlayerData.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-10-24T13:42:36.718Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "PlayerData.hpp",
+              "DocumentMoniker": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\PlayerData.hpp",
+              "RelativeDocumentMoniker": "AProject\\Game\\PlayerData.hpp",
+              "ToolTip": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\PlayerData.hpp",
+              "RelativeToolTip": "AProject\\Game\\PlayerData.hpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-10-24T13:44:45.283Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "GameData.hpp",
+              "DocumentMoniker": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\GameData.hpp",
+              "RelativeDocumentMoniker": "AProject\\Game\\GameData.hpp",
+              "ToolTip": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\GameData.hpp",
+              "RelativeToolTip": "AProject\\Game\\GameData.hpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-10-24T13:38:51.456Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "Board.cpp",
               "DocumentMoniker": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\Scenes\\Board.cpp",
               "RelativeDocumentMoniker": "AProject\\Game\\Scenes\\Board.cpp",
               "ToolTip": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\Scenes\\Board.cpp",
               "RelativeToolTip": "AProject\\Game\\Scenes\\Board.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-10-24T09:45:46.672Z",
               "EditorCaption": ""

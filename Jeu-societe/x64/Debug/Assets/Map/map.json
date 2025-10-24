@@ -78,6 +78,89 @@
         }, 
         {
          "draworder":"topdown",
+         "id":6,
+         "name":"point",
+         "objects":[
+                {
+                 "height":0,
+                 "id":14,
+                 "name":"0",
+                 "point":true,
+                 "rotation":0,
+                 "type":"PositionCase",
+                 "visible":true,
+                 "width":0,
+                 "x":-119.651515151515,
+                 "y":476.636363636364
+                }, 
+                {
+                 "height":0,
+                 "id":15,
+                 "name":"1",
+                 "point":true,
+                 "rotation":0,
+                 "type":"PositionCase",
+                 "visible":true,
+                 "width":0,
+                 "x":64.5151515151515,
+                 "y":481.636363636364
+                }, 
+                {
+                 "height":0,
+                 "id":16,
+                 "name":"2",
+                 "point":true,
+                 "rotation":0,
+                 "type":"PositionCase",
+                 "visible":true,
+                 "width":0,
+                 "x":236,
+                 "y":482
+                }, 
+                {
+                 "height":0,
+                 "id":18,
+                 "name":"3",
+                 "point":true,
+                 "rotation":0,
+                 "type":"PositionCase",
+                 "visible":true,
+                 "width":0,
+                 "x":447,
+                 "y":482
+                }, 
+                {
+                 "height":0,
+                 "id":19,
+                 "name":"4",
+                 "point":true,
+                 "rotation":0,
+                 "type":"PositionCase",
+                 "visible":true,
+                 "width":0,
+                 "x":612,
+                 "y":484
+                }, 
+                {
+                 "height":0,
+                 "id":20,
+                 "name":"5",
+                 "point":true,
+                 "rotation":0,
+                 "type":"PositionCase",
+                 "visible":true,
+                 "width":0,
+                 "x":810,
+                 "y":480
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
          "id":4,
          "name":"FG",
          "objects":[
@@ -100,8 +183,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":6,
- "nextobjectid":7,
+ "nextlayerid":7,
+ "nextobjectid":21,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.2",
@@ -124,7 +207,7 @@
          "tiles":[
                 {
                  "id":0,
-                 "image":"Papaye.jpg",
+                 "image":"..\/..\/Pictures\/Papaye.jpg",
                  "imageheight":1000,
                  "imagewidth":1200
                 }],
