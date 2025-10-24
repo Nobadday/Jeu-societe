@@ -6,6 +6,9 @@
 #include "../../../Common.hpp"
 #include "../../../Animation/Graphics/SpriteAnimated.hpp"
 #include "../../../Animation/Graphics/TextureAnimated.hpp"
+#include "../../../Utilities/Button.hpp"
+
+
 
 class RandCard : public SceneBase
 {
@@ -57,6 +60,9 @@ class RandCard : public SceneBase
 			sf::Font font;
 			sf::Text text;
 
+
+			//Button testButton;
+			//TextureAnimated& testTexture;
 		};
 		SceneData* m_data;
 		void PrintCards(sf::RenderWindow& _renderWindow);
@@ -64,7 +70,6 @@ class RandCard : public SceneBase
 		void AddCardChosen(int _value);
 
 		void NextPlayer(void);
-
 	public:
 		virtual void Load(void);
 		virtual void Unload(void);

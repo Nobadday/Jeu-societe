@@ -6,9 +6,6 @@
 #define BORDER_X 40.f
 
 
-
-
-
 void RandCard::PrintCards(sf::RenderWindow& _renderWindow)
 {
 	float cardSpacing = (SCREEN_WIDTH - 2 * BORDER_X) / m_data->cards.size();
@@ -62,6 +59,11 @@ void RandCard::NextPlayer(void)
 void RandCard::Load(void)
 {
 	m_data = new SceneData;
+
+
+
+	//m_data->testTexture.LoadFromFile("Assets/Sprites/RussianRoulette/Damien.texanim", TextureAnimated::ANIMATION_TEXANIM);
+	//m_data->testButton.ButtonSetTexture(m_data->testTexture);
 
 	//DEBUG
 	m_data->players.push_back({ "Yann", 0});
