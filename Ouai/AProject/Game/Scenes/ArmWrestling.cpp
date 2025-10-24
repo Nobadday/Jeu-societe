@@ -155,7 +155,6 @@ void ArmWrestlingPlayer::DrawAllPlayers(sf::RenderWindow& _renderWindow)
 
 void ArmWrestlingPlayer::Update(float _dt)
 {
-	// Si le bouton A est pressé pour ce joueur
 	if (GetGamePadPressed(GAMEPAD_A, id, true))
 	{
 		short otherID = GetOtherPlayerID(id);
@@ -174,13 +173,11 @@ void ArmWrestlingPlayer::Draw(sf::RenderWindow& _renderWindow)
 
 short ArmWrestlingPlayer::GetOtherPlayerID(short _callerID)
 {
-	// Si moins de deux joueurs, il n'y a pas d'adversaire
 	if (allPlayers.size() < 2)
 	{
 		throw std::runtime_error("Other player not available.");
 	}
 
-	// Retourne l'ID du premier joueur dont l'ID diffère de callerID
 	for (ArmWrestlingPlayer* player : allPlayers)
 	{
 		if (player->GetID() != _callerID)

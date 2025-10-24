@@ -70,6 +70,7 @@ void SetNewKeyToBind(BindList _bind, sf::Keyboard::Key _newKey);
 void SetNewKeyToBindDirection(DirBindList _bind, sf::Keyboard::Key _newKey);
 bool GetKeyWhiteList(sf::Keyboard::Key _key);
 const char* GetKeyName(sf::Keyboard::Key _key);
+const char* GetGamePadButtonName(GamePadBindList _button);
 bool IsAzerty();
 void SetKeyboardLayout(bool _azerty);
 sf::Vector2f GetKeyboardAxis2D(void);

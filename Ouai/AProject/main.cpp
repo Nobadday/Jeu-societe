@@ -1,6 +1,7 @@
 #include "Common.hpp"
 #include "Game/Scenes/ArmWrestling.hpp"
 #include "Game/Scenes/Basket.hpp"
+#include "Game/Scenes/FlagGame.hpp"
 
 
 typedef struct MainData
@@ -10,12 +11,12 @@ typedef struct MainData
 	SceneHandler scenes;
 	SceneBase* armWrestlingScene;
 	SceneBase* basketScene;
+	SceneBase* flagGameScene;
 
 	GameData gameData;
 } MainData;
 
 Binds* binds = nullptr;
-
 
 int main(void);
 
@@ -62,7 +63,8 @@ void MainDataLoad(MainData& _mainData)
 
 	_mainData.scenes.AddScene(*(_mainData.armWrestlingScene = new ArmWrestling()), "ArmWrestling");
 	_mainData.scenes.AddScene(*(_mainData.basketScene = new Basket()), "Basket");
-	_mainData.scenes.SelectScene("Basket",false);
+	_mainData.scenes.AddScene(*(_mainData.flagGameScene = new FlagGame()), "FlagGame");
+	_mainData.scenes.SelectScene("FlagGame",false);
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 
 	// GAME DATA

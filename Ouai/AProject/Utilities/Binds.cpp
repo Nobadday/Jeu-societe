@@ -258,6 +258,24 @@ const char* GetKeyName(sf::Keyboard::Key _key)
 	}
 }
 
+const char* GetGamePadButtonName(GamePadBindList _button)
+{
+	switch (_button)
+	{
+	case GAMEPAD_A: return "A";
+	case GAMEPAD_B: return "B";
+	case GAMEPAD_X: return "X";
+	case GAMEPAD_Y: return "Y";
+	case GAMEPAD_LB: return "Left Bumper";
+	case GAMEPAD_RB: return "Right Bumper";
+	case GAMEPAD_BACK: return "Back";
+	case GAMEPAD_START: return "Start";
+	case GMEPAD_LEFT_STICK: return "Left Stick";
+	case GAMEPAD_RIGHT_STICK: return "Right Stick";
+	default: return "Unknown";
+	}
+}
+
 bool GetKeyWhiteList(sf::Keyboard::Key _key)
 {
 	switch (_key)
