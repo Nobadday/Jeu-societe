@@ -620,3 +620,14 @@ float Rescale(float _value, float _min, float _max)
     float t = (_value - _min) / (_max - _min);
     return t;
 }
+
+sf::Vector2f RotateVector2D(sf::Vector2f _vector, float _radians)
+{
+    // Rotation 2D: [cos -sin; sin cos] * v
+    float c = cosf(_radians);
+    float s = sinf(_radians);
+    return sf::Vector2f(
+        _vector.x * c - _vector.y * s,
+        _vector.x * s + _vector.y * c
+    );
+}

@@ -471,6 +471,10 @@ Quaternion InverseQuaternion(const Quaternion& _q);
 /// \param min Interval minimum
 /// \param max Interval maximum
 float Rescale(float _value, float _min, float _max);
+/// \brief Rotate a 2D vector by an angle (radians)
+/// \param _vector Vector to rotate
+/// \param _radians Angle in radians
+sf::Vector2f RotateVector2D(sf::Vector2f _vector, float _radians);
 
 
 #endif // NEWMATH_H
