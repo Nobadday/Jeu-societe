@@ -4,7 +4,9 @@
 
 #include "../../Common.hpp"
 #include "../../Scenes/Scene.hpp"
-#include "../../Animation/Animation/Timer.hpp"
+#include "../../Animation/Animation/Timer.hpp" 
+
+#include "../../Graphic/Button.hpp"
 
 typedef enum RPS_Choice
 {

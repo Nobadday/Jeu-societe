@@ -159,9 +159,10 @@
     <ClCompile Include="Animation\Graphics\TextureAtlas.cpp" />
     <ClCompile Include="Animation\Utilities\Bezier.cpp" />
     <ClCompile Include="Animation\Utilities\Math.cpp" />
-    <ClCompile Include="Graphics\Button.cpp" />
+    <ClCompile Include="Graphic\Button.hpp" />
     <ClCompile Include="Game\Scenes\RockPaperScissors.cpp" />
     <ClCompile Include="Game\PlayerData.cpp" />
+    <ClCompile Include="Graphic\Button.cpp" />
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Scenes\SceneHandler.cpp" />
     <ClCompile Include="Utilities\AssetManager.cpp" />
@@ -190,7 +191,6 @@
     <ClInclude Include="Animation\Graphics\TextureAtlas.hpp" />
     <ClInclude Include="Animation\Utilities\Bezier.hpp" />
     <ClInclude Include="Animation\Utilities\Math.hpp" />
-    <ClInclude Include="Graphics\Button.hpp" />
     <ClInclude Include="Game\GameData.hpp" />
     <ClInclude Include="Game\PlayerData.hpp" />
     <ClInclude Include="Game\Scenes\RockPaperScissors.hpp" />

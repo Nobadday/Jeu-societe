@@ -6,13 +6,12 @@
 
 class Button : public SpriteAnimated
 {
-public:
-	Button(void);
-	~Button(void);
+	public :
+	
+		Button(void);
 
-
-private:
-
+		bool isMouseOn(sf::Vector2f _mousePos);
+	private: 
 };
-
-#endif // _INC_BUTTON_HPP
+	
+#endif // !_INC_BUTTON_HPP
