@@ -19,7 +19,7 @@ void Tiled::InitTiled(const char* _Map)
         // Charger les tilesets en premier
         if (jsonData.contains("tilesets") && jsonData["tilesets"].is_array())
         {
-            // std::cout << "=== CHARGEMENT DES TILESETS ===" << std::endl;
+            std::cout << "=== CHARGEMENT DES TILESETS ===" << std::endl;
             const auto& tilesets = jsonData["tilesets"];
 
             for (size_t i = 0; i < tilesets.size(); ++i)
@@ -35,6 +35,12 @@ void Tiled::InitTiled(const char* _Map)
                 tileset.SetColumns(tilesetJson.value("columns", 0));
                 tileset.SetMargin(tilesetJson.value("margin", 0));
                 tileset.SetSpacing(tilesetJson.value("spacing", 0));
+				
+                std::cout << "Chargement du tileset: " << tileset.GetName() << std::endl;
+				std::cout << "  First GID: " << tileset.GetFirstGid() << std::endl;
+				std::cout << "  Tile Count: " << tileset.GetTileCount() << std::endl;
+				std::cout << "  Tile Size: " << tileset.GetTileWidth() << "x" << tileset.GetTileHeight() << std::endl;
+
 
                 // Charger les tuiles individuelles
                 if (tilesetJson.contains("tiles") && tilesetJson["tiles"].is_array())
@@ -89,11 +95,18 @@ void Tiled::InitTiled(const char* _Map)
                 mapLayer.SetParallaxX(layer.value("parallaxx", 1.0f));
                 mapLayer.SetParallaxY(layer.value("parallaxy", 1.0f));
 
+                std::cout << "Layer " << i << ": " << mapLayer.GetName()
+                          << " (Type: " << mapLayer.GetType() << ")"
+                          << ", Visible: " << (mapLayer.IsVisible() ? "Oui" : "Non")
+                          << ", Opacité: " << mapLayer.GetOpacity()
+                          << ", Parallaxe: (" << mapLayer.GetParallaxX() << ", " << mapLayer.GetParallaxY() << ")"
+					<< std::endl;
+
                 // Lire les objets dans chaque layer
                 if (layer.contains("objects") && layer["objects"].is_array())
                 {
                     const auto& objects = layer["objects"];
-                    // std::cout << "  Nombre d'objets: " << objects.size() << std::endl;
+                    std::cout << "  Nombre d'objets: " << objects.size() << std::endl;
 
                     for (size_t j = 0; j < objects.size(); ++j)
                     {
@@ -117,10 +130,10 @@ void Tiled::InitTiled(const char* _Map)
                         const Tileset* tileset = tilesetManager.GetTilesetByGid(gid);
                         std::string tilesetName = tileset ? tileset->GetName() : "Aucun";
 
-                        /*std::cout << "    Objet " << j << ": GID=" << gid
+                        std::cout << "    Objet " << j << " : " << mapObject.GetName() << " : GID=" << gid
                                   << " (Tileset: " << tilesetName << ")"
-                                  << ", Pos=(" << mapObject.getX() << "," << mapObject.getY() << ")"
-                                  << ", Taille=(" << mapObject.getWidth() << "x" << mapObject.getHeight() << ")" << std::endl;*/
+                                  << ", Pos=(" << mapObject.GetX() << "," << mapObject.GetY() << ")"
+                                  << ", Taille=(" << mapObject.GetWidth() << "x" << mapObject.GetHeight() << ")" << std::endl;
                     }
                 }
 
@@ -130,18 +143,35 @@ void Tiled::InitTiled(const char* _Map)
             }
         }
 
-        //std::cout << "\n=== RÉCAPITULATIF ===" << std::endl;
-        //std::cout << "Nombre total de tilesets: " << tilesetManager.getTilesetCount() << std::endl;
-        //std::cout << "Nombre total de layers: " << mapLayers.size() << std::endl;
-        //for (const auto& layer : mapLayers)
-        //{
-        //    std::cout << "  - " << layer.getName() << ": " << layer.getObjectCount() << " objets" << std::endl;
-        //}
-        //std::cout << "\n=== CONTRÔLES ===" << std::endl;
-        //std::cout << "Flèches directionnelles : Déplacer la caméra" << std::endl;
-        //std::cout << "Échap : Quitter" << std::endl;
-        //std::cout << std::endl;
+        std::cout << "\n=== RÉCAPITULATIF ===" << std::endl;
+        std::cout << "Nombre total de tilesets: " << tilesetManager.GetTilesetCount() << std::endl;
+        std::cout << "Nombre total de layers: " << mapLayers.size() << std::endl;
+        for (const auto& layer : mapLayers)
+        {
+            std::cout << "  - " << layer.GetName() << ": " << layer.GetObjectCount() << " objets" << std::endl;
+        }
+        std::cout << "\n=== CONTRÔLES ===" << std::endl;
+        std::cout << "Flèches directionnelles : Déplacer la caméra" << std::endl;
+        std::cout << "Échap : Quitter" << std::endl;
+        std::cout << std::endl;
     }
+}
+
+std::vector<MapLayer>& Tiled::GetMapLayers()
+{
+	return mapLayers;
+}
+
+MapLayer& Tiled::GetMapLayer(std::string _name)
+{
+    for (int i = 0; i < mapLayers.size() ; i++)
+    {
+        if (_name == mapLayers[i].GetName())
+        {
+            return mapLayers[i];
+        }
+    }
+    return mapLayers[0];
 }
 
 void Tiled::DrawMapLayers(sf::RenderWindow& _window, const sf::Vector2f& _camera)

@@ -36,6 +36,18 @@ MapObject& MapLayer::GetObject(size_t _index)
     return m_objects[_index];
 }
 
+MapObject& MapLayer::GetObject(std::string _name)
+{
+    for (int i = 0; i < m_objects.size(); i++)
+    {
+        if (_name == m_objects[i].GetName())
+        {
+            return m_objects[i];
+        }
+    }
+    return m_objects[0];
+}
+
 const MapObject& MapLayer::GetObject(size_t _index) const
 {
     return m_objects[_index];

@@ -15,6 +15,8 @@ class Tiled
 		JsonReader config;
 	public:
 		void InitTiled(const char* _Map);
+		std::vector<MapLayer>& GetMapLayers();
+		MapLayer& GetMapLayer(std::string _name);
 		void DrawMapLayers(sf::RenderWindow& _window, const sf::Vector2f& _camera);
 };
 

@@ -42,6 +42,8 @@ void BaseGame::PollEvent(sf::Event& _event)
 		 //std::cout << "Right\n";
 	 }
 
+	 m_data->tile;
+
 	 m_data->camera.Move(movement);
  }
 

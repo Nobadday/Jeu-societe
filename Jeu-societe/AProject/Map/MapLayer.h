@@ -51,6 +51,7 @@ public:
     void AddObject(const MapObject& object);
     MapObject& GetObject(size_t index);
     const MapObject& GetObject(size_t index) const;
+    MapObject& GetObject(std::string _name);
     size_t GetObjectCount() const { return m_objects.size(); }
     void ClearObjects() { m_objects.clear(); }
 
