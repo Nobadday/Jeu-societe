@@ -3,10 +3,9 @@
 #ifndef _INC_SCENE_HPP
 #define _INC_SCENE_HPP
 
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
-#include <vector>
-#include <iostream>
 
 
 struct SceneEvent
@@ -25,7 +24,7 @@ struct SceneEvent
 	bool keepLoaded = false;
 };
 
-// Inherit and override me
+// Base virtual class to make your own scenes
 class SceneBase
 {
 	private:
@@ -34,10 +33,13 @@ class SceneBase
 	protected:
 		void* m_keptData;
 
+	private:
+		void LaunchEvent(SceneEvent::Type _type);
+
 	public:
 		SceneEvent& FetchActions(void);
 		void SetKeptData(void* _data);
-		// If keepLoaded is true, the current scene should stay loaded
+		// If keepLoaded is true, this scene should stay loaded
 		void ChangeScene(const std::string& _sceneName, bool _keepLoaded = false);
 		void ChangeScene(int _index, bool _keepLoaded = false);
 
@@ -83,5 +85,42 @@ class SceneBase
 //		}
 //};
 
+/*   SCENE EXAMPLE 2
+	CTRL + K + U To Remove the comments
+
+	SceneExample.hpp
+ 
+class SceneExample : public SceneBase
+{
+	private:
+		struct SceneData
+		{
+
+		};
+		SceneData* m_data;
+
+	public:
+		virtual void Load(void);
+		
+		virtual void Unload(void);
+
+		virtual void PollEvent(sf::Event& _event);
+		virtual void Update(float _deltaTime);
+		virtual void Draw(sf::RenderWindow& _renderWindow);
+};
+
+	SceneExample.cpp
+ 
+void SceneExample::Load(void)
+{
+	m_data = new SceneData;
+}
+void SceneExample::Unload(void)
+{
+	delete this->m_data;
+	this->m_data = NULL;
+}
+*/
+
 #endif
-// Scene v1.0
+// Scene v1.1

@@ -28,6 +28,7 @@ int main(void)
 	MainData mainData;
 	MainDataLoad(mainData);
 
+	
 
 	while (mainData.renderWindow.isOpen())
 	{
@@ -48,7 +49,7 @@ int main(void)
 
 void MainDataLoad(MainData& _mainData)
 {
-	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "SFML", sf::Style::Close);
+	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "SFML", sf::Style::Resize);
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
 
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);

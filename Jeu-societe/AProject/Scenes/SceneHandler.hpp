@@ -3,11 +3,16 @@
 #ifndef _INC_SCENEHANDLER_HPP
 #define _INC_SCENEHANDLER_HPP
 
+#include <iostream>
+#include <vector>
 #include "Scene.hpp"
+
+
 
 struct SceneWrap
 {
 	std::string name;
+	bool isLoaded;
 	SceneBase* object;
 };
 
@@ -30,7 +35,7 @@ class SceneHandler
 
 		// Add a scene to the scene list, if it's the first one, selects it and loads it
 		// SceneExample mySceneObject;
-		// SceneHandler.AddScene(mySceneObject, "My Scene");
+		// sceneHandler.AddScene(mySceneObject, "My Scene name");
 		void AddScene(SceneBase& _scene, const std::string& _name);
 
 		void SelectScene(int _index, bool _keepLoaded = false);
@@ -46,6 +51,7 @@ class SceneHandler
 
 		int FindSceneIndex(const std::string& _name);
 
+
 		void PollEvent(sf::Event& _event);
 		void Update(float _deltaTime);
 		void Draw(sf::RenderWindow& _renderWindow);
@@ -54,8 +60,11 @@ class SceneHandler
 
 
 #endif
-// SceneHandler v1.0.1
+// SceneHandler v1.1
+
 // TODO :
-// ~Destructor
+// Param pour afficher les scênes déja chargés
+// Event pour load scene + methode load scene(_name)
+// TODO ?
 // Historique de scene chargées, fonction previousScene() pour scenebase
-// Garder les scenes chargés + param pour les afficher quand même
+// SceneBase : Plusieurs events

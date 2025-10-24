@@ -10,7 +10,7 @@
 #include "../Animation/Graphics/TextureAnimated.hpp"
 
 
-// File loaded assets Manager
+// File loaded-assets Manager
 class AssetManager
 {
 	public:
@@ -123,9 +123,16 @@ class AssetManager
 		// Returns true if the assets exits
 		bool AssetExists(const std::string& _name, AssetType _type);
 
-
-		void* GetAsset(int _manifIndex, int _assetIndex, AssetType _type);
 		
+		//void* GetAsset(int _manifIndex, int _assetIndex, AssetType _type);
+		
+
+
+		// Get any asset associated with this name
+		void*& GetAsset(const std::string& _name, AssetType _type, void* _placeholder = NULL);
+
+		// Get
+		sf::Image* GetImage(const std::string& _name);
 
 	private:
 		std::vector<Container> m_containers;

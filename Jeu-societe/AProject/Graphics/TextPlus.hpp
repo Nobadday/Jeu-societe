@@ -7,6 +7,27 @@
 #include <SFML/Graphics.hpp>
 
 
+class TransformPlus : public virtual sf::Transformable
+{
+	private:
+		sf::Vector2f m_originCoef;
+
+	public: 
+
+		virtual sf::FloatRect getLocalBounds(void) = 0;
+
+		void setOriginCoef(sf::Vector2f _origin)
+		{
+			this->m_originCoef = _origin;
+		}
+
+		void UpdateOrigin(void)
+		{
+			sf::Vector2f size = this->getLocalBounds().getSize();
+			this->setOrigin(size.x * this->m_originCoef.x, size.y * this->m_originCoef.y);
+		}
+};
+
 
 class TextPlus : public sf::Text
 {
@@ -18,10 +39,21 @@ class TextPlus : public sf::Text
 		// 1 : String End
 		size_t m_textRange[2];
 
-		// Origin in coefficients
-		sf::Vector2f m_origin;
+		unsigned m_characterSize;
+		float m_characterSizeScale;
 
-		bool m_shouldUpdate;
+		// Origin in coefficients
+		sf::Vector2f m_originCoef;
+
+		bool m_shouldFitSize;
+		sf::Vector2f m_fitSize;
+
+
+		mutable bool m_shouldUpdateGeometry;
+		mutable bool m_shouldUpdate;
+
+	private:
+		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 	public:
 		TextPlus(void);

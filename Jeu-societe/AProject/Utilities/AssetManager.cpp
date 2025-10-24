@@ -8,6 +8,7 @@
 
 #define DEFAULT_CONTAINER ""
 
+#pragma region Global
 const char* AssetPlaceholders[AssetManager::AssetType::ASSET_TYPES] =
 {
 	"PLACEHOLDER:Image",
@@ -36,8 +37,9 @@ const char* AssetManager::GetAssetTypeName(AssetType _type)
 	}
 	return AssetTypeName[_type];
 }
+#pragma endregion
 
-
+#pragma region Container
 AssetManager::Container::Container(void)
 {
 	this->m_name = "";
@@ -96,6 +98,14 @@ void*& AssetManager::Container::GetAsset(const std::string& _name, AssetType _ty
 	return this->GetAsset(this->FindAssetIndex(_name, _type));
 }
 
+void AssetManager::Container::Clear()
+{
+	
+}
+#pragma endregion
+
+
+#pragma region Manager
 int AssetManager::FindContainerIndex(const std::string& _name)
 {
 	for (int i = 0; i < this->m_containers.size(); i++)
@@ -150,8 +160,21 @@ int AssetManager::CreateContainer(const std::string& _name)
 	return index;
 }
 
+void*& AssetManager::GetAsset(const std::string& _name, AssetType _type, void* _placeholder)
+{
+	for (int i = ((int)this->m_containers.size())-1; i >= 0; i--)
+	{
+		Container& container = this->m_containers[i];
+		int id = container.FindAssetIndex(_name, _type);
+		if (id != -1)
+		{
+			return (void*&)container.m_assets[id];
+		}
+	}
+	return _placeholder;
+}
 
-
+#pragma endregion
 
 
 // Asset Manager C++ v1.0

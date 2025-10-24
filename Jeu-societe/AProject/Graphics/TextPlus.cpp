@@ -1,9 +1,21 @@
 #include "TextPlus.hpp"
 
 TextPlus::TextPlus(void) : sf::Text(),
-m_string (""),
-m_origin (0,0)
+m_string		(""),
+m_originCoef	(0,0),
+m_shouldFitSize (false)
 {
+	this->m_characterSize = this->sf::Text::getCharacterSize();
+
+}
+
+void TextPlus::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+	if (this->m_shouldUpdate)
+	{
+
+	}
+	target.draw((sf::Text)*this, states);
 }
 
 void TextPlus::ResetDisplayRange(void)
@@ -26,7 +38,7 @@ void TextPlus::SetDisplayRange(float _coefficient)
 
 void TextPlus::setOrigin(const sf::Vector2f& _origin)
 {
-	this->m_origin = _origin;
+	this->m_originCoef = _origin;
 }
 
 void TextPlus::setString(const std::string& _string, bool _resetRange)
