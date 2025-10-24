@@ -1,5 +1,5 @@
 #include "Common.hpp"
-
+#include "Game/Scenes/Board.hpp"
 
 typedef struct MainData
 {
@@ -26,7 +26,8 @@ int main(void)
 	
 	MainData mainData;
 	MainDataLoad(mainData);
-
+	BaseGame boardScene;
+	mainData.scenes.AddScene(boardScene, "Board");
 
 	while (mainData.renderWindow.isOpen())
 	{

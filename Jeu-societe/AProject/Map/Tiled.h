@@ -1,0 +1,22 @@
+#ifndef TILED_H
+#define TILED_H
+
+#include "../Common.hpp"
+
+#include "MapObject.h"
+#include "MapLayer.h"
+#include "Tileset.h"
+
+class Tiled
+{
+	private:
+		std::vector<MapLayer> mapLayers;
+		TilesetManager tilesetManager;
+		JsonReader config;
+	public:
+		void InitTiled(const char* _Map);
+		void DrawMapLayers(sf::RenderWindow& _window, const sf::Vector2f& _camera);
+};
+
+
+#endif // TILED_H
