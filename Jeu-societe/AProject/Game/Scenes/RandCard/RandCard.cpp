@@ -1,8 +1,12 @@
 #include "RandCard.hpp"
+#include "../../../Utilities/MathPlus.hpp"
 
 #define CARD_SIZE_X 40.f
 #define CARD_SIZE_Y 80.f
 #define BORDER_X 40.f
+
+
+
 
 
 void RandCard::PrintCards(sf::RenderWindow& _renderWindow)
@@ -26,15 +30,44 @@ void RandCard::PrintCards(sf::RenderWindow& _renderWindow)
 
 }
 
+void RandCard::SetCardChosen(int _card)
+{
+	m_data->cardChosen = mathp::ModuloPositiveI(_card, (int)m_data->cards.size());
+}
+void RandCard::AddCardChosen(int _value)
+{
+	this->SetCardChosen(m_data->cardChosen + _value);
+}
+
+void RandCard::NextPlayer(void)
+{
+	if (m_data->currentPlayer >= m_data->players.size())
+	{
+		//Check if the current player was the last in the vector 
+		m_data->currentPlayer = 0;
+	}
+	else
+	{
+		//Next player
+		m_data->currentPlayer++;
+	}
+	m_data->cardChosen = 0;
+	m_data->gameState = CHOOSE_CARD;
+
+
+
+
+}
+
 void RandCard::Load(void)
 {
 	m_data = new SceneData;
 
 	//DEBUG
-	m_data->players.push_back({ "Player0", 0});
-	m_data->players.push_back({ "Player1", 1});
-	m_data->players.push_back({ "Player2", 2});
-	m_data->players.push_back({ "Player3", 3});
+	m_data->players.push_back({ "Yann", 0});
+	m_data->players.push_back({ "Lorenzo", 1});
+	//m_data->players.push_back({ "Kyllian", 2});
+	//m_data->players.push_back({ "Player3", 3});
 
 	//Font
 	m_data->font.loadFromFile("Assets/Fonts/Platinum Sign.ttf");
@@ -84,6 +117,7 @@ void RandCard::Load(void)
 			nbOfBomb--;
 		}
 	}
+	//DEBUG : print all cards in terminal
 	for (int i = 0; i < m_data->cards.size(); ++i)
 	{
 		std::cout << "Card n " << i << " : " << m_data->cards[i] << std::endl;
@@ -104,57 +138,91 @@ void RandCard::Unload(void)
 
 void RandCard::PollEvent(sf::Event& _event)
 {
-	if (m_data->gameState == CHOOSE_CARD)
+	switch (m_data->gameState)
 	{
-		//Restart card, when you comme from the last animation
-		m_data->cardSprAnim.SetAnimation("OFF");
+		case CHOOSE_CARD:
 
-		if (_event.type == sf::Event::KeyPressed)
-		{
-			//Move the position of card chosen to the right
-			if (_event.key.code == sf::Keyboard::D)
+			//Restart card, when you comme from the last animation
+			m_data->cardSprAnim.SetAnimation("OFF");
+
+			switch (_event.type)
 			{
-				m_data->cardChosen = (m_data->cardChosen + 1 > m_data->cards.size()) ? 0 : m_data->cardChosen + 1;
+				case sf::Event::JoystickButtonPressed:
+
+					if (_event.joystickButton.joystickId == m_data->currentPlayer)
+					{
+						//Confirm choice
+						if (m_data->cardChosen != -1)
+						{
+							CardType cardType = m_data->cards[m_data->cardChosen];
+							switch (cardType)
+							{
+							case NORMAL:
+								m_data->cardSprAnim.SetAnimation("NORMAL");
+								break;
+							case BOMB:
+								m_data->cardSprAnim.SetAnimation("BOMB");
+								break;
+							}
+							m_data->gameState = ANIMATION;
+							m_data->cardSprAnim.RestartAnimation();
+						}
+					}
+					break;
+				case sf::Event::KeyPressed:
+					break;
+				case sf::Event::JoystickMoved:
+
+					//X Y joystick gauche
+					//U V joystick droite
+					//Z R pression des gachettes
+					//La croix povX povY
+
+					if (_event.joystickButton.joystickId == m_data->currentPlayer)
+					{
+
+						if (m_data->inputDelay > 0.1f)
+						{
+							switch (_event.joystickMove.axis)
+							{
+								case sf::Joystick::Axis::X:
+								case sf::Joystick::Axis::U:
+
+									//Move the position of card chosen
+									AddCardChosen((int)roundf(_event.joystickMove.position / 100.f));
+									m_data->inputDelay = 0.f;
+									break;
+
+								default:
+									break;
+							}
+						}
+					}
+					break;
+
+				default:
+					break;
 			}
-			//Move the position of card chosen to the left
-			else if (_event.key.code == sf::Keyboard::Q)
+			break;
+
+		case END:
+			if (_event.type == sf::Event::KeyPressed)
 			{
-				m_data->cardChosen = (m_data->cardChosen - 1 < 0) ? int(m_data->cards.size()) : m_data->cardChosen - 1;
-			}
-			//Confirm choice
-			if (_event.key.code == sf::Keyboard::Enter && m_data->cardChosen != -1)
-			{
-				CardType cardType = m_data->cards[m_data->cardChosen];
-				switch (cardType)
+				if (_event.key.code == sf::Keyboard::Enter)
 				{
-					case NORMAL:
-						m_data->cardSprAnim.SetAnimation("NORMAL");
-						break;
-					case BOMB:
-						m_data->cardSprAnim.SetAnimation("BOMB");
-						break;
+					//Return to main menu
+					ChangeScene("RussianRoulette");
 				}
-				m_data->gameState = ANIMATION;
-				m_data->cardSprAnim.RestartAnimation();
 			}
-		}
 	}
-
-
-
 }
 void RandCard::Update(float _deltaTime)
 {
-	//std::cout << "Card Vector size : " << m_data->cards.size() << std::endl;
-	//std::cout << "Player Vector size : " << m_data->players.size() << std::endl;
-
-
 	switch (m_data->gameState) 
 	{
 		case CHOOSE_CARD:
 
-
-
+			m_data->inputDelay += _deltaTime;
 
 			break;
 
@@ -172,33 +240,18 @@ void RandCard::Update(float _deltaTime)
 				if (m_data->cards[m_data->cardChosen] == BOMB)
 				{
 					//DEBUG
-					std::cout << "Player " << m_data->players[m_data->currentPlayer].name << " lost !" << std::endl << std::endl;
 					m_data->players.erase(m_data->players.begin() + m_data->currentPlayer);
 
 					//Check if only one player left
 					if (m_data->players.size() <= 1)
 					{
 						//DEBUG
-						std::cout << "Player " << m_data->players[m_data->currentPlayer].name << " is the winner !" << std::endl;
+						std::cout << "Player " << m_data->players[0].name << " is the winner !" << std::endl;
 						m_data->gameState = END;
 						return;
 					}
-					//Check if the current player was the last in the vector 
-					else if (m_data->currentPlayer == m_data->players.size())
-					{
-						m_data->cards.erase(m_data->cards.begin() + m_data->cardChosen);
-						m_data->currentPlayer = 0;
-						m_data->cardChosen = -1;
-						m_data->gameState = CHOOSE_CARD;
-					}
-					//Next player
-					else
-					{
-						//m_data->currentPlayer++;
-						m_data->cards.erase(m_data->cards.begin() + m_data->cardChosen);
-						m_data->cardChosen = -1;
-						m_data->gameState = CHOOSE_CARD;
-					}
+					NextPlayer();
+					
 				}
 				else
 				{
@@ -215,19 +268,9 @@ void RandCard::Update(float _deltaTime)
 					{
 						m_data->currentPlayer++;
 					}
-
-					//m_data->currentPlayer = (m_data->currentPlayer >= m_data->players.size()) ? 0 : m_data->currentPlayer++;
-
-
-					//m_data->currentPlayer++;
 					m_data->cardChosen = -1;
 					m_data->gameState = CHOOSE_CARD;
 				}
-
-
-
-
-				
 			}
 			break;
 	}

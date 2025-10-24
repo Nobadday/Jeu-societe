@@ -2,10 +2,10 @@
 #ifndef _INC_RUSSIAN_ROULETTE_HPP
 #define _INC_RUSSIAN_ROULETTE_HPP
 
-#include "../Scene.hpp"
-#include "../../Common.hpp"
-#include "../../Animation/Graphics/SpriteAnimated.hpp"
-#include "../../Animation/Graphics/TextureAnimated.hpp"
+#include "../../../Scenes/Scene.hpp"
+#include "../../../Common.hpp"
+#include "../../../Animation/Graphics/SpriteAnimated.hpp"
+#include "../../../Animation/Graphics/TextureAnimated.hpp"
 
 class RussianRoulette : public SceneBase
 {

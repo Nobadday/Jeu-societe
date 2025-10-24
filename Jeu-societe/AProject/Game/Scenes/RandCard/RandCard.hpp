@@ -2,10 +2,10 @@
 #ifndef _INC_RAND_CARD_HPP
 #define _INC_RAND_CARD_HPP
 
-#include "../Scene.hpp"
-#include "../../Common.hpp"
-#include "../../Animation/Graphics/SpriteAnimated.hpp"
-#include "../../Animation/Graphics/TextureAnimated.hpp"
+#include "../../../Scenes/Scene.hpp"
+#include "../../../Common.hpp"
+#include "../../../Animation/Graphics/SpriteAnimated.hpp"
+#include "../../../Animation/Graphics/TextureAnimated.hpp"
 
 class RandCard : public SceneBase
 {
@@ -48,6 +48,9 @@ class RandCard : public SceneBase
 
 			GameState gameState = CHOOSE_CARD;
 			int cardChosen = 0;
+			//Delay when you change card with joystick
+			float inputDelay = 0.2f;
+
 
 			//DEBUG
 			int currentPlayer = 0;
@@ -57,6 +60,10 @@ class RandCard : public SceneBase
 		};
 		SceneData* m_data;
 		void PrintCards(sf::RenderWindow& _renderWindow);
+		void SetCardChosen(int _card);
+		void AddCardChosen(int _value);
+
+		void NextPlayer(void);
 
 	public:
 		virtual void Load(void);

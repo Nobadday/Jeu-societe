@@ -84,10 +84,10 @@
     <ClCompile Include="Scenes\SceneHandler.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\RussianRoulette\RussianRoulette.cpp">
+    <ClCompile Include="Game\Scenes\RussianRoulette\RussianRoulette.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\RandCard\RandCard.cpp">
+    <ClCompile Include="Game\Scenes\RandCard\RandCard.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -176,10 +176,10 @@
     <ClInclude Include="Screen.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\RussianRoulette\RussianRoulette.hpp">
+    <ClInclude Include="Game\Scenes\RussianRoulette\RussianRoulette.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\RandCard\RandCard.hpp">
+    <ClInclude Include="Game\Scenes\RandCard\RandCard.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
