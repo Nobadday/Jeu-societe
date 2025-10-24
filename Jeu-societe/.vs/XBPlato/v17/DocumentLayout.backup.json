@@ -7,150 +7,52 @@
       "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Game\\Scenes\\Board.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Utilities\\Camera\\Camera.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Utilities\\Camera\\Camera.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\Scenes\\Board.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Game\\Scenes\\Board.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Map\\JsonReader.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Map\\JsonReader.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Map\\MapLayer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Map\\MapLayer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Map\\MapObject.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Map\\MapObject.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Map\\Tiled.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Map\\Tiled.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Map\\Tileset.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Map\\Tileset.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Map\\Tiled.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Map\\Tiled.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\Scene.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Scenes\\Scene.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\Scene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Scenes\\Scene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Common.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Common.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\GameData.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{2FDAD905-0517-44B6-8F8E-B2336D104FDD}|AProject\\AProject.vcxproj|solutionrelative:AProject\\Game\\GameData.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
     {
-      "Orientation": 1,
+      "Orientation": 0,
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedHeight": 181,
-          "SelectedChildIndex": 7,
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Tileset.h",
-              "DocumentMoniker": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Map\\Tileset.h",
-              "RelativeDocumentMoniker": "AProject\\Map\\Tileset.h",
-              "ToolTip": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Map\\Tileset.h",
-              "RelativeToolTip": "AProject\\Map\\Tileset.h",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAAAEAAAAAVAAAAAAAAAA==",
+              "DocumentIndex": 1,
+              "Title": "Camera.hpp",
+              "DocumentMoniker": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Utilities\\Camera\\Camera.hpp",
+              "RelativeDocumentMoniker": "AProject\\Utilities\\Camera\\Camera.hpp",
+              "ToolTip": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Utilities\\Camera\\Camera.hpp",
+              "RelativeToolTip": "AProject\\Utilities\\Camera\\Camera.hpp",
+              "ViewState": "AgIAACcAAAAAAAAAAAAAADEAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-10-24T10:01:41.667Z",
+              "WhenOpened": "2025-10-24T12:01:06.462Z",
+              "IsPinned": true,
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Tiled.cpp",
-              "DocumentMoniker": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Map\\Tiled.cpp",
-              "RelativeDocumentMoniker": "AProject\\Map\\Tiled.cpp",
-              "ToolTip": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Map\\Tiled.cpp",
-              "RelativeToolTip": "AProject\\Map\\Tiled.cpp",
-              "ViewState": "AgIAAH8AAAAAAAAAAAD4v1MAAAA1AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-10-24T10:00:50.195Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "MapObject.cpp",
-              "DocumentMoniker": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Map\\MapObject.cpp",
-              "RelativeDocumentMoniker": "AProject\\Map\\MapObject.cpp",
-              "ToolTip": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Map\\MapObject.cpp",
-              "RelativeToolTip": "AProject\\Map\\MapObject.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-10-24T10:00:47.075Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "MapLayer.cpp",
-              "DocumentMoniker": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Map\\MapLayer.cpp",
-              "RelativeDocumentMoniker": "AProject\\Map\\MapLayer.cpp",
-              "ToolTip": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Map\\MapLayer.cpp",
-              "RelativeToolTip": "AProject\\Map\\MapLayer.cpp",
-              "ViewState": "AgIAABgAAAAAAAAAAAAAAF8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-10-24T10:00:41.435Z",
-              "EditorCaption": ""
-            },
+            }
+          ]
+        },
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "JsonReader.cpp",
-              "DocumentMoniker": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Map\\JsonReader.cpp",
-              "RelativeDocumentMoniker": "AProject\\Map\\JsonReader.cpp",
-              "ToolTip": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Map\\JsonReader.cpp",
-              "RelativeToolTip": "AProject\\Map\\JsonReader.cpp",
-              "ViewState": "AgIAABUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-10-24T10:00:33.184Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "Tiled.h",
-              "DocumentMoniker": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Map\\Tiled.h",
-              "RelativeDocumentMoniker": "AProject\\Map\\Tiled.h",
-              "ToolTip": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Map\\Tiled.h",
-              "RelativeToolTip": "AProject\\Map\\Tiled.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAUAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-10-24T09:51:23.297Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
               "Title": "Board.hpp",
               "DocumentMoniker": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\Scenes\\Board.hpp",
               "RelativeDocumentMoniker": "AProject\\Game\\Scenes\\Board.hpp",
               "ToolTip": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\Scenes\\Board.hpp",
               "RelativeToolTip": "AProject\\Game\\Scenes\\Board.hpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAARAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2025-10-24T09:46:12.883Z",
               "EditorCaption": ""
@@ -163,74 +65,9 @@
               "RelativeDocumentMoniker": "AProject\\Game\\Scenes\\Board.cpp",
               "ToolTip": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\Scenes\\Board.cpp",
               "RelativeToolTip": "AProject\\Game\\Scenes\\Board.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABwAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABUAAAAAAAAAAAAAAC0AAAACAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-10-24T09:45:46.672Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "Scene.hpp",
-              "DocumentMoniker": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\Scene.hpp",
-              "RelativeDocumentMoniker": "AProject\\Scenes\\Scene.hpp",
-              "ToolTip": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\Scene.hpp",
-              "RelativeToolTip": "AProject\\Scenes\\Scene.hpp",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAwwBwAAAAPAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-10-24T09:44:17.006Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "Scene.cpp",
-              "DocumentMoniker": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\Scene.cpp",
-              "RelativeDocumentMoniker": "AProject\\Scenes\\Scene.cpp",
-              "ToolTip": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Scenes\\Scene.cpp",
-              "RelativeToolTip": "AProject\\Scenes\\Scene.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAPAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-10-24T09:44:14.361Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "Common.hpp",
-              "DocumentMoniker": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Common.hpp",
-              "RelativeDocumentMoniker": "AProject\\Common.hpp",
-              "ToolTip": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Common.hpp",
-              "RelativeToolTip": "AProject\\Common.hpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAbAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-10-17T07:35:54.875Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "GameData.hpp",
-              "DocumentMoniker": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\GameData.hpp",
-              "RelativeDocumentMoniker": "AProject\\Game\\GameData.hpp",
-              "ToolTip": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\Game\\GameData.hpp",
-              "RelativeToolTip": "AProject\\Game\\GameData.hpp",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAAA0AAAAIAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-10-17T07:31:52.689Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "main.cpp",
-              "DocumentMoniker": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\main.cpp",
-              "RelativeDocumentMoniker": "AProject\\main.cpp",
-              "ToolTip": "C:\\Users\\Etudiant2\\Documents\\Jeu-societe\\Jeu-societe\\AProject\\main.cpp",
-              "RelativeToolTip": "AProject\\main.cpp",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAawCMAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-10-10T10:52:45.073Z",
               "EditorCaption": ""
             }
           ]
