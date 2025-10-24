@@ -3,7 +3,7 @@
 void BaseGame::Load(void)
 {
 	m_data = new SceneData;
-	m_data->Tile.InitTiled("Assets/Map/map.json");
+	m_data->tile.InitTiled("Assets/Map/map.json");
 }
 
 void BaseGame::Unload(void)
@@ -24,5 +24,5 @@ void BaseGame::PollEvent(sf::Event& _event)
 
  void BaseGame::Draw(sf::RenderWindow& _renderWindow)
  {
-	 m_data->Tile.DrawMapLayers(_renderWindow, sf::Vector2f(0.f, 0.f));
+	 m_data->tile.DrawMapLayers(_renderWindow, sf::Vector2f(0.f, 0.f));
  }

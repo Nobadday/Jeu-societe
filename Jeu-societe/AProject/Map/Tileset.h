@@ -34,45 +34,45 @@ private:
 public:
     // Constructeur
     Tileset();
-    Tileset(const std::string& name, int firstGid);
+    Tileset(const std::string& _name, int _firstGid);
 
     // Getters
-    const std::string& getName() const { return m_name; }
-    int getFirstGid() const { return m_firstGid; }
-    int getTileCount() const { return m_tileCount; }
-    int getTileWidth() const { return m_tileWidth; }
-    int getTileHeight() const { return m_tileHeight; }
-    int getColumns() const { return m_columns; }
-    int getMargin() const { return m_margin; }
-    int getSpacing() const { return m_spacing; }
+    const std::string& GetName() const { return m_name; }
+    int GetFirstGid() const { return m_firstGid; }
+    int GetTileCount() const { return m_tileCount; }
+    int GetTileWidth() const { return m_tileWidth; }
+    int GetTileHeight() const { return m_tileHeight; }
+    int GetColumns() const { return m_columns; }
+    int GetMargin() const { return m_margin; }
+    int GetSpacing() const { return m_spacing; }
     
     // Setters
-    void setName(const std::string& name) { m_name = name; }
-    void setFirstGid(int firstGid) { m_firstGid = firstGid; }
-    void setTileCount(int tileCount) { m_tileCount = tileCount; }
-    void setTileWidth(int width) { m_tileWidth = width; }
-    void setTileHeight(int height) { m_tileHeight = height; }
-    void setColumns(int columns) { m_columns = columns; }
-    void setMargin(int margin) { m_margin = margin; }
-    void setSpacing(int spacing) { m_spacing = spacing; }
+    void SetName(const std::string& _name) { m_name = _name; }
+    void SetFirstGid(int _firstGid) { m_firstGid = _firstGid; }
+    void SetTileCount(int _tileCount) { m_tileCount = _tileCount; }
+    void SetTileWidth(int _width) { m_tileWidth = _width; }
+    void SetTileHeight(int _height) { m_tileHeight = _height; }
+    void SetColumns(int _columns) { m_columns = _columns; }
+    void SetMargin(int _margin) { m_margin = _margin; }
+    void SetSpacing(int _spacing) { m_spacing = _spacing; }
 
     // Gestion des tuiles
-    void addTile(int id, const std::string& imagePath, int imageWidth, int imageHeight);
-    const TileInfo* getTileInfo(int localId) const;
-    bool hasTile(int localId) const;
+    void AddTile(int _id, const std::string& _imagePath, int _imageWidth, int _imageHeight);
+    const TileInfo* GetTileInfo(int _localId) const;
+    bool HasTile(int _localId) const;
 
     // Chargement des textures
-    bool loadTextures(const std::string& baseFolder = "Assets/Map/");
-    sf::Texture* getTexture(int localId);
-    const sf::Texture* getTexture(int localId) const;
+    bool LoadTextures(const std::string& _baseFolder = "Assets/Map/");
+    sf::Texture* GetTexture(int _localId);
+    const sf::Texture* GetTexture(int _localId) const;
 
     // Conversion GID <-> ID local
-    int gidToLocalId(int gid) const;
-    int localIdToGid(int localId) const;
-    bool containsGid(int gid) const;
+    int GidToLocalId(int _gid) const;
+    int LocalIdToGid(int _localId) const;
+    bool ContainsGid(int _gid) const;
 
     // Debug
-    void print() const;
+    void Print() const;
 };
 
 // Gestionnaire de tilesets avec mapping par GID
@@ -86,32 +86,32 @@ public:
     TilesetManager();
 
     // Ajouter un tileset
-    void addTileset(const Tileset& tileset);
+    void AddTileset(const Tileset& _tileset);
     
     // Récupérer un tileset par GID
-    Tileset* getTilesetByGid(int gid);
-    const Tileset* getTilesetByGid(int gid) const;
+    Tileset* GetTilesetByGid(int _gid);
+    const Tileset* GetTilesetByGid(int _gid) const;
     
     // Récupérer un tileset par nom
-    Tileset* getTilesetByName(const std::string& name);
-    const Tileset* getTilesetByName(const std::string& name) const;
+    Tileset* GetTilesetByName(const std::string& _name);
+    const Tileset* GetTilesetByName(const std::string& _name) const;
 
     // Récupérer tous les tilesets
-    const std::vector<Tileset>& getTilesets() const { return m_tilesets; }
-    std::vector<Tileset>& getTilesets() { return m_tilesets; }
+    const std::vector<Tileset>& GetTilesets() const { return m_tilesets; }
+    std::vector<Tileset>& GetTilesets() { return m_tilesets; }
 
     // Charger toutes les textures
-    bool loadAllTextures(const std::string& baseFolder = "Assets/");
+    bool LoadAllTextures(const std::string& _baseFolder = "Assets/Map/");
 
     // Obtenir la texture correspondant à un GID
-    sf::Texture* getTextureByGid(int gid);
-    const sf::Texture* getTextureByGid(int gid) const;
+    sf::Texture* GetTextureByGid(int _gid);
+    const sf::Texture* GetTextureByGid(int _gid) const;
 
     // Utilitaires
-    size_t getTilesetCount() const { return m_tilesets.size(); }
-    void clear();
-    void print() const;
+    size_t GetTilesetCount() const { return m_tilesets.size(); }
+    void Clear();
+    void Print() const;
 
 private:
-    void rebuildGidMap();
+    void RebuildGidMap();
 };

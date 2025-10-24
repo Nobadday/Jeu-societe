@@ -19,31 +19,31 @@ public:
     ~JsonReader();
 
     // Charger un fichier JSON
-    bool loadFromFile(const std::string& filename);
+    bool LoadFromFile(const std::string& _filename);
 
     // Vérifier si le fichier est chargé
-    bool isLoaded() const { return m_loaded; }
+    bool IsLoaded() const { return m_loaded; }
 
     // Obtenir une valeur par clé (retourne une valeur par défaut si la clé n'existe pas)
     template<typename T>
-    T getValue(const std::string& key, const T& defaultValue) const;
+    T GetValue(const std::string& _key, const T& _defaultValue) const;
 
     // Obtenir une valeur imbriquée (ex: "player/position/x")
     template<typename T>
-    T getNestedValue(const std::string& path, const T& defaultValue) const;
+    T GetNestedValue(const std::string& _path, const T& _defaultValue) const;
 
     // Vérifier si une clé existe
-    bool hasKey(const std::string& key) const;
+    bool HasKey(const std::string& _key) const;
 
     // Obtenir le JSON brut pour manipulation avancée
-    const json& getData() const { return m_data; }
+    const json& GetData() const { return m_data; }
 
     // Afficher le contenu du JSON (debug)
-    void print() const;
+    void Print() const;
 };
 
 template<typename T>
-inline T JsonReader::getValue(const std::string& key, const T& defaultValue) const
+inline T JsonReader::GetValue(const std::string& key, const T& defaultValue) const
 {
     if (!m_loaded)
         return defaultValue;
@@ -62,7 +62,7 @@ inline T JsonReader::getValue(const std::string& key, const T& defaultValue) con
 }
 
 template<typename T>
-inline T JsonReader::getNestedValue(const std::string& path, const T& defaultValue) const
+inline T JsonReader::GetNestedValue(const std::string& path, const T& defaultValue) const
 {
     if (!m_loaded)
         return defaultValue;

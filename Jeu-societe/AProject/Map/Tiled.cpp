@@ -1,19 +1,20 @@
 #include "Tiled.h"
+#include <sstream>
 
 void Tiled::InitTiled(const char* _Map)
 {
-    if (config.loadFromFile(_Map))
+    if (config.LoadFromFile(_Map))
     {
         // Lire les propriétés de la carte
-        int compressionLevel = config.getValue<int>("compressionlevel", -1);
-        int mapHeight = config.getValue<int>("height", 0);
-        int mapWidth = config.getValue<int>("width", 0);
-        int tileWidth = config.getValue<int>("tilewidth", 32);
-        int tileHeight = config.getValue<int>("tileheight", 32);
-        std::string orientation = config.getValue<std::string>("orientation", "orthogonal");
-        bool infinite = config.getValue<bool>("infinite", false);
+        int compressionLevel = config.GetValue<int>("compressionlevel", -1);
+        int mapHeight = config.GetValue<int>("height", 0);
+        int mapWidth = config.GetValue<int>("width", 0);
+        int tileWidth = config.GetValue<int>("tilewidth", 32);
+        int tileHeight = config.GetValue<int>("tileheight", 32);
+        std::string orientation = config.GetValue<std::string>("orientation", "orthogonal");
+        bool infinite = config.GetValue<bool>("infinite", false);
 
-        const auto& jsonData = config.getData();
+        const auto& jsonData = config.GetData();
 
         // Charger les tilesets en premier
         if (jsonData.contains("tilesets") && jsonData["tilesets"].is_array())
@@ -26,14 +27,14 @@ void Tiled::InitTiled(const char* _Map)
                 const auto& tilesetJson = tilesets[i];
 
                 Tileset tileset;
-                tileset.setName(tilesetJson.value("name", "Sans nom"));
-                tileset.setFirstGid(tilesetJson.value("firstgid", 0));
-                tileset.setTileCount(tilesetJson.value("tilecount", 0));
-                tileset.setTileWidth(tilesetJson.value("tilewidth", 0));
-                tileset.setTileHeight(tilesetJson.value("tileheight", 0));
-                tileset.setColumns(tilesetJson.value("columns", 0));
-                tileset.setMargin(tilesetJson.value("margin", 0));
-                tileset.setSpacing(tilesetJson.value("spacing", 0));
+                tileset.SetName(tilesetJson.value("name", "Sans nom"));
+                tileset.SetFirstGid(tilesetJson.value("firstgid", 0));
+                tileset.SetTileCount(tilesetJson.value("tilecount", 0));
+                tileset.SetTileWidth(tilesetJson.value("tilewidth", 0));
+                tileset.SetTileHeight(tilesetJson.value("tileheight", 0));
+                tileset.SetColumns(tilesetJson.value("columns", 0));
+                tileset.SetMargin(tilesetJson.value("margin", 0));
+                tileset.SetSpacing(tilesetJson.value("spacing", 0));
 
                 // Charger les tuiles individuelles
                 if (tilesetJson.contains("tiles") && tilesetJson["tiles"].is_array())
@@ -46,18 +47,18 @@ void Tiled::InitTiled(const char* _Map)
                         int imageWidth = tile.value("imagewidth", 0);
                         int imageHeight = tile.value("imageheight", 0);
 
-                        tileset.addTile(id, imagePath, imageWidth, imageHeight);
+                        tileset.AddTile(id, imagePath, imageWidth, imageHeight);
                     }
                 }
 
                 // Ajouter le tileset au gestionnaire
-                tilesetManager.addTileset(tileset);
+                tilesetManager.AddTileset(tileset);
                 //std::cout << std::endl;
             }
 
             // Charger toutes les textures
             std::cout << "Chargement des textures..." << std::endl;
-            if (tilesetManager.loadAllTextures("Assets/Map/"))
+            if (tilesetManager.LoadAllTextures("Assets/Map/"))
             {
                 std::cout << "Toutes les textures ont été chargées avec succès!" << std::endl;
             }
@@ -101,20 +102,20 @@ void Tiled::InitTiled(const char* _Map)
                         // Créer un nouvel objet
                         MapObject mapObject;
                         int gid = obj.value("gid", 0);
-                        mapObject.setGid(gid);
-                        mapObject.setPosition(obj.value("x", 0.0f), obj.value("y", 0.0f));
-                        mapObject.setSize(obj.value("width", 0.0f), obj.value("height", 0.0f));
-                        mapObject.setName(obj.value("name", ""));
-                        mapObject.setType(obj.value("type", ""));
-                        mapObject.setRotation(obj.value("rotation", 0.0f));
-                        mapObject.setVisible(obj.value("visible", true));
+                        mapObject.SetGid(gid);
+                        mapObject.SetPosition(obj.value("x", 0.0f), obj.value("y", 0.0f));
+                        mapObject.SetSize(obj.value("width", 0.0f), obj.value("height", 0.0f));
+                        mapObject.SetName(obj.value("name", ""));
+                        mapObject.SetType(obj.value("type", ""));
+                        mapObject.SetRotation(obj.value("rotation", 0.0f));
+                        mapObject.SetVisible(obj.value("visible", true));
 
                         // Ajouter l'objet au layer
                         mapLayer.AddObject(mapObject);
 
                         // Trouver le tileset correspondant
-                        const Tileset* tileset = tilesetManager.getTilesetByGid(gid);
-                        std::string tilesetName = tileset ? tileset->getName() : "Aucun";
+                        const Tileset* tileset = tilesetManager.GetTilesetByGid(gid);
+                        std::string tilesetName = tileset ? tileset->GetName() : "Aucun";
 
                         /*std::cout << "    Objet " << j << ": GID=" << gid
                                   << " (Tileset: " << tilesetName << ")"

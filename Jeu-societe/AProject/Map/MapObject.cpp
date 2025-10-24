@@ -33,12 +33,12 @@ MapObject::MapObject(int gid, float x, float y, float width, float height)
 {
 }
 
-sf::FloatRect MapObject::getBounds() const
+sf::FloatRect MapObject::GetBounds() const
 {
     return sf::FloatRect(m_position.x, m_position.y, m_size.x, m_size.y);
 }
 
-bool MapObject::contains(const sf::Vector2f& point) const
+bool MapObject::Contains(const sf::Vector2f& point) const
 {
-    return getBounds().contains(point);
+    return GetBounds().contains(point);
 }

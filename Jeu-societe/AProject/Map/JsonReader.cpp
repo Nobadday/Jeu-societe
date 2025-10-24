@@ -10,17 +10,17 @@ JsonReader::~JsonReader()
 {
 }
 
-bool JsonReader::loadFromFile(const std::string& filename)
+bool JsonReader::LoadFromFile(const std::string& _filename)
 {
-    m_filename = filename;
+    m_filename = _filename;
     m_loaded = false;
 
     try
     {
-        std::ifstream file(filename);
+        std::ifstream file(_filename);
         if (!file.is_open())
         {
-            std::cerr << "Impossible d'ouvrir le fichier: " << filename << std::endl;
+            std::cerr << "Impossible d'ouvrir le fichier: " << _filename << std::endl;
             return false;
         }
 
@@ -28,7 +28,7 @@ bool JsonReader::loadFromFile(const std::string& filename)
         file.close();
         m_loaded = true;
 
-        std::cout << "Fichier JSON chargé avec succès: " << filename << std::endl;
+        std::cout << "Fichier JSON chargé avec succès: " << _filename << std::endl;
         return true;
     }
     catch (const std::exception& e)
@@ -38,15 +38,15 @@ bool JsonReader::loadFromFile(const std::string& filename)
     }
 }
 
-bool JsonReader::hasKey(const std::string& key) const
+bool JsonReader::HasKey(const std::string& _key) const
 {
     if (!m_loaded)
         return false;
 
-    return m_data.contains(key);
+    return m_data.contains(_key);
 }
 
-void JsonReader::print() const
+void JsonReader::Print() const
 {
     if (!m_loaded)
     {

@@ -14,10 +14,10 @@ MapLayer::MapLayer()
 {
 }
 
-MapLayer::MapLayer(int id, const std::string& name, const std::string& type)
-    : m_id(id)
-    , m_name(name)
-    , m_type(type)
+MapLayer::MapLayer(int _id, const std::string& _name, const std::string& _type)
+    : m_id(_id)
+    , m_name(_name)
+    , m_type(_type)
     , m_visible(true)
     , m_opacity(1.0f)
     , m_parallaxX(1.0f)
@@ -26,41 +26,41 @@ MapLayer::MapLayer(int id, const std::string& name, const std::string& type)
 {
 }
 
-void MapLayer::AddObject(const MapObject& object)
+void MapLayer::AddObject(const MapObject& _object)
 {
-    m_objects.push_back(object);
+    m_objects.push_back(_object);
 }
 
-MapObject& MapLayer::GetObject(size_t index)
+MapObject& MapLayer::GetObject(size_t _index)
 {
-    return m_objects[index];
+    return m_objects[_index];
 }
 
-const MapObject& MapLayer::GetObject(size_t index) const
+const MapObject& MapLayer::GetObject(size_t _index) const
 {
-    return m_objects[index];
+    return m_objects[_index];
 }
 
-void MapLayer::Draw(sf::RenderTarget& target, TilesetManager& tilesetManager, const sf::Vector2f& camera) const
+void MapLayer::Draw(sf::RenderTarget& _target, TilesetManager& _tilesetManager, const sf::Vector2f& _camera) const
 {
     if (!m_visible)
         return;
 
     // Calculer l'offset de la caméra avec parallaxe
-    float parallaxOffsetX = camera.x * m_parallaxX;
-    float parallaxOffsetY = camera.y * m_parallaxY;
+    float parallaxOffsetX = _camera.x * m_parallaxX;
+    float parallaxOffsetY = _camera.y * m_parallaxY;
 
     for (const auto& object : m_objects)
     {
-        if (!object.isVisible())
+        if (!object.IsVisible())
             continue;
 
-        int gid = object.getGid();
+        int gid = object.GetGid();
         if (gid == 0)
             continue;
 
         // Obtenir la texture correspondante au GID
-        sf::Texture* texture = tilesetManager.getTextureByGid(gid);
+        sf::Texture* texture = _tilesetManager.GetTextureByGid(gid);
         if (!texture)
             continue;
 
@@ -69,11 +69,11 @@ void MapLayer::Draw(sf::RenderTarget& target, TilesetManager& tilesetManager, co
         sprite.setTexture(*texture);
 
         // Calculer la position avec parallaxe
-        float worldX = object.getX();
-        float worldY = object.getY();
+        float worldX = object.GetX();
+        float worldY = object.GetY();
 
         // Dans Tiled, l'origine Y est en bas de l'objet pour les images
-        worldY -= object.getHeight();
+        worldY -= object.GetHeight();
 
         // Appliquer la transformation de la caméra avec parallaxe
         float screenX = worldX - parallaxOffsetX;
@@ -82,14 +82,14 @@ void MapLayer::Draw(sf::RenderTarget& target, TilesetManager& tilesetManager, co
         sprite.setPosition(screenX, screenY);
 
         // Appliquer la taille
-        float scaleX = object.getWidth() / texture->getSize().x;
-        float scaleY = object.getHeight() / texture->getSize().y;
+        float scaleX = object.GetWidth() / texture->getSize().x;
+        float scaleY = object.GetHeight() / texture->getSize().y;
         sprite.setScale(scaleX, scaleY);
 
         // Appliquer la rotation
-        if (object.getRotation() != 0.0f)
+        if (object.GetRotation() != 0.0f)
         {
-            sprite.setRotation(object.getRotation());
+            sprite.setRotation(object.GetRotation());
         }
 
         // Appliquer l'opacité et la couleur de teinte
@@ -98,6 +98,6 @@ void MapLayer::Draw(sf::RenderTarget& target, TilesetManager& tilesetManager, co
         sprite.setColor(color);
 
         // Dessiner le sprite
-        target.draw(sprite);
+        _target.draw(sprite);
     }
 }

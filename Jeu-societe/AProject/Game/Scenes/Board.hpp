@@ -3,13 +3,15 @@
 
 #include "../../Scenes/Scene.hpp"
 #include "../../Map/Tiled.h"
+#include "../../Utilities/Camera/Camera.hpp"
 
 class BaseGame : public SceneBase
 {
 	private:
 		struct SceneData
 		{
-			Tiled Tile;
+			Tiled tile;
+			Camera camera;
 		};
 		SceneData* m_data;
 

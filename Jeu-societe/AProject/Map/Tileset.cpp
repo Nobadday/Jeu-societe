@@ -26,7 +26,7 @@ Tileset::Tileset(const std::string& name, int firstGid)
 {
 }
 
-void Tileset::addTile(int id, const std::string& imagePath, int imageWidth, int imageHeight)
+void Tileset::AddTile(int id, const std::string& imagePath, int imageWidth, int imageHeight)
 {
     TileInfo tile;
     tile.id = id;
@@ -37,7 +37,7 @@ void Tileset::addTile(int id, const std::string& imagePath, int imageWidth, int 
     m_tiles[id] = tile;
 }
 
-const TileInfo* Tileset::getTileInfo(int localId) const
+const TileInfo* Tileset::GetTileInfo(int localId) const
 {
     auto it = m_tiles.find(localId);
     if (it != m_tiles.end())
@@ -45,12 +45,12 @@ const TileInfo* Tileset::getTileInfo(int localId) const
     return nullptr;
 }
 
-bool Tileset::hasTile(int localId) const
+bool Tileset::HasTile(int localId) const
 {
     return m_tiles.find(localId) != m_tiles.end();
 }
 
-bool Tileset::loadTextures(const std::string& baseFolder)
+bool Tileset::LoadTextures(const std::string& baseFolder)
 {
     bool allLoaded = true;
     
@@ -81,7 +81,7 @@ bool Tileset::loadTextures(const std::string& baseFolder)
     return allLoaded;
 }
 
-sf::Texture* Tileset::getTexture(int localId)
+sf::Texture* Tileset::GetTexture(int localId)
 {
     auto it = m_textures.find(localId);
     if (it != m_textures.end())
@@ -89,7 +89,7 @@ sf::Texture* Tileset::getTexture(int localId)
     return nullptr;
 }
 
-const sf::Texture* Tileset::getTexture(int localId) const
+const sf::Texture* Tileset::GetTexture(int localId) const
 {
     auto it = m_textures.find(localId);
     if (it != m_textures.end())
@@ -97,23 +97,23 @@ const sf::Texture* Tileset::getTexture(int localId) const
     return nullptr;
 }
 
-int Tileset::gidToLocalId(int gid) const
+int Tileset::GidToLocalId(int gid) const
 {
     return gid - m_firstGid;
 }
 
-int Tileset::localIdToGid(int localId) const
+int Tileset::LocalIdToGid(int localId) const
 {
     return m_firstGid + localId;
 }
 
-bool Tileset::containsGid(int gid) const
+bool Tileset::ContainsGid(int gid) const
 {
-    int localId = gidToLocalId(gid);
+    int localId = GidToLocalId(gid);
     return localId >= 0 && localId < m_tileCount;
 }
 
-void Tileset::print() const
+void Tileset::Print() const
 {
     std::cout << "Tileset: " << m_name << std::endl;
     std::cout << "  First GID: " << m_firstGid << std::endl;
@@ -135,20 +135,20 @@ TilesetManager::TilesetManager()
 {
 }
 
-void TilesetManager::addTileset(const Tileset& tileset)
+void TilesetManager::AddTileset(const Tileset& tileset)
 {
     m_tilesets.push_back(tileset);
-    rebuildGidMap();
+    RebuildGidMap();
 }
 
-void TilesetManager::rebuildGidMap()
+void TilesetManager::RebuildGidMap()
 {
     m_gidToTileset.clear();
     
     for (auto& tileset : m_tilesets)
     {
-        int firstGid = tileset.getFirstGid();
-        int lastGid = firstGid + tileset.getTileCount();
+        int firstGid = tileset.GetFirstGid();
+        int lastGid = firstGid + tileset.GetTileCount();
         
         for (int gid = firstGid; gid < lastGid; ++gid)
         {
@@ -157,7 +157,7 @@ void TilesetManager::rebuildGidMap()
     }
 }
 
-Tileset* TilesetManager::getTilesetByGid(int gid)
+Tileset* TilesetManager::GetTilesetByGid(int gid)
 {
     auto it = m_gidToTileset.find(gid);
     if (it != m_gidToTileset.end())
@@ -165,7 +165,7 @@ Tileset* TilesetManager::getTilesetByGid(int gid)
     return nullptr;
 }
 
-const Tileset* TilesetManager::getTilesetByGid(int gid) const
+const Tileset* TilesetManager::GetTilesetByGid(int gid) const
 {
     auto it = m_gidToTileset.find(gid);
     if (it != m_gidToTileset.end())
@@ -173,66 +173,66 @@ const Tileset* TilesetManager::getTilesetByGid(int gid) const
     return nullptr;
 }
 
-Tileset* TilesetManager::getTilesetByName(const std::string& name)
+Tileset* TilesetManager::GetTilesetByName(const std::string& name)
 {
     for (auto& tileset : m_tilesets)
     {
-        if (tileset.getName() == name)
+        if (tileset.GetName() == name)
             return &tileset;
     }
     return nullptr;
 }
 
-const Tileset* TilesetManager::getTilesetByName(const std::string& name) const
+const Tileset* TilesetManager::GetTilesetByName(const std::string& name) const
 {
     for (const auto& tileset : m_tilesets)
     {
-        if (tileset.getName() == name)
+        if (tileset.GetName() == name)
             return &tileset;
     }
     return nullptr;
 }
 
-bool TilesetManager::loadAllTextures(const std::string& baseFolder)
+bool TilesetManager::LoadAllTextures(const std::string& baseFolder)
 {
     bool allLoaded = true;
     for (auto& tileset : m_tilesets)
     {
-        if (!tileset.loadTextures(baseFolder))
+        if (!tileset.LoadTextures(baseFolder))
             allLoaded = false;
     }
     return allLoaded;
 }
 
-sf::Texture* TilesetManager::getTextureByGid(int gid)
+sf::Texture* TilesetManager::GetTextureByGid(int gid)
 {
-    Tileset* tileset = getTilesetByGid(gid);
+    Tileset* tileset = GetTilesetByGid(gid);
     if (tileset)
     {
-        int localId = tileset->gidToLocalId(gid);
-        return tileset->getTexture(localId);
+        int localId = tileset->GidToLocalId(gid);
+        return tileset->GetTexture(localId);
     }
     return nullptr;
 }
 
-const sf::Texture* TilesetManager::getTextureByGid(int gid) const
+const sf::Texture* TilesetManager::GetTextureByGid(int gid) const
 {
-    const Tileset* tileset = getTilesetByGid(gid);
+    const Tileset* tileset = GetTilesetByGid(gid);
     if (tileset)
     {
-        int localId = tileset->gidToLocalId(gid);
-        return tileset->getTexture(localId);
+        int localId = tileset->GidToLocalId(gid);
+        return tileset->GetTexture(localId);
     }
     return nullptr;
 }
 
-void TilesetManager::clear()
+void TilesetManager::Clear()
 {
     m_tilesets.clear();
     m_gidToTileset.clear();
 }
 
-void TilesetManager::print() const
+void TilesetManager::Print() const
 {
     std::cout << "=== TILESET MANAGER ===" << std::endl;
     std::cout << "Nombre de tilesets: " << m_tilesets.size() << std::endl;
@@ -241,7 +241,7 @@ void TilesetManager::print() const
     
     for (const auto& tileset : m_tilesets)
     {
-        tileset.print();
+        tileset.Print();
         std::cout << std::endl;
     }
 }
