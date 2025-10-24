@@ -15,9 +15,12 @@ class BasketPlayer
 	sf::Sprite* ballSprite;
 	sf::Sprite* hoopSprite;
 	sf::VertexArray* aimLine;
+	void SetWon(bool _won);
+	bool GetWon(void) const;
 private:
 	short id;
 	float force;
+	bool won;
 	void Update(float _dt);
 	void Draw(sf::RenderWindow& _renderWindow);
 };
@@ -28,9 +31,10 @@ public:
 
 	struct SceneData
 	{
-		sf::Text* text;
-		BasketPlayer* player1;
-		BasketPlayer* player2;
+		sf::Text* timerText;
+		sf::Text* winnerText;
+		short winnerPlayers;
+		float timerToReset;
 	};
 
 	SceneData* m_data;
@@ -40,5 +44,7 @@ public:
 	virtual void PollEvent(sf::Event& _event);
 	virtual void Update(float _deltaTime);
 	virtual void Draw(sf::RenderWindow& _renderWindow);
+private:
+	void ResetBasketGame(void);
 };
 

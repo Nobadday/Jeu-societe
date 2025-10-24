@@ -64,7 +64,7 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene(*(_mainData.armWrestlingScene = new ArmWrestling()), "ArmWrestling");
 	_mainData.scenes.AddScene(*(_mainData.basketScene = new Basket()), "Basket");
 	_mainData.scenes.AddScene(*(_mainData.flagGameScene = new FlagGame()), "FlagGame");
-	_mainData.scenes.SelectScene("FlagGame",false);
+	_mainData.scenes.SelectScene("Basket",false);
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 
 	// GAME DATA
