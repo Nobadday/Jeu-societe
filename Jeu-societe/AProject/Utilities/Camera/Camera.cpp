@@ -131,6 +131,10 @@ bool Camera::IsLimited(void) const
 	return this->m_isLimited;
 }
 
+void Camera::Reset(const sf::RenderWindow& _renderWindow)
+{
+	this->Reset(_renderWindow.getDefaultView());
+}
 void Camera::Reset(const sf::View& _view)
 {
 	this->m_view = _view;
@@ -238,4 +242,10 @@ const sf::View& Camera::GetView(void)
 	return this->m_view;
 }
 
-// Camera C++ for SFML 2.6.2 || v.1.0
+Camera::operator const sf::View&()
+{
+	return this->GetView();
+}
+
+
+// Camera C++ for SFML 2.6.2 || v.1.1

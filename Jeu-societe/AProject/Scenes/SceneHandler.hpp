@@ -4,7 +4,6 @@
 #define _INC_SCENEHANDLER_HPP
 
 #include "Scene.hpp"
-#include <any>
 
 struct SceneWrap
 {
@@ -55,7 +54,7 @@ class SceneHandler
 
 
 #endif
-// SceneHandler v1.0
+// SceneHandler v1.0.1
 // TODO :
 // ~Destructor
 // Historique de scene chargées, fonction previousScene() pour scenebase

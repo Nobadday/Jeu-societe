@@ -31,11 +31,15 @@ class Camera
 		void SetCenter(float _x, float _y);
 		void SetCenter(const sf::Vector2f& _center);
 
+		// Set the current zoom of the camera
+		// The higher the value is the smallest objects look
+		// The smallest the value is the bigger objects look
 		void SetZoom(float _factor);
 		
 		void SetSize(float _width, float _height);
 		void SetSize(const sf::Vector2f& _size);
 
+		// Angle in degrees
 		void SetRotation(float _angle);
 
 		// Set physical limitations for the camera
@@ -43,21 +47,28 @@ class Camera
 		
 		// Enables or not limitations
 		void SetLimitationCondition(bool _condition);
+		// Enable ON/OFF limitations
 		void ToggleLimitations(void);
-
+		
 		void SetViewport(const sf::FloatRect& _viewport);
 
+		// Get the intended Center of the camera
+		// To get the real size, you must get the View first !
 		const sf::Vector2f& GetCenter(void) const;
+		// Get the intended Size of the camera
+		// To get the real size, you must get the View first !
 		const sf::Vector2f& GetSize(void) const;
+		// Get camera's Zoom
 		float GetZoom(void) const;
 
 		// Returns a rect of the displayed area
 		sf::FloatRect GetRenderRect(void);
 
 		const sf::FloatRect& GetLimitations(void) const;
+		// Returns true if the limitation is enables
 		bool IsLimited(void) const;
 
-
+		void Reset(const sf::RenderWindow& _renderWindow);
 		void Reset(const sf::View& _view);
 		void Reset(const sf::FloatRect& _rectangle);
 
@@ -71,9 +82,13 @@ class Camera
 		// (re-calculated is done when calling GetView())
 		bool NeedsUpdate(void);
 
+		// Get the view to apply to the render surfaces
 		const sf::View& GetView(void);
+
+
+		operator const sf::View&();
 };
 
 
 #endif
-// Camera C++ for SFML 2.6.2 || v.1.0
+// Camera C++ for SFML 2.6.2 || v.1.1
