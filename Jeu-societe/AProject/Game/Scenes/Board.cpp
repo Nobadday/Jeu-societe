@@ -21,11 +21,13 @@ void BaseGame::Load(void)
 	tempPlayer.sprite = tempSprite;
 	tempPlayer.currentCaseIndex = 0;
 	tempPlayer.boardPosition = m_data->posCase[0].GetPosition();
+	tempPlayer.sprite.setPosition(tempPlayer.boardPosition);
 
 	m_data->players.push_back(tempPlayer);
 
-	m_data->animator.AnimateObject(m_data->players[0].sprite);
-
+	// Configuration de l'animator
+	m_data->animator.Modify(1.0f, 60.0f, false, 1.0f); // 1 seconde de durée, 60 FPS, pas de loop
+	m_data->animator.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::INOUTSINE);
 }
 
 void BaseGame::Unload(void)
@@ -36,55 +38,74 @@ void BaseGame::Unload(void)
 
 void BaseGame::PollEvent(sf::Event& _event)
 {
-
+	if (_event.type == sf::Event::KeyPressed)
+	{
+		if (_event.key.code == sf::Keyboard::Space)
+		{
+			// Empêcher un nouveau lancer si une animation est en cours
+			if (m_data->animator.IsFinished())
+			{
+				int rando = 1 + rand() % 6;
+				std::cout << "Roll Dice: " << rando << std::endl;
+				
+				// Calcul de la nouvelle position
+				int newIndex = (m_data->players[0].currentCaseIndex + rando) % m_data->posCase.size();
+				sf::Vector2f startPos = m_data->players[0].boardPosition;
+				sf::Vector2f endPos = m_data->posCase[newIndex].GetPosition();
+				
+				// Configuration de l'animation
+				m_data->animator.SetGoTo(startPos, endPos);
+				m_data->animator.Restart();
+				
+				// Mise à jour de l'index
+				m_data->players[0].currentCaseIndex = newIndex;
+			}
+		}
+	}
 }
 
- void BaseGame::Update(float _deltaTime)
- {
-	 sf::Vector2f movement(0.f, 0.f);
-	 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
-	 {
-		 movement.y -= 100.f * _deltaTime;
-		 //std::cout << "Up\n";
-	 }
-	 if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-	 {
-		 movement.y += 100.f * _deltaTime;
-		 //std::cout << "Down\n";
-	 }
-	 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
-	 {
-		 movement.x -= 100.f * _deltaTime;
-		 //std::cout << "Left\n";
-	 }
-	 if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-	 {
-		 movement.x += 100.f * _deltaTime;
-		 //std::cout << "Right\n";
-	 }
-	 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-	 {
-		 int rando  = 1 + rand() % 6;
-		 std::cout << "Roll Dice: " << rando << std::endl;
-		 m_data->players[0].currentCaseIndex += rando;
-	 }
+void BaseGame::Update(float _deltaTime)
+{
+	sf::Vector2f movement(0.f, 0.f);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+	{
+		movement.y -= 100.f * _deltaTime;
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+	{
+		movement.y += 100.f * _deltaTime;
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+	{
+		movement.x -= 100.f * _deltaTime;
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	{
+		movement.x += 100.f * _deltaTime;
+	}
 
-	 m_data->animator.SetGoTo(m_data->players[0].boardPosition, m_data->posCase[m_data->players[0].currentCaseIndex % m_data->posCase.size()].GetPosition());
+	// Mise à jour de l'animator
+	m_data->animator.Update(_deltaTime);
+	
+	// Récupération de la position interpolée et mise à jour du joueur
+	if (!m_data->animator.IsFinished())
+	{
+		m_data->players[0].boardPosition = m_data->animator.GetGoTo();
+	}
 
-	 m_data->animator.Update(_deltaTime);
-	 m_data->camera.Move(movement);
- }
+	m_data->camera.Move(movement);
+}
 
- void BaseGame::Draw(sf::RenderWindow& _renderWindow)
- {
-	 const sf::View& referenceView = m_data->camera.GetView();
-	 _renderWindow.setView(referenceView);
-	 m_data->tile.DrawMapLayers(_renderWindow, referenceView.getCenter());
-	 for (auto& player : m_data->players)
-	 {
-		 player.sprite.setPosition(player.boardPosition);
-
-		 _renderWindow.draw(player.sprite);
-	 }
- }
+void BaseGame::Draw(sf::RenderWindow& _renderWindow)
+{
+	const sf::View& referenceView = m_data->camera.GetView();
+	_renderWindow.setView(referenceView);
+	m_data->tile.DrawMapLayers(_renderWindow, referenceView.getCenter());
+	
+	for (auto& player : m_data->players)
+	{
+		player.sprite.setPosition(player.boardPosition);
+		_renderWindow.draw(player.sprite);
+	}
+}
 
