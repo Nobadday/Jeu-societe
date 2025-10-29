@@ -1,12 +1,8 @@
 #include "AssetManager.hpp"
 
-#ifdef ASSET_MANAGER_DEBUG
-#define DEBUG_PRINT printf
-#else
-#define DEBUG_PRINT //
-#endif
 
 #define DEFAULT_CONTAINER ""
+
 
 #pragma region Global
 const char* AssetPlaceholders[AssetManager::AssetType::ASSET_TYPES] =
@@ -91,14 +87,14 @@ AssetManager::Asset& AssetManager::Container::GetAssetWrap(int _index)
 	return this->m_assets[_index];
 }
 
-//void*& AssetManager::Container::GetAsset(int _index)
-//{
-//	return this->GetAssetWrap(_index).object.get();
-//}
-//void*& AssetManager::Container::GetAsset(const std::string& _name, AssetType _type)
-//{
-//	return this->GetAsset(this->FindAssetIndex(_name, _type));
-//}
+void* AssetManager::Container::GetAsset(int _index)
+{
+	return this->GetAssetWrap(_index).object.get();
+}
+void* AssetManager::Container::GetAsset(const std::string& _name, AssetType _type)
+{
+	return this->GetAsset(this->FindAssetIndex(_name, _type));
+}
 
 void AssetManager::Container::DeleteAsset(int _index)
 {
@@ -209,7 +205,7 @@ bool AssetManager::LoadManifest(const std::string& _filePath, const std::string&
 		return false;
 	}
 
-	int containerIndex = this->CreateContainer(_containerName);
+	Container& container = this->GetContainer(this->CreateContainer(_containerName));
 	nlohmann::json jsonBase = nlohmann::json::parse(file);
 
 	nlohmann::json& array = jsonBase["assets"];
@@ -218,50 +214,60 @@ bool AssetManager::LoadManifest(const std::string& _filePath, const std::string&
 	{
 		nlohmann::json& object = array[i];
 
-		const std::string& assetName = object["name"];
 		const std::string& assetPath = object["path"];
+		const std::string& assetName = object.value("name", assetPath);
 		AssetType assetType = (AssetType)object.value("type", (int)AssetType::UNKNOWN);
 
-
+		// TODO : Change this and use a function instead of mindless copy pastes
+		// Func that uses shared_ptr
 		void* clsObj = NULL;
 		switch (assetType)
 		{
 			case AssetType::IMAGE:
 				clsObj = new sf::Image();
 				((sf::Image*)clsObj)->loadFromFile(assetPath);
+				container.AddAsset<sf::Image>(assetName, (sf::Image*)clsObj, assetType);
 				break;
 			case AssetType::TEXTURE:
 				clsObj = new sf::Texture();
 				((sf::Texture*)clsObj)->loadFromFile(assetPath);
+				container.AddAsset<sf::Texture>(assetName, (sf::Texture*)clsObj, assetType);
 				break;
 			case AssetType::FONT:
 				clsObj = new sf::Font();
 				((sf::Font*)clsObj)->loadFromFile(assetPath);
+				container.AddAsset<sf::Font>(assetName, (sf::Font*)clsObj, assetType);
 				break;
 			case AssetType::SOUND_BUFFER:
 				clsObj = new sf::SoundBuffer();
 				((sf::SoundBuffer*)clsObj)->loadFromFile(assetPath);
+				container.AddAsset<sf::SoundBuffer>(assetName, (sf::SoundBuffer*)clsObj, assetType);
 				break;
 			case AssetType::MUSIC:
 				clsObj = new sf::Music();
 				((sf::Music*)clsObj)->openFromFile(assetPath);
+				container.AddAsset<sf::Music>(assetName, (sf::Music*)clsObj, assetType);
 				break;
 
 			case AssetType::TEXTURE_ATLAS:
 				clsObj = new TextureAtlas();
 				((TextureAtlas*)clsObj)->LoadFromFile(assetPath, (TextureAtlas::ParseType)object["subType"]);
+				container.AddAsset<TextureAtlas>(assetName, (TextureAtlas*)clsObj, assetType);
 				break;
 			case AssetType::TEXTURE_ANIMATED:
 				clsObj = new TextureAnimated();
 				((TextureAnimated*)clsObj)->LoadFromFile(assetPath, (TextureAnimated::AnimationType)object["subType"]);
+				container.AddAsset<TextureAnimated>(assetName, (TextureAnimated*)clsObj, assetType);
 				break;
 
 			default:
 			case AssetType::UNKNOWN:
 				printf("[WARNING] AssetManager : Impossible to create an object because an unknown asset type was given\n");
+				container.AddAsset<TextureAnimated>(assetName, NULL, assetType);
 				break;
 		}
-
+		
+		
 	}
 	return true;
 }

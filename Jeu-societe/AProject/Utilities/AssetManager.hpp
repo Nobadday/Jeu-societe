@@ -61,12 +61,15 @@ class AssetManager
 				template <typename T>
 				void AddAsset(const std::string& _name, T* _object, AssetType _type = AssetType::UNKNOWN);
 
+				// TODO :
+				//void AddAsset(const std::string& _name, std::shared_ptr<void> _object, AssetType _type = AssetType::UNKNOWN);
+
 				int FindAssetIndex(const std::string& _name, AssetType _type);
 				bool AssetExists(const std::string& _name, AssetType _type);
 
 				Asset& GetAssetWrap(int _index);
-				//void*& GetAsset(int _index);
-				//void*& GetAsset(const std::string& _name, AssetType _type);
+				void* GetAsset(int _index);
+				void* GetAsset(const std::string& _name, AssetType _type);
 
 				
 				void DeleteAsset(int _index);
