@@ -1,13 +1,12 @@
 #include "Common.hpp"
-
-
+#include "./Utilities/AssetManager.hpp"
 typedef struct MainData
 {
 	sf::RenderWindow renderWindow;
 	sf::Clock clock;
 	SceneHandler scenes;
 
-
+	AssetManager ass;
 	GameData gameData;
 } MainData;
 
@@ -49,7 +48,7 @@ int main(void)
 
 void MainDataLoad(MainData& _mainData)
 {
-	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "SFML", sf::Style::Resize);
+	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "SFML", sf::Style::Default);
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
 
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
@@ -57,8 +56,13 @@ void MainDataLoad(MainData& _mainData)
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
 
+	sf::Texture* what = new sf::Texture;
+	what->create(200u, 200u);
 
-	//
+	_mainData.ass.AddAsset<sf::Texture>("Uhh", what, AssetManager::TEXTURE);
+
+	sf::Texture* idk = (sf::Texture*)_mainData.ass.GetAsset("Uhh", AssetManager::TEXTURE);
+	
 
 	_mainData.clock.restart();
 }
@@ -90,6 +94,7 @@ void Update(MainData& _mainData)
 	float deltaTime = _mainData.clock.restart().asSeconds();
 	//float dtFixed = deltaTime / (1.0f / 60.0f);
 	_mainData.scenes.Update(deltaTime);
+	
 }
 
 void Draw(MainData& _mainData)

@@ -5,8 +5,6 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 
-sf::RenderWindow what;
-
 
 namespace sfMod
 {
@@ -16,14 +14,38 @@ class RenderWindow : public sf::RenderWindow
 	private:
 		bool m_isFullscreen;
 		sf::Uint32 m_baseStyle;
-		sf::Vector2f m_baseSize;
+		sf::VideoMode m_baseVideoMode;
 		sf::Vector2f m_aspectRatio;
-
+		sf::Image m_icon;
 
 	public:
+		enum FullscreenMode
+		{
+			BORDERLESS,
+			FULLSCREEN
+		};
+
 		RenderWindow(void);
 
+
+		void SetFullscreenMode(FullscreenMode _mode);
+		void SetFullscreen(bool _condition);
+		void ToggleFullscreen(void);
 		
+		
+
+		void setIcon(const sf::Image& _image);
+		void setIcon(const sf::String& _filePath);
+
+
+		// Modifies the texture
+		void capture(sf::Texture& _texture);
+		void capture(sf::Image& _image);
+		bool Screenshot(const sf::String& _fileName);
+
+	protected:
+		virtual void onCreate(void);
+		virtual void onResize(void);
 };
 
 

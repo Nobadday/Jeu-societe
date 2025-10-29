@@ -6,7 +6,7 @@
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 
-
+// 2D Camera with sf::View
 class Camera
 {
 	private:
@@ -87,8 +87,16 @@ class Camera
 
 
 		operator const sf::View&();
+
+
+
+		// Get the position of a view from a given origin in coefficient
+		static sf::Vector2f ViewGetPosition(const sf::View& _view, const sf::Vector2f& _origin = sf::Vector2f(0.0f, 0.0f));
+
+		// Get a rect of the displayed area from a sf::View
+		static sf::FloatRect ViewGetRenderRect(const sf::View& _view);
 };
 
 
 #endif
-// Camera C++ for SFML 2.6.2 || v.1.1
+// Camera C++ for SFML 2.6.2 || v.1.2

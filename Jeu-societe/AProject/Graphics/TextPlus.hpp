@@ -71,7 +71,7 @@ class TextPlus : public sf::Text
 		void setOrigin(const sf::Vector2f& _origin);
 
 		void setString(const std::string& _string);
-		void setString(const std::string& _string, bool _resetRange);
+		void setString(const std::string& _string, bool _resetRange = true);
 
 		const std::string& getString(void);
 		// Gets displayed string

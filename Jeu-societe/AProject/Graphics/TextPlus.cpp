@@ -13,7 +13,7 @@ void TextPlus::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	if (this->m_shouldUpdate)
 	{
-
+		
 	}
 	target.draw((sf::Text)*this, states);
 }
@@ -22,15 +22,12 @@ void TextPlus::ResetDisplayRange(void)
 {
 	this->SetDisplayRange(0, this->m_string.size());
 }
-
-
 void TextPlus::SetDisplayRange(size_t _start, size_t _end)
 {
 	this->m_textRange[0] = _start;
 	this->m_textRange[1] = _end;
 	
 }
-
 void TextPlus::SetDisplayRange(float _coefficient)
 {
 	this->SetDisplayRange(0, (size_t)((float)this->m_string.size() * _coefficient));
