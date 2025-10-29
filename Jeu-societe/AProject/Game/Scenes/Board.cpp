@@ -21,9 +21,21 @@ void BaseGame::Load(void)
 	tempPlayer.sprite = tempSprite;
 	tempPlayer.currentCaseIndex = 0;
 	tempPlayer.boardPosition = m_data->posCase[0].GetPosition();
+	std::cout << "Player starting position: " << tempPlayer.boardPosition.x << ", " << tempPlayer.boardPosition.y << std::endl;
 	tempPlayer.sprite.setPosition(tempPlayer.boardPosition);
+	tempPlayer.isActive = false;
 
 	m_data->players.push_back(tempPlayer);
+	m_data->players.push_back(tempPlayer);
+	m_data->players.push_back(tempPlayer);
+	m_data->players.push_back(tempPlayer);
+
+	for (auto& player : m_data->players)
+	{
+		std::cout << "Player position: " << player.boardPosition.x << ", " << player.boardPosition.y << std::endl;
+	}
+
+	m_data->currentPlayerIndex = 0;
 
 	// Configuration de l'animator
 	m_data->animator.Modify(1.0f, 60.0f, false, 1.0f); // 1 seconde de durée, 60 FPS, pas de loop
@@ -49,8 +61,8 @@ void BaseGame::PollEvent(sf::Event& _event)
 				std::cout << "Roll Dice: " << rando << std::endl;
 				
 				// Calcul de la nouvelle position
-				int newIndex = (m_data->players[0].currentCaseIndex + rando) % m_data->posCase.size();
-				sf::Vector2f startPos = m_data->players[0].boardPosition;
+				int newIndex = (m_data->players[m_data->currentPlayerIndex].currentCaseIndex + rando) % m_data->posCase.size();
+				sf::Vector2f startPos = m_data->players[m_data->currentPlayerIndex].boardPosition;
 				sf::Vector2f endPos = m_data->posCase[newIndex].GetPosition();
 				
 				// Configuration de l'animation
@@ -58,7 +70,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 				m_data->animator.Restart();
 				
 				// Mise à jour de l'index
-				m_data->players[0].currentCaseIndex = newIndex;
+				m_data->players[m_data->currentPlayerIndex].currentCaseIndex = newIndex;
 			}
 		}
 	}
@@ -90,8 +102,31 @@ void BaseGame::Update(float _deltaTime)
 	// Récupération de la position interpolée et mise à jour du joueur
 	if (!m_data->animator.IsFinished())
 	{
-		m_data->players[0].boardPosition = m_data->animator.GetGoTo();
+		m_data->players[m_data->currentPlayerIndex].boardPosition = m_data->animator.GetGoTo();
+		m_data->players[m_data->currentPlayerIndex].isActive = true;
 	}
+	else if(m_data->players[m_data->currentPlayerIndex].isActive)
+	{
+		if(m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Bonus")
+		{
+			std::cout << "Landed on a Bonus case!" << std::endl;
+		}
+
+		if (m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Malus")
+		{
+			std::cout << "Landed on a Malus case!" << std::endl;
+		}
+
+		if (m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Luck")
+		{
+			std::cout << "Landed on a Malus case!" << std::endl;
+		}
+		m_data->players[m_data->currentPlayerIndex].isActive = false;
+		m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
+	}
+
+
+	//std::cout << m_data->posCase[0].GetType() << std::endl;
 
 	m_data->camera.Move(movement);
 }

@@ -15,6 +15,7 @@ class BaseGame : public SceneBase
 			sf::Sprite sprite;
 			sf::Vector2f boardPosition;
 			int currentCaseIndex;
+			bool isActive;
 
 		};
 		struct SceneData
@@ -24,6 +25,7 @@ class BaseGame : public SceneBase
 			Camera camera;
 			std::vector<Player>  players;
 			anim::Animator animator;
+			int currentPlayerIndex;
 		};
 		SceneData* m_data;
 
