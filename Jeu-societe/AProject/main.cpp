@@ -4,6 +4,10 @@
 
 #include "./Game/scenes/RockPaperScissors.hpp"
 
+#include "./Game/Scenes/RussianRoulette/RussianRoulette.hpp"
+#include "./Game/Scenes/RandCard/RandCard.hpp"
+
+
 
 typedef struct MainData
 {
@@ -12,6 +16,9 @@ typedef struct MainData
 	SceneHandler scenes;
 
 	RockPaperSizor rockPaperSizorScene;
+
+	RussianRoulette sceneRussianRoulette;
+	RandCard randCard;
 
 	GameData gameData;
 } MainData;
@@ -32,6 +39,7 @@ int main(void)
 	
 	MainData mainData;
 	MainDataLoad(mainData);
+
 	BaseGame boardScene;
 	mainData.scenes.AddScene(boardScene, "Board");
 
@@ -62,8 +70,14 @@ void MainDataLoad(MainData& _mainData)
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
 	
+
 	//RockPaperSizor rockPaperSizorScene;
 	//_mainData.scenes.AddScene(_mainData.rockPaperSizorScene, "rockPaperSizor");
+
+	//_mainData.scenes.AddScene(_mainData.sceneRussianRoulette, "RussianRoulette");
+	//_mainData.scenes.AddScene(_mainData.randCard, "RandCard");
+
+
 
 	_mainData.clock.restart();
 }

@@ -14,6 +14,7 @@ class GameData
 	public:
 		sf::RenderWindow* m_renderWindow;
 
+
 		std::vector<PlayerData> m_playerDataList;
 
 };
