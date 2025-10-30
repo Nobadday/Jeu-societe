@@ -41,7 +41,7 @@ int main(void)
 	MainDataLoad(mainData);
 
 	BaseGame boardScene;
-	mainData.scenes.AddScene(boardScene, "Board");
+	//mainData.scenes.AddScene(boardScene, "Board");
 
 	while (mainData.renderWindow.isOpen())
 	{

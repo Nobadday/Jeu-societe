@@ -155,7 +155,9 @@
     <ClCompile Include="Animation\Utilities\Math.cpp" />
     <ClCompile Include="Game\PlayerData.cpp" />
     <ClCompile Include="Game\Scenes\Board.cpp" />
+    <ClCompile Include="Game\Scenes\RandCard\RandCard.cpp" />
     <ClCompile Include="Game\Scenes\RockPaperScissors.cpp" />
+    <ClCompile Include="Game\Scenes\RussianRoulette\RussianRoulette.cpp" />
     <ClCompile Include="Map\JsonReader.cpp" />
     <ClCompile Include="Map\MapLayer.cpp" />
     <ClCompile Include="Map\MapObject.cpp" />
@@ -192,7 +194,9 @@
     <ClInclude Include="Game\GameData.hpp" />
     <ClInclude Include="Game\PlayerData.hpp" />
     <ClInclude Include="Game\Scenes\Board.hpp" />
+    <ClInclude Include="Game\Scenes\RandCard\RandCard.hpp" />
     <ClInclude Include="Game\Scenes\RockPaperScissors.hpp" />
+    <ClInclude Include="Game\Scenes\RussianRoulette\RussianRoulette.hpp" />
     <ClInclude Include="Map\JsonReader.h" />
     <ClInclude Include="Map\MapLayer.h" />
     <ClInclude Include="Map\MapObject.h" />
