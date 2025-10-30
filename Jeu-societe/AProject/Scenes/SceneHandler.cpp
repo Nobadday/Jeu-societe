@@ -1,6 +1,5 @@
 #include "SceneHandler.hpp"
 
-
 void SceneHandler::CheckEvents(void)
 {
 	if (this->m_activeScene != -1)

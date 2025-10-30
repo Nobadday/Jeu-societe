@@ -4,7 +4,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 
-
 #include "PlayerData.hpp"
 
 class GameData
