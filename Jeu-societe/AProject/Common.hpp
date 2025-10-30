@@ -6,5 +6,6 @@
 #include "Screen.hpp"
 #include "./Game/GameData.hpp"
 #include "Utilities/Random.hpp"
+
 #include "Scenes/SceneHandler.hpp"
 #include "Map/JsonReader.h"
