@@ -9,22 +9,9 @@
 #include "../Utilities/Math.hpp"
 #include <string>
 
-#define ANIM_DEFAULT_FPS 24.0f
-#define ANIM_DEFAULT_LOOP false
 
-class AnimationProperties
-{
-	public:
-		std::string m_name;
-		std::string m_atlasName;
-		int m_atlasIndex;
-		int m_frameCount;
-		float m_framerate;
-		bool m_loop;
-		sf::Vector2f m_offset;
-		
-		AnimationProperties(void);
-};
+
+
 
 // Data for spritesheet animations
 // contains all animations details like
@@ -32,6 +19,20 @@ class AnimationProperties
 class TextureAnimated
 {
 	public:
+		class AnimationProperties
+		{
+			public:
+				std::string m_name;
+				std::string m_atlasName;
+				int m_atlasIndex;
+				int m_frameCount;
+				float m_framerate;
+				bool m_loop;
+				sf::Vector2f m_offset;
+		
+				AnimationProperties(void);
+		};
+
 		enum AnimationType
 		{
 			// Old animation format :
@@ -54,6 +55,9 @@ class TextureAnimated
 
 			ANIMATIONTYPES_COUNT
 		};
+
+
+	public:
 		TextureAnimated(void);
 		~TextureAnimated(void);
 		
@@ -88,4 +92,4 @@ class TextureAnimated
 };
 
 #endif
-// Texture Animated v1.0
+// Texture Animated v1.0.2

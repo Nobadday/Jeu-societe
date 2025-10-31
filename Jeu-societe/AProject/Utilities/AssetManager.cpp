@@ -216,7 +216,18 @@ bool AssetManager::LoadManifest(const std::string& _filePath, const std::string&
 
 		const std::string& assetPath = object["path"];
 		const std::string& assetName = object.value("name", assetPath);
-		AssetType assetType = (AssetType)object.value("type", (int)AssetType::UNKNOWN);
+		
+		AssetType assetType;
+		
+		if (object["type"].type() == nlohmann::json::value_type::value_t::string)
+		{
+			assetType = GetAssetTypeFromName((std::string)object["type"]);
+		}
+		else
+		{
+			assetType = (AssetType)object.value("type", (int)AssetType::UNKNOWN);
+		}
+		
 
 		// TODO : Change this and use a function instead of mindless copy pastes
 		// Func that uses shared_ptr
@@ -266,9 +277,9 @@ bool AssetManager::LoadManifest(const std::string& _filePath, const std::string&
 				container.AddAsset<TextureAnimated>(assetName, NULL, assetType);
 				break;
 		}
-		
-		
 	}
+
+	file.close();
 	return true;
 }
 
@@ -318,4 +329,4 @@ void* AssetManager::GetAssetOrPlaceholder(const std::string& _name, AssetType _t
 #pragma endregion
 
 
-// Asset Manager C++ v1.0
+// Asset Manager C++ v1.0.2

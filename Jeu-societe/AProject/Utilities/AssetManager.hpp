@@ -179,4 +179,4 @@ inline void AssetManager::AddAsset(const std::string& _name, T* _object, AssetTy
 
 
 #endif
-// Asset Manager C++ v1.0
+// Asset Manager C++ v1.0.2

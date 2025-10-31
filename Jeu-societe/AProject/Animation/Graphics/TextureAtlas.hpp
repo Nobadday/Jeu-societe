@@ -5,25 +5,30 @@
 
 #include "../Common.hpp"
 
+// C++
+#include <iostream>
 #include <string>
 #include <fstream>
+//#include <vector>
+
 // SFML 2.6.2
 #include <SFML/Graphics.hpp>
+
 // Nlohamnn JSON
 #include <nlohmann/json.hpp>
+
+// XML
+#include <rapidxml/rapidxml.hpp>
+#include <rapidxml/rapidxml_utils.hpp>
+
 // Yamelo Libs (me :3 )
 #include "../../Utilities/Lists/DynaList.hpp"
 #include "../../Utilities/FileTools.hpp"
 
-#include <rapidxml/rapidxml.hpp>
-#include <rapidxml/rapidxml_utils.hpp>
-#include <iostream>
 
 class AtlasFrame
 {
 	public:
-		// Values with associated booleans are optional parameters, if bool is true than the variable is initialised
-
 		std::string m_name;
 		// Subtexture rect, where to pick the image on the texture
 		sf::IntRect m_textureRect;
@@ -128,4 +133,4 @@ class TextureAtlas
 
 #endif
 
-// Texture Atlases for C++ & SFML v1.0
+// Texture Atlases for C++ & SFML v1.0.2

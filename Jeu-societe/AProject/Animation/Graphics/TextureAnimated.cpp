@@ -1,17 +1,22 @@
 #include "TextureAnimated.hpp"
 
-AnimationProperties::AnimationProperties(void) :
+#define ANIM_DEFAULT_FPS 24.0f
+#define ANIM_DEFAULT_LOOP false
+
+
+TextureAnimated::AnimationProperties::AnimationProperties(void) :
 m_name (""),
 m_atlasName(""),
 m_atlasIndex (-1),
 m_frameCount (0),
-m_framerate (24.0f),
-m_loop (false),
+m_framerate (ANIM_DEFAULT_FPS),
+m_loop (ANIM_DEFAULT_LOOP),
 m_offset(0, 0)
 {
 }
 
 
+#pragma region Texture Animated
 TextureAnimated::TextureAnimated(void)
 {
 }
@@ -228,12 +233,12 @@ void TextureAnimated::ClearAll(void)
 	}
 }
 
-AnimationProperties* TextureAnimated::GetAnimation(int _index)
+TextureAnimated::AnimationProperties* TextureAnimated::GetAnimation(int _index)
 {
 	return (AnimationProperties*)this->m_animations[_index];
 }
 
-AnimationProperties* TextureAnimated::GetAnimation(const std::string& _name)
+TextureAnimated::AnimationProperties* TextureAnimated::GetAnimation(const std::string& _name)
 {
 	AnimationProperties* anim;
 	for (int i = 0; i < this->m_animations.Len(); i++)
@@ -288,4 +293,7 @@ int TextureAnimated::GetAnimationCount(void)
 	return this->m_animations.Len();
 }
 
-// Texture Animated v1.0
+#pragma endregion
+
+
+// Texture Animated v1.0.2

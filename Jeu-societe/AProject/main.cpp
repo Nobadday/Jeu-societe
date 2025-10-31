@@ -1,12 +1,11 @@
 #include "Common.hpp"
-#include "./Utilities/AssetManager.hpp"
+
 typedef struct MainData
 {
 	sf::RenderWindow renderWindow;
 	sf::Clock clock;
 	SceneHandler scenes;
 
-	AssetManager ass;
 	GameData gameData;
 } MainData;
 
@@ -56,13 +55,6 @@ void MainDataLoad(MainData& _mainData)
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
 
-	sf::Texture* what = new sf::Texture;
-	what->create(200u, 200u);
-
-	_mainData.ass.AddAsset<sf::Texture>("Uhh", what, AssetManager::TEXTURE);
-
-	sf::Texture* idk = (sf::Texture*)_mainData.ass.GetAsset("Uhh", AssetManager::TEXTURE);
-	
 
 	_mainData.clock.restart();
 }
