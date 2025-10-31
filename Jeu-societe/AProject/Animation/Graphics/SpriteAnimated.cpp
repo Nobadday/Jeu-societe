@@ -10,7 +10,7 @@ void SpriteAnimated::UpdateFrame(void)
 {
 	if (this->m_animationSelected != -1)
 	{
-		AnimationProperties* anim = this->AnimatedObject::m_texture->GetAnimation(this->m_animationSelected);
+		TextureAnimated::AnimationProperties* anim = this->AnimatedObject::m_texture->GetAnimation(this->m_animationSelected);
 		AtlasFrame* frame = this->AnimatedObject::m_texture->GetFrame(anim->m_atlasIndex, this->m_animationHandler.GetCurrentFrameInt());
 		
 		this->setTextureRect(frame->m_textureRect);

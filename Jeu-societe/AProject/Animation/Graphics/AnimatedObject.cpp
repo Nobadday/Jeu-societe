@@ -63,7 +63,7 @@ void AnimatedObject::SetAnimation(int _animationIndex, bool _resetAnimation)
 		if (_animationIndex != this->m_animationSelected)
 		{
 			this->m_animationSelected = _animationIndex;
-			AnimationProperties* anim = this->m_texture->GetAnimation(this->m_animationSelected);
+			TextureAnimated::AnimationProperties* anim = this->m_texture->GetAnimation(this->m_animationSelected);
 			this->m_animationHandler.SetFrameCount(anim->m_frameCount);
 			this->m_animationHandler.SetFramerate(anim->m_framerate);
 			this->m_animationHandler.SetLoop(anim->m_loop);
@@ -113,7 +113,7 @@ bool AnimatedObject::HasAnimation(void)
 	return this->m_animationSelected != -1;
 }
 
-AnimationProperties* AnimatedObject::GetAnimationProperties(void)
+TextureAnimated::AnimationProperties* AnimatedObject::GetAnimationProperties(void)
 {
 	return this->m_texture->GetAnimation(this->m_animationSelected);
 }

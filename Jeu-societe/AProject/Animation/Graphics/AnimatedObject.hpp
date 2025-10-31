@@ -40,7 +40,7 @@ class AnimatedObject
 		bool HasAnimation(void);
 
 		// Get the current animation properties
-		AnimationProperties* GetAnimationProperties(void);
+		TextureAnimated::AnimationProperties* GetAnimationProperties(void);
 
 		// Please call UpdateFrame after modifying attributes of the animation
 		Animation& GetAnimationHandler(void);
