@@ -1,7 +1,7 @@
 #pragma once
-
 #ifndef _INC_SPRITE_ANIMATED_HPP
 #define _INC_SPRITE_ANIMATED_HPP
+
 
 #include <SFML/Graphics.hpp>
 
@@ -9,6 +9,7 @@
 #include "../Animation/AnimationHandler.hpp"
 #include "TextureAnimated.hpp"
 #include "AnimatedObject.hpp"
+
 
 class SpriteAnimated : public sf::Sprite, public AnimatedObject
 {
@@ -26,10 +27,10 @@ class SpriteAnimated : public sf::Sprite, public AnimatedObject
 		void setTexture(TextureAnimated& _texture, bool _keepAnimation = false);
 		sf::FloatRect getGlobalBounds(void) const;
 
-
+	private:
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };
 
 
 #endif
-// SpriteAnimated v1.0
+// SpriteAnimated v1.0.2

@@ -21,10 +21,7 @@ bool AnimatedObject::Update(float _deltaTime)
 	return false;
 }
 
-void AnimatedObject::UpdateFrame(void)
-{
-	
-}
+
 
 void AnimatedObject::SetTexture(TextureAnimated& _texture, bool _keepAnimation)
 {
@@ -123,4 +120,4 @@ Animation& AnimatedObject::GetAnimationHandler(void)
 	return this->m_animationHandler;
 }
 
-// AnimatedObject v1.1
+// AnimatedObject v1.1.2

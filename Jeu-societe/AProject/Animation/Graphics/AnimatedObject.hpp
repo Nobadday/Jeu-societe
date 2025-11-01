@@ -1,6 +1,7 @@
 #pragma once
-#ifndef _INC_ANIMATION_CLASS_HPP
-#define _INC_ANIMATION_CLASS_HPP
+#ifndef _INC_ANIMATIONOBJECT_HPP
+#define _INC_ANIMATIONOBJECT_HPP
+
 
 #include "../Common.hpp"
 #include "../Animation/AnimationHandler.hpp"
@@ -23,7 +24,7 @@ class AnimatedObject
 
 		// Update the animation returns true if the frame changed
 		bool Update(float _deltaTime);
-		virtual void UpdateFrame(void);
+		virtual void UpdateFrame(void) = 0;
 
 
 		// Set the animation of the sprite using the index
@@ -47,4 +48,4 @@ class AnimatedObject
 };
 
 #endif
-// AnimatedObject v1.1
+// AnimatedObject v1.1.2
