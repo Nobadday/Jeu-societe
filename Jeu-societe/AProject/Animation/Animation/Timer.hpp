@@ -2,28 +2,31 @@
 #ifndef _INC_TIMER_HPP
 #define _INC_TIMER_HPP
 
+
 class DeltaClock
 {
 	protected:
-		float m_timeElapsed = 0.0f;
-		float m_speed = 1.0f;
-		bool m_play = true;
+		float m_timeElapsed;
+		float m_speed;
+		bool m_play;
 
 	public:
 
 		//Default constructor
 		DeltaClock(void);
 		DeltaClock(DeltaClock& _copy);
-
 		DeltaClock(float _currentTime, float _speed = 1.0f, bool _play = true);
 
 		void SyncTime(DeltaClock& _timer);
 
+		// Updates the DeltaClock by adding time
 		void Update(float _deltaTime);
 
 		void SetTime(float _seconds);
 		void SetTime(float _minutes, float _seconds);
 		void SetTime(float _minutes, float _seconds, float _miliseconds);
+		// Adds time regardless if it's paused or not and doesn't multiply by the speed,
+		// if that's not the wanted effect, call Update() instead
 		void AddTime(float _seconds);
 
 		void SetSpeed(float _value);
@@ -32,6 +35,7 @@ class DeltaClock
 		void SetPause(bool _condition);
 		void TogglePause(void);
 		void SetReverse(bool _condition);
+		void ToggleReverse(void);
 
 		void Restart(float _offset = 0.0f);
 
@@ -68,12 +72,12 @@ class DeltaClock
 class Timer : public DeltaClock
 {
 	protected:
-		float m_timeTarget = 0.0f;
+		float m_timeTarget;
 	
 	public:
-		
+
 		Timer(void);
-		//Timer(Timer& _copy);
+		Timer(Timer& _copy);
 		Timer(float _timeTarget, float _speed = 1.0f, bool _play = true, float _currentTime = 0.0f);
 
 		// Restarts the timer and apply the excess time as offset
@@ -102,4 +106,4 @@ class Timer : public DeltaClock
 };
 
 #endif
-// Timer & DeltaClock C++ v1.0
+// DeltaClock & Timer C++ || v1.1

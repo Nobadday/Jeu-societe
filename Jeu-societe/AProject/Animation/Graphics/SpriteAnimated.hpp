@@ -11,21 +11,23 @@
 #include "AnimatedObject.hpp"
 
 
-class SpriteAnimated : public sf::Sprite, public AnimatedObject
+class SpriteAnimated : public sf::Sprite, public AnimatedObj
 {
 	private:
-		sf::Vector2f m_originPercentage;
+		sf::Vector2f m_originCoefficient;
 		sf::Transform m_animTransform;
 
 	public:
 		// Default constructor
 		SpriteAnimated(void);
 
-		void UpdateFrame(void);
-
 		// If keepAnimation true; set's animation to last anim
 		void setTexture(TextureAnimated& _texture, bool _keepAnimation = false);
+
 		sf::FloatRect getGlobalBounds(void) const;
+
+	protected:
+		virtual void FrameChanged(void);
 
 	private:
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const;
@@ -33,4 +35,4 @@ class SpriteAnimated : public sf::Sprite, public AnimatedObject
 
 
 #endif
-// SpriteAnimated v1.0.2
+// SpriteAnimated v1.1

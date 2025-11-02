@@ -1,4 +1,5 @@
 #include "Common.hpp"
+#include "./Animation/Graphics.hpp"
 
 typedef struct MainData
 {
@@ -6,6 +7,7 @@ typedef struct MainData
 	sf::Clock clock;
 	SceneHandler scenes;
 
+	TextAnimated tp;
 	GameData gameData;
 } MainData;
 
@@ -26,7 +28,19 @@ int main(void)
 	MainData mainData;
 	MainDataLoad(mainData);
 
+	sf::Font font;
+	font.loadFromFile("./Assets/Fonts/tf2cprofessor.ttf");
 	
+	
+	mainData.tp.setFont(font);
+	mainData.tp.setString("CLAP BONJOUR ! C'est Amixem, le sexe, je sais pas. Très longue bite. évitezdefairedesphrasessansespaceslesenfants!");
+	mainData.tp.setCharacterSize(60u);
+	mainData.tp.setFillColor(sf::Color::White);
+	mainData.tp.setPosition(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f);
+	mainData.tp.setOrigin(sf::Vector2f(0.0f, 0.0f));
+	mainData.tp.SetCharactersPerLine(20);
+	mainData.tp.SetAlignement(TextPlus::Alignement::CENTER);
+	mainData.tp.Modify(8.5f, 24.0f, false);
 
 	while (mainData.renderWindow.isOpen())
 	{
@@ -86,7 +100,7 @@ void Update(MainData& _mainData)
 	float deltaTime = _mainData.clock.restart().asSeconds();
 	//float dtFixed = deltaTime / (1.0f / 60.0f);
 	_mainData.scenes.Update(deltaTime);
-	
+	_mainData.tp.Update(deltaTime);
 }
 
 void Draw(MainData& _mainData)
@@ -94,6 +108,8 @@ void Draw(MainData& _mainData)
 	_mainData.renderWindow.clear(sf::Color::Black);
 	
 	_mainData.scenes.Draw(_mainData.renderWindow);
+
+	_mainData.renderWindow.draw(_mainData.tp);
 
 	_mainData.renderWindow.display();
 }
