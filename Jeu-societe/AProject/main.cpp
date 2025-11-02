@@ -53,7 +53,7 @@ int main(void)
 	MainDataLoad(mainData);
 
 	BaseGame boardScene;
-	//mainData.scenes.AddScene(boardScene, "Board");
+	mainData.scenes.AddScene(boardScene, "Board");
 
 
 	while (mainData.renderWindow.isOpen())
@@ -84,12 +84,10 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
 
 
-	_mainData.scenes.AddScene(*(_mainData.armWrestlingScene = new ArmWrestling()), "ArmWrestling");
+	/*_mainData.scenes.AddScene(*(_mainData.armWrestlingScene = new ArmWrestling()), "ArmWrestling");
 	_mainData.scenes.AddScene(*(_mainData.basketScene = new Basket()), "Basket");
 	_mainData.scenes.AddScene(*(_mainData.flagGameScene = new FlagGame()), "FlagGame");
-	_mainData.scenes.SelectScene("ArmWrestling",false);
-	
-	//_mainData.scenes.SetTransferedData(&_mainData.gameData);
+	_mainData.scenes.SelectScene("ArmWrestling",false);*/
 
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
@@ -100,6 +98,7 @@ void MainDataLoad(MainData& _mainData)
 	//_mainData.scenes.AddScene(_mainData.sceneRussianRoulette, "RussianRoulette");
 	//_mainData.scenes.AddScene(_mainData.randCard, "RandCard");
 
+	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 
 	_mainData.clock.restart();
 }

@@ -10,29 +10,21 @@ void BaseGame::Load(void)
 
 	m_data->posCase = layer.GetObjects();
 
-	sf::Sprite tempSprite;
-	sf::Texture tempT;
+	m_data->players.push_back({});
+	m_data->players.push_back({});
+	m_data->players.push_back({});
+	m_data->players.push_back({});
 
-	tempT.loadFromFile("Assets/Images/Placeholder.png");
-
-	tempSprite.setTexture(tempT);
-
-	Player tempPlayer;
-	tempPlayer.sprite = tempSprite;
-	tempPlayer.currentCaseIndex = 0;
-	tempPlayer.boardPosition = m_data->posCase[0].GetPosition();
-	std::cout << "Player starting position: " << tempPlayer.boardPosition.x << ", " << tempPlayer.boardPosition.y << std::endl;
-	tempPlayer.sprite.setPosition(tempPlayer.boardPosition);
-	tempPlayer.isActive = false;
-
-	m_data->players.push_back(tempPlayer);
-	m_data->players.push_back(tempPlayer);
-	m_data->players.push_back(tempPlayer);
-	m_data->players.push_back(tempPlayer);
-
-	for (auto& player : m_data->players)
+	for (int i = 0; i < m_data->players.size(); i++)
 	{
-		std::cout << "Player position: " << player.boardPosition.x << ", " << player.boardPosition.y << std::endl;
+		m_data->players[i].texture.loadFromFile("Assets/Images/Placeholder.png");
+		m_data->players[i].sprite.setTexture(m_data->players[i].texture);
+		m_data->players[i].boardPosition = m_data->posCase[0].GetPosition();
+		m_data->players[i].currentCaseIndex = 0;
+		m_data->players[i].isActive = false;
+		m_data->players[i].isActiveBonus = false;
+
+		std::cout << "Player " << i << " position: " << m_data->players[i].boardPosition.x << ", " << m_data->players[i].boardPosition.y << std::endl;
 	}
 
 	m_data->currentPlayerIndex = 0;
@@ -107,24 +99,71 @@ void BaseGame::Update(float _deltaTime)
 	}
 	else if(m_data->players[m_data->currentPlayerIndex].isActive)
 	{
-		if(m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Bonus")
+		if(m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Bonus" && !m_data->players[m_data->currentPlayerIndex].isActiveBonus) 
 		{
 			std::cout << "Landed on a Bonus case!" << std::endl;
-		}
+			int rando = 1 + rand() % 3;
 
-		if (m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Malus")
+
+			int newIndex = (m_data->players[m_data->currentPlayerIndex].currentCaseIndex + rando) % m_data->posCase.size();
+			sf::Vector2f startPos = m_data->players[m_data->currentPlayerIndex].boardPosition;
+			sf::Vector2f endPos = m_data->posCase[newIndex].GetPosition();
+			m_data->animator.SetGoTo(startPos, endPos);
+			m_data->animator.Restart();
+
+			// Mise à jour de l'index
+			m_data->players[m_data->currentPlayerIndex].currentCaseIndex = newIndex;
+			m_data->players[m_data->currentPlayerIndex].isActiveBonus = true;
+		}
+		else if (m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Malus" && !m_data->players[m_data->currentPlayerIndex].isActiveBonus)
 		{
 			std::cout << "Landed on a Malus case!" << std::endl;
-		}
+			int rando = 1 + rand() % 3;
+			int newIndex = (m_data->players[m_data->currentPlayerIndex].currentCaseIndex - rando) % m_data->posCase.size();
+			sf::Vector2f startPos = m_data->players[m_data->currentPlayerIndex].boardPosition;
+			sf::Vector2f endPos = m_data->posCase[newIndex].GetPosition();
+			m_data->animator.SetGoTo(startPos, endPos);
+			m_data->animator.Restart();
 
-		if (m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Luck")
-		{
-			std::cout << "Landed on a Malus case!" << std::endl;
+			// Mise à jour de l'index
+			m_data->players[m_data->currentPlayerIndex].currentCaseIndex = newIndex;
+			m_data->players[m_data->currentPlayerIndex].isActiveBonus = true;
 		}
-		m_data->players[m_data->currentPlayerIndex].isActive = false;
-		m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
+		else if (m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Luck" && !m_data->players[m_data->currentPlayerIndex].isActiveBonus)
+		{
+			std::cout << "Landed on a Luck case!" << std::endl;
+
+			int rando = 1 + rand() % 3;
+
+			if (rand() % 2 == 0)
+			{
+				rando = -rando;
+			}
+
+			int newIndex = (m_data->players[m_data->currentPlayerIndex].currentCaseIndex + rando) % m_data->posCase.size();
+			sf::Vector2f startPos = m_data->players[m_data->currentPlayerIndex].boardPosition;
+			sf::Vector2f endPos = m_data->posCase[newIndex].GetPosition();
+			m_data->animator.SetGoTo(startPos, endPos);
+			m_data->animator.Restart();
+
+			// Mise à jour de l'index
+			m_data->players[m_data->currentPlayerIndex].currentCaseIndex = newIndex;
+			m_data->players[m_data->currentPlayerIndex].isActiveBonus = true;
+		}
+		else
+		{
+			m_data->players[m_data->currentPlayerIndex].isActive = false;
+			m_data->players[m_data->currentPlayerIndex].isActiveBonus = false;
+			m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
+		}
+	
 	}
 
+
+	for (int i = 0; i < m_data->players.size(); i++)
+	{
+		std::cout << "Player " << i << " position: " << m_data->players[i].boardPosition.x << ", " << m_data->players[i].boardPosition.y << std::endl;
+	}
 
 	//std::cout << m_data->posCase[0].GetType() << std::endl;
 
@@ -139,7 +178,10 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 	
 	for (auto& player : m_data->players)
 	{
-		player.sprite.setPosition(player.boardPosition);
+		float screenX = player.boardPosition.x - referenceView.getCenter().x;
+		float screenY = player.boardPosition.y- referenceView.getCenter().y;
+
+		player.sprite.setPosition({screenX,screenY});
 		_renderWindow.draw(player.sprite);
 	}
 }

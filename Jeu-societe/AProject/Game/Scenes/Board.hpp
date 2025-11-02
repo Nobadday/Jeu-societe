@@ -13,9 +13,11 @@ class BaseGame : public SceneBase
 		struct Player
 		{
 			sf::Sprite sprite;
+			sf::Texture texture;
 			sf::Vector2f boardPosition;
 			int currentCaseIndex;
 			bool isActive;
+			bool isActiveBonus;
 
 		};
 		struct SceneData
