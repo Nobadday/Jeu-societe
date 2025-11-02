@@ -11,7 +11,7 @@
 #include "AnimatedObject.hpp"
 
 
-class SpriteAnimated : public sf::Sprite, public AnimatedObj
+class SpriteAnimated : public sf::Sprite, public AnimatedObject
 {
 	private:
 		sf::Vector2f m_originCoefficient;
@@ -35,4 +35,4 @@ class SpriteAnimated : public sf::Sprite, public AnimatedObj
 
 
 #endif
-// SpriteAnimated v1.1
+// SpriteAnimated v1.1.2

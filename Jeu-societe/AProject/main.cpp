@@ -33,11 +33,11 @@ int main(void)
 	
 	
 	mainData.tp.setFont(font);
-	mainData.tp.setString("CLAP BONJOUR ! C'est Amixem, le sexe, je sais pas. Très longue bite. évitezdefairedesphrasessansespaceslesenfants!");
+	mainData.tp.setString("CLAP BONJOUR ! C'est Amixem, le sexy, je sais pas. Très long string now. évitezdefairedesphrasessansespaceslesenfants!");
 	mainData.tp.setCharacterSize(60u);
 	mainData.tp.setFillColor(sf::Color::White);
 	mainData.tp.setPosition(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f);
-	mainData.tp.setOrigin(sf::Vector2f(0.0f, 0.0f));
+	mainData.tp.setOrigin(sf::Vector2f(0.5f, 0.5f));
 	mainData.tp.SetCharactersPerLine(20);
 	mainData.tp.SetAlignement(TextPlus::Alignement::CENTER);
 	mainData.tp.Modify(8.5f, 24.0f, false);

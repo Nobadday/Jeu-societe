@@ -12,8 +12,8 @@ void SpriteAnimated::FrameChanged(void)
 {
 	if (this->m_animationSelected != -1)
 	{
-		TextureAnimated::AnimationProperties* anim = this->AnimatedObj::m_texture->GetAnimation(this->m_animationSelected);
-		AtlasFrame* frame = this->AnimatedObj::m_texture->GetFrame(anim->m_atlasIndex, this->GetCurrentFrameInt());
+		TextureAnimated::AnimationProperties* anim = this->AnimatedObject::m_texture->GetAnimation(this->m_animationSelected);
+		AtlasFrame* frame = this->AnimatedObject::m_texture->GetFrame(anim->m_atlasIndex, this->GetCurrentFrameInt());
 		
 		this->setTextureRect(frame->m_textureRect);
 		sf::Vector2f scale = this->getScale();
@@ -76,7 +76,7 @@ void SpriteAnimated::FrameChanged(void)
 
 void SpriteAnimated::setTexture(TextureAnimated& _texture, bool _keepAnimation)
 {
-	this->AnimatedObj::SetTexture(_texture, _keepAnimation);
+	this->AnimatedObject::SetTexture(_texture, _keepAnimation);
 	this->sf::Sprite::setTexture(_texture.GetTextureRef());
 }
 
@@ -91,4 +91,4 @@ void SpriteAnimated::draw(sf::RenderTarget& target, sf::RenderStates states) con
 	states.transform.combine(this->m_animTransform);
 	target.draw((sf::Sprite)(*this), states);
 }
-// SpriteAnimated v1.1
+// SpriteAnimated v1.1.2
