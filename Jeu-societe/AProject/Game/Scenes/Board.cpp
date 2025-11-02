@@ -1,4 +1,4 @@
-#include "Board.hpp"
+ï»¿#include "Board.hpp"
 
 void BaseGame::Load(void)
 {
@@ -9,7 +9,7 @@ void BaseGame::Load(void)
 	MapLayer layer = m_data->tile.GetMapLayer("point");
 
 	m_data->posCase = layer.GetObjects();
-
+	
 	m_data->players.push_back({});
 	m_data->players.push_back({});
 	m_data->players.push_back({});
@@ -23,15 +23,16 @@ void BaseGame::Load(void)
 		m_data->players[i].currentCaseIndex = 0;
 		m_data->players[i].isActive = false;
 		m_data->players[i].isActiveBonus = false;
-
-		std::cout << "Player " << i << " position: " << m_data->players[i].boardPosition.x << ", " << m_data->players[i].boardPosition.y << std::endl;
 	}
 
 	m_data->currentPlayerIndex = 0;
 
 	// Configuration de l'animator
-	m_data->animator.Modify(1.0f, 60.0f, false, 1.0f); // 1 seconde de durée, 60 FPS, pas de loop
+	m_data->animator.Modify(1.0f, 60.0f, false, 1.0f); // 1 seconde de durÃ©e, 60 FPS, pas de loop
 	m_data->animator.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::INOUTSINE);
+
+	//m_data->animator.Restart();
+	m_data->animator.End();
 }
 
 void BaseGame::Unload(void)
@@ -46,7 +47,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 	{
 		if (_event.key.code == sf::Keyboard::Space)
 		{
-			// Empêcher un nouveau lancer si une animation est en cours
+			// EmpÃªcher un nouveau lancer si une animation est en cours
 			if (m_data->animator.IsFinished())
 			{
 				int rando = 1 + rand() % 6;
@@ -61,7 +62,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 				m_data->animator.SetGoTo(startPos, endPos);
 				m_data->animator.Restart();
 				
-				// Mise à jour de l'index
+				// Mise Ã  jour de l'index
 				m_data->players[m_data->currentPlayerIndex].currentCaseIndex = newIndex;
 			}
 		}
@@ -70,6 +71,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 
 void BaseGame::Update(float _deltaTime)
 {
+	
 	sf::Vector2f movement(0.f, 0.f);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
 	{
@@ -88,10 +90,10 @@ void BaseGame::Update(float _deltaTime)
 		movement.x += 100.f * _deltaTime;
 	}
 
-	// Mise à jour de l'animator
+	// Mise Ã  jour de l'animator
 	m_data->animator.Update(_deltaTime);
 	
-	// Récupération de la position interpolée et mise à jour du joueur
+	// RÃ©cupÃ©ration de la position interpolÃ©e et mise Ã  jour du joueur
 	if (!m_data->animator.IsFinished())
 	{
 		m_data->players[m_data->currentPlayerIndex].boardPosition = m_data->animator.GetGoTo();
@@ -111,7 +113,7 @@ void BaseGame::Update(float _deltaTime)
 			m_data->animator.SetGoTo(startPos, endPos);
 			m_data->animator.Restart();
 
-			// Mise à jour de l'index
+			// Mise Ã  jour de l'index
 			m_data->players[m_data->currentPlayerIndex].currentCaseIndex = newIndex;
 			m_data->players[m_data->currentPlayerIndex].isActiveBonus = true;
 		}
@@ -125,7 +127,7 @@ void BaseGame::Update(float _deltaTime)
 			m_data->animator.SetGoTo(startPos, endPos);
 			m_data->animator.Restart();
 
-			// Mise à jour de l'index
+			// Mise Ã  jour de l'index
 			m_data->players[m_data->currentPlayerIndex].currentCaseIndex = newIndex;
 			m_data->players[m_data->currentPlayerIndex].isActiveBonus = true;
 		}
@@ -146,7 +148,7 @@ void BaseGame::Update(float _deltaTime)
 			m_data->animator.SetGoTo(startPos, endPos);
 			m_data->animator.Restart();
 
-			// Mise à jour de l'index
+			// Mise Ã  jour de l'index
 			m_data->players[m_data->currentPlayerIndex].currentCaseIndex = newIndex;
 			m_data->players[m_data->currentPlayerIndex].isActiveBonus = true;
 		}
@@ -160,10 +162,10 @@ void BaseGame::Update(float _deltaTime)
 	}
 
 
-	for (int i = 0; i < m_data->players.size(); i++)
-	{
-		std::cout << "Player " << i << " position: " << m_data->players[i].boardPosition.x << ", " << m_data->players[i].boardPosition.y << std::endl;
-	}
+	//for (int i = 0; i < m_data->players.size(); i++)
+	//{
+	//	std::cout << "Player " << i << " position: " << m_data->players[i].boardPosition.x << ", " << m_data->players[i].boardPosition.y << std::endl;
+	//}
 
 	//std::cout << m_data->posCase[0].GetType() << std::endl;
 
@@ -179,9 +181,9 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 	for (auto& player : m_data->players)
 	{
 		float screenX = player.boardPosition.x - referenceView.getCenter().x;
-		float screenY = player.boardPosition.y- referenceView.getCenter().y;
+		float screenY = player.boardPosition.y - referenceView.getCenter().y;
 
-		player.sprite.setPosition({screenX,screenY});
+		player.sprite.setPosition({ screenX, screenY }); 
 		_renderWindow.draw(player.sprite);
 	}
 }
