@@ -20,6 +20,7 @@ m_offset	 (0, 0)
 #pragma region Texture Animated
 TextureAnimated::TextureAnimated(void)
 {
+
 }
 
 TextureAnimated::~TextureAnimated(void)

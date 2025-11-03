@@ -1,14 +1,7 @@
 #include "TextureAtlas.hpp"
 
 
-AtlasFrame::AtlasFrame(void)
-{
-}
 
-void AtlasFrame::SetTextureRect(int _x, int _y, int _w, int _h)
-{
-	this->m_textureRect = { _x, _y, _w, _h };
-}
 
 
 #pragma region TextureAtlas
@@ -20,6 +13,17 @@ TextureAtlas::TextureAtlas(void)
 TextureAtlas::~TextureAtlas(void)
 {
 	this->ClearAll();
+}
+
+bool TextureAtlas::create(unsigned _width, unsigned _height)
+{
+	if (this->create(_width, _height))
+	{
+
+
+		return true;
+	}
+	return false;
 }
 
 bool TextureAtlas::LoadFromFile(const std::string& _fileName, TextureAtlas::ParseType _parseType)
@@ -131,7 +135,8 @@ bool TextureAtlas::LoadFromFile(std::fstream& _file, const std::string& _dirPath
 		case PARSE_JSON_ARRAY:
 			{
 				jsonBase = nlohmann::json::parse(_file);
-				textureName = (std::string)jsonBase["meta"]["image"];
+				nlohmann::json& meta = jsonBase["meta"];
+				textureName = (std::string)meta["image"];
 
 				nlohmann::json& array = jsonBase["frames"];
 				int arraySize = (int)array.size();
@@ -278,5 +283,20 @@ AtlasFrame* TextureAtlas::GetFrameByGroup(const std::string& _name, int _index)
 
 #pragma endregion
 
+TextureWhat::TextureWhat(void) : AtlasContainer()
+{
+
+}
+
+
+bool TextureWhat::create(unsigned _width, unsigned _height)
+{
+	if (this->sf::Texture::create(_width, _height))
+	{
+		this->ClearAtlasFrames();
+		return true;
+	}
+	return false;
+}
 
 // Texture Atlases for C++ & SFML v1.0.2

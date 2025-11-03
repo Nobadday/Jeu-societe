@@ -24,34 +24,10 @@
 // Yamelo Libs (me :3 )
 #include "../../Utilities/Lists/DynaList.hpp"
 #include "../../Utilities/FileTools.hpp"
+#include "./AtlasContainer.hpp"
 
 
-class AtlasFrame
-{
-	public:
-		std::string m_name;
-		// Subtexture rect, where to pick the image on the texture
-		sf::IntRect m_textureRect;
-		
-		// Frame offset, x & y should be added
-		// w & h indicate the in game size of the frame
-		sf::IntRect m_frameOffset;
 
-		bool m_flipX = false;
-		bool m_flipY = false;
-		// Is rect rotated by 90° ?
-		bool m_rotated = false;
-
-		bool m_hasTilt = false;
-		// Additional tilt that should be applied
-		sf::Vector2f m_frameTilt;
-
-	public:
-		AtlasFrame(void);
-		
-		void SetTextureRect(int _x, int _y, int _w, int _h);
-
-};
 
 class AtlasFrameGroup
 {
@@ -78,11 +54,14 @@ class TextureAtlas
 			// https://enigmaengine.github.io/docs/animation-format/
 			PARSE_XML_SPARROW_V2,
 
+
 			// Detects if json is either in HASH or ARRAY
 			// Not recommended
 			PARSE_JSON_AUTO,
+
 			// JSON format
 			PARSE_JSON_HASH,
+
 			// JSON-Array format
 			// Compatible with Aseprite & Animate
 			PARSE_JSON_ARRAY,
@@ -90,11 +69,14 @@ class TextureAtlas
 			
 			PARSETYPES_COUNT
 		};
-		
+
+	public:
 		// Default constructor, creates an empty texture
 		TextureAtlas(void);
 
 		~TextureAtlas(void);
+
+		bool create(unsigned _width, unsigned _height);
 
 		// Load the textureAtlas from a known format
 		bool LoadFromFile(const std::string& _fileName, TextureAtlas::ParseType _parseType);
@@ -129,6 +111,58 @@ class TextureAtlas
 		int FindFrameGroupIndexLast(const std::string& _name);
 
 		AtlasFrame* GetFrameByGroup(const std::string& _name, int _index);
+	
+	private:
+
+
+};
+
+// Texture containing multiple images
+// Also known as spritesheet
+class TextureWhat : public sf::Texture, public AtlasContainer
+{
+	public:
+		enum ParseType
+		{
+			// Sparrow v2
+			// Mostly used for Adobe Animate Spritesheet exports
+			// https://enigmaengine.github.io/docs/animation-format/
+			PARSE_XML_SPARROW_V2,
+
+			// Detects if json is either in HASH or ARRAY
+			// Not recommended
+			PARSE_JSON_AUTO,
+
+			// JSON format
+			PARSE_JSON_HASH,
+
+			// JSON-Array format
+			// Compatible with Aseprite & Animate
+			PARSE_JSON_ARRAY,
+
+
+			// Counter of all parse types
+			PARSETYPES_COUNT
+		};
+
+	public:
+		// Default constructor, creates an empty texture
+		TextureWhat(void);
+
+		// Create the texture
+		// If this function fails, the texture & atlas data is left unchanged.
+		bool create(unsigned _width, unsigned _height);
+
+		// Load the textureAtlas from a known format
+		bool LoadFromFile(const std::string& _fileName, TextureWhat::ParseType _parseType);
+
+
+		// Load from file the picture of the texture
+		bool LoadFromFilePicture(const sf::String& _filePath);
+	
+	protected:
+		bool LoadFromFile(std::fstream& _file, const std::string& _dirPath, TextureWhat::ParseType _parseType);
+		using sf::Texture::loadFromFile;
 };
 
 #endif
