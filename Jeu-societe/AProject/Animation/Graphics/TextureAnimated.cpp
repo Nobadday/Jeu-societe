@@ -1,17 +1,23 @@
 #include "TextureAnimated.hpp"
 
-AnimationProperties::AnimationProperties(void) :
-m_name (""),
-m_atlasName(""),
+#define ANIM_DEFAULT_FPS 24.0f
+#define ANIM_DEFAULT_LOOP false
+
+
+TextureAnimated::AnimationProperties::AnimationProperties(void) :
+m_name		 (""),
+m_atlasName	 (""),
 m_atlasIndex (-1),
 m_frameCount (0),
-m_framerate (24.0f),
-m_loop (false),
-m_offset(0, 0)
+m_framerate  (ANIM_DEFAULT_FPS),
+m_loop		 (ANIM_DEFAULT_LOOP),
+m_offset	 (0, 0)
 {
+
 }
 
 
+#pragma region Texture Animated
 TextureAnimated::TextureAnimated(void)
 {
 }
@@ -58,8 +64,8 @@ bool TextureAnimated::LoadFromFile(std::fstream& _file, const std::string& _dirP
 					AnimationProperties* newAnim = new AnimationProperties();
 					newAnim->m_name = object["animationName"];
 					newAnim->m_atlasName = object.value("texName", newAnim->m_name);
-					newAnim->m_loop = object.value("loop", false);
-					newAnim->m_framerate = object.value("fps", 24.0f);
+					newAnim->m_loop = object.value("loop", ANIM_DEFAULT_LOOP);
+					newAnim->m_framerate = object.value("fps", ANIM_DEFAULT_FPS);
 
 					newAnim->m_atlasIndex = this->m_textureAtlas.FindFrameGroupIndex(newAnim->m_atlasName);
 					newAnim->m_frameCount = this->m_textureAtlas.FindFrameGroupLenght(newAnim->m_atlasName, newAnim->m_atlasIndex);
@@ -228,12 +234,12 @@ void TextureAnimated::ClearAll(void)
 	}
 }
 
-AnimationProperties* TextureAnimated::GetAnimation(int _index)
+TextureAnimated::AnimationProperties* TextureAnimated::GetAnimation(int _index)
 {
 	return (AnimationProperties*)this->m_animations[_index];
 }
 
-AnimationProperties* TextureAnimated::GetAnimation(const std::string& _name)
+TextureAnimated::AnimationProperties* TextureAnimated::GetAnimation(const std::string& _name)
 {
 	AnimationProperties* anim;
 	for (int i = 0; i < this->m_animations.Len(); i++)
@@ -288,4 +294,7 @@ int TextureAnimated::GetAnimationCount(void)
 	return this->m_animations.Len();
 }
 
-// Texture Animated v1.0
+#pragma endregion
+
+
+// Texture Animated v1.0.2

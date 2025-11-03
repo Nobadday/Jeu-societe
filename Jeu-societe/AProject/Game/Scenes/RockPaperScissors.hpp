@@ -5,8 +5,9 @@
 #include "../../Common.hpp"
 #include "../../Scenes/Scene.hpp"
 #include "../../Animation/Animation/Timer.hpp" 
+#include "../../Animation/Graphics.hpp"
 
-#include "../../Graphic/Button.hpp"
+#include "../../Ui/Button.hpp"
 
 typedef enum RPS_Choice
 {
@@ -39,6 +40,9 @@ class RockPaperSizor : public SceneBase
 		sf::Font font;
 
 		sf::Text victoryText;
+
+		Button button;
+		TextureAnimated buttonTexture;
 	};
 	SceneData* m_data;
 

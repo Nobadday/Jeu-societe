@@ -11,8 +11,10 @@ void AtlasFrame::SetTextureRect(int _x, int _y, int _w, int _h)
 }
 
 
+#pragma region TextureAtlas
 TextureAtlas::TextureAtlas(void)
 {
+	
 }
 
 TextureAtlas::~TextureAtlas(void)
@@ -274,4 +276,7 @@ AtlasFrame* TextureAtlas::GetFrameByGroup(const std::string& _name, int _index)
 	return this->GetFrame(this->FindFrameGroupIndex(_name) + _index);
 }
 
-// Texture Atlases for C++ & SFML v1.0
+#pragma endregion
+
+
+// Texture Atlases for C++ & SFML v1.0.2
