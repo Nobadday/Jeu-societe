@@ -59,7 +59,7 @@ void RockPaperSizor::Unload()
 
 void RockPaperSizor::PollEvent(sf::Event& _event)
 {
-	
+	m_data->button.PollEvent(_event);
 	//if (m_data->button.isClicked(sf::Vector2f(_event.mouseMove.x, _event.mouseMove.y)))
 	//{
 	//	std::cout << "Button Clicked !" << std::endl;

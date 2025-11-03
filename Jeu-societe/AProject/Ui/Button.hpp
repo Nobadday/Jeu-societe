@@ -23,13 +23,12 @@ class Button : public SpriteAnimated
 		void Update(float _deltaTime);
 		void PollEvent(sf::Event& _event);
 
-		bool isMouseOn(sf::Vector2f _mousePos);
-		bool isClicked(sf::Vector2f _mousePos);
+		bool IsMouseOn(sf::Vector2f _mousePos);
+		bool IsClicked(sf::Vector2f _mousePos);
 
 
 
 		void SetState(State _state);
-
 		State GetState(void);
 
 	private: 

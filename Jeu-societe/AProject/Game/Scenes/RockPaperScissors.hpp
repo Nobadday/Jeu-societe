@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ROCKPAPERSIZOR_HPP
-#define ROCKPAPERSCISSORS_HPP
+#ifndef _INC_ROCKPAPERSCISSORS_HPP
+#define _INC_ROCKPAPERSCISSORS_HPP
 
 #include "../../Common.hpp"
 #include "../../Scenes/Scene.hpp"
@@ -55,4 +55,4 @@ public:
 	virtual void Draw(sf::RenderWindow& _renderWindow);
 };
 
-#endif // !ROCKPAPERSIZOR_HPP
+#endif // !_INC_ROCKPAPERSCISSORS_HPP
