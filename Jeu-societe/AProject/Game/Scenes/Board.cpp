@@ -1,5 +1,6 @@
 ﻿#include "Board.hpp"
 
+
 void BaseGame::Load(void)
 {
 	m_data = new SceneData;
@@ -43,14 +44,14 @@ void BaseGame::Unload(void)
 
 void BaseGame::PollEvent(sf::Event& _event)
 {
-	if (_event.type == sf::Event::KeyPressed)
+	if (_event.type == sf::Event::JoystickButtonPressed)
 	{
-		if (_event.key.code == sf::Keyboard::Space)
+		if (_event.joystickButton.button == 1)
 		{
 			// Empêcher un nouveau lancer si une animation est en cours
 			if (m_data->animator.IsFinished())
 			{
-				int rando = 1 + rand() % 6;
+				int rando = random::RandomInt(1,6);
 				std::cout << "Roll Dice: " << rando << std::endl;
 				
 				// Calcul de la nouvelle position
@@ -101,64 +102,7 @@ void BaseGame::Update(float _deltaTime)
 	}
 	else if(m_data->players[m_data->currentPlayerIndex].isActive)
 	{
-		if(m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Bonus" && !m_data->players[m_data->currentPlayerIndex].isActiveBonus) 
-		{
-			std::cout << "Landed on a Bonus case!" << std::endl;
-			int rando = 1 + rand() % 3;
-
-
-			int newIndex = (m_data->players[m_data->currentPlayerIndex].currentCaseIndex + rando) % m_data->posCase.size();
-			sf::Vector2f startPos = m_data->players[m_data->currentPlayerIndex].boardPosition;
-			sf::Vector2f endPos = m_data->posCase[newIndex].GetPosition();
-			m_data->animator.SetGoTo(startPos, endPos);
-			m_data->animator.Restart();
-
-			// Mise à jour de l'index
-			m_data->players[m_data->currentPlayerIndex].currentCaseIndex = newIndex;
-			m_data->players[m_data->currentPlayerIndex].isActiveBonus = true;
-		}
-		else if (m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Malus" && !m_data->players[m_data->currentPlayerIndex].isActiveBonus)
-		{
-			std::cout << "Landed on a Malus case!" << std::endl;
-			int rando = 1 + rand() % 3;
-			int newIndex = (m_data->players[m_data->currentPlayerIndex].currentCaseIndex - rando) % m_data->posCase.size();
-			sf::Vector2f startPos = m_data->players[m_data->currentPlayerIndex].boardPosition;
-			sf::Vector2f endPos = m_data->posCase[newIndex].GetPosition();
-			m_data->animator.SetGoTo(startPos, endPos);
-			m_data->animator.Restart();
-
-			// Mise à jour de l'index
-			m_data->players[m_data->currentPlayerIndex].currentCaseIndex = newIndex;
-			m_data->players[m_data->currentPlayerIndex].isActiveBonus = true;
-		}
-		else if (m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Luck" && !m_data->players[m_data->currentPlayerIndex].isActiveBonus)
-		{
-			std::cout << "Landed on a Luck case!" << std::endl;
-
-			int rando = 1 + rand() % 3;
-
-			if (rand() % 2 == 0)
-			{
-				rando = -rando;
-			}
-
-			int newIndex = (m_data->players[m_data->currentPlayerIndex].currentCaseIndex + rando) % m_data->posCase.size();
-			sf::Vector2f startPos = m_data->players[m_data->currentPlayerIndex].boardPosition;
-			sf::Vector2f endPos = m_data->posCase[newIndex].GetPosition();
-			m_data->animator.SetGoTo(startPos, endPos);
-			m_data->animator.Restart();
-
-			// Mise à jour de l'index
-			m_data->players[m_data->currentPlayerIndex].currentCaseIndex = newIndex;
-			m_data->players[m_data->currentPlayerIndex].isActiveBonus = true;
-		}
-		else
-		{
-			m_data->players[m_data->currentPlayerIndex].isActive = false;
-			m_data->players[m_data->currentPlayerIndex].isActiveBonus = false;
-			m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
-		}
-	
+		CaseAction();
 	}
 
 
@@ -188,3 +132,71 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 	}
 }
 
+void BaseGame::CaseAction()
+{
+	if (m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Bonus" && !m_data->players[m_data->currentPlayerIndex].isActiveBonus)
+	{
+		std::cout << "Landed on a Bonus case!" << std::endl;
+		int rando = random::RandomInt(1, 3);
+
+
+		int newIndex = (m_data->players[m_data->currentPlayerIndex].currentCaseIndex + rando) % m_data->posCase.size();
+		sf::Vector2f startPos = m_data->players[m_data->currentPlayerIndex].boardPosition;
+		sf::Vector2f endPos = m_data->posCase[newIndex].GetPosition();
+		m_data->animator.SetGoTo(startPos, endPos);
+		m_data->animator.Restart();
+
+		// Mise à jour de l'index
+		m_data->players[m_data->currentPlayerIndex].currentCaseIndex = newIndex;
+		m_data->players[m_data->currentPlayerIndex].isActiveBonus = true;
+	}
+	else if (m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Malus" && !m_data->players[m_data->currentPlayerIndex].isActiveBonus)
+	{
+		std::cout << "Landed on a Malus case!" << std::endl;
+
+		int rando = random::RandomInt(1, 3);
+
+		int newIndex = (m_data->players[m_data->currentPlayerIndex].currentCaseIndex - rando) % m_data->posCase.size();
+
+		sf::Vector2f startPos = m_data->players[m_data->currentPlayerIndex].boardPosition;
+		sf::Vector2f endPos = m_data->posCase[newIndex].GetPosition();
+		m_data->animator.SetGoTo(startPos, endPos);
+		m_data->animator.Restart();
+
+		// Mise à jour de l'index
+		m_data->players[m_data->currentPlayerIndex].currentCaseIndex = newIndex;
+		m_data->players[m_data->currentPlayerIndex].isActiveBonus = true;
+	}
+	else if (m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Luck" && !m_data->players[m_data->currentPlayerIndex].isActiveBonus)
+	{
+		std::cout << "Landed on a Luck case!" << std::endl;
+
+		int rando = random::RandomInt(1, 3);
+
+		if (rand() % 2 == 0)
+		{
+			rando = -rando;
+		}
+
+		int newIndex = (m_data->players[m_data->currentPlayerIndex].currentCaseIndex + rando) % m_data->posCase.size();
+		sf::Vector2f startPos = m_data->players[m_data->currentPlayerIndex].boardPosition;
+		sf::Vector2f endPos = m_data->posCase[newIndex].GetPosition();
+		m_data->animator.SetGoTo(startPos, endPos);
+		m_data->animator.Restart();
+
+		// Mise à jour de l'index
+		m_data->players[m_data->currentPlayerIndex].currentCaseIndex = newIndex;
+		m_data->players[m_data->currentPlayerIndex].isActiveBonus = true;
+	}
+	else if (m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Battle" && !m_data->players[m_data->currentPlayerIndex].isActiveBonus)
+	{
+		std::cout << "Landed on a Battle case!" << std::endl;
+		m_data->players[m_data->currentPlayerIndex].isActiveBonus = true;
+	}
+	else
+	{
+		m_data->players[m_data->currentPlayerIndex].isActive = false;
+		m_data->players[m_data->currentPlayerIndex].isActiveBonus = false;
+		m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
+	}
+}

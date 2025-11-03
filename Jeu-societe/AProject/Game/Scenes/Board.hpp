@@ -5,6 +5,7 @@
 #include "../../Map/Tiled.h"
 #include "../../Utilities/Camera/Camera.hpp"
 #include "../../Utilities/MathPlus.hpp"
+#include "../../Utilities/Random.hpp"
 #include "../../Animation/Animation/Animator.hpp"
 
 class BaseGame : public SceneBase
@@ -18,8 +19,10 @@ class BaseGame : public SceneBase
 			int currentCaseIndex;
 			bool isActive;
 			bool isActiveBonus;
+			int id_manette
 
 		};
+
 		struct SceneData
 		{
 			Tiled tile;
@@ -29,7 +32,10 @@ class BaseGame : public SceneBase
 			anim::Animator animator;
 			int currentPlayerIndex;
 		};
+
 		SceneData* m_data;
+
+		void CaseAction();
 
 	public:
 		virtual void Load(void);
