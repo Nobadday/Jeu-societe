@@ -45,13 +45,33 @@ void Animation::Modify(int _frameCount, float _framerate, bool _loop, float _spe
 	this->m_loop = _loop;
 	this->m_speed = _speed;
 
-	this->SetFramerate(_framerate);
-	
 	this->m_shouldUpdate = true;
+
+	this->SetFramerate(_framerate);
+}
+void Animation::Modify(int _frameCount, float _framerate, bool _loop)
+{
+	this->m_frame = 0.0f;
+	this->m_frameCount = _frameCount;
+	this->m_loop = _loop;
+
+	this->m_shouldUpdate = true;
+
+	this->SetFramerate(_framerate);
 }
 void Animation::Modify(float _durationSeconds, float _framerate, bool _loop, float _speed)
 {
 	this->Modify((int)anim::AniMath::SecondsToFrameTime(_durationSeconds, _framerate), _framerate, _loop, _speed);
+}
+void Animation::Modify(float _durationSeconds, float _framerate, bool _loop)
+{
+	this->m_frame = 0.0f;
+	this->m_frameCount = (int)anim::AniMath::SecondsToFrameTime(_durationSeconds, _framerate);
+	this->m_loop = _loop;
+
+	this->m_shouldUpdate = true;
+
+	this->SetFramerate(_framerate);
 }
 
 #pragma endregion
@@ -65,6 +85,7 @@ void Animation::Update(float _deltaTime)
 	// AND if the animation isn't looped & finished
 	if (this->m_play && !(this->IsFinished() && !this->m_loop))
 	{
+		// TODO : Appeler DeltaClock
 		this->m_timeElapsed += _deltaTime * this->m_speed;
 		this->UpdateFrame();
 	}
@@ -82,7 +103,6 @@ void Animation::UpdateFrame(void)
 	if (this->m_loop)
 	{
 		// Frame will always have proper values
-		// Modulo always positive :
 		newFrame = anim::AniMath::ModuloPositiveF(newFrame, (float)m_frameCount);
 	}
 	else
@@ -94,21 +114,23 @@ void Animation::UpdateFrame(void)
 		}
 		else if (newFrame > m_frameCount - 1)
 		{
-			// ( Convert number to index -> [-1])
+			// -1 to convert number to index
 			newFrame = (float)(m_frameCount - 1);
 		}
 	}
 
-	// Checks shouldUpdate
+	// Checks for frameUpdates
 	if (this->m_frame != newFrame)
 	{
+		bool frameChanged = false;
 		if ((int)this->m_frame != (int)newFrame)
 		{
-			this->m_shouldUpdate = true;
+			frameChanged = true;
 		}
 		this->m_frame = newFrame;
-		if (this->m_shouldUpdate)
+		if (frameChanged)
 		{
+			this->m_shouldUpdate = true;
 			this->OnFrameChange();
 		}
 	}
@@ -173,7 +195,7 @@ void Animation::SetDuration(float _seconds)
 
 void Animation::SetFramerate(float _framerate)
 {
-	if (_framerate <= 0.0f)
+	if (_framerate < ANIMATION_MINIMUM_FPS)
 	{
 		_framerate = ANIMATION_MINIMUM_FPS;
 	}
@@ -188,7 +210,12 @@ void Animation::SetFramerate(int _framerate)
 void Animation::AddFramerate(float _value)
 {
 	this->m_frameTime += anim::AniMath::FPSToFrameTime(_value);
+	// Keep the same frame
 	this->SetFrame(this->m_frame);
+}
+void Animation::AddFramerate(int _value)
+{
+	this->AddFramerate((float)_value);
 }
 
 void Animation::SetLoop(bool _condition)
@@ -236,10 +263,7 @@ void Animation::SetShouldUpdate(void)
 {
 	this->m_shouldUpdate = true;
 }
-void Animation::SetShouldUpdateProtected(bool _condition)
-{
-	this->m_shouldUpdate = this->m_shouldUpdate || _condition;
-}
+
 
 #pragma endregion
 

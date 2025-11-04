@@ -32,18 +32,18 @@ class Animation : private DeltaClock
 		// Create a frame-based animation object
 		Animation(int _frameCount, float _framerate, bool _loop = false, float _speed = 1.0f);
 		// Create a time-based animation object
-		Animation(float _durationSeconds, float _framerate = 24.0f, bool _loop = false, float _speed = 1.0f);
+		Animation(float _durationSeconds, float _framerate = ANIMATION_DEFAULT_FPS, bool _loop = false, float _speed = 1.0f);
 	
 	#pragma endregion
 
 
 	#pragma region Modifiers
 		// Frame-based animation
-		void Modify(int _frameCount, float _framerate, bool _loop = false, float _speed = 1.0f);
-		//void Modify(int _frameCount, float _framerate, bool _loop);
+		void Modify(int _frameCount, float _framerate, bool _loop, float _speed);
+		void Modify(int _frameCount, float _framerate, bool _loop = false);
 		// Time-based animation object
-		void Modify(float _durationSeconds, float _framerate = 24.0f, bool _loop = false, float _speed = 1.0f);
-		//void Modify(float _durationSeconds, float _framerate, bool _loop);
+		void Modify(float _durationSeconds, float _framerate, bool _loop, float _speed);
+		void Modify(float _durationSeconds, float _framerate, bool _loop = false);
 
 	#pragma endregion
 
@@ -85,11 +85,13 @@ class Animation : private DeltaClock
 		void SetDuration(float _seconds);
 
 		// Set the framerate, positive only (FPS)
+		// The default framerate is 24.0 FPS
 		void SetFramerate(float _framerate);
 		void SetFramerate(int _framerate);
 
 		// Add Framerate (FPS)
 		void AddFramerate(float _value);
+		void AddFramerate(int _value);
 
 		// Set animation Speed (negative for reverse animation)
 		using DeltaClock::SetSpeed;
@@ -121,8 +123,6 @@ class Animation : private DeltaClock
 		// Set ShouldUpdate to true: should tell animated objects to update themselves.
 		void SetShouldUpdate(void);
 
-		// Only set shouldUpdate to true if _condition is true
-		void SetShouldUpdateProtected(bool _condition);
 
 	#pragma endregion
 		

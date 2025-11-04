@@ -39,7 +39,8 @@ class DeltaClock
 		// if true, speed will be set to a negative value
 		// else a positive value
 		void SetReverse(bool _condition);
-		// Inverses the sign of the current speed
+		// Inverses the sign of the current speed,
+		// Positive speed will become negative and negative speed will become positive
 		void ToggleReverse(void);
 
 		void Restart(float _offset = 0.0f);
