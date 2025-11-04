@@ -27,7 +27,7 @@ class SpriteAnimated : public sf::Sprite, public AnimatedObject
 		sf::FloatRect getGlobalBounds(void) const;
 
 	protected:
-		virtual void FrameChanged(void);
+		virtual void OnFrameChange(void);
 
 	private:
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const;

@@ -1,7 +1,5 @@
 #include "AnimationHandler.hpp"
 
-#define ANIMATION_MINIMUM_FPS 0.01f
-
 
 #pragma region Animation Class
 
@@ -11,7 +9,7 @@
 Animation::Animation(void) :
 m_frame			(0.0f),
 m_frameCount	(0),
-m_frameTime		(0.0f),
+m_frameTime		(ANIMATION_DEFAULT_FPS_SECONDS),
 m_loop			(false),
 m_shouldUpdate	(false)
 {
@@ -111,7 +109,7 @@ void Animation::UpdateFrame(void)
 		this->m_frame = newFrame;
 		if (this->m_shouldUpdate)
 		{
-			this->FrameChanged();
+			this->OnFrameChange();
 		}
 	}
 }
@@ -258,14 +256,13 @@ float Animation::GetCurrentFrameUncapped(void)
 	return this->m_frame;
 }
 
-float Animation::GetCurrentFrame(void)
-{
-	return this->m_frame;
-}
-
-int Animation::GetCurrentFrameInt(void)
+int Animation::GetCurrentFrame(void)
 {
 	return (int)this->m_frame;
+}
+float Animation::GetCurrentFramePrecise(void)
+{
+	return this->m_frame;
 }
 
 int Animation::GetFrameCount(void)
@@ -324,7 +321,7 @@ float Animation::GetFrameCoefficient(void)
 	if (this->m_frameCount > 1)
 	{
 		// Troncate the float values to truely be frame by frame
-		return (float)((float)this->GetCurrentFrameInt() / (float)(this->m_frameCount - 1));
+		return (float)((float)this->GetCurrentFrame() / (float)(this->m_frameCount - 1));
 	}
 	return 1.0f;
 }
@@ -441,14 +438,9 @@ bool Animation::ShouldUpdateFixed(void)
 	return this->m_shouldUpdate;
 }
 
-bool Animation::ShouldUpdateOnce(void)
-{
-	return this->ShouldUpdate();
-}
-
 #pragma endregion
 
-void Animation::FrameChanged(void)
+void Animation::OnFrameChange(void)
 {
 	// Virtual method, does nothing here
 }

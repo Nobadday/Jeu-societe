@@ -30,7 +30,7 @@ void AnimatedObject::SetAnimation(int _animationIndex, bool _resetAnimation)
 			this->Restart();
 		}
 	}
-	this->FrameChanged();
+	this->OnFrameChange();
 }
 
 void AnimatedObject::SetAnimation(const std::string& _animationName, bool _resetAnimation)
@@ -84,7 +84,7 @@ void AnimatedObject::SetTexture(TextureAnimated& _texture, bool _keepAnimation)
 		}
 		else
 		{
-			this->FrameChanged();
+			this->OnFrameChange();
 		}
 	}
 }

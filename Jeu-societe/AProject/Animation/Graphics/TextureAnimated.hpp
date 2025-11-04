@@ -58,7 +58,7 @@ class TextureAnimated
 		TextureAtlas m_textureAtlas;
 		// List of AnimationProperties*
 		DynaList m_animations;
-		std::vector<AnimationProperties> m_anim2;
+		
 
 	public:
 		TextureAnimated(void);
@@ -95,7 +95,7 @@ class TextureAnimated
 class TextureAnimatHUH : public TextureWhat
 {
 	private:
-
+		//std::vector<> m_anim2;
 	public:
 		TextureAnimatHUH(void);
 

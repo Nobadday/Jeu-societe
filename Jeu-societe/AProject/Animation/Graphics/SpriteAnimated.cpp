@@ -8,12 +8,12 @@ m_animTransform		()
 
 }
 
-void SpriteAnimated::FrameChanged(void)
+void SpriteAnimated::OnFrameChange(void)
 {
 	if (this->m_animationSelected != -1)
 	{
 		TextureAnimated::AnimationProperties* anim = this->AnimatedObject::m_texture->GetAnimation(this->m_animationSelected);
-		AtlasFrame* frame = this->AnimatedObject::m_texture->GetFrame(anim->m_atlasIndex, this->GetCurrentFrameInt());
+		AtlasFrame* frame = this->AnimatedObject::m_texture->GetFrame(anim->m_atlasIndex, this->GetCurrentFrame());
 		
 		this->setTextureRect(frame->m_textureRect);
 		sf::Vector2f scale = this->getScale();

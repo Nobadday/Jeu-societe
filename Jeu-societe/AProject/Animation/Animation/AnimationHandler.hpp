@@ -2,6 +2,10 @@
 #ifndef _INC_ANIMATION_HANDLER_HPP
 #define _INC_ANIMATION_HANDLER_HPP
 
+#define ANIMATION_DEFAULT_FPS 24.0f
+#define ANIMATION_DEFAULT_FPS_SECONDS 1.0f/ANIMATION_DEFAULT_FPS
+#define ANIMATION_MINIMUM_FPS 0.01f
+
 #include "../Common.hpp"
 #include "Timer.hpp"
 #include "../Utilities/Math.hpp"
@@ -36,9 +40,11 @@ class Animation : private DeltaClock
 	#pragma region Modifiers
 		// Frame-based animation
 		void Modify(int _frameCount, float _framerate, bool _loop = false, float _speed = 1.0f);
+		//void Modify(int _frameCount, float _framerate, bool _loop);
 		// Time-based animation object
 		void Modify(float _durationSeconds, float _framerate = 24.0f, bool _loop = false, float _speed = 1.0f);
-	
+		//void Modify(float _durationSeconds, float _framerate, bool _loop);
+
 	#pragma endregion
 
 
@@ -126,11 +132,11 @@ class Animation : private DeltaClock
 		// Time/(1/framerate)
 		float GetCurrentFrameUncapped(void);
 
-		// Get the current frame CAPPED as Float (starts at 0.0f, precise gets updated/capped every update)
-		float GetCurrentFrame(void);
-
 		// Get the current frame CAPPED as Int (starts at 0)
-		int GetCurrentFrameInt(void);
+		int GetCurrentFrame(void);
+
+		// Get the current frame CAPPED as Float (starts at 0.0f, precise gets updated/capped every update)
+		float GetCurrentFramePrecise(void);
 
 		// Get the count of frames
 		int GetFrameCount(void);
@@ -155,6 +161,7 @@ class Animation : private DeltaClock
 		// Get the current framerate multiplied by |speed|
 		float GetFramerateSpeedPositive(void);
 		
+
 		// Get currentFrame / frameCount
 		float GetProgress(void);
 		// Get currentFrame / frameCount
@@ -218,15 +225,13 @@ class Animation : private DeltaClock
 		// Returns true if the frame has changed since the last update
 		// Use ShouldUpdate() instead for optimisation purposes
 		bool ShouldUpdateFixed(void);
-		
-		// DEPRECATED, use ShouldUpdate() Instead !
-		// Returns true if the frame has changed since the last update and resets the boolean
-		bool ShouldUpdateOnce(void);
 
 	#pragma endregion
 
 	protected:
-		virtual void FrameChanged(void);
+		using DeltaClock::OnTimeChange;
+		// Virtual method called everytime the frame is changed
+		virtual void OnFrameChange(void);
 };
 
 
