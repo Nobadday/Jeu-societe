@@ -1,5 +1,4 @@
 #pragma once
-
 #ifndef _INC_ANIMATION_HANDLER_HPP
 #define _INC_ANIMATION_HANDLER_HPP
 

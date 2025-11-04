@@ -43,6 +43,12 @@ class AtlasContainer
 	public:
 		AtlasContainer(void);
 
+
+		// Appens an atlas frame into the container and gets it's reference
+		// If it already exists, gets that reference
+		AtlasFrame& ModifyAtlasFrame(const std::string& _name);
+
+
 		// Get the index of a atlas frame
 		// If not found, return -1
 		int FindAtlasFrameIndex(const std::string& _name);
@@ -59,4 +65,4 @@ class AtlasContainer
 
 
 #endif
-// AtlasContainer C++ || v0.1
+// AtlasContainer C++ || v0.2

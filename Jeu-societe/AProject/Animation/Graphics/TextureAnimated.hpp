@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _INC_ANIMATION_TEXTURE_HPP
-#define _INC_ANIMATION_TEXTURE_HPP
+#ifndef _INC_ANIMATION_TEXTUREANIMATED_HPP
+#define _INC_ANIMATION_TEXTUREANIMATED_HPP
 
 #include "../Common.hpp"
 #include "TextureAtlas.hpp"
@@ -91,6 +91,19 @@ class TextureAnimated
 
 		int GetAnimationCount(void);
 };
+
+class TextureAnimatHUH : public TextureWhat
+{
+	private:
+
+	public:
+		TextureAnimatHUH(void);
+
+
+
+};
+
+
 
 #endif
 // Texture Animated v1.0.2

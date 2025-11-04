@@ -29,6 +29,7 @@ m_play			(_play)
 void DeltaClock::SyncTime(DeltaClock& _timer)
 {
 	this->m_timeElapsed = _timer.m_timeElapsed;
+	OnTimeChange();
 }
 
 void DeltaClock::Update(float _deltaTime)
@@ -36,6 +37,7 @@ void DeltaClock::Update(float _deltaTime)
 	if (this->m_play)
 	{
 		this->m_timeElapsed += _deltaTime * this->m_speed;
+		OnTimeChange();
 	}
 }
 
@@ -43,21 +45,23 @@ void DeltaClock::Update(float _deltaTime)
 void DeltaClock::SetTime(float _seconds)
 {
 	this->m_timeElapsed = _seconds;
+	OnTimeChange();
 }
 
 void DeltaClock::SetTime(float _minutes, float _seconds)
 {
-	this->m_timeElapsed = (_minutes * 60.0f) + _seconds;
+	this->SetTime((_minutes * 60.0f) + _seconds);
 }
 
-void DeltaClock::SetTime(float _minutes, float _seconds, float _miliseconds)
+void DeltaClock::SetTime(float _hours, float _minutes, float _seconds)
 {
-	this->m_timeElapsed = (_minutes * 60.0f) + _seconds + (_miliseconds/1000.0f);
+	this->SetTime((_hours * 3600.0f) + (_minutes * 60.0f) + _seconds);
 }
 
 void DeltaClock::AddTime(float _seconds)
 {
 	this->m_timeElapsed += _seconds;
+	this->OnTimeChange();
 }
 
 void DeltaClock::SetSpeed(float _value)
@@ -75,6 +79,7 @@ void DeltaClock::AddSpeed(float _value)
 void DeltaClock::Restart(float _offset)
 {
 	this->m_timeElapsed = 0.0f + _offset;
+	OnTimeChange();
 }
 
 #pragma region Conditions
@@ -113,10 +118,6 @@ float DeltaClock::GetSpeed(void)
 	return this->m_speed;
 }
 
-float DeltaClock::TimeDifference(DeltaClock& _dtClock)
-{
-	return this->m_timeElapsed - _dtClock.m_timeElapsed;
-}
 float DeltaClock::TimeDifference(float _seconds)
 {
 	return this->m_timeElapsed - _seconds;
@@ -143,20 +144,42 @@ void DeltaClock::operator+=(float _seconds)
 {
 	this->AddTime(_seconds);
 }
-
 void DeltaClock::operator-=(float _seconds)
 {
 	this->AddTime(-_seconds);
 }
-
 void DeltaClock::operator=(float _seconds)
 {
 	this->SetTime(_seconds);
+}
+float DeltaClock::operator+(float _seconds)
+{
+	return this->m_timeElapsed + _seconds;
+}
+float DeltaClock::operator-(float _seconds)
+{
+	return this->TimeDifference(_seconds);
+}
+bool DeltaClock::operator==(float _seconds)
+{
+	return this->m_timeElapsed == _seconds;
+}
+bool DeltaClock::operator<=(float _seconds)
+{
+	return this->m_timeElapsed <= _seconds;
+}
+bool DeltaClock::operator>=(float _seconds)
+{
+	return this->m_timeElapsed >= _seconds;
 }
 
 DeltaClock::operator float()
 {
 	return this->m_timeElapsed;
+}
+
+void DeltaClock::OnTimeChange(void)
+{
 }
 
 #pragma endregion
@@ -255,4 +278,4 @@ float Timer::GetTimeTargetAccurate(void)
 	return 0.0f;
 }
 #pragma endregion
-// Timer & DeltaClock C++ v1.1
+// Timer & DeltaClock C++ v1.2

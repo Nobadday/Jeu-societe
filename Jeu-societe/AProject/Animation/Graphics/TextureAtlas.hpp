@@ -1,7 +1,6 @@
 #pragma once
-
-#ifndef _INC_ANIMATION_TEXTURE_ATLAS_HPP
-#define _INC_ANIMATION_TEXTURE_ATLAS_HPP
+#ifndef _INC_ANIMATION_TEXTUREATLAS_HPP
+#define _INC_ANIMATION_TEXTUREATLAS_HPP
 
 #include "../Common.hpp"
 
@@ -76,7 +75,6 @@ class TextureAtlas
 
 		~TextureAtlas(void);
 
-		bool create(unsigned _width, unsigned _height);
 
 		// Load the textureAtlas from a known format
 		bool LoadFromFile(const std::string& _fileName, TextureAtlas::ParseType _parseType);
@@ -153,16 +151,24 @@ class TextureWhat : public sf::Texture, public AtlasContainer
 		// If this function fails, the texture & atlas data is left unchanged.
 		bool create(unsigned _width, unsigned _height);
 
-		// Load the textureAtlas from a known format
+
+		// Load from file the picture of the texture, 
+		// if _resetAtlas is true, will clear all atlas data
+		bool LoadFromFilePicture(const sf::String& _filePath, bool _resetAtlas = true, const sf::IntRect& _area = sf::IntRect());
+		// Load from file the picture of the texture from an image, 
+		// if _resetAtlas is true, will clear all atlas data
+		bool LoadFromFilePicture(const sf::Image& _image, bool _resetAtlas = true, const sf::IntRect& _area = sf::IntRect());
+
+		// Load the textureAtlas from a known format, some format may load the texture image along side the atlas data
 		bool LoadFromFile(const std::string& _fileName, TextureWhat::ParseType _parseType);
+		
 
-
-		// Load from file the picture of the texture
-		bool LoadFromFilePicture(const sf::String& _filePath);
-	
 	protected:
 		bool LoadFromFile(std::fstream& _file, const std::string& _dirPath, TextureWhat::ParseType _parseType);
+
 		using sf::Texture::loadFromFile;
+		using sf::Texture::loadFromImage;
+
 };
 
 #endif

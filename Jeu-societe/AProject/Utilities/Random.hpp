@@ -3,9 +3,12 @@
 #define _INC_RANDOM_HPP
 
 #define RANDOM_HPP_NAMESPACE random
+#define RANDOM_MT_HPP_NAMESPACE randmt
 
 #include <process.h>
 #include <stdlib.h>
+#include <random>
+
 
 namespace RANDOM_HPP_NAMESPACE
 {
@@ -33,5 +36,27 @@ namespace RANDOM_HPP_NAMESPACE
 	// Chance between _minChance -> _maxChange
 	bool Chance(float _value, float _minimumChance = 0.0f, float _maximumChange = 1.0f);
 }
+
+
+// Random with larger values and more random
+namespace RANDOM_MT_HPP_NAMESPACE
+{
+	void SetSeed(unsigned _seed);
+	void SetSeedDefault(void);
+	void SetSeedPID(void);
+
+	inline unsigned Rand(void);
+
+	int RandomInt(int _min, int _max);
+
+	float RandomFloat(float _min, float _max);
+
+	bool Chance(float _value, float _minimumChance = 0.0f, float _maximumChange = 1.0f);
+
+
+	unsigned GetSeed(void);
+	unsigned GetSeedDefault(void);
+}
+
 #endif
-// Random C++ v1.0
+// Random C++ v1.1

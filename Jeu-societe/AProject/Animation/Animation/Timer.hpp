@@ -24,7 +24,8 @@ class DeltaClock
 
 		void SetTime(float _seconds);
 		void SetTime(float _minutes, float _seconds);
-		void SetTime(float _minutes, float _seconds, float _miliseconds);
+		void SetTime(float _hours, float _minutes, float _seconds);
+		
 		// Adds time regardless if it's paused or not and doesn't multiply by the speed,
 		// if that's not the wanted effect, call Update() instead
 		void AddTime(float _seconds);
@@ -43,9 +44,6 @@ class DeltaClock
 
 		float GetSpeed(void);
 
-		// Get time difference between this clock and _dtClock
-		// thisClock - _dtClock
-		float TimeDifference(DeltaClock& _dtClock);
 		// Get time difference between this clock and _seconds
 		// thisClock - _seconds
 		float TimeDifference(float _seconds);
@@ -55,17 +53,21 @@ class DeltaClock
 		bool IsPaused(void);
 		bool IsReversed(void);
 		
-		
 
 		void operator+=(float _seconds);
 		void operator-=(float _seconds);
 		void operator=(float _seconds);
-		//void operator+(float _seconds);
-		//void operator-(float _seconds);
-
-		//void operator==(float _seconds);
+		float operator+(float _seconds);
+		float operator-(float _seconds);
+		bool operator==(float _seconds);
+		bool operator <=(float _seconds);
+		bool operator >=(float _seconds);
 
 		operator float();
+
+	protected:
+		virtual void OnTimeChange(void);
+
 };
 
 
@@ -106,4 +108,4 @@ class Timer : public DeltaClock
 };
 
 #endif
-// DeltaClock & Timer C++ || v1.1
+// DeltaClock & Timer C++ || v1.2

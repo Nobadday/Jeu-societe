@@ -1,5 +1,6 @@
 #include "AtlasContainer.hpp"
 
+
 AtlasFrame::AtlasFrame(void) :
 m_name			(""),
 m_textureRect	(0, 0, 0, 0),
@@ -18,10 +19,28 @@ void AtlasFrame::SetTextureRect(int _x, int _y, int _w, int _h)
 	this->m_textureRect = { _x, _y, _w, _h };
 }
 
+
+
+
 AtlasContainer::AtlasContainer(void) :
 m_frames ()
 {
 
+}
+
+AtlasFrame& AtlasContainer::ModifyAtlasFrame(const std::string& _name)
+{
+	int id = this->FindAtlasFrameIndex(_name);
+	if (id == -1)
+	{
+		id = (int)this->m_frames.size();
+		this->m_frames.resize(id+1);
+	}
+	AtlasFrame& frame = this->m_frames[id];
+	frame.m_name = _name;
+	
+
+	return frame;
 }
 
 
@@ -62,4 +81,5 @@ size_t AtlasContainer::GetAtlasFrameCount(void)
 	return this->m_frames.size();
 }
 
-// AtlasContainer C++ || v0.1
+
+// AtlasContainer C++ || v0.2

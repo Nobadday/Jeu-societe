@@ -298,4 +298,10 @@ int TextureAnimated::GetAnimationCount(void)
 #pragma endregion
 
 
+TextureAnimatHUH::TextureAnimatHUH(void) : TextureWhat()
+{
+	
+}
+
+
 // Texture Animated v1.0.2
