@@ -11,28 +11,32 @@ class Button : public SpriteAnimated
 		enum State
 		{
 			STATE_IDLE = 0,
-			STATE_HOVER,
+			STATE_ON,
 			STATE_PRESSED,
 
 			BUTTONSTATE_COUNT
 		};
 
-		Button(void);
+		Button();
 
-
-		void Update(float _deltaTime);
+		virtual void FrameChanged(void);
 		void PollEvent(sf::Event& _event);
 
-		bool IsMouseOn(sf::Vector2f _mousePos);
-		bool IsClicked(sf::Vector2f _mousePos);
+		bool IsMouseOn(const sf::Vector2f& _mousePos);
+		bool IsMouseOn(int _mouseX, int _mouseY);
 
+		bool IsClicked(const sf::Vector2f& _mousePos);
+		bool IsClicked(int _mouseX, int _mouseY);
 
 
 		void SetState(State _state);
 		State GetState(void);
 
+		bool HasBeenClicked(void);
+		
 	private: 
 		State m_currentState;
+		bool m_isClicked;
 };
 	
 #endif // !_INC_BUTTON_HPP

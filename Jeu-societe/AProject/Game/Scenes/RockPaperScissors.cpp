@@ -48,7 +48,7 @@ void RockPaperSizor::Load()
 	m_data->victoryText.setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 });
 
 
-	m_data->buttonTexture.LoadFromFile("Assets/CardData.texanim", TextureAnimated::ANIMATION_TEXANIM);
+	m_data->buttonTexture.LoadFromFile("Assets/ButtonPlaceHolder.anim", TextureAnimated::ANIMATION_ANIM);
 	m_data->button.setTexture(m_data->buttonTexture);
 }                               
 
@@ -175,7 +175,6 @@ void RockPaperSizor::Update(float _deltaTime)
 void RockPaperSizor::Draw(sf::RenderWindow& _renderWindow)
 {
 	_renderWindow.draw(m_data->button);
-
 
 	//for (short i = 0; i < 6; i++)
 	//{
