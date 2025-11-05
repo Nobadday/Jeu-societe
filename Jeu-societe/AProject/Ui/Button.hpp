@@ -39,4 +39,6 @@ class Button : public SpriteAnimated
 		bool m_isClicked;
 };
 	
+// Button V1.0
+
 #endif // !_INC_BUTTON_HPP

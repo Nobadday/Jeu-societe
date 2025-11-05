@@ -4,7 +4,7 @@
 #define INIT_TIME 2
 #define PLAY_TIME 5
 
-void RockPaperSizor::Load()
+void RockPaperScissors::Load()
 {
 	m_data = new SceneData;
 	//PlaceHolders
@@ -50,14 +50,15 @@ void RockPaperSizor::Load()
 
 	m_data->buttonTexture.LoadFromFile("Assets/ButtonPlaceHolder.anim", TextureAnimated::ANIMATION_ANIM);
 	m_data->button.setTexture(m_data->buttonTexture);
+	m_data->button.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 }                               
 
-void RockPaperSizor::Unload()
+void RockPaperScissors::Unload()
 {
 	delete m_data;
 }
 
-void RockPaperSizor::PollEvent(sf::Event& _event)
+void RockPaperScissors::PollEvent(sf::Event& _event)
 {
 	m_data->button.PollEvent(_event);
 	//if (m_data->button.isClicked(sf::Vector2f(_event.mouseMove.x, _event.mouseMove.y)))
@@ -117,7 +118,7 @@ void RockPaperSizor::PollEvent(sf::Event& _event)
 	//}
 }
 
-void RockPaperSizor::Update(float _deltaTime)
+void RockPaperScissors::Update(float _deltaTime)
 {   
 	m_data->button.Update(_deltaTime);
 	//m_data->timer.Update(_deltaTime);
@@ -172,7 +173,7 @@ void RockPaperSizor::Update(float _deltaTime)
 	//}
 }
 
-void RockPaperSizor::Draw(sf::RenderWindow& _renderWindow)
+void RockPaperScissors::Draw(sf::RenderWindow& _renderWindow)
 {
 	_renderWindow.draw(m_data->button);
 

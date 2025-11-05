@@ -7,7 +7,7 @@ typedef struct MainData
 	sf::Clock clock;
 	SceneHandler scenes;
 
-	RockPaperSizor rockPaperSizorScene;
+	RockPaperScissors rockPaperSizorScene;
 
 	GameData gameData;
 } MainData;

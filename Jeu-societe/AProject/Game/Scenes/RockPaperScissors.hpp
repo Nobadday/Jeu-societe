@@ -5,7 +5,7 @@
 #include "../../Common.hpp"
 #include "../../Scenes/Scene.hpp"
 #include "../../Animation/Animation/Timer.hpp" 
-//#include "../../Animation/Graphics.hpp"
+#include "../../Animation/Graphics.hpp"
 
 #include "../../Ui/Button.hpp"
 
@@ -18,7 +18,7 @@ typedef enum RPS_Choice
 	RPS_CHOICE_COUNT
 } RPS_Choice;
 
-class RockPaperSizor : public SceneBase
+class RockPaperScissors : public SceneBase
 {
 	private:
 	struct SceneData
@@ -54,5 +54,7 @@ public:
 	virtual void Update(float _deltaTime);
 	virtual void Draw(sf::RenderWindow& _renderWindow);
 };
+
+
 
 #endif // !_INC_ROCKPAPERSCISSORS_HPP

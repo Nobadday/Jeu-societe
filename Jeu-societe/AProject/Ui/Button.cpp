@@ -15,6 +15,8 @@ void Button::FrameChanged(void)
 
 void Button::PollEvent(sf::Event& _event)
 {
+
+
 	if (!this->m_isClicked)
 	{
 		switch (_event.type)
@@ -22,9 +24,8 @@ void Button::PollEvent(sf::Event& _event)
 		case sf::Event::MouseButtonPressed:
 			if (this->GetState() == STATE_ON)
 			{
-				if (this->IsClicked(_event.mouseMove.x, _event.mouseMove.y))
+				if (this->IsClicked(_event.mouseButton.x, _event.mouseButton.y))
 				{
-					std::cout << "clic" << std::endl;
 					this->SetState(STATE_PRESSED);
 				}
 			}
@@ -33,10 +34,13 @@ void Button::PollEvent(sf::Event& _event)
 		case sf::Event::MouseButtonReleased:
 			if (this->GetState() == STATE_PRESSED)
 			{
-				if (_event.mouseButton.button == sf::Mouse::Left && this->IsMouseOn(_event.mouseMove.x, _event.mouseMove.y))
+				if (_event.mouseButton.button == sf::Mouse::Left && this->IsMouseOn(_event.mouseButton.x, _event.mouseButton.y))
 				{
-					std::cout << "Button cliqued" << std::endl;
 					this->m_isClicked = true;
+				}
+				else
+				{
+					this->SetState(STATE_IDLE);
 				}
 			}
 			break;
@@ -77,6 +81,7 @@ bool Button::IsMouseOn(int _mouseX, int _mouseY)
 {
 	return this->getGlobalBounds().contains((float)_mouseX, (float)_mouseY);
 }
+
 
 bool Button::IsClicked(const sf::Vector2f& _mousePos)
 {
@@ -124,3 +129,5 @@ Button::State Button::GetState(void)
 {
 	return this->m_currentState;
 }
+
+// Button v1.0
