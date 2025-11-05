@@ -4,10 +4,11 @@ namespace sfMod
 {
 
 RenderWindow::RenderWindow(void) : sf::RenderWindow(),
-	m_isFullscreen(false),
-	m_baseStyle(0),
-	m_baseVideoMode(0, 0),
-	m_aspectRatio(16, 9)
+m_isFullscreen(false),
+m_baseStyle(0),
+m_baseVideoMode(0, 0),
+m_aspectRatio(16, 9),
+m_view (NULL)
 {
 
 }

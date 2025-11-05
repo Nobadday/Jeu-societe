@@ -30,9 +30,10 @@ class SpriteAnimated : public sf::Sprite, public AnimatedObject
 		virtual void OnFrameChange(void);
 
 	private:
-		void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };
 
 
 #endif
-// SpriteAnimated v1.1.2
+
+// SpriteAnimated v1.1.3

@@ -29,6 +29,7 @@ class TextureAnimated
 			
 			public:
 				AnimationProperties(void);
+
 		};
 
 		enum AnimationType
@@ -72,8 +73,8 @@ class TextureAnimated
 		bool LoadFromFile(const std::string& _fileName, TextureAtlas::ParseType _atlasParseType);
 		// Load only a texture atlas and creates an animation of the entire atlas
 		bool LoadFromFile(std::fstream& _file, const std::string& _dirPath, TextureAtlas::ParseType _atlasParseType);
+		
 
-		// 
 		void ClearAll(void);
 
 		AnimationProperties* GetAnimation(int _index);
@@ -94,13 +95,42 @@ class TextureAnimated
 
 class TextureAnimatHUH : public TextureWhat
 {
+	public:
+		enum AnimationType
+		{
+			// Old animation format :
+			// .texanim
+			ANIMATION_TEXANIM,
+
+			// New animation format
+			ANIMATION_ANIM,
+
+			// Animation files produced by Aseprite,
+			// only available if you exported your animation
+			// with tags meta
+			ANIMATION_ASEPRITE,
+
+			// Animation files of Friday Night Funckin' (Legacy)
+			ANIMATION_FNF_LEGACY,
+
+			// Animation files of Friday Night Funckin'
+			ANIMATION_FNF,
+
+			ANIMATIONTYPES_COUNT
+		};
+
 	private:
 		//std::vector<> m_anim2;
+
 	public:
 		TextureAnimatHUH(void);
 
+		// Load the animation file
+		bool LoadFromFile(const std::string& _fileName, TextureAnimatHUH::AnimationType _animationFormat);
 
 
+	protected:
+		
 };
 
 

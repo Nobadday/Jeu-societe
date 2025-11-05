@@ -122,11 +122,8 @@ void Animation::UpdateFrame(void)
 	// Checks for frameUpdates
 	if (this->m_frame != newFrame)
 	{
-		bool frameChanged = false;
-		if ((int)this->m_frame != (int)newFrame)
-		{
-			frameChanged = true;
-		}
+		bool frameChanged = (int)this->m_frame != (int)newFrame;
+
 		this->m_frame = newFrame;
 		if (frameChanged)
 		{
@@ -209,9 +206,7 @@ void Animation::SetFramerate(int _framerate)
 
 void Animation::AddFramerate(float _value)
 {
-	this->m_frameTime += anim::AniMath::FPSToFrameTime(_value);
-	// Keep the same frame
-	this->SetFrame(this->m_frame);
+	this->SetFramerate(this->GetFramerate() + _value);
 }
 void Animation::AddFramerate(int _value)
 {
@@ -272,7 +267,7 @@ void Animation::SetShouldUpdate(void)
 
 float Animation::GetCurrentFrameUncapped(void)
 {
-	if (this->m_frameTime != 0.0f)
+	if (this->m_frameTime > 0.0f)
 	{
 		return this->m_timeElapsed / this->m_frameTime;
 	}

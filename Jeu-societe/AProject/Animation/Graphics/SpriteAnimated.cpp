@@ -91,4 +91,5 @@ void SpriteAnimated::draw(sf::RenderTarget& target, sf::RenderStates states) con
 	states.transform.combine(this->m_animTransform);
 	target.draw((sf::Sprite)(*this), states);
 }
-// SpriteAnimated v1.1.2
+
+// SpriteAnimated v1.1.3

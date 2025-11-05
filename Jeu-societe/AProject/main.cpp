@@ -9,6 +9,7 @@ typedef struct MainData
 
 	TextAnimated tp;
 	GameData gameData;
+	
 } MainData;
 
 
@@ -29,7 +30,7 @@ int main(void)
 	MainDataLoad(mainData);
 
 	sf::Font font;
-	font.loadFromFile("./Assets/Fonts/tf2cprofessor.ttf");
+	font.loadFromFile("./Assets/Fonts/OMORI_GAME2.ttf");
 	
 	
 	mainData.tp.setFont(font);
@@ -41,6 +42,7 @@ int main(void)
 	mainData.tp.SetCharactersPerLine(20);
 	mainData.tp.SetAlignement(TextPlus::Alignement::CENTER);
 	mainData.tp.Modify(8.5f, 24.0f, false);
+
 
 	while (mainData.renderWindow.isOpen())
 	{
@@ -85,6 +87,8 @@ void PollEvent(MainData& _mainData)
 			case sf::Event::Closed:
 				_mainData.renderWindow.close();
 				return;
+				break;
+			case sf::Event::KeyPressed:
 				break;
 
 			default:

@@ -17,7 +17,7 @@ class RenderWindow : public sf::RenderWindow
 		sf::VideoMode m_baseVideoMode;
 		sf::Vector2f m_aspectRatio;
 		sf::Image m_icon;
-		sf::View& m_view;
+		sf::View* m_view;
 
 		sf::VertexArray m_borders;
 
