@@ -3,38 +3,58 @@
 #define _INC_BUTTON_HPP
 
 #include "../Animation/Graphics/SpriteAnimated.hpp"
+#include "../Animation/Graphics/TextPlus.hpp"
 
 class Button : public SpriteAnimated
 {
 	public :
 	
-		Button(void);
+		enum State
+		{
+			STATE_IDLE = 0,
+			STATE_ON,
+			STATE_PRESSED,
 
-		void Update(float _dt);
-		void Draw(sf::RenderTarget& target, sf::RenderStates states);
+			BUTTONSTATE_COUNT
+		};
 
-		void UpdateTexture();
+		Button();
 
-		void SetTexure(TextureAnimated _texture);
-		void SetPosition(sf::Vector2f _pos);
+		virtual void FrameChanged(void);
+		void PollEvent(sf::Event& _event);
 
+		bool IsMouseOn(const sf::Vector2f& _mousePos);
+		bool IsMouseOn(int _mouseX, int _mouseY);
 
-		void SetOrigin(sf::Vector2f _origin);
-
-		bool isMouseOn(sf::Vector2f _mousePos);
-		//bool isSelected();
-		bool isClicked(sf::Vector2f _mousePos);
-
-
-		SpriteAnimated GetSpriteAnimated();
-		sf::Sprite getSprite();
-
-		sf::Vector2f getPosition();
+		bool IsClicked(const sf::Vector2f& _mousePos);
+		bool IsClicked(int _mouseX, int _mouseY);
 
 
+		void SetState(State _state);
+		State GetState(void);
 
+		bool HasBeenClicked(void);
+		
 	private: 
-		sf::Vector2f m_originPercent;
+		State m_currentState;
+		bool m_isClicked;
 };
 	
+//
+//class ButtonText : public Button
+//{
+//
+//	public :
+//		ButtonText();
+//
+//		virtual void FrameChanged(void);
+//		
+//	private:
+//		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+//
+//		TextPlus m_text;
+//
+//};
+// Button V1.0
+
 #endif // !_INC_BUTTON_HPP

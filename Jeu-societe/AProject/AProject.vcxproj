@@ -149,6 +149,7 @@
     <ClCompile Include="Animation\Graphics\AnimatedObject.cpp" />
     <ClCompile Include="Animation\Graphics\GraphicAddons.cpp" />
     <ClCompile Include="Animation\Graphics\SpriteAnimated.cpp" />
+    <ClCompile Include="Animation\Graphics\TextPlus.cpp" />
     <ClCompile Include="Animation\Graphics\TextureAnimated.cpp" />
     <ClCompile Include="Animation\Graphics\TextureAtlas.cpp" />
     <ClCompile Include="Animation\Utilities\Bezier.cpp" />
@@ -181,6 +182,7 @@
     <ClInclude Include="Animation\Graphics\AnimatedObject.hpp" />
     <ClInclude Include="Animation\Graphics\GraphicAddons.hpp" />
     <ClInclude Include="Animation\Graphics\SpriteAnimated.hpp" />
+    <ClInclude Include="Animation\Graphics\TextPlus.hpp" />
     <ClInclude Include="Animation\Graphics\TextureAnimated.hpp" />
     <ClInclude Include="Animation\Graphics\TextureAtlas.hpp" />
     <ClInclude Include="Animation\Utilities\Bezier.hpp" />

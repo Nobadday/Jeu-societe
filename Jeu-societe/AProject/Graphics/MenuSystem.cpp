@@ -16,7 +16,7 @@ MenuHolder::~MenuHolder(void)
 
 	for (auto& [name, button] : m_buttons)
 	{
-		//button.~Button();
+		button.~Button();
 		//Web3school, for each in loop example
 	}
 	m_buttons.clear();
