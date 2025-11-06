@@ -2,7 +2,7 @@
 #ifndef _INC_BUTTON_HPP
 #define _INC_BUTTON_HPP
 
-#include "../Animation/Graphics/SpriteAnimated.hpp"
+#include "../Animation/Graphics.hpp"
 #include "../Animation/Graphics/TextPlus.hpp"
 
 class Button : public SpriteAnimated
@@ -26,6 +26,7 @@ class Button : public SpriteAnimated
 		bool IsMouseOn(const sf::Vector2f& _mousePos);
 		bool IsMouseOn(int _mouseX, int _mouseY);
 
+		//Check if the button is actually clicked
 		bool IsClicked(const sf::Vector2f& _mousePos);
 		bool IsClicked(int _mouseX, int _mouseY);
 
@@ -40,7 +41,7 @@ class Button : public SpriteAnimated
 		bool m_isClicked;
 };
 	
-//
+
 //class ButtonText : public Button
 //{
 //
