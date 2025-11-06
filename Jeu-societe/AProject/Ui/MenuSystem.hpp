@@ -26,18 +26,17 @@ public:
 
 	void UpdateAll(float _deltaTime);
 
-	// Adds a option category to the menu
 	void MenuAdd(std::string _menuName, bool _selectionLoop);
 	void MenuRemove(std::string _menuName);
 	void MenuRemoveIndex(int _menuIndex);
 
 
-	// Add a button to the menu category
 	void MenuAddButton(std::string _menuName, std::string _buttonName, Button& _buttonREF);
 
-	// Removes and gets a button from the menu
-	Button* MenuPopButton(std::string _menuName, std::string _buttonName);
-	Button* MenuPopButtonIndex(std::string _menuName, int _index);
+	//Delete from map and destroy it, it will be unusable
+	void MenuDeleteButton(std::string _menuName, std::string _buttonName);
+	//Delete from map and destroy it, it will be unusable
+	void MenuDeleteButtonIndex(std::string _menuName, int _index);
 
 	MenuHolder& GetMenuHolder(std::string _menuName);
 	MenuHolder& GetMenuHolderIndex(int _index);
@@ -58,7 +57,7 @@ public:
 	bool IsSelected(std::string _menuName);
 	bool MenuExists(std::string _menuName);
 	Button& GetButton(std::string _buttonName);
-	Button& GetButtonIndex(int _buttonIndex);
+	Button& GetButton(int _value);
 	int GetButtonCount();
 	std::string GetButtonName(int _buttonIndex);
 
@@ -79,7 +78,7 @@ public:
 
 
 private:
-	std::string currentMenu;
+	std::string m_currentMenu;
 	std::map< std::string, MenuHolder> m_menus;
 	//Map or vector of MenuHolder
 };

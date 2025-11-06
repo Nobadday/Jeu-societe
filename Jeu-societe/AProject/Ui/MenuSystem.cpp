@@ -86,6 +86,10 @@ void MenuHolder::AddButton(std::string _name, Button& _button)
 }
 Button& MenuHolder::GetButton(std::string _name)
 {
+	//Static object to return if error, BOUTTON SI SITUATION CACA
+	static Button nullButton;
+
+
 	//Ref : https://www.geeksforgeeks.org/cpp/map-find-function-in-c-stl/
 	auto key = m_buttons.find(_name);
 
@@ -95,15 +99,17 @@ Button& MenuHolder::GetButton(std::string _name)
 	}
 	else
 	{
-		std::cout << "Error, you get button who no exist" << std::endl;
+		std::cout << "Error, you get button who no exist, return fake button" << std::endl;
 	}
+	return nullButton;;
 }
-Button& MenuSystem::GetButtonIndex(int _buttonIndex)
-{
-	// TODO: insérer une instruction return ici
-}
+
 Button& MenuHolder::GetButton(int _value)
 {
+	//Static object to return if error, BOUTTON SI SITUATION CACA
+	static Button nullButton; 
+
+
 	//I think we can erase this function, map with index is bad idea no ?
 	int i = 0;
 	for (auto& [name, button] : m_buttons)
@@ -114,11 +120,16 @@ Button& MenuHolder::GetButton(int _value)
 		}
 		i++;
 	}
-	std::cout << "Error, you get button who no exist" << std::endl;
+	std::cout << "Error, you get button who no exist, return fake button" << std::endl;
+	return nullButton;
 }
 
 Button& MenuHolder::PopButton(std::string _name)
 {
+	//Static object to return if error, BOUTTON SI SITUATION CACA
+	static Button nullButton;
+
+
 	auto key = m_buttons.find(_name);
 
 	if (key != m_buttons.end())
@@ -133,11 +144,17 @@ Button& MenuHolder::PopButton(std::string _name)
 	}
 	else
 	{
-		std::cout << "Error, you want pop button who no exist" << std::endl;
+		std::cout << "Error, you want pop button who no exist, return fake button" << std::endl;
 	}
+	return nullButton;
 }
 Button& MenuHolder::PopButton(int _value)
 {
+	//Static object to return if error, BOUTTON SI SITUATION CACA
+	static Button nullButton;
+
+
+
 	int i = 0;
 	for (auto& [name, button] : m_buttons)
 	{
@@ -152,7 +169,8 @@ Button& MenuHolder::PopButton(int _value)
 		}
 		i++;
 	}
-	std::cout << "Error, you want pop button who no exist" << std::endl;
+	std::cout << "Error, you want pop button who no exist, return fake button" << std::endl;
+	return nullButton;
 }
 
 int MenuHolder::GetButtonCount(void)
@@ -297,28 +315,57 @@ void MenuSystem::MenuAddButton(std::string _menuName, std::string _buttonName, B
 {
 }
 
-Button* MenuSystem::MenuPopButton(std::string _menuName, std::string _buttonName)
+void MenuSystem::MenuDeleteButton(std::string _menuName, std::string _buttonName)
 {
-	return nullptr;
+
+
+
 }
 
-Button* MenuSystem::MenuPopButtonIndex(std::string _menuName, int _index)
+void MenuSystem::MenuDeleteButtonIndex(std::string _menuName, int _index)
 {
-	return nullptr;
 }
+
+
 
 MenuHolder& MenuSystem::GetMenuHolder(std::string _menuName)
 {
 	// TODO: insérer une instruction return ici
+	//temp
+	return m_menus.at(_menuName);
 }
 
 MenuHolder& MenuSystem::GetMenuHolderIndex(int _index)
 {
-	// TODO: insérer une instruction return ici
+
+	int i = 0;
+	for (auto& [name, menuHolder] : m_menus)
+	{
+		if (i == _index)
+		{
+			return menuHolder;
+		}
+		i++;
+	}
+	std::cout << "Error, you get menu who no exist, return last menu can finded : " << m_menus.size() << std::endl;
+	return m_menus.end()->second;
 }
 
 MenuHolder& MenuSystem::GetCurrentMenu(void)
 {
-	// TODO: insérer une instruction return ici
+	//Check if menuSysteme have menuHolder in his map
+	if (!m_currentMenu.empty())
+	{
+		//Check if currentMenu exist in map
+		if (m_menus.find(m_currentMenu) != m_menus.end())
+		{
+			return m_menus.at(m_currentMenu);
+		}
+
+		std::cout << "Current menu is not correctly set, but map not empty.\nReturned last MenuSystem on MenuHolder";
+		return m_menus.at(m_currentMenu);
+
+	}
+	std::cout << "Error, you dont have MenuSystem in map of MenuHolder \n";
 }
 #pragma endregion
