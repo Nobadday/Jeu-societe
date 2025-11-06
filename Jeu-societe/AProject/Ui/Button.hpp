@@ -3,6 +3,7 @@
 #define _INC_BUTTON_HPP
 
 #include "../Animation/Graphics/SpriteAnimated.hpp"
+#include "../Animation/Graphics/TextPlus.hpp"
 
 class Button : public SpriteAnimated
 {
@@ -39,6 +40,21 @@ class Button : public SpriteAnimated
 		bool m_isClicked;
 };
 	
+//
+//class ButtonText : public Button
+//{
+//
+//	public :
+//		ButtonText();
+//
+//		virtual void FrameChanged(void);
+//		
+//	private:
+//		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+//
+//		TextPlus m_text;
+//
+//};
 // Button V1.0
 
 #endif // !_INC_BUTTON_HPP

@@ -5,7 +5,6 @@
 #include "../../Common.hpp"
 #include "../../Scenes/Scene.hpp"
 #include "../../Animation/Animation/Timer.hpp" 
-#include "../../Animation/Graphics.hpp"
 
 #include "../../Ui/Button.hpp"
 
@@ -41,7 +40,7 @@ class RockPaperScissors : public SceneBase
 
 		sf::Text victoryText;
 
-		Button button;
+		ButtonText button;
 		TextureAnimated buttonTexture;
 	};
 	SceneData* m_data;

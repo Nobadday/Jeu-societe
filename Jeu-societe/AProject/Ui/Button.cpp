@@ -72,7 +72,6 @@ void Button::PollEvent(sf::Event& _event)
 	}	
 }
 
-
 bool Button::IsMouseOn(const sf::Vector2f& _mousePos)
 {
 	return this->getGlobalBounds().contains(_mousePos);
@@ -129,5 +128,20 @@ Button::State Button::GetState(void)
 {
 	return this->m_currentState;
 }
+
+
+
+//ButtonText::ButtonText():Button()
+//{
+//}
+//
+//void ButtonText::FrameChanged(void)
+//{
+//	this->SpriteAnimated::FrameChanged();
+//}
+//
+//void ButtonText::draw(sf::RenderTarget& target, sf::RenderStates states) const
+//{
+//}
 
 // Button v1.0
