@@ -40,8 +40,6 @@ class RockPaperScissors : public SceneBase
 
 		sf::Text victoryText;
 
-		ButtonText button;
-		TextureAnimated buttonTexture;
 	};
 	SceneData* m_data;
 
