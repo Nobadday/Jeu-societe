@@ -1,17 +1,19 @@
 #include "SpriteAnimated.hpp"
 
-SpriteAnimated::SpriteAnimated(void) : sf::Sprite()
+
+SpriteAnimated::SpriteAnimated(void) : sf::Sprite(),
+m_originCoefficient (0.0f,0.0f),
+m_animTransform		()
 {
-	this->m_originPercentage = { 0.0f, 0.0f };
+
 }
 
-
-void SpriteAnimated::UpdateFrame(void)
+void SpriteAnimated::FrameChanged(void)
 {
 	if (this->m_animationSelected != -1)
 	{
-		AnimationProperties* anim = this->AnimatedObject::m_texture->GetAnimation(this->m_animationSelected);
-		AtlasFrame* frame = this->AnimatedObject::m_texture->GetFrame(anim->m_atlasIndex, this->m_animationHandler.GetCurrentFrameInt());
+		TextureAnimated::AnimationProperties* anim = this->AnimatedObject::m_texture->GetAnimation(this->m_animationSelected);
+		AtlasFrame* frame = this->AnimatedObject::m_texture->GetFrame(anim->m_atlasIndex, this->GetCurrentFrameInt());
 		
 		this->setTextureRect(frame->m_textureRect);
 		sf::Vector2f scale = this->getScale();
@@ -21,10 +23,10 @@ void SpriteAnimated::UpdateFrame(void)
 		float c = 0.0f;
 		float d = 1.0f;
 		float x = -((frame->m_frameOffset.left + anim->m_offset.x)) * scale.x;
-		float y = -((frame->m_frameOffset.top + anim->m_offset.y) * (1.0f - this->m_originPercentage.y)) * scale.y;
+		float y = -((frame->m_frameOffset.top + anim->m_offset.y) * (1.0f - this->m_originCoefficient.y)) * scale.y;
 
-		//std::cout << "x : " << 1.0f-(2.0f*this->m_originPercentage.x) << " ";
-		//std::cout << "y : " << (1.0f - this->m_originPercentage.y) << "\n";
+		//std::cout << "x : " << 1.0f-(2.0f*this->m_originCoefficient.x) << " ";
+		//std::cout << "y : " << (1.0f - this->m_originCoefficient.y) << "\n";
 
 		if (frame->m_rotated && false)
 		{
@@ -68,7 +70,7 @@ void SpriteAnimated::UpdateFrame(void)
 			//										0.0f, 0.0f, 1.0f);
 
 		}
-		this->sf::Transformable::setOrigin(frame->m_textureRect.width * this->m_originPercentage.x, frame->m_textureRect.height * this->m_originPercentage.y);
+		this->sf::Transformable::setOrigin(frame->m_textureRect.width * this->m_originCoefficient.x, frame->m_textureRect.height * this->m_originCoefficient.y);
 	}
 }
 
@@ -89,4 +91,4 @@ void SpriteAnimated::draw(sf::RenderTarget& target, sf::RenderStates states) con
 	states.transform.combine(this->m_animTransform);
 	target.draw((sf::Sprite)(*this), states);
 }
-// SpriteAnimated v1.0
+// SpriteAnimated v1.1.2

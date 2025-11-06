@@ -1,7 +1,7 @@
 #include "MenuSystem.hpp"
 
 #pragma region MENU_HOLDER
-MenuHolder::MenuHolder(bool _looping = true)
+MenuHolder::MenuHolder(bool _looping)
 	: m_selectionLooping(_looping),
 	m_selection(-1)
 {
@@ -56,7 +56,7 @@ void MenuHolder::Update(float _dt)
 			
 			//¤$£ (idk how to call you) 
 			//Change texture
-			btnREF.UpdateTexture();
+			//btnREF.UpdateTexture();
 		}
 		btnREF.Update(_dt);
 		i++;
@@ -64,10 +64,10 @@ void MenuHolder::Update(float _dt)
 }
 void MenuHolder::Draw(sf::RenderWindow& _renderWindow, sf::RenderStates _states)
 {
-	m_buttons.size();
+	//m_buttons.size();
 	for (auto& [name, button] : m_buttons)
 	{
-		button.draw(_renderWindow, _states);
+		_renderWindow.draw(button);
 	}
 }
 
@@ -97,6 +97,10 @@ Button& MenuHolder::GetButton(std::string _name)
 	{
 		std::cout << "Error, you get button who no exist" << std::endl;
 	}
+}
+Button& MenuSystem::GetButtonIndex(int _buttonIndex)
+{
+	// TODO: insérer une instruction return ici
 }
 Button& MenuHolder::GetButton(int _value)
 {
@@ -156,6 +160,49 @@ int MenuHolder::GetButtonCount(void)
 	return (int)m_buttons.size();
 }
 
+std::string MenuSystem::GetButtonName(int _buttonIndex)
+{
+	return std::string();
+}
+
+std::string MenuSystem::GetCurrentMenuName()
+{
+	return std::string();
+}
+
+int MenuSystem::GetMenuCount()
+{
+	return 0;
+}
+
+void MenuSystem::Draw(MenuSystem* _menuSystem, sf::RenderWindow& _renderWindow, sf::RenderStates& _states)
+{
+}
+
+void MenuSystem::DrawName(MenuSystem* _menuSystem, std::string _menuName, sf::RenderWindow& _renderWindow, sf::RenderStates& _states)
+{
+}
+
+void MenuSystem::DrawAll(MenuSystem* _menuSystem, sf::RenderWindow& _renderWindow, sf::RenderStates& _states)
+{
+}
+
+void MenuSystem::Destroy(MenuSystem* _menuSystem)
+{
+}
+
+void MenuSystem::Print(MenuSystem* _menuSystem)
+{
+}
+
+void MenuSystem::SetMenu(std::string _menuName)
+{
+}
+
+void MenuSystem::SetMenuIndex(int _index)
+{
+}
+
 void MenuHolder::SetSelection(int _selection)
 {
 	if (_selection < 0)
@@ -188,18 +235,90 @@ void MenuHolder::SetSelection(int _selection)
 		//buttonREF->stateIsON = sfFalse;
 		 
 		//ButtonUpdateTexture(buttonREF);
-		buttonREF.UpdateTexture();
+		buttonREF.UpdateFrame();
 	}
 	m_selection = _selection;
 }
 void MenuHolder::AddSelection(int _value)
 {
 }
+void MenuSystem::SetSelectionAll(int _selection)
+{
+}
 void MenuHolder::ResetSelection(void)
 {
+}
+void MenuSystem::ResetSelectionAll(void)
+{
+}
+bool MenuSystem::IsSelected(std::string _menuName)
+{
+	return false;
+}
+bool MenuSystem::MenuExists(std::string _menuName)
+{
+	return false;
 }
 void MenuHolder::ConfirmSelection(void)
 {
 }
 #pragma endregion
 
+#pragma region MENU_SYSTEM
+MenuSystem::MenuSystem()
+{
+}
+
+MenuSystem::~MenuSystem()
+{
+}
+
+void MenuSystem::PollEventAll(sf::Event& _event)
+{
+}
+
+void MenuSystem::UpdateAll(float _deltaTime)
+{
+}
+
+void MenuSystem::MenuAdd(std::string _menuName, bool _selectionLoop)
+{
+}
+
+void MenuSystem::MenuRemove(std::string _menuName)
+{
+}
+
+void MenuSystem::MenuRemoveIndex(int _menuIndex)
+{
+}
+
+void MenuSystem::MenuAddButton(std::string _menuName, std::string _buttonName, Button& _buttonREF)
+{
+}
+
+Button* MenuSystem::MenuPopButton(std::string _menuName, std::string _buttonName)
+{
+	return nullptr;
+}
+
+Button* MenuSystem::MenuPopButtonIndex(std::string _menuName, int _index)
+{
+	return nullptr;
+}
+
+MenuHolder& MenuSystem::GetMenuHolder(std::string _menuName)
+{
+	// TODO: insérer une instruction return ici
+}
+
+MenuHolder& MenuSystem::GetMenuHolderIndex(int _index)
+{
+	// TODO: insérer une instruction return ici
+}
+
+MenuHolder& MenuSystem::GetCurrentMenu(void)
+{
+	// TODO: insérer une instruction return ici
+}
+#pragma endregion

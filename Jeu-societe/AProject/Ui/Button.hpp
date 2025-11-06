@@ -2,7 +2,8 @@
 #ifndef _INC_BUTTON_HPP
 #define _INC_BUTTON_HPP
 
-#include "../Animation/Graphics/SpriteAnimated.hpp"
+#include "../Animation/Graphics.hpp"
+//#include "../Animation/Graphics/SpriteAnimated.hpp"
 #include "../Animation/Graphics/TextPlus.hpp"
 
 class Button : public SpriteAnimated

@@ -2,24 +2,26 @@
 
 #pragma region DeltaClock
 #pragma region Constructors
-DeltaClock::DeltaClock(void)
+DeltaClock::DeltaClock(void) :
+m_timeElapsed	(0.0f),
+m_speed			(1.0f),
+m_play			(true)
 {
-	this->m_timeElapsed = 0.0f;
-	this->m_speed = 1.0f;
-	this->m_play = true;
-}
-DeltaClock::DeltaClock(DeltaClock& _copy)
-{
-	this->m_timeElapsed = _copy.m_timeElapsed;
-	this->m_speed = _copy.m_speed;
-	this->m_play = _copy.m_play;
-}
 
-DeltaClock::DeltaClock(float _currentTime, float _speed, bool _play)
+}
+DeltaClock::DeltaClock(DeltaClock& _copy) : 
+m_timeElapsed	(_copy.m_timeElapsed),
+m_speed			(_copy.m_speed),
+m_play			(_copy.m_play)
 {
-	this->m_timeElapsed = _currentTime;
-	this->m_speed = _speed;
-	this->m_play = _play;
+
+}
+DeltaClock::DeltaClock(float _currentTime, float _speed, bool _play) :
+m_timeElapsed	(_currentTime),
+m_speed			(_speed),
+m_play			(_play)
+{
+
 }
 
 #pragma endregion
@@ -93,6 +95,11 @@ void DeltaClock::SetReverse(bool _condition)
 		this->m_speed = -this->m_speed;
 	}
 }
+void DeltaClock::ToggleReverse(void)
+{
+	this->SetReverse(!this->IsReversed());
+}
+
 #pragma endregion
 
 #pragma region Get
@@ -157,14 +164,20 @@ DeltaClock::operator float()
 #pragma endregion // DeltaTime
 
 #pragma region Timer
-Timer::Timer()
+Timer::Timer() : DeltaClock(),
+m_timeTarget (0.0f)
 {
-	this->m_timeTarget = 0.0f;
-}
 
-Timer::Timer(float _timeTarget, float _speed, bool _play, float _currentTime) : DeltaClock(_currentTime, _speed, _play)
+}
+Timer::Timer(Timer& _copy) : DeltaClock(_copy),
+m_timeTarget (_copy.m_timeTarget)
 {
-	this->m_timeTarget = _timeTarget;
+
+}
+Timer::Timer(float _timeTarget, float _speed, bool _play, float _currentTime) : DeltaClock(_currentTime, _speed, _play),
+m_timeTarget (_timeTarget)
+{
+
 }
 
 void Timer::RestartOffsetExcessTime(void)
@@ -172,9 +185,10 @@ void Timer::RestartOffsetExcessTime(void)
 	this->DeltaClock::Restart(this->GetExcessTime());
 }
 
-void Timer::SetTimeTarget(float _seconds)
+void Timer::SetTimeTarget(float _seconds, bool _restart)
 {
 	this->m_timeTarget = _seconds;
+	this->Restart();
 }
 
 void Timer::End(void)
@@ -241,3 +255,4 @@ float Timer::GetTimeTargetAccurate(void)
 	return 0.0f;
 }
 #pragma endregion
+// Timer & DeltaClock C++ v1.1

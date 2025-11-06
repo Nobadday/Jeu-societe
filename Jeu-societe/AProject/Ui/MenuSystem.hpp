@@ -9,6 +9,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+class MenuHolder;
 
 class MenuSystem
 {
@@ -38,9 +39,9 @@ public:
 	Button* MenuPopButton(std::string _menuName, std::string _buttonName);
 	Button* MenuPopButtonIndex(std::string _menuName, int _index);
 
-	MenuHolder* GetMenuHolder(std::string _menuName);
-	MenuHolder* GetMenuHolderIndex(int _index);
-	MenuHolder* GetCurrentMenu(void);
+	MenuHolder& GetMenuHolder(std::string _menuName);
+	MenuHolder& GetMenuHolderIndex(int _index);
+	MenuHolder& GetCurrentMenu(void);
 
 
 	void SetMenu(std::string _menuName);
@@ -79,6 +80,7 @@ public:
 
 private:
 	std::string currentMenu;
+	std::map< std::string, MenuHolder> m_menus;
 	//Map or vector of MenuHolder
 };
 
