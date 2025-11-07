@@ -32,6 +32,11 @@ bool RenderWindow::Screenshot(const sf::String& _fileName)
 	return screenshot.saveToFile(_fileName);
 }
 
+void RenderWindow::ResetView(void)
+{
+	this->setView(this->getDefaultView());
+}
+
 
 void RenderWindow::onCreate(void)
 {

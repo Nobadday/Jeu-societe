@@ -2,6 +2,7 @@
 #ifndef _INC_ANIMATION_TEXTUREANIMATED_HPP
 #define _INC_ANIMATION_TEXTUREANIMATED_HPP
 
+
 #include "../Common.hpp"
 #include "TextureAtlas.hpp"
 #include "../Animation/AnimationHandler.hpp"
@@ -56,83 +57,46 @@ class TextureAnimated
 		};
 
 	private:
-		TextureAtlas m_textureAtlas;
-		// List of AnimationProperties*
-		DynaList m_animations;
+		TextureWhat m_textureAtlas;
+
+		std::vector<AnimationProperties> m_animations;
 		
 
 	public:
 		TextureAnimated(void);
 		~TextureAnimated(void);
 		
-		
+
+		// Load an animation file of any of the supported formats given with _animationFormat
 		bool LoadFromFile(const std::string& _fileName, TextureAnimated::AnimationType _animationFormat);
+		// Load an animation file of any of the supported formats given with _animationFormat
 		bool LoadFromFile(std::fstream& _file, const std::string& _dirPath, TextureAnimated::AnimationType _animationFormat);
 
 		// Load only a texture atlas and creates an animation of the entire atlas
-		bool LoadFromFile(const std::string& _fileName, TextureAtlas::ParseType _atlasParseType);
+		//bool LoadFromFile(const std::string& _fileName, TextureAtlas::ParseType _atlasParseType);
 		// Load only a texture atlas and creates an animation of the entire atlas
-		bool LoadFromFile(std::fstream& _file, const std::string& _dirPath, TextureAtlas::ParseType _atlasParseType);
+		//bool LoadFromFile(std::fstream& _file, const std::string& _dirPath, TextureAtlas::ParseType _atlasParseType);
 		
 
 		void ClearAll(void);
 
-		AnimationProperties* GetAnimation(int _index);
-		AnimationProperties* GetAnimation(const std::string& _name);
+		AnimationProperties& GetAnimation(int _index);
+		AnimationProperties& GetAnimation(const std::string& _name);
 		// -1 if not found
 		int FindAnimationIndex(const std::string& _name);
 		bool AnimationExists(const std::string& _name);
-		bool AnimationExists(int _index);
 
-		AtlasFrame* GetFrame(int _atlasIndex, int _frame);
+		AtlasFrame& GetFrame(int _atlasIndex, int _frame);
 
-		const sf::Texture* GetTexture(void);
-		const sf::Texture& GetTextureRef(void);
+		const TextureWhat& GetAtlas(void);
+		//const sf::Texture& GetTexture(void);
 
 
 		int GetAnimationCount(void);
-};
-
-class TextureAnimatHUH : public TextureWhat
-{
-	public:
-		enum AnimationType
-		{
-			// Old animation format :
-			// .texanim
-			ANIMATION_TEXANIM,
-
-			// New animation format
-			ANIMATION_ANIM,
-
-			// Animation files produced by Aseprite,
-			// only available if you exported your animation
-			// with tags meta
-			ANIMATION_ASEPRITE,
-
-			// Animation files of Friday Night Funckin' (Legacy)
-			ANIMATION_FNF_LEGACY,
-
-			// Animation files of Friday Night Funckin'
-			ANIMATION_FNF,
-
-			ANIMATIONTYPES_COUNT
-		};
-
-	private:
-		//std::vector<> m_anim2;
-
-	public:
-		TextureAnimatHUH(void);
-
-		// Load the animation file
-		bool LoadFromFile(const std::string& _fileName, TextureAnimatHUH::AnimationType _animationFormat);
-
-
+	
 	protected:
 		
 };
-
 
 
 #endif

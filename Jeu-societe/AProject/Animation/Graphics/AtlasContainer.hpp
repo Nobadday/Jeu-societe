@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _INC_ATLASCONTAINER_HPP
-#define _INC_ATLASCONTAINER_HPP
+#ifndef _INC_ANIMATION_ATLASCONTAINER_HPP
+#define _INC_ANIMATION_ATLASCONTAINER_HPP
 
 
 #include "../Common.hpp"

@@ -45,6 +45,10 @@ class RenderWindow : public sf::RenderWindow
 		void capture(sf::Texture& _texture);
 		void capture(sf::Image& _image);
 		bool Screenshot(const sf::String& _fileName);
+		void ResetView(void);
+
+
+		//void display(bool _drawBorders = true);
 
 	protected:
 		virtual void onCreate(void);

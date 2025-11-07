@@ -424,23 +424,22 @@ bool Animation::IsFinished(void)
 	return this->IsFinished(this->IsReversed());
 }
 
-//bool Animation::IsOnStartFrame(void)
-//{
-//	if (this->IsReversed())
-//	{
-//		return this->GetCurrentFrameInt() == this->m_frameCount-1;
-//	}
-//	return this->GetCurrentFrameInt() == 0;
-//}
-//
-//bool Animation::IsOnEndFrame(void)
-//{
-//	if (this->IsReversed())
-//	{
-//		return this->GetCurrentFrameInt() == 0;
-//	}
-//	return this->GetCurrentFrameInt() == this->m_frameCount - 1;
-//}
+bool Animation::IsOnStartFrame(void)
+{
+	if (this->IsReversed())
+	{
+		return this->GetCurrentFrame() == (this->m_frameCount - 1);
+	}
+	return this->GetCurrentFrame() == 0;
+}
+bool Animation::IsOnEndFrame(void)
+{
+	if (this->IsReversed())
+	{
+		return this->GetCurrentFrame() == 0;
+	}
+	return this->GetCurrentFrame() == (this->m_frameCount - 1);
+}
 
 bool Animation::ShouldUpdate(void)
 {

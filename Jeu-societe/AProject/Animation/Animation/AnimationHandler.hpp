@@ -1,10 +1,7 @@
 #pragma once
-#ifndef _INC_ANIMATION_HANDLER_HPP
-#define _INC_ANIMATION_HANDLER_HPP
+#ifndef _INC_ANIMATION_ANIMATIONHANDLER_HPP
+#define _INC_ANIMATION_ANIMATIONHANDLER_HPP
 
-#define ANIMATION_DEFAULT_FPS 24.0f
-#define ANIMATION_DEFAULT_FPS_SECONDS 1.0f/ANIMATION_DEFAULT_FPS
-#define ANIMATION_MINIMUM_FPS 0.01f
 
 #include "../Common.hpp"
 #include "Timer.hpp"
@@ -211,13 +208,13 @@ class Animation : private DeltaClock
 		// else, finishes normally
 		bool IsFinished(void);
 
+		// Return true if the animation is on it's first frame
+		// If it's reversed, first frame is End frame
+		bool IsOnStartFrame(void);
+		// Return true if the animation is on it's last frame
+		// If it's reversed, last frame is First frame
+		bool IsOnEndFrame(void);
 
-		//// Return true if the animation is on it's first frame
-		//// If it's reversed, first frame is End frame
-		//bool IsOnStartFrame(void);
-		//// Return true if the animation is on it's last frame
-		//// If it's reversed, last frame is First frame
-		//bool IsOnEndFrame(void);
 
 		// Returns true if the frame has changed since the last update and resets the boolean
 		bool ShouldUpdate(void);

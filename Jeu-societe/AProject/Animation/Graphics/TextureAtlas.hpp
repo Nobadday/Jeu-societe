@@ -28,14 +28,6 @@
 
 
 
-class AtlasFrameGroup
-{
-	public:
-		std::string m_baseName;
-		int m_index;
-		int m_lenght;
-};
-
 // Texture containing multiple images in it
 // Also known as spritesheet
 class TextureAtlas
@@ -117,7 +109,7 @@ class TextureAtlas
 
 // Texture containing multiple images
 // Also known as spritesheet
-class TextureWhat : public sf::Texture, public AtlasContainer
+class TextureWhat : private sf::Texture, public AtlasContainer
 {
 	public:
 		enum ParseType
@@ -147,9 +139,10 @@ class TextureWhat : public sf::Texture, public AtlasContainer
 		// Default constructor, creates an empty texture
 		TextureWhat(void);
 
+		
 		// Create the texture
 		// If this function fails, the texture & atlas data is left unchanged.
-		bool create(unsigned _width, unsigned _height);
+		bool Create(unsigned _width, unsigned _height);
 
 
 		// Load from file the picture of the texture, 
@@ -163,11 +156,18 @@ class TextureWhat : public sf::Texture, public AtlasContainer
 		bool LoadFromFile(const std::string& _fileName, TextureWhat::ParseType _parseType);
 		
 
+		using sf::Texture::getSize;
+		using sf::Texture::copyToImage;
+		using sf::Texture::setSmooth;
+		using sf::Texture::isSmooth;
+		using sf::Texture::setSrgb;
+		using sf::Texture::isSrgb;
+		using sf::Texture::setRepeated;
+		using sf::Texture::isRepeated;
+
+
 	protected:
 		bool LoadFromFile(std::fstream& _file, const std::string& _dirPath, TextureWhat::ParseType _parseType);
-
-		using sf::Texture::loadFromFile;
-		using sf::Texture::loadFromImage;
 
 };
 

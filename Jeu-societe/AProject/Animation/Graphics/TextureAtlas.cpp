@@ -278,7 +278,7 @@ TextureWhat::TextureWhat(void) : sf::Texture(), AtlasContainer()
 }
 
 
-bool TextureWhat::create(unsigned _width, unsigned _height)
+bool TextureWhat::Create(unsigned _width, unsigned _height)
 {
 	if (this->sf::Texture::create(_width, _height))
 	{
@@ -398,7 +398,7 @@ bool TextureWhat::LoadFromFile(std::fstream& _file, const std::string& _dirPath,
 			for (auto it = objects.begin(); it != objects.end(); ++it)
 			{
 				AtlasFrame& frame = this->m_frames[i];
-
+				 
 				nlohmann::json& frameData = it.value();
 
 				frame.m_name = it.key();
