@@ -93,7 +93,7 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
 
 	//RockPaperSizor rockPaperSizorScene;
-	//_mainData.scenes.AddScene(_mainData.rockPaperSizorScene, "rockPaperSizor");
+	_mainData.scenes.AddScene(_mainData.rockPaperSizorScene, "rockPaperSizor");
 
 	//_mainData.scenes.AddScene(_mainData.sceneRussianRoulette, "RussianRoulette");
 	//_mainData.scenes.AddScene(_mainData.randCard, "RandCard");
