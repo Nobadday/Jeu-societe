@@ -19,7 +19,6 @@ class RandCard : public SceneBase
 		{
 			std::string name;
 			short id;
-			short dyingTime;
 		};
 		enum GameState
 		{
@@ -48,6 +47,7 @@ class RandCard : public SceneBase
 
 			std::vector<CardType> cards;
 			std::vector<Player> players;
+			std::vector<Player> deadPlayers;
 
 
 			GameState gameState = CHOOSE_CARD;

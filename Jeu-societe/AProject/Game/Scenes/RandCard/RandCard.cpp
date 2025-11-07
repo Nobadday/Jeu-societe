@@ -51,10 +51,6 @@ void RandCard::NextPlayer(void)
 	}
 	m_data->cardChosen = 0;
 	m_data->gameState = CHOOSE_CARD;
-
-
-
-
 }
 
 void RandCard::Load(void)
@@ -69,11 +65,8 @@ void RandCard::Load(void)
 	((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(0);
 	((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(1);
 
-
 	int nbOfPlayers = ((GameData*)this->m_keptData)->m_gonnaPlayIndex.size();
 	std::cout << "nb of player " << nbOfPlayers << std::endl;
-
-
 
 	//Copy players playing from GameData
 	for (int i = 0; i < nbOfPlayers; ++i)
@@ -93,15 +86,6 @@ void RandCard::Load(void)
 
 	m_data->menuSystem->MenuAddButton("TestMenu", "ButtonTest", m_data->buttonTest);
 	m_data->menuSystem->SetMenu("TestMenu");
-
-
-
-
-
-	//m_data->testTexture.LoadFromFile("Assets/Sprites/RussianRoulette/Damien.texanim", TextureAnimated::ANIMATION_TEXANIM);
-	//m_data->testButton.ButtonSetTexture(m_data->testTexture);
-
-
 
 	//Font
 	m_data->font.loadFromFile("Assets/Fonts/Platinum Sign.ttf");
@@ -163,6 +147,7 @@ void RandCard::Unload(void)
 {
 	m_data->cards.clear();
 	m_data->players.clear();
+	m_data->deadPlayers.clear();
 
 
 
@@ -280,18 +265,38 @@ void RandCard::Update(float _deltaTime)
 
 				if (m_data->cards[m_data->cardChosen] == BOMB)
 				{
-					//DEBUG
+					m_data->deadPlayers.push_back(m_data->players.at(m_data->currentPlayer));
 					m_data->players.erase(m_data->players.begin() + m_data->currentPlayer);
 
+					NextPlayer();
+					
 					//Check if only one player left
 					if (m_data->players.size() <= 1)
 					{
 						//DEBUG
+						//m_data->deadPlayers.push_back(m_data->players.at(m_data->currentPlayer));
+						m_data->deadPlayers.push_back(m_data->players.at(0));
 						std::cout << "Player " << m_data->players[0].name << " is the winner !" << std::endl;
 						m_data->gameState = END;
+
+
+						//Save data
+						int nbOfPlayers = ((GameData*)this->m_keptData)->m_gonnaPlayIndex.size();
+
+						//for (int i = nbOfPlayers - 1; i > 0; i++)
+						//{
+						//	Player tempPlayer = m_data->deadPlayers.at(i);
+						//	((GameData*)this->m_keptData)->m_winIndex.push_back({tempPlayer.id});
+						//}
+						for (int i = 0 ; i < nbOfPlayers; i++)
+						{
+							std::cout << "END, player rank" << i << " player : " << m_data->deadPlayers.at(i).id << " name :" << m_data->deadPlayers.at(i).name << std::endl;
+							((GameData*)this->m_keptData)->m_winIndex.push_back({ m_data->deadPlayers.at(i).id });
+						}
+						//Unload();
+						ChangeScene(1);
 						return;
 					}
-					NextPlayer();
 					
 				}
 				else
