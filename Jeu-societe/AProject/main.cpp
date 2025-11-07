@@ -18,15 +18,6 @@ typedef struct MainData
 	sf::Clock clock;
 	SceneHandler scenes;
 
-	RockPaperSizor rockPaperSizorScene;
-
-	RussianRoulette sceneRussianRoulette;
-	RandCard randCard;
-
-	SceneBase* armWrestlingScene;
-	SceneBase* basketScene;
-	SceneBase* flagGameScene;
-
 	GameData gameData;
 } MainData;
 
@@ -52,8 +43,7 @@ int main(void)
 	MainData mainData;
 	MainDataLoad(mainData);
 
-	BaseGame boardScene;
-	mainData.scenes.AddScene(boardScene, "Board");
+	mainData.scenes.AddScene<BaseGame>("Board");
 
 
 	while (mainData.renderWindow.isOpen())
@@ -84,21 +74,20 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
 
 
+	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
+	_mainData.scenes.SetTransferedData(&_mainData.gameData);
+
 	/*_mainData.scenes.AddScene(*(_mainData.armWrestlingScene = new ArmWrestling()), "ArmWrestling");
 	_mainData.scenes.AddScene(*(_mainData.basketScene = new Basket()), "Basket");
 	_mainData.scenes.AddScene(*(_mainData.flagGameScene = new FlagGame()), "FlagGame");
 	_mainData.scenes.SelectScene("ArmWrestling",false);*/
 
 	// GAME DATA
-	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
-
 	//RockPaperSizor rockPaperSizorScene;
 	//_mainData.scenes.AddScene(_mainData.rockPaperSizorScene, "rockPaperSizor");
 
 	//_mainData.scenes.AddScene(_mainData.sceneRussianRoulette, "RussianRoulette");
 	//_mainData.scenes.AddScene(_mainData.randCard, "RandCard");
-
-	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 
 	_mainData.clock.restart();
 }
