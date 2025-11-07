@@ -1,20 +1,19 @@
 #pragma once
 
-#ifndef _INC_FILE_TOOLS_HPP
-#define _INC_FILE_TOOLS_HPP
+#ifndef _INC_FILETOOLS_HPP
+#define _INC_FILETOOLS_HPP
 
 #include <fstream>
+#include <filesystem>
 
 namespace filetools
 {
-	//long GetFileSize(std::fstream _file);
 
-
+	// Get the firectory path from the given path
+	// "./Assets/Files/Data.json" -> "./Assets/Files/"
 	std::string GetDirName(const std::string& _path);
 
 }
-
-
-
-
 #endif
+
+// FileTools C++ v1.0

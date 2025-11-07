@@ -114,11 +114,7 @@ float Camera::GetZoom(void) const
 
 sf::FloatRect Camera::GetRenderRect(void)
 {
-	const sf::View& view = this->GetView();
-	const sf::Vector2f& size = view.getSize();
-	const sf::Vector2f& position = view.getCenter();
-	return sf::FloatRect(position.x - (size.x / 2.0f)	, position.y - (size.y / 2.0f),
-						 size.x							, size.y);
+	return Camera::ViewGetRenderRect(this->GetView());
 }
 
 const sf::FloatRect& Camera::GetLimitations(void) const
@@ -131,6 +127,10 @@ bool Camera::IsLimited(void) const
 	return this->m_isLimited;
 }
 
+void Camera::Reset(const sf::RenderWindow& _renderWindow)
+{
+	this->Reset(_renderWindow.getDefaultView());
+}
 void Camera::Reset(const sf::View& _view)
 {
 	this->m_view = _view;
@@ -238,4 +238,26 @@ const sf::View& Camera::GetView(void)
 	return this->m_view;
 }
 
-// Camera C++ for SFML 2.6.2 || v.1.0
+Camera::operator const sf::View&()
+{
+	return this->GetView();
+}
+
+
+sf::Vector2f Camera::ViewGetPosition(const sf::View& _view, const sf::Vector2f& _origin)
+{
+	const sf::Vector2f& center = _view.getCenter();
+	const sf::Vector2f& size = _view.getSize();
+	return sf::Vector2f(center.x + (size.x * (_origin.x - 0.5f)), center.y + (size.y * (_origin.y - 0.5f)));
+}
+
+sf::FloatRect Camera::ViewGetRenderRect(const sf::View& _view)
+{
+	const sf::Vector2f& size = _view.getSize();
+	const sf::Vector2f& position = _view.getCenter();
+	return sf::FloatRect(	position.x - (size.x / 2.0f), position.y - (size.y / 2.0f),
+							size.x						, size.y						);
+}
+
+
+// Camera C++ for SFML 2.6.2 || v.1.2
