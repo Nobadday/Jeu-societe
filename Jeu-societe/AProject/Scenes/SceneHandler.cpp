@@ -1,8 +1,5 @@
 #include "SceneHandler.hpp"
 
-
-
-
 void SceneHandler::CheckEvents(void)
 {
 	if (this->m_activeScene != -1)
@@ -116,7 +113,6 @@ int SceneHandler::FindSceneIndex(const std::string& _name)
 	}
 	return -1;
 }
-
 
 void SceneHandler::PollEvent(sf::Event& _event)
 {

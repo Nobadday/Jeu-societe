@@ -1,4 +1,3 @@
-#pragma once
 #ifndef PLAYERDATA_HPP
 #define PLAYERDATA_HPP
 
