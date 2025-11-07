@@ -1,15 +1,15 @@
 #include "Common.hpp"
 
-#include "Game/Scenes/Board.hpp"
+#include "Game/Scenes/Board/Board.hpp"
 
-#include "./Game/scenes/RockPaperScissors.hpp"
+#include "./Game/scenes/RockPaperScissors/RockPaperScissors.hpp"
 
 #include "./Game/Scenes/RussianRoulette/RussianRoulette.hpp"
 #include "./Game/Scenes/RandCard/RandCard.hpp"
 
-#include "Game/Scenes/ArmWrestling.hpp"
-#include "Game/Scenes/Basket.hpp"
-#include "Game/Scenes/FlagGame.hpp"
+#include "Game/Scenes/ArmWrestling/ArmWrestling.hpp"
+#include "Game/Scenes/Basket/Basket.hpp"
+#include "Game/Scenes/FlagGame/FlagGame.hpp"
 
 
 typedef struct MainData
