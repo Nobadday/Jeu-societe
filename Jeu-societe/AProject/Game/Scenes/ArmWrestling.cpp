@@ -1,113 +1,189 @@
 #include "ArmWrestling.hpp"
 
-static std::vector<ArmWrestlingPlayer*> allPlayers;
-
-short nextID = 0;
-
 void ArmWrestling::Load(void)
 {
 	m_data = new SceneData();
 	m_data->timer = 0.0f;
-	m_data->titleText = new sf::Text();
-	m_data->titleText->setFont(StringFormat::GetDefaultFont());
-	m_data->titleText->setCharacterSize(24);
-	m_data->titleText->setFillColor(sf::Color::White);
-	m_data->titleText->setString("Arm Wrestling Mini-Game");
-	m_data->titleText->setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 11);
-	m_data->titleText->setOrigin(m_data->titleText->getLocalBounds().width / 2, m_data->titleText->getLocalBounds().height / 2);
 
-	m_data->timeText = new sf::Text();
-	m_data->timeText->setFont(StringFormat::GetDefaultFont());
-	m_data->timeText->setCharacterSize(15);
-	m_data->timeText->setFillColor(sf::Color::White);
-	m_data->timeText->setString("Timer: 0/30");
-	m_data->timeText->setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 8);
-	m_data->timeText->setOrigin(m_data->timeText->getLocalBounds().width / 2, m_data->timeText->getLocalBounds().height / 2);
+	// Title text (membre par valeur)
+	m_data->titleText.setFont(StringFormat::GetDefaultFont());
+	m_data->titleText.setCharacterSize(24);
+	m_data->titleText.setFillColor(sf::Color::White);
+	m_data->titleText.setString("Arm Wrestling Mini-Game");
+	m_data->titleText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 11);
+	m_data->titleText.setOrigin(m_data->titleText.getLocalBounds().width / 2, m_data->titleText.getLocalBounds().height / 2);
 
-	m_data->fillBar = new sf::RectangleShape(sf::Vector2f(200.0f, 30.0f));
-	m_data->fillBar->setFillColor(sf::Color::Transparent);
-	m_data->fillBar->setOutlineColor(sf::Color::White);
-	m_data->fillBar->setOutlineThickness(1.0f);
-	m_data->fillBar->setOrigin(m_data->fillBar->getSize().x / 2, m_data->fillBar->getSize().y / 2);
-	m_data->fillBar->setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 5);
+	// Time text (membre par valeur)
+	m_data->timeText.setFont(StringFormat::GetDefaultFont());
+	m_data->timeText.setCharacterSize(15);
+	m_data->timeText.setFillColor(sf::Color::White);
+	m_data->timeText.setString("Timer: 0/30");
+	m_data->timeText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 8);
+	m_data->timeText.setOrigin(m_data->timeText.getLocalBounds().width / 2, m_data->timeText.getLocalBounds().height / 2);
 
-	m_data->player1 = new ArmWrestlingPlayer(sf::Vector2f(m_data->fillBar->getPosition().x-50.f, m_data->fillBar->getPosition().y), sf::Color::Red, 1.0f,0);
-	m_data->player2 = new ArmWrestlingPlayer(sf::Vector2f(m_data->fillBar->getPosition().x + 50.f, m_data->fillBar->getPosition().y), sf::Color::Green, -1.0f,1);
+	// Fill bar (membre par valeur)
+	m_data->fillBar = sf::RectangleShape(sf::Vector2f(200.0f, 30.0f));
+	m_data->fillBar.setFillColor(sf::Color::Transparent);
+	m_data->fillBar.setOutlineColor(sf::Color::White);
+	m_data->fillBar.setOutlineThickness(1.0f);
+	m_data->fillBar.setOrigin(m_data->fillBar.getSize().x / 2, m_data->fillBar.getSize().y / 2);
+	m_data->fillBar.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 5);
+
+	// Initialiser la liste et nextID dans SceneData
+	m_data->allPlayers.clear();
+	m_data->nextID = 0;
+
+	// Créer les joueurs dans la vector (par valeur), pas de new / pas de placement new
+	m_data->allPlayers.emplace_back(sf::Vector2f(m_data->fillBar.getPosition().x - 50.f, m_data->fillBar.getPosition().y), sf::Color::Red, 1.0f, m_data->nextID++);
+	m_data->allPlayers.emplace_back(sf::Vector2f(m_data->fillBar.getPosition().x + 50.f, m_data->fillBar.getPosition().y), sf::Color::Green, -1.0f, m_data->nextID++);
+
+	// Liaison au GameData passé dans m_keptData (comme dans RockPaperScissors)
+	m_data->gameData = (GameData*)this->m_keptData;
+
+	// Préparer le texte de résultat (vide pour l'instant)
+	m_data->resultText.setFont(StringFormat::GetDefaultFont());
+	m_data->resultText.setCharacterSize(20);
+	m_data->resultText.setFillColor(sf::Color::White);
+	m_data->resultText.setString("");
+	m_data->resultText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.7f);
+	m_data->resultText.setOrigin(m_data->resultText.getLocalBounds().width / 2, m_data->resultText.getLocalBounds().height / 2);
+
+	m_data->finished = false;
+	m_data->endDelay = 0.0f;
 }
 
 void ArmWrestling::Unload(void)
 {
-	delete m_data->titleText;
-	delete m_data->timeText;
-	delete m_data->fillBar;
-	m_data->titleText = nullptr;
-	m_data->timeText = nullptr;
-	m_data->fillBar = nullptr;
-	delete m_data->player1;
-	delete m_data->player2;
-	m_data->player1 = nullptr;
-	m_data->player2 = nullptr;
+	if (!m_data) return;
+
+	// Nettoyer la liste des joueurs
+	m_data->allPlayers.clear();
+
 	delete m_data;
 	m_data = nullptr;
-	nextID = 0;
 }
 
 void ArmWrestling::PollEvent(sf::Event& _event)
 {
+	(void)_event;
 }
 
 void ArmWrestling::Update(float _deltaTime)
 {
+	if (!m_data) return;
+
+	// Si on est déjà en phase de résultat, décrémenter le délai avant changement de scène
+	if (m_data->finished)
+	{
+		m_data->endDelay -= _deltaTime;
+		if (m_data->endDelay <= 0.0f)
+		{
+			ChangeScene("Board", false);
+		}
+		return;
+	}
+
 	m_data->timer += _deltaTime;
-	m_data->timeText->setString(StringFormat::Format("Timer: %d/30", (short)m_data->timer));
-	m_data->timeText->setOrigin(m_data->timeText->getLocalBounds().width / 2, m_data->timeText->getLocalBounds().height / 2);
-	ArmWrestlingPlayer::UpdateAllPlayers(_deltaTime);
+	m_data->timeText.setString(StringFormat::Format("Timer: %d/30", (short)m_data->timer));
+	m_data->timeText.setOrigin(m_data->timeText.getLocalBounds().width / 2, m_data->timeText.getLocalBounds().height / 2);
+
+	// Appeler Update sur chaque joueur (comme RockPaperScissors fait pour ses données)
+	for (auto& player : m_data->allPlayers)
+	{
+		player.Update(_deltaTime, m_data->allPlayers);
+	}
+
+	// Conditions de fin : timer >= 30 OU un bras atteint la largeur de la barre OU un bras <= 0
+	bool timeUp = (m_data->timer >= 30.0f);
+	bool barMaxMin = false;
+	for (const auto& player : m_data->allPlayers)
+	{
+		if (player.GetArmWidth() >= m_data->fillBar.getSize().x || player.GetArmWidth() <= 0.0f)
+		{
+			barMaxMin = true;
+			break;
+		}
+	}
+
+	if (timeUp || barMaxMin)
+	{
+		// Déterminer gagnant/perdant (suppose 2 joueurs)
+		if (m_data->allPlayers.size() < 2)
+		{
+			// Pas assez de joueurs, retour direct
+			ChangeScene("Board", false);
+			return;
+		}
+
+		const auto& p0 = m_data->allPlayers[0];
+		const auto& p1 = m_data->allPlayers[1];
+
+		int winnerIndexInPlayers = (p0.GetArmWidth() >= p1.GetArmWidth()) ? 0 : 1;
+		int loserIndexInPlayers = 1 - winnerIndexInPlayers;
+
+		short winnerID = m_data->allPlayers[winnerIndexInPlayers].GetID();
+		short loserID = m_data->allPlayers[loserIndexInPlayers].GetID();
+
+		// Enregistrer les résultats dans GameData comme RockPaperScissors
+		if (m_data->gameData)
+		{
+			// Ajout de la paire gagnant/perdant (même convention que RPS)
+			m_data->gameData->AddPlayerWin(winnerID);
+			m_data->gameData->AddPlayerWin(loserID);
+		}
+
+		// Préparer l'affichage du résultat
+		char buffer[64];
+		std::snprintf(buffer, sizeof(buffer), "Player %d wins\nPlayer %d loses", winnerID + 1, loserID + 1);
+		m_data->resultText.setString(buffer);
+		m_data->resultText.setOrigin(m_data->resultText.getLocalBounds().width / 2, m_data->resultText.getLocalBounds().height / 2);
+
+		// Mettre en attente avant retour au plateau
+		m_data->finished = true;
+		m_data->endDelay = 2.0f; // 2 secondes d'affichage du résultat
+	}
 }
 
 void ArmWrestling::Draw(sf::RenderWindow& _renderWindow)
 {
-	_renderWindow.draw(*m_data->titleText);
-	_renderWindow.draw(*m_data->timeText);
-	_renderWindow.draw(*m_data->fillBar);
-	ArmWrestlingPlayer::DrawAllPlayers(_renderWindow);
+	if (!m_data) return;
+
+	_renderWindow.draw(m_data->titleText);
+	_renderWindow.draw(m_data->timeText);
+	_renderWindow.draw(m_data->fillBar);
+
+	for (auto& player : m_data->allPlayers)
+	{
+		player.Draw(_renderWindow);
+	}
+
+	if (m_data->finished)
+	{
+		_renderWindow.draw(m_data->resultText);
+	}
 }
 
-ArmWrestlingPlayer::ArmWrestlingPlayer(sf::Vector2f _pos, sf::Color _color,float _scale, short _id)
+ArmWrestlingPlayer::ArmWrestlingPlayer(sf::Vector2f _pos, sf::Color _color, float _scale, short _id)
 {
 	id = _id;
 	force = 1;
-	shape = new sf::RectangleShape(sf::Vector2f(100.0f, 30.0f));
-	shape->setFillColor(_color);
-	shape->setOrigin(shape->getSize().x / 2, shape->getSize().y / 2);
-	shape->setPosition(_pos);
-	shape->setScale(_scale, 1);
-	nameText = new sf::Text();
-	nameText->setFont(StringFormat::GetDefaultFont());
-	nameText->setCharacterSize(30);
-	nameText->setFillColor(sf::Color::White);
-	nameText->setString(StringFormat::Format("Player %d", id + 1));
-	sf::Vector2f nameTextSize = sf::Vector2f(nameText->getLocalBounds().width, nameText->getLocalBounds().height);
-	nameText->setPosition(_pos.x - (_scale * shape->getSize().x) - (_scale*nameTextSize.x), _pos.y);
-	nameText->setOrigin(nameTextSize.x / 2, nameTextSize.y / 2);
-	allPlayers.push_back(this);
 
-}
+	// shape est un membre par valeur
+	shape = sf::RectangleShape(sf::Vector2f(100.0f, 30.0f));
+	shape.setFillColor(_color);
+	shape.setOrigin(shape.getSize().x / 2, shape.getSize().y / 2);
+	shape.setPosition(_pos);
+	shape.setScale(_scale, 1);
 
-ArmWrestlingPlayer::~ArmWrestlingPlayer()
-{
-	delete shape;
-	shape = nullptr;
-	delete nameText;
-	nameText = nullptr;
-	for (auto it = allPlayers.begin(); it != allPlayers.end(); ++it)
-	{
-		if (*it == this)
-		{
-			allPlayers.erase(it);
-			nextID--;
-			break;
-		}
-	}
+	// nameText est un membre par valeur
+	nameText = sf::Text();
+	nameText.setFont(StringFormat::GetDefaultFont());
+	nameText.setCharacterSize(30);
+	nameText.setFillColor(sf::Color::White);
+	nameText.setString(StringFormat::Format("Player %d", id + 1));
+	sf::Vector2f nameTextSize = sf::Vector2f(nameText.getLocalBounds().width, nameText.getLocalBounds().height);
+	nameText.setPosition(_pos.x - (_scale * shape.getSize().x) - (_scale * nameTextSize.x), _pos.y);
+	nameText.setOrigin(nameTextSize.x / 2, nameTextSize.y / 2);
 }
 
 short ArmWrestlingPlayer::GetID(void) const
@@ -125,66 +201,51 @@ void ArmWrestlingPlayer::SetForce(short _force)
 	force = _force;
 }
 
-ArmWrestlingPlayer& ArmWrestlingPlayer::GetPlayerByID(short _id)
+void ArmWrestlingPlayer::Update(float _dt, std::vector<ArmWrestlingPlayer>& allPlayers)
 {
-	for (ArmWrestlingPlayer* player : allPlayers)
-	{
-		if (player->GetID() == _id)
-		{
-			return *player;
-		}
-	}
-	throw std::runtime_error("Player with ID " + std::to_string(_id) + " not found.");
-}
-
-void ArmWrestlingPlayer::UpdateAllPlayers(float _dt)
-{
-	for (ArmWrestlingPlayer* player : allPlayers)
-	{
-		player->Update(_dt);
-	}
-}
-
-void ArmWrestlingPlayer::DrawAllPlayers(sf::RenderWindow& _renderWindow)
-{
-	for (ArmWrestlingPlayer* player : allPlayers)
-	{
-		player->Draw(_renderWindow);
-	}
-}
-
-void ArmWrestlingPlayer::Update(float _dt)
-{
+	(void)_dt;
 	if (GetGamePadPressed(GAMEPAD_A, id, true))
 	{
-		short otherID = GetOtherPlayerID(id);
-		ArmWrestlingPlayer& other = GetPlayerByID(otherID);
-
-		shape->setSize(sf::Vector2f(shape->getSize().x + force, shape->getSize().y));
-		other.shape->setSize(sf::Vector2f(other.shape->getSize().x - force, other.shape->getSize().y));
+		// Trouver l'autre joueur dans la liste fournie
+		for (auto& player : allPlayers)
+		{
+			if (player.GetID() != id)
+			{
+				// Augmenter la taille du bras du joueur courant et diminuer celle de l'autre
+				shape.setSize(sf::Vector2f(shape.getSize().x + force, shape.getSize().y));
+				player.shape.setSize(sf::Vector2f(player.shape.getSize().x - force, player.shape.getSize().y));
+				break;
+			}
+		}
 	}
 }
 
 void ArmWrestlingPlayer::Draw(sf::RenderWindow& _renderWindow)
 {
-	_renderWindow.draw(*shape);
-	_renderWindow.draw(*nameText);
+	_renderWindow.draw(shape);
+	_renderWindow.draw(nameText);
 }
 
-short ArmWrestlingPlayer::GetOtherPlayerID(short _callerID)
+short ArmWrestlingPlayer::GetOtherPlayerID(short _callerID, const std::vector<ArmWrestlingPlayer>& allPlayers) const
 {
 	if (allPlayers.size() < 2)
 	{
 		throw std::runtime_error("Other player not available.");
 	}
 
-	for (ArmWrestlingPlayer* player : allPlayers)
+	for (const auto& player : allPlayers)
 	{
-		if (player->GetID() != _callerID)
+		if (player.GetID() != _callerID)
 		{
-			return player->GetID();
+			return player.GetID();
 		}
 	}
 
 	throw std::runtime_error("Other player not found.");
+}
+
+// Implémentation du getter ajouté
+float ArmWrestlingPlayer::GetArmWidth() const
+{
+	return shape.getSize().x;
 }

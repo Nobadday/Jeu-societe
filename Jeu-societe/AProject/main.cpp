@@ -105,8 +105,9 @@ void MainDataLoad(MainData& _mainData)
 
 	_mainData.scenes.AddScene<BaseGame>("Board");
 	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
+	_mainData.scenes.AddScene<ArmWrestling>("ArmWrestling");
 
-	_mainData.scenes.SelectScene("Board", true);
+	_mainData.scenes.SelectScene("ArmWrestling", true);
 
 	_mainData.clock.restart();
 }

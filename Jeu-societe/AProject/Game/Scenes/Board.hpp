@@ -21,7 +21,7 @@ class BaseGame : public SceneBase
 			BATTLE_ACTION,
 			DUEL,
 			WIN,
-			LOST,
+			WIN_DEPLACEMENT,
 			CASE_ACTION_END,
 		};
 
@@ -49,6 +49,7 @@ class BaseGame : public SceneBase
 			std::vector<Player> players;
 
 			anim::Animator animator;
+			anim::Animator animator2;
 
 			State state;
 
