@@ -4,7 +4,6 @@
 namespace filetools
 {
 
-
 	std::string GetDirName(const std::string& _path)
 	{
 		// stackoverflow.com/questions/8518743/get-directory-from-file-path-c
@@ -15,4 +14,8 @@ namespace filetools
 		}
 		return _path.substr(0, pos+1);
 	}
+
+
 }
+
+// FileTools C++ v1.0

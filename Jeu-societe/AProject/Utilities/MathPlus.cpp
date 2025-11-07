@@ -46,4 +46,4 @@ namespace mathp
 
 }
 
-// Math Plus C++ v1.0
+// Math Plus C++ v1.1

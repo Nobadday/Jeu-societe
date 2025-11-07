@@ -64,7 +64,26 @@ void RandCard::Load(void)
 	m_data->menuSystem = new MenuSystem();
 	m_data->menuSystem->MenuAdd("TestMenu", true);
 
+	//Debug names
+	std::string playersNames[4] = { "Yann", "Lorenzo", "Kyllian", "Damien" };
+	((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(0);
+	((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(1);
 
+
+	int nbOfPlayers = ((GameData*)this->m_keptData)->m_gonnaPlayIndex.size();
+	std::cout << "nb of player " << nbOfPlayers << std::endl;
+
+
+
+	//Copy players playing from GameData
+	for (int i = 0; i < nbOfPlayers; ++i)
+	{
+		int playerId = (int)((GameData*)this->m_keptData)->m_gonnaPlayIndex.at(i);
+		m_data->players.push_back({ playersNames[i],  (short)playerId });
+	}
+
+
+	//this->m_keptData
 
 	m_data->buttonTest = new Button();
 	
@@ -82,11 +101,7 @@ void RandCard::Load(void)
 	//m_data->testTexture.LoadFromFile("Assets/Sprites/RussianRoulette/Damien.texanim", TextureAnimated::ANIMATION_TEXANIM);
 	//m_data->testButton.ButtonSetTexture(m_data->testTexture);
 
-	//DEBUG
-	m_data->players.push_back({ "Yann", 0});
-	m_data->players.push_back({ "Lorenzo", 1});
-	//m_data->players.push_back({ "Kyllian", 2});
-	//m_data->players.push_back({ "Player3", 3});
+
 
 	//Font
 	m_data->font.loadFromFile("Assets/Fonts/Platinum Sign.ttf");

@@ -2,15 +2,9 @@
 #ifndef _INC_MATH_PLUS
 #define _INC_MATH_PLUS
 
-#ifndef _INC_MATH
 #define _USE_MATH_DEFINES
 #include <math.h>
-#else
-#ifndef _USE_MATH_DEFINES
-#define _USE_MATH_DEFINES
-#include <math.h>
-#endif
-#endif
+
 
 // PI/180, degrees to radians
 #define MP_DEG_RAD 0.01745329251994329576923690768489
@@ -48,4 +42,4 @@ namespace mathp
 
 
 #endif
-// Math Plus C++ v1.0
+// Math Plus C++ v1.1

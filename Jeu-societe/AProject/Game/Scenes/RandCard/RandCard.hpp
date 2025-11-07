@@ -14,11 +14,12 @@ class RandCard : public SceneBase
 {
 	private:
 
-		//DEBUG, REMOVE WHEN PLAYER STRUCT FROM GAMEDATA COMME
+		//Final ;)
 		struct Player
 		{
 			std::string name;
 			short id;
+			short dyingTime;
 		};
 		enum GameState
 		{
@@ -60,7 +61,7 @@ class RandCard : public SceneBase
 			sf::Font font;
 			sf::Text text;
 
-
+			int playerCountLeft = 0;
 
 			MenuSystem* menuSystem;
 			Button* buttonTest;

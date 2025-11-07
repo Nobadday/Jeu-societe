@@ -1,6 +1,15 @@
-#include "Common.hpp"
+#include "./Common.hpp"
+
+#include "./Game/Scenes/Board.hpp"
+
+#include "./Game/scenes/RockPaperScissors.hpp"
+
 #include "./Game/Scenes/RussianRoulette/RussianRoulette.hpp"
 #include "./Game/Scenes/RandCard/RandCard.hpp"
+
+#include "./Game/Scenes/ArmWrestling.hpp"
+#include "./Game/Scenes/Basket.hpp"
+#include "./Game/Scenes/FlagGame.hpp"
 
 
 typedef struct MainData
@@ -9,8 +18,6 @@ typedef struct MainData
 	sf::Clock clock;
 	SceneHandler scenes;
 
-	RussianRoulette sceneRussianRoulette;
-	RandCard randCard;
 	GameData gameData;
 } MainData;
 
@@ -59,8 +66,13 @@ void MainDataLoad(MainData& _mainData)
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
 	
-	//_mainData.scenes.AddScene(_mainData.sceneRussianRoulette, "RussianRoulette");
-	_mainData.scenes.AddScene(_mainData.randCard, "RandCard");
+	_mainData.scenes.AddScene<RandCard>("RandCard");
+	_mainData.scenes.AddScene<BaseGame>("Board");
+	_mainData.scenes.AddScene<RussianRoulette>("RussianRoulette");
+	_mainData.scenes.AddScene<FlagGame>("FlagGame");
+	_mainData.scenes.AddScene<ArmWrestling>("ArmWrestling");
+	_mainData.scenes.AddScene<Basket>("Basket");
+	_mainData.scenes.AddScene<RockPaperScissors>("RockPaperScissors");
 
 	
 
