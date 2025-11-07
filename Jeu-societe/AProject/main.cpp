@@ -42,21 +42,22 @@ void Draw(MainData& _mainData);
 
 int main(void)
 {
+	random::SetSeedPID();
+
 	StringFormat::Load();
 	binds = new Binds();
 
-	random::SetSeedPID();
-	
 	MainData mainData;
-	MainDataLoad(mainData);
 
-
-	for (short i = 0; i < 4; i++)
+	for (short i = 0; i < 2; i++)
 	{
 		PlayerData newPlayer;
 		newPlayer.m_joystickId = i;
 		mainData.gameData.m_playerDataList.push_back(newPlayer);
 	}
+
+
+	MainDataLoad(mainData);
 
 
 	while (mainData.renderWindow.isOpen())
@@ -104,6 +105,8 @@ void MainDataLoad(MainData& _mainData)
 
 	_mainData.scenes.AddScene<BaseGame>("Board");
 	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
+
+	_mainData.scenes.SelectScene("Board", true);
 
 	_mainData.clock.restart();
 }

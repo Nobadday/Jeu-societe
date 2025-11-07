@@ -19,6 +19,7 @@ class BaseGame : public SceneBase
 			DEPLACEMENT_ACTION,
 			CASE_ACTION,
 			BATTLE_ACTION,
+			DUEL,
 			WIN,
 			LOST,
 			CASE_ACTION_END,
@@ -57,11 +58,14 @@ class BaseGame : public SceneBase
 
 		SceneData* m_data;
 
+	private:
 		void CaseAction();
 
 		void SetBoardState(State _state, int _newIndex = 0);
 		
 		void BoardStateUpdate();
+
+		int OnSameCase();
 
 	public:
 		virtual void Load(void);
