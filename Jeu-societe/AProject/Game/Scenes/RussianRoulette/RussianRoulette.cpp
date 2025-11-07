@@ -12,10 +12,18 @@ void RussianRoulette::Load(void)
 
 
 	//DEBUG
-	m_data->players.push_back({ "Yann", 0, true});
-	m_data->players.push_back({ "Lorenzo", 1, true });
-	//m_data->players.push_back({ "Kylian", 2, true });
-	//m_data->players.push_back({ "Player3", 3, true });
+	std::string playersNames[4] = { "Yann", "Lorenzo", "Kyllian", "Damien" };
+	((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(0);
+	((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(1);
+
+	int nbOfPlayers = ((GameData*)this->m_keptData)->m_gonnaPlayIndex.size();
+
+	//Copy players playing from GameData
+	for (int i = 0; i < nbOfPlayers; ++i)
+	{
+		int playerId = (int)((GameData*)this->m_keptData)->m_gonnaPlayIndex.at(i);
+		m_data->players.push_back({ playersNames[i],  (short)playerId, true });
+	}
 
 
 
@@ -44,8 +52,6 @@ void RussianRoulette::Unload(void)
 
 void RussianRoulette::PollEvent(sf::Event& _event)
 {
-	//std::cout << "Gamstate : " << m_data->gameState << std::endl;
-
 	switch (m_data->gameState)
 	{
 		case WAITING:
@@ -139,6 +145,8 @@ void RussianRoulette::Update(float _deltaTime)
 					m_data->text.setString(buffer);
 
 					std::cout << "Game Over ! Player " << m_data->players[m_data->currentPlayer].name << " is dead !" << std::endl;
+					m_data->deadPlayers.push_back(m_data->players[m_data->currentPlayer]);
+
 					//Load bullet for next game, its not useful
 					m_data->bullet = random::RandomInt(1, 6);
 				}
@@ -149,9 +157,6 @@ void RussianRoulette::Update(float _deltaTime)
 					m_data->gunSprAnim.Restart();
 
 					//Next player
-
-
-
 					if (m_data->currentPlayer + 1 < m_data->players.size())
 					{
 						m_data->currentPlayer++;
