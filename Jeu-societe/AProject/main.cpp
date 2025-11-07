@@ -1,12 +1,13 @@
 #include "Common.hpp"
+#include "./Utilities/AssetManager.hpp"
 
 #include "Game/Scenes/Board.hpp"
 
-#include "./Game/scenes/RockPaperScissors.hpp"
 
+//Include scenes
+#include "./Game/scenes/RockPaperScissors.hpp"
 #include "./Game/Scenes/RussianRoulette/RussianRoulette.hpp"
 #include "./Game/Scenes/RandCard/RandCard.hpp"
-
 #include "Game/Scenes/ArmWrestling.hpp"
 #include "Game/Scenes/Basket.hpp"
 #include "Game/Scenes/FlagGame.hpp"
@@ -15,15 +16,10 @@
 typedef struct MainData
 {
 	sf::RenderWindow renderWindow;
+	AssetManager assetManager;
+
 	sf::Clock clock;
 	SceneHandler scenes;
-
-	RussianRoulette sceneRussianRoulette;
-	RandCard randCard;
-
-	SceneBase* armWrestlingScene;
-	SceneBase* basketScene;
-	SceneBase* flagGameScene;
 
 	GameData gameData;
 } MainData;
@@ -94,7 +90,7 @@ void MainDataLoad(MainData& _mainData)
 
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
-
+	_mainData.gameData.m_assetManager = &_mainData.assetManager;
 	
 
 	//_mainData.scenes.AddScene(_mainData.sceneRussianRoulette, "RussianRoulette");
