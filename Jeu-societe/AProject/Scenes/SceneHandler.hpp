@@ -3,13 +3,17 @@
 #ifndef _INC_SCENEHANDLER_HPP
 #define _INC_SCENEHANDLER_HPP
 
+
+#include <iostream>
+#include <vector>
 #include "Scene.hpp"
-#include <any>
+
 
 struct SceneWrap
 {
 	std::string name;
-	SceneBase* object;
+	bool isLoaded;
+	std::shared_ptr<SceneBase> object;
 };
 
 class SceneHandler
@@ -19,20 +23,18 @@ class SceneHandler
 		int m_activeScene;
 		void* m_transferedData;
 
-	private:
-		void CheckEvents(void);
-		
-
 	public:
 		SceneHandler(void);
 		~SceneHandler(void);
 
 		void SetTransferedData(void* _data);
 
+
 		// Add a scene to the scene list, if it's the first one, selects it and loads it
-		// SceneExample mySceneObject;
-		// SceneHandler.AddScene(mySceneObject, "My Scene");
-		void AddScene(SceneBase& _scene, const std::string& _name);
+		// sceneHandler.AddScene<SceneExample>("My Scene name");
+		template <typename SceneType>
+		void AddScene(const std::string& _name);
+
 
 		void SelectScene(int _index, bool _keepLoaded = false);
 		void SelectScene(const std::string& _name, bool _keepLoaded = false);
@@ -47,16 +49,41 @@ class SceneHandler
 
 		int FindSceneIndex(const std::string& _name);
 
+
 		void PollEvent(sf::Event& _event);
 		void Update(float _deltaTime);
 		void Draw(sf::RenderWindow& _renderWindow);
+
+	private:
+		void CheckEvents(void);
 };
 
 
+template<typename SceneType>
+inline void SceneHandler::AddScene(const std::string& _name)
+{
+	this->m_scenes.resize(this->m_scenes.size() + 1);
+	SceneWrap& scene = this->m_scenes[this->m_scenes.size() - 1];
+
+	scene.isLoaded = false;
+	scene.name = _name;
+
+	scene.object = std::make_shared<SceneType>();
+	scene.object.get()->SetKeptData(this->m_transferedData);
+
+	if (this->m_activeScene == -1)
+	{
+		this->SelectScene(0, false);
+	}
+}
+
 
 #endif
-// SceneHandler v1.0
+// SceneHandler v1.2
+
 // TODO :
-// ~Destructor
+// Param pour afficher les scênes déja chargés
+// Event pour load scene + methode load scene(_name)
+// TODO ?
 // Historique de scene chargées, fonction previousScene() pour scenebase
-// Garder les scenes chargés + param pour les afficher quand même
+// SceneBase : Plusieurs events
