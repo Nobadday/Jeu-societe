@@ -87,3 +87,9 @@ class RandCard : public SceneBase
 };
 
 #endif // _INC_RAND_CARD_HPP
+
+
+//How it works ? 
+//Copy players data by gameData
+//With this copy, i delete players when he dies, and add it to deadPlayers
+//At the end, delete player have winner, and we can save the order of players die with deadPlayers

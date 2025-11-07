@@ -75,9 +75,6 @@ void RandCard::Load(void)
 		m_data->players.push_back({ playersNames[i],  (short)playerId });
 	}
 
-
-	//this->m_keptData
-
 	m_data->buttonTest = new Button();
 	
 	m_data->textanim = new TextureAnimated();
@@ -142,14 +139,11 @@ void RandCard::Load(void)
 	}
 
 }
-
 void RandCard::Unload(void)
 {
 	m_data->cards.clear();
 	m_data->players.clear();
 	m_data->deadPlayers.clear();
-
-
 
 	delete this->m_data;
 	this->m_data = NULL;
@@ -158,8 +152,6 @@ void RandCard::Unload(void)
 void RandCard::PollEvent(sf::Event& _event)
 {
 	m_data->menuSystem->PollEvent(_event);
-	//m_data->buttonTest->PollEvent(_event);
-
 
 	switch (m_data->gameState)
 	{
@@ -258,10 +250,8 @@ void RandCard::Update(float _deltaTime)
 			m_data->cardSprAnim.Update(_deltaTime);
 			if (m_data->cardSprAnim.IsFinished())
 			{
-				std::cout << "Current player : " << m_data->currentPlayer << std::endl;
-				//std::cout << "Card Vector size : " << m_data->cards.size() << std::endl;
-				std::cout << "Player Vector size : " << m_data->players.size() << std::endl;
-
+				//std::cout << "Current player : " << m_data->currentPlayer << std::endl;
+				//std::cout << "Player Vector size : " << m_data->players.size() << std::endl;
 
 				if (m_data->cards[m_data->cardChosen] == BOMB)
 				{
@@ -273,36 +263,28 @@ void RandCard::Update(float _deltaTime)
 					//Check if only one player left
 					if (m_data->players.size() <= 1)
 					{
-						//DEBUG
-						//m_data->deadPlayers.push_back(m_data->players.at(m_data->currentPlayer));
 						m_data->deadPlayers.push_back(m_data->players.at(0));
-						std::cout << "Player " << m_data->players[0].name << " is the winner !" << std::endl;
+						//Print if you want check
+						//std::cout << "Player " << m_data->players[0].name << " is the winner !" << std::endl;
 						m_data->gameState = END;
 
 
 						//Save data
 						int nbOfPlayers = ((GameData*)this->m_keptData)->m_gonnaPlayIndex.size();
-
-						//for (int i = nbOfPlayers - 1; i > 0; i++)
-						//{
-						//	Player tempPlayer = m_data->deadPlayers.at(i);
-						//	((GameData*)this->m_keptData)->m_winIndex.push_back({tempPlayer.id});
-						//}
 						for (int i = 0 ; i < nbOfPlayers; i++)
 						{
-							std::cout << "END, player rank" << i << " player : " << m_data->deadPlayers.at(i).id << " name :" << m_data->deadPlayers.at(i).name << std::endl;
+							//Print if you want check
+							//std::cout << "END, player rank" << i << " player : " << m_data->deadPlayers.at(i).id << " name :" << m_data->deadPlayers.at(i).name << std::endl;
 							((GameData*)this->m_keptData)->m_winIndex.push_back({ m_data->deadPlayers.at(i).id });
 						}
-						//Unload();
 						ChangeScene(1);
 						return;
-					}
-					
+					}					
 				}
 				else
 				{
 					//DEBUG
-					std::cout << "Player " << m_data->players[m_data->currentPlayer].name << " survived !" << std::endl << std::endl;
+					//std::cout << "Player " << m_data->players[m_data->currentPlayer].name << " survived !" << std::endl << std::endl;
 					m_data->cards.erase(m_data->cards.begin() + m_data->cardChosen);
 
 
@@ -320,14 +302,10 @@ void RandCard::Update(float _deltaTime)
 			}
 			break;
 	}
-
-
-
 }
 void RandCard::Draw(sf::RenderWindow& _renderWindow)
 {
 	m_data->menuSystem->Draw(_renderWindow, sf::RenderStates::Default);
-	//_renderWindow.draw(*m_data->buttonTest);
 	_renderWindow.draw(m_data->text);
 	PrintCards(_renderWindow);
 }
