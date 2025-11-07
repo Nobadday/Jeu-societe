@@ -14,6 +14,7 @@ class BasketPlayer
 	short GetID(void) const;
 	sf::Sprite* ballSprite;
 	sf::Sprite* hoopSprite;
+	sf::CircleShape* ballShape;
 	sf::VertexArray* aimLine;
 	void SetWon(bool _won);
 	bool GetWon(void) const;

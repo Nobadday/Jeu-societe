@@ -78,7 +78,7 @@ void Basket::PollEvent(sf::Event& _event)
 void Basket::Update(float _deltaTime)
 {
 	m_data->timerText->setString(StringFormat::Format("Timer %.2f", m_data->timerToReset));
-	m_data->winnerText->setString(StringFormat::Format("Winners player: %s\nPress A to Restart", GetWinnerID()));
+	m_data->winnerText->setString(StringFormat::Format("Winners player: %s\nPress A to Restart", GetWinnerID()+1));
 	m_data->winnerText->setOrigin(m_data->winnerText->getLocalBounds().width / 2.f, m_data->winnerText->getLocalBounds().height / 2.f);
 	if (m_data->timerToReset <= 0.f)
 	{
@@ -122,6 +122,7 @@ BasketPlayer::BasketPlayer(short _id)
 
 	aimLine = new sf::VertexArray(sf::Lines, 2);
 
+
 	won = false;
 
 	float spape = 500.f;
@@ -132,6 +133,12 @@ BasketPlayer::BasketPlayer(short _id)
 
 	hoopSprite->setPosition((id + 1) * rootSpace, rand);
 	hoopSprite->setOrigin(hoopSprite->getLocalBounds().width / 2.f, hoopSprite->getLocalBounds().height / 2.f);
+
+
+	ballShape = new sf::CircleShape(ballSprite->getLocalBounds().width/2.f);
+	ballShape->setOrigin(ballShape->getRadius(), ballShape->getRadius());
+	ballShape->setPosition(ballSprite->getPosition());
+	ballShape->setFillColor(sf::Color::Transparent);
 
 	allPlayers.push_back(this);
 }
@@ -150,9 +157,11 @@ BasketPlayer::~BasketPlayer()
 	delete ballSprite;
 	delete hoopSprite;
 	delete aimLine;
+	delete ballShape;
 	aimLine = nullptr;
 	ballSprite = nullptr;
 	hoopSprite = nullptr;
+	ballShape = nullptr;
 }
 
 void BasketPlayer::UpdateAllPlayers(float _dt)
@@ -183,11 +192,16 @@ void BasketPlayer::Update(float _dt)
 	{
 		(*aimLine)[0].color = sf::Color::Green;
 		(*aimLine)[1].color = sf::Color::Green;
+		ballShape->setFillColor(sf::Color::Green);
 		return;
 	}
 	float joy = GetAxis2D(id).y;
 	float force = JoystickToTargetPercentage(joy, ballSprite->getPosition().y, 1);
+	float forceCircle = (short)JoystickToTargetPercentage(joy, ballSprite->getPosition().y, 0.00392f);
 	float targetY = Rescale(hoopSprite->getPosition().y, ballSprite->getPosition().y, 0);
+
+	std::cout << " Force: " << forceCircle << std::endl;
+	ballShape->setFillColor(sf::Color(255, 0, 0, forceCircle));
 
 	(*aimLine)[0].position = ballSprite->getPosition();
 	(*aimLine)[0].color = sf::Color::White;
@@ -208,7 +222,8 @@ void BasketPlayer::Draw(sf::RenderWindow& _renderWindow)
 {
 	if (ballSprite) _renderWindow.draw(*ballSprite);
 	if (hoopSprite) _renderWindow.draw(*hoopSprite);
-	_renderWindow.draw(*aimLine);
+	//_renderWindow.draw(*aimLine);
+	if (ballShape) _renderWindow.draw(*ballShape);
 }
 
 float JoystickToTargetPercentage(float _joystickY, float _ballY, float _axisAbsMax)
