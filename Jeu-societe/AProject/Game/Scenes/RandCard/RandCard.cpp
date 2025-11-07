@@ -16,7 +16,8 @@ void RandCard::PrintCards(sf::RenderWindow& _renderWindow)
 		if (i == m_data->cardChosen)
 		{
 			m_data->cardSprAnim.setPosition(BORDER_X + cardSpacing * i, SCREEN_HEIGHT / 4.f);
-			m_data->cardSprAnim.draw(_renderWindow, sf::RenderStates::Default);
+			//m_data->cardSprAnim.draw(_renderWindow, sf::RenderStates::Default);
+			_renderWindow.draw(m_data->cardSprAnim);
 		}
 		else
 		{
@@ -167,7 +168,8 @@ void RandCard::PollEvent(sf::Event& _event)
 								break;
 							}
 							m_data->gameState = ANIMATION;
-							m_data->cardSprAnim.RestartAnimation();
+							//m_data->cardSprAnim.RestartAnimation();
+							m_data->cardSprAnim.Restart();
 						}
 					}
 					break;
@@ -231,9 +233,8 @@ void RandCard::Update(float _deltaTime)
 		case ANIMATION:
 
 			m_data->cardSprAnim.Update(_deltaTime);
-			if (m_data->cardSprAnim.GetAn().IsFinished())
+			if (m_data->cardSprAnim.IsFinished())
 			{
-
 				std::cout << "Current player : " << m_data->currentPlayer << std::endl;
 				//std::cout << "Card Vector size : " << m_data->cards.size() << std::endl;
 				std::cout << "Player Vector size : " << m_data->players.size() << std::endl;

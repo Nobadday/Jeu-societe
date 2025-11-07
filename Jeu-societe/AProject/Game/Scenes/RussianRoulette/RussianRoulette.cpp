@@ -31,7 +31,7 @@ void RussianRoulette::Load(void)
 	//m_data->gunTexAnim.LoadFromFile("Assets/Sprites/RussianRoulette/PiouMort.json", TextureAnimated::ANIMATION_ASEPRITE);
 	m_data->gunTexAnim.LoadFromFile("Assets/Sprites/RussianRoulette/Damien.texanim", TextureAnimated::ANIMATION_TEXANIM);
 	m_data->gunSprAnim.setTexture(m_data->gunTexAnim);
-	m_data->gunSprAnim.GetAn().SetFramerate(1.f);
+	//m_data->gunSprAnim.SetFramerate(1.f);
 
 	m_data->gameState = WAITING;
 }
@@ -127,7 +127,7 @@ void RussianRoulette::Update(float _deltaTime)
 			m_data->gunSprAnim.Update(_deltaTime);
 
 			//Animation ended
-			if (m_data->gunSprAnim.GetAn().IsFinished())
+			if (m_data->gunSprAnim.IsFinished())
 			{
 				if (!m_data->players[m_data->currentPlayer].isAlive)
 				{
@@ -146,7 +146,7 @@ void RussianRoulette::Update(float _deltaTime)
 				{
 					m_data->gameState = WAITING;
 
-					m_data->gunSprAnim.RestartAnimation();
+					m_data->gunSprAnim.Restart();
 
 					//Next player
 
@@ -177,6 +177,6 @@ void RussianRoulette::Update(float _deltaTime)
 }
 void RussianRoulette::Draw(sf::RenderWindow& _renderWindow)
 {
-	m_data->gunSprAnim.draw(_renderWindow, sf::RenderStates::Default);
+	_renderWindow.draw(m_data->gunSprAnim);
 	_renderWindow.draw(m_data->text);
 }

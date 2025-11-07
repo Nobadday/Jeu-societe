@@ -1,5 +1,4 @@
 #pragma once
-
 #ifndef _INC_ANIMATION_TEXTURE_HPP
 #define _INC_ANIMATION_TEXTURE_HPP
 
@@ -9,22 +8,7 @@
 #include "../Utilities/Math.hpp"
 #include <string>
 
-#define ANIM_DEFAULT_FPS 24.0f
-#define ANIM_DEFAULT_LOOP false
 
-class AnimationProperties
-{
-	public:
-		std::string m_name;
-		std::string m_atlasName;
-		int m_atlasIndex;
-		int m_frameCount;
-		float m_framerate;
-		bool m_loop;
-		sf::Vector2f m_offset;
-		
-		AnimationProperties(void);
-};
 
 // Data for spritesheet animations
 // contains all animations details like
@@ -32,6 +16,21 @@ class AnimationProperties
 class TextureAnimated
 {
 	public:
+		class AnimationProperties
+		{
+			public:
+				std::string m_name;
+				std::string m_atlasName;
+				int m_atlasIndex;
+				int m_frameCount;
+				float m_framerate;
+				bool m_loop;
+				sf::Vector2f m_offset;
+			
+			public:
+				AnimationProperties(void);
+		};
+
 		enum AnimationType
 		{
 			// Old animation format :
@@ -54,8 +53,17 @@ class TextureAnimated
 
 			ANIMATIONTYPES_COUNT
 		};
+
+	private:
+		TextureAtlas m_textureAtlas;
+		// List of AnimationProperties*
+		DynaList m_animations;
+		std::vector<AnimationProperties> m_anim2;
+
+	public:
 		TextureAnimated(void);
 		~TextureAnimated(void);
+		
 		
 		bool LoadFromFile(const std::string& _fileName, TextureAnimated::AnimationType _animationFormat);
 		bool LoadFromFile(std::fstream& _file, const std::string& _dirPath, TextureAnimated::AnimationType _animationFormat);
@@ -65,6 +73,7 @@ class TextureAnimated
 		// Load only a texture atlas and creates an animation of the entire atlas
 		bool LoadFromFile(std::fstream& _file, const std::string& _dirPath, TextureAtlas::ParseType _atlasParseType);
 
+		// 
 		void ClearAll(void);
 
 		AnimationProperties* GetAnimation(int _index);
@@ -79,13 +88,9 @@ class TextureAnimated
 		const sf::Texture* GetTexture(void);
 		const sf::Texture& GetTextureRef(void);
 
-		int GetAnimationCount(void);
 
-	private:
-		TextureAtlas m_textureAtlas;
-		// List of AnimationProperties*
-		DynaList m_animations;
+		int GetAnimationCount(void);
 };
 
 #endif
-// Texture Animated v1.0
+// Texture Animated v1.0.2

@@ -2,36 +2,40 @@
 
 #define ANIMATION_MINIMUM_FPS 0.01f
 
+
 #pragma region Animation Class
-Animation::Animation(void)
+
+
+#pragma region Constructors
+
+Animation::Animation(void) :
+m_frame			(0.0f),
+m_frameCount	(0),
+m_frameTime		(0.0f),
+m_loop			(false),
+m_shouldUpdate	(false)
 {
-	//this->m_frame = 0.0f;
-	//this->m_frameCount = 0;
-	//this->m_frameTime = 0.0f;
-	//this->m_loop = false;
 
-	//this->m_shouldUpdate = false;
 }
-
-Animation::Animation(Animation& _copy) : DeltaClock(_copy)
+Animation::Animation(Animation& _copy) : DeltaClock(_copy),
+m_frame			(_copy.m_frame),
+m_frameCount	(_copy.m_frameCount),
+m_frameTime		(_copy.m_frameTime),
+m_loop			(_copy.m_loop),
+m_shouldUpdate	(_copy.m_shouldUpdate)
 {
-	this->m_frame = _copy.m_frame;
-	this->m_frameCount = _copy.m_frameCount;
-	this->m_frameTime = _copy.m_frameTime;
-	this->m_loop = _copy.m_loop;
 
-	this->m_shouldUpdate = _copy.m_shouldUpdate;
 }
-
 Animation::Animation(int _frameCount, float _framerate, bool _loop, float _speed)
 {
 	this->Modify(_frameCount, _framerate, _loop, _speed);
 }
-
 Animation::Animation(float _durationSeconds, float _framerate, bool _loop, float _speed)
 {
 	this->Modify(_durationSeconds, _framerate, _loop, _speed);
 }
+
+#pragma endregion
 
 
 #pragma region Modifiers
@@ -66,11 +70,15 @@ void Animation::Update(float _deltaTime)
 		this->m_timeElapsed += _deltaTime * this->m_speed;
 		this->UpdateFrame();
 	}
-	//this->UpdateFrame();
 }
 
 void Animation::UpdateFrame(void)
 {
+	if (this->m_frameCount <= 0)
+	{
+		return;
+	}
+
 	float newFrame = this->GetCurrentFrameUncapped();
 
 	if (this->m_loop)
@@ -101,12 +109,16 @@ void Animation::UpdateFrame(void)
 			this->m_shouldUpdate = true;
 		}
 		this->m_frame = newFrame;
+		if (this->m_shouldUpdate)
+		{
+			this->FrameChanged();
+		}
 	}
 }
 
 void Animation::SyncTime(Animation& _syncer)
 {
-	//this->DeltaClock::SyncTime(_syncer);
+	this->DeltaClock::SyncTime(_syncer);
 	this->UpdateFrame();
 }
 void Animation::SyncFrame(Animation& _syncer)
@@ -140,12 +152,25 @@ void Animation::AddFrame(int _value)
 
 void Animation::SetFrameCount(int _frameCount)
 {
-	this->m_frameCount = (_frameCount)+((_frameCount < 1) * ((_frameCount * -1) + 1));
+	if (_frameCount < 0)
+	{
+		_frameCount = 0;
+	}
+	this->m_frameCount = _frameCount;
 	this->UpdateFrame();
 }
 void Animation::AddFrameCount(int _value)
 {
 	this->SetFrameCount(this->m_frameCount + _value);
+}
+
+void Animation::SetDuration(float _seconds, float _framerate)
+{
+	this->SetFrameCount((int)anim::AniMath::SecondsToFrameTime(_seconds, _framerate));
+}
+void Animation::SetDuration(float _seconds)
+{
+	this->SetDuration(_seconds, this->GetFramerate());
 }
 
 void Animation::SetFramerate(float _framerate)
@@ -248,11 +273,6 @@ int Animation::GetFrameCount(void)
 	return this->m_frameCount;
 }
 
-float Animation::GetSpeed(void)
-{
-	return this->m_speed;
-}
-
 float Animation::GetFrameDuration(void)
 {
 	return this->m_frameTime;
@@ -269,7 +289,7 @@ float Animation::GetFrameDurationSpeedPositive(void)
 {
 	if (this->m_speed != 0.0f)
 	{
-		return this->m_frameTime / fabsf(this->m_speed);
+		return this->m_frameTime / std::fabsf(this->m_speed);
 	}
 	return 0.0f;
 }
@@ -290,11 +310,15 @@ float Animation::GetFramerateSpeedPositive(void)
 {
 	if (this->m_speed != 0.0f)
 	{
-		return this->GetFramerate() / fabsf(this->m_speed);
+		return this->GetFramerate() / std::fabsf(this->m_speed);
 	}
 	return 0.0f;
 }
 
+float Animation::GetProgress(void)
+{
+	return this->GetFrameCoefficient();
+}
 float Animation::GetFrameCoefficient(void)
 {
 	if (this->m_frameCount > 1)
@@ -312,12 +336,16 @@ float Animation::GetFramePercentage(void)
 
 int Animation::GetLoopCount(void)
 {
-	if (this->IsReversed())
+	if (this->m_frameCount > 0)
 	{
-		// Frames uncapped will be negatives
-		return (int)this->GetCurrentFrameUncapped() / -this->m_frameCount;
+		if (this->IsReversed())
+		{
+			// Frames uncapped will be negatives
+			return (int)this->GetCurrentFrameUncapped() / -this->m_frameCount;
+		}
+		return (int)this->GetCurrentFrameUncapped() / this->m_frameCount;
 	}
-	return (int)this->GetCurrentFrameUncapped() / this->m_frameCount;
+	return 1;
 }
 
 float Animation::GetDuration(void)
@@ -331,7 +359,7 @@ float Animation::GetDurationSpeed(void)
 
 float Animation::GetRemainingTime(void)
 {
-	float time = this->GetDurationSpeed() - fabsf(this->m_timeElapsed);
+	float time = this->GetDurationSpeed() - std::fabsf(this->m_timeElapsed);
 	if (time < 0.0f)
 	{
 		time = 0.0f;
@@ -348,7 +376,7 @@ float Animation::GetRemainingTimeAccurate(void)
 }
 float Animation::GetExcessTime(void)
 {
-	float time = fabsf(this->m_timeElapsed) - this->GetDurationSpeed();
+	float time = std::fabsf(this->m_timeElapsed) - this->GetDurationSpeed();
 	if (time < 0.0f)
 	{
 		time = 0.0f;
@@ -418,10 +446,13 @@ bool Animation::ShouldUpdateOnce(void)
 	return this->ShouldUpdate();
 }
 
-
-
 #pragma endregion
+
+void Animation::FrameChanged(void)
+{
+	// Virtual method, does nothing here
+}
 
 #pragma endregion Animation Class End
 
-// AnimationHandler C++ v2.0
+// AnimationHandler C++ || v2.1

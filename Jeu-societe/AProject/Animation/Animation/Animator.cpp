@@ -1,15 +1,21 @@
 #include "Animator.hpp"
 
+
 namespace ANIMATION_NAMESPACE
 {
 
-Animator::Animator(void) : Animation()
+Animator::Animator(void) : Animation(),
+m_usedAnims(),
+m_animEasings()
 {
 	this->ResetAnimation();
 }
 
-Animator::Animator(float _durationSeconds, float _framerate, bool _loop, float _speed) : Animation(_durationSeconds, _framerate, _loop, _speed)
+Animator::Animator(float _durationSeconds, float _framerate, bool _loop, float _speed) : Animation(_durationSeconds, _framerate, _loop, _speed),
+m_usedAnims(),
+m_animEasings()
 {
+
 }
 
 
@@ -126,4 +132,5 @@ sf::Color Animator::GetColorTransition(void)
 }
 
 }
-// Animator v1.0
+
+// Animator v1.0.2

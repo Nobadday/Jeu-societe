@@ -18,6 +18,13 @@ typedef struct MainData
 	sf::Clock clock;
 	SceneHandler scenes;
 
+	RussianRoulette sceneRussianRoulette;
+	RandCard randCard;
+
+	SceneBase* armWrestlingScene;
+	SceneBase* basketScene;
+	SceneBase* flagGameScene;
+
 	GameData gameData;
 } MainData;
 
@@ -43,7 +50,13 @@ int main(void)
 	MainData mainData;
 	MainDataLoad(mainData);
 
-	mainData.scenes.AddScene<BaseGame>("Board");
+
+	for (short i = 0; i < 4; i++)
+	{
+		PlayerData newPlayer;
+		newPlayer.m_joystickId = i;
+		mainData.gameData.m_playerDataList.push_back(newPlayer);
+	}
 
 
 	while (mainData.renderWindow.isOpen())
@@ -74,20 +87,23 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
 
 
-	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
-	_mainData.scenes.SetTransferedData(&_mainData.gameData);
-
 	/*_mainData.scenes.AddScene(*(_mainData.armWrestlingScene = new ArmWrestling()), "ArmWrestling");
 	_mainData.scenes.AddScene(*(_mainData.basketScene = new Basket()), "Basket");
 	_mainData.scenes.AddScene(*(_mainData.flagGameScene = new FlagGame()), "FlagGame");
 	_mainData.scenes.SelectScene("ArmWrestling",false);*/
 
 	// GAME DATA
-	//RockPaperSizor rockPaperSizorScene;
-	//_mainData.scenes.AddScene(_mainData.rockPaperSizorScene, "rockPaperSizor");
+	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
+
+	
 
 	//_mainData.scenes.AddScene(_mainData.sceneRussianRoulette, "RussianRoulette");
 	//_mainData.scenes.AddScene(_mainData.randCard, "RandCard");
+
+	_mainData.scenes.SetTransferedData(&_mainData.gameData);
+
+	_mainData.scenes.AddScene<BaseGame>("Board");
+	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
 
 	_mainData.clock.restart();
 }
@@ -109,7 +125,6 @@ void PollEvent(MainData& _mainData)
 			default:
 				_mainData.scenes.PollEvent(event);
 				break;
-
 		}
 	}
 }
