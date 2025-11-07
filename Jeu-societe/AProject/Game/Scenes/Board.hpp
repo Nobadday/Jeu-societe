@@ -14,6 +14,7 @@ class BaseGame : public SceneBase
 		enum State
 		{
 			START,
+			PLAY,
 			DEPLACEMENT,
 			DEPLACEMENT_ACTION,
 			CASE_ACTION,
@@ -32,6 +33,8 @@ class BaseGame : public SceneBase
 			sf::Vector2f boardPosition;
 			
 			int currentCaseIndex;
+
+			int startRandom;
 		};
 
 		struct SceneData
@@ -42,7 +45,7 @@ class BaseGame : public SceneBase
 
 			Camera camera;
 
-			std::vector<Player>  players;
+			std::vector<Player> players;
 
 			anim::Animator animator;
 

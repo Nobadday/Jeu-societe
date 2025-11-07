@@ -10,10 +10,10 @@ void BaseGame::Load(void)
 
 	m_data->posCase = layer.GetObjects();
 
-	m_data->players.push_back({});
-	m_data->players.push_back({});
-	m_data->players.push_back({});
-	m_data->players.push_back({});
+	GameData* data = (GameData*)this->m_keptData;
+
+	//m_data->players.resize(data->m_playerDataList.size());
+	m_data->players.resize(4);
 
 	m_data->state = START;
 
@@ -23,6 +23,7 @@ void BaseGame::Load(void)
 		m_data->players[i].sprite.setTexture(m_data->players[i].texture);
 		m_data->players[i].boardPosition = m_data->posCase[0].GetPosition();
 		m_data->players[i].currentCaseIndex = 0;
+		m_data->players[i].startRandom = 0;
 	}
 
 	m_data->currentPlayerIndex = 0;
@@ -53,10 +54,16 @@ void BaseGame::PollEvent(sf::Event& _event)
 				int rando = random::RandomInt(1, 6);
 				std::cout << "Roll Dice: " << rando << std::endl;
 
-				// Calcul de la nouvelle position
-				int newIndex = (m_data->players[m_data->currentPlayerIndex].currentCaseIndex + rando) % m_data->posCase.size();
-
-				SetBoardState(DEPLACEMENT, newIndex);
+				if (m_data->state != START)
+				{
+					// Calcul de la nouvelle position
+					int newIndex = (m_data->players[m_data->currentPlayerIndex].currentCaseIndex + rando) % m_data->posCase.size();
+					SetBoardState(DEPLACEMENT, newIndex);
+				}
+				else
+				{
+					m_data->players[m_data->currentPlayerIndex].startRandom = rando;
+				}
 			}
 		}
 	}
@@ -73,8 +80,17 @@ void BaseGame::PollEvent(sf::Event& _event)
 
 				// Calcul de la nouvelle position
 				int newIndex = (m_data->players[m_data->currentPlayerIndex].currentCaseIndex + rando) % m_data->posCase.size();
-				
-				SetBoardState(DEPLACEMENT, newIndex);
+
+				if (m_data->state != START)
+				{
+					// Calcul de la nouvelle position
+					int newIndex = (m_data->players[m_data->currentPlayerIndex].currentCaseIndex + rando) % m_data->posCase.size();
+					SetBoardState(DEPLACEMENT, newIndex);
+				}
+				else
+				{
+					m_data->players[m_data->currentPlayerIndex].startRandom = rando;
+				}
 			}
 		}
 	}
@@ -106,6 +122,10 @@ void BaseGame::Update(float _deltaTime)
 	// Récupération de la position interpolée et mise à jour du joueur
 	BoardStateUpdate();
 
+	std::cout << std::endl;
+
+	std::cout << "State: " << m_data->state << std::endl;
+
 	m_data->camera.Move(movement);
 }
 
@@ -127,7 +147,7 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 
 void BaseGame::CaseAction()
 {
-	if (m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Bonus" )
+	if (m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Bonus")
 	{
 		std::cout << "Landed on a Bonus case!" << std::endl;
 		int rando = random::RandomInt(1, 3);
@@ -137,7 +157,7 @@ void BaseGame::CaseAction()
 		SetBoardState(DEPLACEMENT_ACTION, newIndex);
 
 	}
-	else if (m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Malus" )
+	else if (m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Malus")
 	{
 		std::cout << "Landed on a Malus case!" << std::endl;
 
@@ -147,7 +167,7 @@ void BaseGame::CaseAction()
 
 		SetBoardState(DEPLACEMENT_ACTION, newIndex);
 	}
-	else if (m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Luck" )
+	else if (m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Luck")
 	{
 		std::cout << "Landed on a Luck case!" << std::endl;
 
@@ -162,18 +182,18 @@ void BaseGame::CaseAction()
 
 		SetBoardState(DEPLACEMENT_ACTION, newIndex);
 	}
-	else if (m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Battle" )
+	else if (m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType() == "Battle")
 	{
 		std::cout << "Landed on a Battle case!" << std::endl;
 	}
 	else
 	{
-		m_data->state = START;
+		m_data->state = PLAY;
 		m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
 	}
 }
 
-void BaseGame::SetBoardState(State _state ,int _newIndex = 0)
+void BaseGame::SetBoardState(State _state, int _newIndex)
 {
 	m_data->state = _state;
 	switch (m_data->state)
@@ -184,6 +204,7 @@ void BaseGame::SetBoardState(State _state ,int _newIndex = 0)
 		case DEPLACEMENT:
 			[[fallthrough]];
 		case DEPLACEMENT_ACTION:
+		{
 			sf::Vector2f startPos = m_data->players[m_data->currentPlayerIndex].boardPosition;
 			sf::Vector2f endPos = m_data->posCase[_newIndex].GetPosition();
 
@@ -192,8 +213,8 @@ void BaseGame::SetBoardState(State _state ,int _newIndex = 0)
 
 			// Mise à jour de l'index
 			m_data->players[m_data->currentPlayerIndex].currentCaseIndex = _newIndex;
-
-			break;
+		}
+		break;
 		case CASE_ACTION:
 			// Action de la case
 			break;
@@ -210,7 +231,33 @@ void BaseGame::BoardStateUpdate()
 	switch (m_data->state)
 	{
 		case START:
-			// Attente du lancer de dé
+			{
+				int somme = 1;
+
+				m_data->currentPlayerIndex = 0;
+
+				for (const auto& player : m_data->players)
+				{
+					if (player.startRandom != 0)
+					{
+						m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
+					}
+
+					std::cout << "Player start roll: " << player.startRandom << std::endl;
+
+					somme *= player.startRandom;
+				}
+
+				if (somme != 0)
+				{
+					std::sort(m_data->players.begin(), m_data->players.end(),
+						[](const BaseGame::Player& a, const BaseGame::Player& b)
+						{
+							return a.startRandom > b.startRandom;
+						});
+					m_data->state = PLAY;
+				}
+			}
 			break;
 		case DEPLACEMENT:
 			// Déplacement en cours
@@ -237,7 +284,7 @@ void BaseGame::BoardStateUpdate()
 			break;
 		case CASE_ACTION_END:
 			// Fin de l'action de la case
-			m_data->state = START;
+			m_data->state = PLAY;
 			m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
 			break;
 		default:
