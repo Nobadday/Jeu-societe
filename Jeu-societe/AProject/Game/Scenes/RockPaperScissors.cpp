@@ -1,6 +1,9 @@
 #include "RockPaperScissors.hpp"
 #include "../../Utilities/Random.hpp"
 
+#define PLAY_TIME 5
+#define PAUSE_TIME 2
+
 void RockPaperScissors::Load()
 {
 	m_data = new SceneData;
@@ -23,8 +26,8 @@ void RockPaperScissors::Load()
 	m_data->timerText.setFont(m_data->font);
 
 	//a retirer plus tard
-	m_data->player1ChoiceSprite.setPosition({ SCREEN_WIDTH * 0.66f, SCREEN_HEIGHT * 0.66f });
-	m_data->player2ChoiceSprite.setPosition({ SCREEN_WIDTH * 0.33f, SCREEN_HEIGHT * 0.66f });
+	m_data->playerChoiceSprite[0].setPosition({SCREEN_WIDTH * 0.66f, SCREEN_HEIGHT * 0.66f});
+	m_data->playerChoiceSprite[1].setPosition({SCREEN_WIDTH * 0.33f, SCREEN_HEIGHT * 0.66f});
 
 	m_data->victoryText.setFont(m_data->font);
 	m_data->victoryText.setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 });
@@ -39,6 +42,7 @@ void RockPaperScissors::Load()
 	m_data->timer.SetTimeTarget(5);
 
 	m_data->state = STATE_PLAY;
+	m_data->roundNB = 0;
 
 }                               
 
@@ -95,77 +99,73 @@ void RockPaperScissors::PollEvent(sf::Event& _event)
 
 void RockPaperScissors::Update(float _deltaTime)
 {   
+	m_data->timer.Update(_deltaTime);
+	char buffer[20];
+	std::snprintf(buffer, 20, "%02.2f", m_data->timer.GetRemainingTime());
+	m_data->timerText.setString(buffer);
+
 	if (this->m_data->state == STATE_PLAY)
 	{
-
-		m_data->timer.Update(_deltaTime);
-
-		char buffer[20];
-		std::snprintf(buffer, 20, "%02.2f", m_data->timer.GetRemainingTime());
-		m_data->timerText.setString(buffer);
 		if (m_data->timer.IsFinished())
 		{
 			if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] == this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]])
 			{
-				//redémarrer la partie
-				// 
-				//this->m_data->timer.Restart();
-				std::cout << "egalite" << std::endl;
-			}
-			else
-			{
-				if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] > this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]]
-					|| m_data->playersChoice[m_data->gameData->m_gonnaPlayIndex[0]] == RPS_ROCK && this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] == RPS_SCISSORS)
+				if (this->m_data->roundNB < 2)
 				{
-					std::cout << "player " << this->m_data->gameData->m_gonnaPlayIndex[0] + 1<< " win";
-					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[0]);
-					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[1]);
+					this->UpdatePlayerChoiceTexture();
+					this->m_data->state = STATE_PAUSE;
+					this->m_data->roundNB++;
+					this->m_data->timer.SetTimeTarget(PAUSE_TIME, true);
 				}
 				else
 				{
-					std::cout << "player " << this->m_data->gameData->m_gonnaPlayIndex[1] + 1 << " win";
-					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[1]);
-					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[0]);
+					this->UpdatePlayerChoiceTexture();
+					this->m_data->state = STATE_EQUALITY;
+					this->m_data->timer.SetTimeTarget(PAUSE_TIME, true);
 				}
-
-				this->m_data->state = STATE_VICTORY;
-				ChangeScene("Board");
-				return;
-
-				#pragma region caché
-				switch (m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]])
-				{
-					case RPS_ROCK:
-						m_data->player1ChoiceSprite.setTexture(m_data->textureTab[4]);
-						break;
-					case RPS_PAPER:
-						m_data->player1ChoiceSprite.setTexture(m_data->textureTab[3]);
-						break;
-					case RPS_SCISSORS:
-						m_data->player1ChoiceSprite.setTexture(m_data->textureTab[5]);
-						break;
-					default:
-						break;
-				}
-
-				switch (m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]])
-				{
-						case RPS_ROCK:
-						m_data->player2ChoiceSprite.setTexture(m_data->textureTab[4]);
-						break;
-					case RPS_PAPER:
-						m_data->player2ChoiceSprite.setTexture(m_data->textureTab[3]);
-						break;
-					case RPS_SCISSORS:
-						m_data->player2ChoiceSprite.setTexture(m_data->textureTab[5]);
-						break;
-				default:
-					break;
-				}
-#pragma endregion
-
-				
 			}
+			else
+			{
+				this->UpdatePlayerChoiceTexture();
+				this->m_data->timer.SetTimeTarget(PAUSE_TIME, true);
+				this->m_data->state = STATE_VICTORY;	
+			}
+		}
+	}
+	else if (this->m_data->state == STATE_PAUSE)
+	{
+		if (this->m_data->timer.IsFinished())
+		{
+			this->m_data->timer.SetTimeTarget(PLAY_TIME, true);
+			this->m_data->state = STATE_PLAY;
+		}
+	}
+	else if (this->m_data->state == STATE_VICTORY)
+	{
+		if (this->m_data->timer.IsFinished())
+		{
+			if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] > this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]]
+				|| m_data->playersChoice[m_data->gameData->m_gonnaPlayIndex[0]] == RPS_ROCK && this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] == RPS_SCISSORS)
+			{
+				std::cout << "player " << this->m_data->gameData->m_gonnaPlayIndex[0] + 1 << " win";
+				this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[0]);
+				this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[1]);
+			}
+			else
+			{
+				std::cout << "player " << this->m_data->gameData->m_gonnaPlayIndex[1] + 1 << " win";
+				this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[1]);
+				this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[0]);
+			}
+
+			ChangeScene("Board", false);
+		}
+	}
+	else if (this->m_data->state == STATE_EQUALITY)
+	{
+		if (this->m_data->timer.IsFinished())
+		{
+			ChangeScene("Board", false);
 		}
 	}
 }
@@ -177,10 +177,33 @@ void RockPaperScissors::Draw(sf::RenderWindow& _renderWindow)
 		_renderWindow.draw(m_data->spriteTab[i]);
 	}
 
-	if (this->m_data->state == STATE_VICTORY)
+	if (this->m_data->state != STATE_PLAY)
 	{
-		_renderWindow.draw(m_data->player1ChoiceSprite);
-		_renderWindow.draw(m_data->player2ChoiceSprite);
+		for (short i = 0; i < 2; i++)
+		{
+			_renderWindow.draw(this->m_data->playerChoiceSprite[i]);
+		}
 	}
 	_renderWindow.draw(m_data->timerText);
+}
+
+void RockPaperScissors::UpdatePlayerChoiceTexture()
+{
+	for (short i = 0; i < 2; i++)
+	{
+		switch (this->m_data->playersChoice[i])
+		{
+			case RPS_ROCK:
+				this->m_data->playerChoiceSprite[i].setTexture(this->m_data->textureTab[4]);
+				break;
+			case RPS_PAPER:
+				this->m_data->playerChoiceSprite[i].setTexture(this->m_data->textureTab[5]);
+				break;
+			case RPS_SCISSORS:
+				this->m_data->playerChoiceSprite[i].setTexture(this->m_data->textureTab[3]);
+				break;
+			default:
+				break;
+		}
+	}
 }

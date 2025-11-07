@@ -105,6 +105,7 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<BaseGame>("Board");
 	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
 
+	_mainData.scenes.SelectScene("rockPaperSizor", true);
 	_mainData.clock.restart();
 }
 
