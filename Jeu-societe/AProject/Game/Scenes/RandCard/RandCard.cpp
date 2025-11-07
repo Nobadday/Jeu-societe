@@ -61,6 +61,22 @@ void RandCard::Load(void)
 {
 	m_data = new SceneData;
 
+	m_data->menuSystem = new MenuSystem();
+	m_data->menuSystem->MenuAdd("TestMenu", true);
+
+
+
+	m_data->buttonTest = new Button();
+	
+	m_data->textanim = new TextureAnimated();
+	m_data->textanim->LoadFromFile("Assets/Sprites/ButtonPlaceHolder.anim", TextureAnimated::AnimationType::ANIMATION_ANIM);
+	m_data->buttonTest->setTexture(*m_data->textanim);
+
+	m_data->menuSystem->MenuAddButton("TestMenu", "ButtonTest", m_data->buttonTest);
+	m_data->menuSystem->SetMenu("TestMenu");
+
+
+
 
 
 	//m_data->testTexture.LoadFromFile("Assets/Sprites/RussianRoulette/Damien.texanim", TextureAnimated::ANIMATION_TEXANIM);
@@ -141,6 +157,10 @@ void RandCard::Unload(void)
 
 void RandCard::PollEvent(sf::Event& _event)
 {
+	m_data->menuSystem->PollEvent(_event);
+	//m_data->buttonTest->PollEvent(_event);
+
+
 	switch (m_data->gameState)
 	{
 		case CHOOSE_CARD:
@@ -222,6 +242,9 @@ void RandCard::PollEvent(sf::Event& _event)
 }
 void RandCard::Update(float _deltaTime)
 {
+	//m_data->buttonTest->Update(_deltaTime);
+	m_data->menuSystem->Update(_deltaTime);
+
 	switch (m_data->gameState) 
 	{
 		case CHOOSE_CARD:
@@ -283,6 +306,8 @@ void RandCard::Update(float _deltaTime)
 }
 void RandCard::Draw(sf::RenderWindow& _renderWindow)
 {
+	m_data->menuSystem->Draw(_renderWindow, sf::RenderStates::Default);
+	//_renderWindow.draw(*m_data->buttonTest);
 	_renderWindow.draw(m_data->text);
 	PrintCards(_renderWindow);
 }

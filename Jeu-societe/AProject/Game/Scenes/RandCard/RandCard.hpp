@@ -6,7 +6,7 @@
 #include "../../../Common.hpp"
 #include "../../../Animation/Graphics/SpriteAnimated.hpp"
 #include "../../../Animation/Graphics/TextureAnimated.hpp"
-#include "../../../Ui/Button.hpp"
+#include "../../../Ui/MenuSystem.hpp"
 
 
 
@@ -60,6 +60,11 @@ class RandCard : public SceneBase
 			sf::Font font;
 			sf::Text text;
 
+
+
+			MenuSystem* menuSystem;
+			Button* buttonTest;
+			TextureAnimated* textanim;
 
 			//Button testButton;
 			//TextureAnimated& testTexture;
