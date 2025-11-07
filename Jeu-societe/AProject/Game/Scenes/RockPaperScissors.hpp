@@ -6,8 +6,6 @@
 #include "../../Scenes/Scene.hpp"
 #include "../../Animation/Animation/Timer.hpp" 
 
-#include "../../Ui/Button.hpp"
-
 typedef enum RPS_Choice
 {
 	RPS_NONE = -1,
@@ -51,7 +49,6 @@ public:
 	virtual void Update(float _deltaTime);
 	virtual void Draw(sf::RenderWindow& _renderWindow);
 };
-
 
 
 #endif // !_INC_ROCKPAPERSCISSORS_HPP
