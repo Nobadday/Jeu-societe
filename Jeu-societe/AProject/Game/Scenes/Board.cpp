@@ -173,7 +173,7 @@ void BaseGame::CaseAction()
 	}
 }
 
-void BaseGame::SetBoardState(State _state ,int _newIndex = 0)
+void BaseGame::SetBoardState(State _state ,int _newIndex)
 {
 	m_data->state = _state;
 	switch (m_data->state)
@@ -184,6 +184,7 @@ void BaseGame::SetBoardState(State _state ,int _newIndex = 0)
 		case DEPLACEMENT:
 			[[fallthrough]];
 		case DEPLACEMENT_ACTION:
+		{
 			sf::Vector2f startPos = m_data->players[m_data->currentPlayerIndex].boardPosition;
 			sf::Vector2f endPos = m_data->posCase[_newIndex].GetPosition();
 
@@ -192,6 +193,7 @@ void BaseGame::SetBoardState(State _state ,int _newIndex = 0)
 
 			// Mise à jour de l'index
 			m_data->players[m_data->currentPlayerIndex].currentCaseIndex = _newIndex;
+		}
 
 			break;
 		case CASE_ACTION:

@@ -6,38 +6,45 @@
 #include "../../Scenes/Scene.hpp"
 #include "../../Animation/Animation/Timer.hpp" 
 
-typedef enum RPS_Choice
-{
-	RPS_NONE = -1,
-	RPS_ROCK,
-	RPS_PAPER,
-	RPS_SCISSORS,
-	RPS_CHOICE_COUNT
-} RPS_Choice;
 
 class RockPaperScissors : public SceneBase
 {
 	private:
+	enum RPS_Choice
+	{
+		RPS_NONE = -1,
+		RPS_ROCK,
+		RPS_PAPER,
+		RPS_SCISSORS,
+		RPS_CHOICE_COUNT
+	};
+
+	enum State
+	{
+		STATE_WARMUP,
+		STATE_PLAY,
+		STATE_PAUSE,
+		STATE_VICTORY
+	};
+
 	struct SceneData
 	{
 		sf::Sprite spriteTab[6];                                                                                                                             
 		sf::Texture textureTab[6];
 
-		int player1ID = 0;
-		RPS_Choice player1Choice = RPS_NONE;
-		sf::Sprite player1ChoiceSprite;
-
-		int player2ID = 0;
-		RPS_Choice player2Choice = RPS_NONE;
-		sf::Sprite player2ChoiceSprite;
-
+		//sf::Sprite player1ChoiceSprite;
+		//sf::Sprite player2ChoiceSprite;
 		Timer timer;
 
 		sf::Text timerText;
 		sf::Font font;
 
 		sf::Text victoryText;
+		State state;
+		GameData* gameData;
 
+		RPS_Choice playersChoice[4];
+	
 	};
 	SceneData* m_data;
 

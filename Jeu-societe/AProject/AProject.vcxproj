@@ -149,10 +149,13 @@
     <ClCompile Include="Animation\Graphics\AnimatedObject.cpp" />
     <ClCompile Include="Animation\Graphics\GraphicAddons.cpp" />
     <ClCompile Include="Animation\Graphics\SpriteAnimated.cpp" />
+    <ClCompile Include="Animation\Graphics\TextAnimated.cpp" />
+    <ClCompile Include="Animation\Graphics\TextPlus.cpp" />
     <ClCompile Include="Animation\Graphics\TextureAnimated.cpp" />
     <ClCompile Include="Animation\Graphics\TextureAtlas.cpp" />
     <ClCompile Include="Animation\Utilities\Bezier.cpp" />
     <ClCompile Include="Animation\Utilities\Math.cpp" />
+    <ClCompile Include="Game\GameData.cpp" />
     <ClCompile Include="Game\PlayerData.cpp" />
     <ClCompile Include="Game\Scenes\ArmWrestling.cpp" />
     <ClCompile Include="Game\Scenes\Basket.cpp" />
@@ -161,7 +164,6 @@
     <ClCompile Include="Game\Scenes\RandCard\RandCard.cpp" />
     <ClCompile Include="Game\Scenes\RockPaperScissors.cpp" />
     <ClCompile Include="Game\Scenes\RussianRoulette\RussianRoulette.cpp" />
-    <ClCompile Include="Graphic\Button.cpp" />
     <ClCompile Include="Map\JsonReader.cpp" />
     <ClCompile Include="Map\MapLayer.cpp" />
     <ClCompile Include="Map\MapObject.cpp" />
@@ -169,9 +171,9 @@
     <ClCompile Include="Map\Tileset.cpp" />
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Scenes\SceneHandler.cpp" />
+    <ClCompile Include="Ui\Button.cpp" />
     <ClCompile Include="Utilities\AssetManager.cpp" />
     <ClCompile Include="Utilities\Binds.cpp" />
-    <ClCompile Include="Utilities\Button.cpp" />
     <ClCompile Include="Utilities\Camera\Camera.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Utilities\Controller\Controller.cpp" />
@@ -180,7 +182,6 @@
     <ClCompile Include="Utilities\Lists\DynaList.cpp" />
     <ClCompile Include="Utilities\Lists\PyList.cpp" />
     <ClCompile Include="Utilities\MathPlus.cpp" />
-    <ClCompile Include="Utilities\MenuSystem.cpp" />
     <ClCompile Include="Utilities\NewMath.cpp" />
     <ClCompile Include="Utilities\Random.cpp" />
     <ClCompile Include="Utilities\StringFormat.cpp" />
@@ -196,6 +197,8 @@
     <ClInclude Include="Animation\Graphics\AnimatedObject.hpp" />
     <ClInclude Include="Animation\Graphics\GraphicAddons.hpp" />
     <ClInclude Include="Animation\Graphics\SpriteAnimated.hpp" />
+    <ClInclude Include="Animation\Graphics\TextAnimated.hpp" />
+    <ClInclude Include="Animation\Graphics\TextPlus.hpp" />
     <ClInclude Include="Animation\Graphics\TextureAnimated.hpp" />
     <ClInclude Include="Animation\Graphics\TextureAtlas.hpp" />
     <ClInclude Include="Animation\Utilities\Bezier.hpp" />
@@ -209,7 +212,6 @@
     <ClInclude Include="Game\Scenes\RandCard\RandCard.hpp" />
     <ClInclude Include="Game\Scenes\RockPaperScissors.hpp" />
     <ClInclude Include="Game\Scenes\RussianRoulette\RussianRoulette.hpp" />
-    <ClInclude Include="Graphic\Button.hpp" />
     <ClInclude Include="Map\JsonReader.h" />
     <ClInclude Include="Map\MapLayer.h" />
     <ClInclude Include="Map\MapObject.h" />
@@ -218,9 +220,9 @@
     <ClInclude Include="Scenes\Scene.hpp" />
     <ClInclude Include="Scenes\SceneHandler.hpp" />
     <ClInclude Include="Screen.hpp" />
+    <ClInclude Include="Ui\Button.hpp" />
     <ClInclude Include="Utilities\AssetManager.hpp" />
     <ClInclude Include="Utilities\Binds.hpp" />
-    <ClInclude Include="Utilities\Button.hpp" />
     <ClInclude Include="Utilities\Camera\Camera.hpp" />
     <ClInclude Include="Common.hpp" />
     <ClInclude Include="Utilities\Controller\Controller.hpp" />
@@ -229,7 +231,6 @@
     <ClInclude Include="Utilities\Lists\DynaList.hpp" />
     <ClInclude Include="Utilities\Lists\PyList.hpp" />
     <ClInclude Include="Utilities\MathPlus.hpp" />
-    <ClInclude Include="Utilities\MenuSystem.hpp" />
     <ClInclude Include="Utilities\NewMath.hpp" />
     <ClInclude Include="Utilities\Random.hpp" />
     <ClInclude Include="Utilities\StringFormat.hpp" />
