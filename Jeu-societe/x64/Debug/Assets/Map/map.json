@@ -9,15 +9,15 @@
          "objects":[
                 {
                  "gid":2,
-                 "height":860,
+                 "height":1732.72727272727,
                  "id":1,
                  "name":"",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":2106.03,
-                 "x":-487.667,
-                 "y":657.091
+                 "width":3833.30272727273,
+                 "x":-963.424575757576,
+                 "y":1529.81827272727
                 }],
          "opacity":1,
          "parallaxx":1.4,
@@ -230,7 +230,7 @@
          "objects":[
                 {
                  "gid":3,
-                 "height":292,
+                 "height":658.666666666667,
                  "id":5,
                  "name":"",
                  "rotation":0,
@@ -238,7 +238,7 @@
                  "visible":true,
                  "width":3249.79,
                  "x":-552.939,
-                 "y":876.788
+                 "y":1243.45466666667
                 }],
          "opacity":1,
          "parallaxx":1.1,

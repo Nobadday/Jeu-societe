@@ -17,7 +17,7 @@ void ArmWrestling::Load(void)
 	m_data->timeText.setFont(StringFormat::GetDefaultFont());
 	m_data->timeText.setCharacterSize(15);
 	m_data->timeText.setFillColor(sf::Color::White);
-	m_data->timeText.setString("Timer: 0/30");
+	m_data->timeText.setString("Timer: 0/15");
 	m_data->timeText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 8);
 	m_data->timeText.setOrigin(m_data->timeText.getLocalBounds().width / 2, m_data->timeText.getLocalBounds().height / 2);
 
@@ -84,7 +84,7 @@ void ArmWrestling::Update(float _deltaTime)
 	}
 
 	m_data->timer += _deltaTime;
-	m_data->timeText.setString(StringFormat::Format("Timer: %d/30", (short)m_data->timer));
+	m_data->timeText.setString(StringFormat::Format("Timer: %d/15", (short)m_data->timer));
 	m_data->timeText.setOrigin(m_data->timeText.getLocalBounds().width / 2, m_data->timeText.getLocalBounds().height / 2);
 
 	// Appeler Update sur chaque joueur (comme RockPaperScissors fait pour ses données)
@@ -94,7 +94,7 @@ void ArmWrestling::Update(float _deltaTime)
 	}
 
 	// Conditions de fin : timer >= 30 OU un bras atteint la largeur de la barre OU un bras <= 0
-	bool timeUp = (m_data->timer >= 30.0f);
+	bool timeUp = (m_data->timer >= 15.0f);
 	bool barMaxMin = false;
 	for (const auto& player : m_data->allPlayers)
 	{

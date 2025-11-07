@@ -57,6 +57,8 @@ class BaseGame : public SceneBase
 
 		};
 
+		GameData* m_gameData;
+
 		SceneData* m_data;
 
 	private:
@@ -67,6 +69,13 @@ class BaseGame : public SceneBase
 		void BoardStateUpdate();
 
 		int OnSameCase();
+
+		std::string RandomDuel();
+
+		// Fonctions de gestion de la caméra
+		void UpdateCameraToShowAllPlayers();
+		
+		void UpdateCameraFollowPlayer(float _deltaTime);
 
 	public:
 		virtual void Load(void);
