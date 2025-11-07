@@ -20,7 +20,8 @@
                  "y":657.091
                 }],
          "opacity":1,
-         "parallaxx":0.6,
+         "parallaxx":1.4,
+         "parallaxy":1.1,
          "type":"objectgroup",
          "visible":true,
          "x":0,
@@ -40,11 +41,12 @@
                  "type":"",
                  "visible":true,
                  "width":2877.55,
-                 "x":-625.667,
-                 "y":419.697
+                 "x":-509.667,
+                 "y":427.697
                 }],
          "opacity":1,
-         "parallaxx":0.9,
+         "parallaxx":1.3,
+         "parallaxy":1.1,
          "tintcolor":"#00aa00",
          "type":"objectgroup",
          "visible":true,
@@ -66,10 +68,12 @@
                  "type":"",
                  "visible":true,
                  "width":3169.91,
-                 "x":-250.879,
-                 "y":743.576
+                 "x":-492.879,
+                 "y":735.576
                 }],
          "opacity":1,
+         "parallaxx":1.2,
+         "parallaxy":1.1,
          "tintcolor":"#ffffff",
          "type":"objectgroup",
          "visible":true,
@@ -87,11 +91,11 @@
                  "name":"0",
                  "point":true,
                  "rotation":0,
-                 "type":"PositionCase",
+                 "type":"Case",
                  "visible":true,
                  "width":0,
-                 "x":-119.651515151515,
-                 "y":476.636363636364
+                 "x":18.348484848485,
+                 "y":474.636363636364
                 }, 
                 {
                  "height":0,
@@ -99,11 +103,11 @@
                  "name":"1",
                  "point":true,
                  "rotation":0,
-                 "type":"PositionCase",
+                 "type":"Battle",
                  "visible":true,
                  "width":0,
-                 "x":64.5151515151515,
-                 "y":481.636363636364
+                 "x":114.515151515152,
+                 "y":479.636363636364
                 }, 
                 {
                  "height":0,
@@ -111,11 +115,11 @@
                  "name":"2",
                  "point":true,
                  "rotation":0,
-                 "type":"PositionCase",
+                 "type":"Bonus",
                  "visible":true,
                  "width":0,
-                 "x":236,
-                 "y":482
+                 "x":218,
+                 "y":478
                 }, 
                 {
                  "height":0,
@@ -123,11 +127,11 @@
                  "name":"3",
                  "point":true,
                  "rotation":0,
-                 "type":"PositionCase",
+                 "type":"Case",
                  "visible":true,
                  "width":0,
-                 "x":447,
-                 "y":482
+                 "x":329,
+                 "y":478
                 }, 
                 {
                  "height":0,
@@ -135,11 +139,11 @@
                  "name":"4",
                  "point":true,
                  "rotation":0,
-                 "type":"PositionCase",
+                 "type":"Malus",
                  "visible":true,
                  "width":0,
-                 "x":612,
-                 "y":484
+                 "x":424,
+                 "y":476
                 }, 
                 {
                  "height":0,
@@ -147,11 +151,71 @@
                  "name":"5",
                  "point":true,
                  "rotation":0,
-                 "type":"PositionCase",
+                 "type":"Case",
                  "visible":true,
                  "width":0,
-                 "x":810,
+                 "x":506,
+                 "y":476
+                }, 
+                {
+                 "height":0,
+                 "id":21,
+                 "name":"6",
+                 "point":true,
+                 "rotation":0,
+                 "type":"Luck",
+                 "visible":true,
+                 "width":0,
+                 "x":598,
+                 "y":478
+                }, 
+                {
+                 "height":0,
+                 "id":22,
+                 "name":"7",
+                 "point":true,
+                 "rotation":0,
+                 "type":"Luck",
+                 "visible":true,
+                 "width":0,
+                 "x":688,
+                 "y":476
+                }, 
+                {
+                 "height":0,
+                 "id":23,
+                 "name":"8",
+                 "point":true,
+                 "rotation":0,
+                 "type":"Battle",
+                 "visible":true,
+                 "width":0,
+                 "x":786,
+                 "y":478
+                }, 
+                {
+                 "height":0,
+                 "id":24,
+                 "name":"9",
+                 "point":true,
+                 "rotation":0,
+                 "type":"Case",
+                 "visible":true,
+                 "width":0,
+                 "x":874,
                  "y":480
+                }, 
+                {
+                 "height":0,
+                 "id":25,
+                 "name":"10",
+                 "point":true,
+                 "rotation":0,
+                 "type":"Case",
+                 "visible":true,
+                 "width":0,
+                 "x":960,
+                 "y":478
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -177,17 +241,18 @@
                  "y":876.788
                 }],
          "opacity":1,
-         "parallaxx":1.3,
+         "parallaxx":1.1,
+         "parallaxy":1.1,
          "type":"objectgroup",
          "visible":true,
          "x":0,
          "y":0
         }],
  "nextlayerid":7,
- "nextobjectid":21,
+ "nextobjectid":26,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.11.2",
+ "tiledversion":"1.10.1",
  "tileheight":32,
  "tilesets":[
         {

@@ -1,5 +1,16 @@
 #include "Common.hpp"
+
 #include "Game/Scenes/Board.hpp"
+
+#include "./Game/scenes/RockPaperScissors.hpp"
+
+#include "./Game/Scenes/RussianRoulette/RussianRoulette.hpp"
+#include "./Game/Scenes/RandCard/RandCard.hpp"
+
+#include "Game/Scenes/ArmWrestling.hpp"
+#include "Game/Scenes/Basket.hpp"
+#include "Game/Scenes/FlagGame.hpp"
+
 
 typedef struct MainData
 {
@@ -7,9 +18,20 @@ typedef struct MainData
 	sf::Clock clock;
 	SceneHandler scenes;
 
+	RockPaperSizor rockPaperSizorScene;
+
+	RussianRoulette sceneRussianRoulette;
+	RandCard randCard;
+
+	SceneBase* armWrestlingScene;
+	SceneBase* basketScene;
+	SceneBase* flagGameScene;
+
 	GameData gameData;
 } MainData;
 
+
+Binds* binds = nullptr;
 
 int main(void);
 
@@ -22,12 +44,17 @@ void Draw(MainData& _mainData);
 
 int main(void)
 {
+	StringFormat::Load();
+	binds = new Binds();
+
 	random::SetSeedPID();
 	
 	MainData mainData;
 	MainDataLoad(mainData);
+
 	BaseGame boardScene;
 	mainData.scenes.AddScene(boardScene, "Board");
+
 
 	while (mainData.renderWindow.isOpen())
 	{
@@ -43,6 +70,11 @@ int main(void)
 		}
 	}
 
+
+	StringFormat::Unload();
+	delete binds;
+	binds = nullptr;
+	
 	return EXIT_SUCCESS;
 }
 
@@ -51,14 +83,22 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "SFML", sf::Style::Close);
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
 
-	_mainData.scenes.SetTransferedData(&_mainData.gameData);
+
+	/*_mainData.scenes.AddScene(*(_mainData.armWrestlingScene = new ArmWrestling()), "ArmWrestling");
+	_mainData.scenes.AddScene(*(_mainData.basketScene = new Basket()), "Basket");
+	_mainData.scenes.AddScene(*(_mainData.flagGameScene = new FlagGame()), "FlagGame");
+	_mainData.scenes.SelectScene("ArmWrestling",false);*/
 
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
-	
 
+	//RockPaperSizor rockPaperSizorScene;
+	//_mainData.scenes.AddScene(_mainData.rockPaperSizorScene, "rockPaperSizor");
 
-	//
+	//_mainData.scenes.AddScene(_mainData.sceneRussianRoulette, "RussianRoulette");
+	//_mainData.scenes.AddScene(_mainData.randCard, "RandCard");
+
+	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 
 	_mainData.clock.restart();
 }

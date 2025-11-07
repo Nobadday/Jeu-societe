@@ -38,6 +38,12 @@ class AnimatedObject
 
 		// Get the current animation properties
 		AnimationProperties* GetAnimationProperties(void);
+		
+		Animation& GetAn(void)
+		{
+			return this->m_animationHandler;
+		}
+
 
 };
 
