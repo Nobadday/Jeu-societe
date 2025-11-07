@@ -18,8 +18,6 @@ typedef struct MainData
 	sf::Clock clock;
 	SceneHandler scenes;
 
-	RockPaperScissors rockPaperSizorScene;
-
 	RussianRoulette sceneRussianRoulette;
 	RandCard randCard;
 
@@ -52,8 +50,13 @@ int main(void)
 	MainData mainData;
 	MainDataLoad(mainData);
 
-	BaseGame boardScene;
-	mainData.scenes.AddScene(boardScene, "Board");
+
+	for (short i = 0; i < 4; i++)
+	{
+		PlayerData newPlayer;
+		newPlayer.m_joystickId = i;
+		mainData.gameData.m_playerDataList.push_back(newPlayer);
+	}
 
 
 	while (mainData.renderWindow.isOpen())
@@ -92,13 +95,15 @@ void MainDataLoad(MainData& _mainData)
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
 
-	//RockPaperSizor rockPaperSizorScene;
-	_mainData.scenes.AddScene(_mainData.rockPaperSizorScene, "rockPaperSizor");
+	
 
 	//_mainData.scenes.AddScene(_mainData.sceneRussianRoulette, "RussianRoulette");
 	//_mainData.scenes.AddScene(_mainData.randCard, "RandCard");
 
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
+
+	_mainData.scenes.AddScene<BaseGame>("Board");
+	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
 
 	_mainData.clock.restart();
 }
@@ -120,7 +125,6 @@ void PollEvent(MainData& _mainData)
 			default:
 				_mainData.scenes.PollEvent(event);
 				break;
-
 		}
 	}
 }

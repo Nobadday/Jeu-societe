@@ -32,8 +32,8 @@ class RockPaperScissors : public SceneBase
 		sf::Sprite spriteTab[6];                                                                                                                             
 		sf::Texture textureTab[6];
 
-		//sf::Sprite player1ChoiceSprite;
-		//sf::Sprite player2ChoiceSprite;
+		sf::Sprite player1ChoiceSprite;
+		sf::Sprite player2ChoiceSprite;
 		Timer timer;
 
 		sf::Text timerText;
@@ -44,7 +44,7 @@ class RockPaperScissors : public SceneBase
 		GameData* gameData;
 
 		RPS_Choice playersChoice[4];
-	
+		int roundNB;
 	};
 	SceneData* m_data;
 
