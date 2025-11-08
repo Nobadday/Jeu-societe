@@ -274,14 +274,14 @@ void RandCard::Update(float _deltaTime)
 
 
 						//Save data
-						int nbOfPlayers = m_data->gameData->m_gonnaPlayIndex.size();
+						int nbOfPlayers = m_data->gameData->m_gonnaPlayIndex.size() - 1;
 						for (int i = 0 ; i < nbOfPlayers; i++)
 						{
 							//Print if you want check
 							//std::cout << "END, player rank" << i << " player : " << m_data->deadPlayers.at(i).id << " name :" << m_data->deadPlayers.at(i).name << std::endl;
-							m_data->gameData->AddPlayerWin(m_data->deadPlayers.at(i).id);
+							m_data->gameData->AddPlayerWin(m_data->deadPlayers.at(nbOfPlayers - i).id);
 						}
-						ChangeScene(1);
+						SceneBase::ChangeScene("Board", false);
 						return;
 					}					
 				}

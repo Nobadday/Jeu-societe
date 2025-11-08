@@ -143,6 +143,39 @@ void RussianRoulette::Update(float _deltaTime)
 
 					std::cout << "Game Over ! Player " << m_data->players[m_data->currentPlayer].name << " is dead !" << std::endl;
 					m_data->deadPlayers.push_back(m_data->players[m_data->currentPlayer]);
+					
+
+					//DEBUG juste pour faire fonctionner
+					//Va falloir que j'améliore car pas beau
+					// 
+					//Add next player to dead player, its winer
+					if (m_data->currentPlayer + 1 < m_data->players.size())
+					{
+						m_data->currentPlayer++;
+					}
+					else
+					{
+						m_data->currentPlayer = 0;
+					}
+
+					m_data->deadPlayers.push_back(m_data->players[m_data->currentPlayer]);
+
+
+
+
+
+					//Save data
+					int nbOfPlayers = m_data->gameData->m_gonnaPlayIndex.size() - 1;
+					std::cout << "nb player : " << nbOfPlayers << std::endl;
+
+					for (int i = 0; i < nbOfPlayers; i++)
+					{
+
+						m_data->gameData->AddPlayerWin(m_data->deadPlayers.at(nbOfPlayers - i).id);
+					}
+
+
+
 
 					//Load bullet for next game, its not useful
 					m_data->bullet = random::RandomInt(1, 6);
@@ -169,7 +202,7 @@ void RussianRoulette::Update(float _deltaTime)
 	case END:
 
 		std::cout << "FINI, CHANGEMENT De SCENE ICI" << std::endl;
-		SceneBase::ChangeScene("RandCard", false);
+		SceneBase::ChangeScene("Board", false);
 		break;
 	}
 }
