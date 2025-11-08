@@ -1,9 +1,10 @@
 #include "Common.hpp"
 #include "./Animation/Graphics.hpp"
+#include "./Utilities/BetterWindow/BW.hpp"
 
 typedef struct MainData
 {
-	sf::RenderWindow renderWindow;
+	sfMod::RenderWindow renderWindow;
 	sf::Clock clock;
 	SceneHandler scenes;
 
@@ -111,6 +112,10 @@ void Draw(MainData& _mainData)
 {
 	_mainData.renderWindow.clear(sf::Color::Black);
 	
+	sf::RectangleShape test(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
+	test.setFillColor(sf::Color(51, 215, 110));
+	_mainData.renderWindow.draw(test);
+
 	_mainData.scenes.Draw(_mainData.renderWindow);
 
 	_mainData.renderWindow.draw(_mainData.tp);

@@ -11,7 +11,7 @@
 
 #endif
 
-// Animation Module's Common || v1.1
+// Animation Module's Common || v1.2
 // Animation Module for SFML 2.6.2 is
 // Made by Yannou :)
 

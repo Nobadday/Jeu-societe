@@ -57,7 +57,7 @@ class TextureAnimated
 		};
 
 	private:
-		TextureWhat m_textureAtlas;
+		TextureAtlas m_textureAtlas;
 
 		std::vector<AnimationProperties> m_animations;
 		
@@ -85,14 +85,15 @@ class TextureAnimated
 		// -1 if not found
 		int FindAnimationIndex(const std::string& _name);
 		bool AnimationExists(const std::string& _name);
+		bool AnimationExists(int _index);
 
 		AtlasFrame& GetFrame(int _atlasIndex, int _frame);
 
-		const TextureWhat& GetAtlas(void);
-		//const sf::Texture& GetTexture(void);
+		const TextureAtlas& GetTextureAtlas(void);
+		const sf::Texture& GetTexture(void);
 
 
-		int GetAnimationCount(void);
+		size_t GetAnimationCount(void);
 	
 	protected:
 		
@@ -100,4 +101,4 @@ class TextureAnimated
 
 
 #endif
-// Texture Animated v1.0.2
+// Texture Animated v1.1

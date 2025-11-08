@@ -48,6 +48,7 @@ void Animation::Modify(int _frameCount, float _framerate, bool _loop, float _spe
 	this->m_shouldUpdate = true;
 
 	this->SetFramerate(_framerate);
+	this->OnFrameChange();
 }
 void Animation::Modify(int _frameCount, float _framerate, bool _loop)
 {
@@ -58,6 +59,7 @@ void Animation::Modify(int _frameCount, float _framerate, bool _loop)
 	this->m_shouldUpdate = true;
 
 	this->SetFramerate(_framerate);
+	this->OnFrameChange();
 }
 void Animation::Modify(float _durationSeconds, float _framerate, bool _loop, float _speed)
 {
@@ -72,6 +74,7 @@ void Animation::Modify(float _durationSeconds, float _framerate, bool _loop)
 	this->m_shouldUpdate = true;
 
 	this->SetFramerate(_framerate);
+	this->OnFrameChange();
 }
 
 #pragma endregion
@@ -85,7 +88,7 @@ void Animation::Update(float _deltaTime)
 	// AND if the animation isn't looped & finished
 	if (this->m_play && !(this->IsFinished() && !this->m_loop))
 	{
-		// TODO : Appeler DeltaClock
+		// TODO : Appeler DeltaClock avec onTimeUpdate
 		this->m_timeElapsed += _deltaTime * this->m_speed;
 		this->UpdateFrame();
 	}
@@ -465,4 +468,4 @@ void Animation::OnFrameChange(void)
 
 #pragma endregion Animation Class End
 
-// AnimationHandler C++ || v2.1
+// AnimationHandler C++ || v2.2

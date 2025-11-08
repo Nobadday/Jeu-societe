@@ -82,4 +82,4 @@ size_t AtlasContainer::GetAtlasFrameCount(void)
 }
 
 
-// AtlasContainer C++ || v0.2
+// AtlasContainer C++ || v1.0

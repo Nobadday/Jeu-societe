@@ -234,4 +234,4 @@ class Animation : private DeltaClock
 
 #endif
 
-// AnimationHandler C++ || v2.1
+// AnimationHandler C++ || v2.2

@@ -36,4 +36,4 @@ class SpriteAnimated : public sf::Sprite, public AnimatedObject
 
 #endif
 
-// SpriteAnimated v1.1.3
+// SpriteAnimated v1.2

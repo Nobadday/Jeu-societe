@@ -53,8 +53,8 @@ class AnimatedObject : public AnimationPRO
 		// If keepAnimation true; set's animation to last anim
 		void SetTexture(TextureAnimated& _texture, bool _keepAnimation = false);
 
-		virtual void AnimationChanged(void);
+		virtual void OnAnimationChange(void);
 };
 
 #endif
-// AnimatedObject || v1.2.2
+// AnimatedObject || v1.3

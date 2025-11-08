@@ -50,7 +50,7 @@ bool TextureAnimated::LoadFromFile(std::fstream& _file, const std::string& _dirP
 		case ANIMATION_TEXANIM:
 			{
 			nlohmann::json jsonBase = nlohmann::json::parse(_file);
-			this->m_textureAtlas.LoadFromFile(_dirPath + (std::string)jsonBase["filePath"], TextureWhat::PARSE_JSON_ARRAY);
+			this->m_textureAtlas.LoadFromFile(_dirPath + (std::string)jsonBase["filePath"], TextureAtlas::PARSE_JSON_ARRAY);
 
 			nlohmann::json& array = jsonBase["animations"];
 			size_t arraySize = array.size();
@@ -74,7 +74,7 @@ bool TextureAnimated::LoadFromFile(std::fstream& _file, const std::string& _dirP
 		case ANIMATION_ANIM:
 			{
 			nlohmann::json jsonBase = nlohmann::json::parse(_file);
-			this->m_textureAtlas.LoadFromFile(_dirPath + (std::string)jsonBase["assetPath"], TextureWhat::PARSE_JSON_ARRAY);
+			this->m_textureAtlas.LoadFromFile(_dirPath + (std::string)jsonBase["assetPath"], TextureAtlas::PARSE_JSON_ARRAY);
 
 			nlohmann::json& array = jsonBase["animations"];
 			size_t arraySize = array.size();
@@ -101,7 +101,7 @@ bool TextureAnimated::LoadFromFile(std::fstream& _file, const std::string& _dirP
 			nlohmann::json jsonBase = nlohmann::json::parse(_file);
 
 			nlohmann::json& meta = jsonBase["meta"];
-			this->m_textureAtlas.LoadFromFile(_file, _dirPath, TextureWhat::PARSE_JSON_AUTO);
+			this->m_textureAtlas.LoadFromFile(_file, _dirPath, TextureAtlas::PARSE_JSON_AUTO);
 			nlohmann::json& otherArray = jsonBase["frames"];
 
 			nlohmann::json& array = meta["frameTags"];
@@ -126,7 +126,7 @@ bool TextureAnimated::LoadFromFile(std::fstream& _file, const std::string& _dirP
 		case ANIMATION_FNF_LEGACY:
 			{
 			nlohmann::json jsonBase = nlohmann::json::parse(_file);
-			this->m_textureAtlas.LoadFromFile(_dirPath + (std::string)jsonBase["image"] + ".xml", TextureWhat::PARSE_XML_SPARROW_V2);
+			this->m_textureAtlas.LoadFromFile(_dirPath + (std::string)jsonBase["image"] + ".xml", TextureAtlas::PARSE_XML_SPARROW_V2);
 
 			nlohmann::json& array = jsonBase["animations"];
 			size_t arraySize = array.size();
@@ -158,7 +158,7 @@ bool TextureAnimated::LoadFromFile(std::fstream& _file, const std::string& _dirP
 		case ANIMATION_FNF:
 			{
 			nlohmann::json jsonBase = nlohmann::json::parse(_file);
-			this->m_textureAtlas.LoadFromFile(_dirPath + (std::string)jsonBase["assetPath"] + ".xml", TextureWhat::PARSE_XML_SPARROW_V2);
+			this->m_textureAtlas.LoadFromFile(_dirPath + (std::string)jsonBase["assetPath"] + ".xml", TextureAtlas::PARSE_XML_SPARROW_V2);
 
 			nlohmann::json& array = jsonBase["animations"];
 			size_t arraySize = array.size();
@@ -252,6 +252,10 @@ bool TextureAnimated::AnimationExists(const std::string& _name)
 {
 	return this->FindAnimationIndex(_name) != -1;
 }
+bool TextureAnimated::AnimationExists(int _index)
+{
+	return (_index >= 0) && (_index < this->m_animations.size());
+}
 
 
 AtlasFrame& TextureAnimated::GetFrame(int _atlasIndex, int _frame)
@@ -260,21 +264,21 @@ AtlasFrame& TextureAnimated::GetFrame(int _atlasIndex, int _frame)
 }
 
 
-const TextureWhat& TextureAnimated::GetAtlas(void)
+const TextureAtlas& TextureAnimated::GetTextureAtlas(void)
 {
 	return this->m_textureAtlas;
 }
-//const sf::Texture& TextureAnimated::GetTexture(void)
-//{
-//	return this->m_textureAtlas;
-//}
-
-int TextureAnimated::GetAnimationCount(void)
+const sf::Texture& TextureAnimated::GetTexture(void)
 {
-	return this->m_animations.Len();
+	return this->m_textureAtlas.GetTextureRef();
+}
+
+size_t TextureAnimated::GetAnimationCount(void)
+{
+	return this->m_animations.size();
 }
 
 #pragma endregion
 
 
-// Texture Animated v1.0.2
+// Texture Animated v1.1
