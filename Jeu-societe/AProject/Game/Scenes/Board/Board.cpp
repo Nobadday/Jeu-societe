@@ -198,13 +198,15 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 	}
 	break;
 
-	case WIN:
+	case WIN_DEPLACEMENT :
 	{
 		int winnerIndex = m_gameData->m_winIndex[0];
 		int loserIndex = m_gameData->m_winIndex[m_gameData->m_winIndex.size() - 1];
 
 		m_data->players[winnerIndex].currentCaseIndex += _newIndex;
 		m_data->players[loserIndex].currentCaseIndex -= _newIndex;
+		m_data->players[winnerIndex].currentCaseIndex %= m_data->posCase.size();
+		m_data->players[loserIndex].currentCaseIndex %= m_data->posCase.size();
 
 		// Animation du gagnant
 		sf::Vector2f startPos = m_data->players[winnerIndex].boardPosition;
