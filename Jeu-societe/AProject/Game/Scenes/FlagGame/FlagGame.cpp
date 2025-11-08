@@ -1,367 +1,492 @@
 #include "FlagGame.hpp"
+#include "../../Utilities/Random.hpp"
 
-std::vector<FlagGamePlayer*> allPlayers;
-short leftPlayer = 0;
-
-void EleminatePlayer(short _playerID);
-bool SomeOneWon(void);
-short GetWinerID(void);
-GamePadBindList GetRandomGamePadInput(void);
-bool WhiteListGamePadInput(GamePadBindList _input);
+#define ROUND_TIME 5.0f
+#define ROUND_END_TIME 3.0f
+#define INPUT_CHANGE_MIN 0.5f
+#define INPUT_CHANGE_MAX 3.0f
 
 void FlagGame::Load(void)
 {
 	m_data = new SceneData();
-	m_data->round = 1;
-	m_data->timerBeforeNextRound = 5.0f;
-	m_data->titleText = new sf::Text();
-	m_data->titleText->setFont(StringFormat::GetDefaultFont());
-	m_data->titleText->setCharacterSize(24);
-	m_data->titleText->setFillColor(sf::Color::White);
-	m_data->titleText->setString("Flag Game Mini-Game");
-	m_data->titleText->setPosition(SCREEN_WIDTH / 2, 0);
-	m_data->titleText->setOrigin(m_data->titleText->getLocalBounds().width / 2, 0);
+	m_data->gameData = (GameData*)this->m_keptData;
+	m_data->state = STATE_WAITING;
+	m_data->currentRound = 0;
+	m_data->playersRemaining = 0;
+	m_data->eliminationCounter = 0;
+	m_data->totalGameTime = 0.0f;
 
-	m_data->timerText = new sf::Text();
-	m_data->timerText->setFont(StringFormat::GetDefaultFont());
-	m_data->timerText->setCharacterSize(25);
-	m_data->timerText->setFillColor(sf::Color::White);
-	m_data->timerText->setString("Time: 5");
-	m_data->timerText->setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3);
-	m_data->timerText->setOrigin(m_data->timerText->getLocalBounds().width / 2, m_data->timerText->getLocalBounds().height / 2);
+	// Load font
+	m_data->font.loadFromFile("Assets/Fonts/arial.ttf");
 
-	m_data->countRoundText = new sf::Text();
-	m_data->countRoundText->setFont(StringFormat::GetDefaultFont());
-	m_data->countRoundText->setCharacterSize(25);
-	m_data->countRoundText->setFillColor(sf::Color::Blue);
-	m_data->countRoundText->setString("Round: 1");
-	m_data->countRoundText->setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4);
-	m_data->countRoundText->setOrigin(m_data->countRoundText->getLocalBounds().width / 2, m_data->countRoundText->getLocalBounds().height / 2);
+	// Initialize title text
+	m_data->titleText.setFont(m_data->font);
+	m_data->titleText.setCharacterSize(24);
+	m_data->titleText.setFillColor(sf::Color::White);
+	m_data->titleText.setString("Flag Game Mini-Game");
+	m_data->titleText.setPosition(SCREEN_WIDTH / 2, 20);
+	m_data->titleText.setOrigin(m_data->titleText.getLocalBounds().width / 2, 0);
 
-	m_data->noEnoughtPlayer = new sf::Text();
-	m_data->noEnoughtPlayer->setFont(StringFormat::GetDefaultFont());
-	m_data->noEnoughtPlayer->setCharacterSize(25);
-	m_data->noEnoughtPlayer->setFillColor(sf::Color::Red);
-	m_data->noEnoughtPlayer->setString("Not Enought Players Connected!");
-	m_data->noEnoughtPlayer->setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-	m_data->noEnoughtPlayer->setOrigin(m_data->noEnoughtPlayer->getLocalBounds().width / 2, m_data->noEnoughtPlayer->getLocalBounds().height / 2);
+	// Initialize round text
+	m_data->roundText.setFont(m_data->font);
+	m_data->roundText.setCharacterSize(25);
+	m_data->roundText.setFillColor(sf::Color::Blue);
+	m_data->roundText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4);
 
-	m_data->randomDelayforChangeInput = random::RandomFloat(0.1f, 3.0f);
-	m_data->randomInputID = (short)GetRandomGamePadInput();
-	m_data->InputText = new sf::Text();
-	m_data->InputText->setFont(StringFormat::GetDefaultFont());
-	m_data->InputText->setCharacterSize(25);
-	m_data->InputText->setFillColor(sf::Color::Yellow);
-	m_data->InputText->setString(StringFormat::Format("Input: %s",GetGamePadButtonName((GamePadBindList)m_data->randomInputID)));
-	m_data->InputText->setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.5f);
-	m_data->InputText->setOrigin(m_data->InputText->getLocalBounds().width / 2, m_data->InputText->getLocalBounds().height / 2);
+	// Initialize timer text
+	m_data->timerText.setFont(m_data->font);
+	m_data->timerText.setCharacterSize(25);
+	m_data->timerText.setFillColor(sf::Color::White);
+	m_data->timerText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3);
 
-	for(short i = 0; i < 4; ++i)
+	// Initialize required input text
+	m_data->requiredInputText.setFont(m_data->font);
+	m_data->requiredInputText.setCharacterSize(25);
+	m_data->requiredInputText.setFillColor(sf::Color::Yellow);
+	m_data->requiredInputText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.5f);
+
+	// Initialize not enough players text
+	m_data->notEnoughPlayersText.setFont(m_data->font);
+	m_data->notEnoughPlayersText.setCharacterSize(25);
+	m_data->notEnoughPlayersText.setFillColor(sf::Color::Red);
+	m_data->notEnoughPlayersText.setString("Not Enough Players Connected!");
+	m_data->notEnoughPlayersText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+	m_data->notEnoughPlayersText.setOrigin(m_data->notEnoughPlayersText.getLocalBounds().width / 2, m_data->notEnoughPlayersText.getLocalBounds().height / 2);
+
+	// Initialize result text
+	m_data->resultText.setFont(m_data->font);
+	m_data->resultText.setCharacterSize(30);
+	m_data->resultText.setFillColor(sf::Color::Green);
+	m_data->resultText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+
+	// Initialize player data for all players in m_gonnaPlayIndex
+	for (int i = 0; i < 4; ++i)
 	{
-		if (sf::Joystick::isConnected(i))
+		m_data->playerData[i].isEliminated = true;
+		m_data->playerData[i].currentInput = (GamePadBindList)(-1);
+		m_data->playerData[i].eliminationOrder = 0;
+		m_data->playerData[i].eliminationTime = 0.0f;
+
+		m_data->playerData[i].inputText.setFont(m_data->font);
+		m_data->playerData[i].inputText.setCharacterSize(20);
+		m_data->playerData[i].inputText.setFillColor(sf::Color::Green);
+	}
+
+	// Setup only participating players
+	if (m_data->gameData)
+	{
+		for (int i = 0; i < m_data->gameData->m_gonnaPlayIndex.size(); ++i)
 		{
-			new FlagGamePlayer(i);
-			leftPlayer++;
+			int playerID = m_data->gameData->m_gonnaPlayIndex[i];
+			if (playerID >= 0 && playerID < 4)
+			{
+				m_data->playerData[playerID].isEliminated = false;
+				m_data->playersRemaining++;
+
+				// Position text based on number of participating players
+				m_data->playerData[playerID].inputText.setPosition(
+					SCREEN_WIDTH / (m_data->gameData->m_gonnaPlayIndex.size() + 1) * (i + 1),
+					100.f
+				);
+			}
 		}
+	}
+
+	UpdatePlayerInputTexts();
+
+	// Start the game if enough players
+	if (HasEnoughPlayers())
+	{
+		m_data->state = STATE_PLAYING;
+		StartNewRound();
 	}
 }
 
 void FlagGame::Unload(void)
 {
-	delete m_data->titleText;
-	delete m_data->countRoundText;
-	delete m_data->noEnoughtPlayer;
-	delete m_data->timerText;
-	delete m_data->InputText;
-	m_data->titleText = nullptr;
-	m_data->countRoundText = nullptr;
-	m_data->noEnoughtPlayer = nullptr;
-	m_data->timerText = nullptr;
-	m_data->InputText = nullptr;
 	delete m_data;
 	m_data = nullptr;
-
-	for (FlagGamePlayer* player : allPlayers)
-	{
-		delete player;
-	}
 }
 
 void FlagGame::PollEvent(sf::Event& _event)
 {
+	if (m_data->state == STATE_PLAYING)
+	{
+		switch (_event.type)
+		{
+		case sf::Event::JoystickButtonPressed:
+		{
+			// Get player ID from joystick
+			int playerID = m_data->gameData->GetPlayerIDFromJoystick(_event.joystickButton.joystickId);
+
+			// Check if this player is participating
+			if (m_data->gameData->IsPlayerParticipating(playerID))
+			{
+				if (playerID >= 0 && playerID < 4 && !m_data->playerData[playerID].isEliminated)
+				{
+					// Convert button to GamePadBindList
+					GamePadBindList input = (GamePadBindList)_event.joystickButton.button;
+
+					if (IsInputValid(input))
+					{
+						m_data->playerData[playerID].currentInput = input;
+						UpdatePlayerInputTexts();
+					}
+				}
+			}
+			break;
+		}
+		default:
+			break;
+		}
+	}
 }
 
 void FlagGame::Update(float _deltaTime)
 {
-	short countPlayer = 0;
-	for(short i = 0; i < (short)sf::Joystick::Count; ++i)
+	// Track total game time during playing state
+	if (m_data->state == STATE_PLAYING)
 	{
-		if(sf::Joystick::isConnected(i))
-		{
-			countPlayer++;
-		}
+		m_data->totalGameTime += _deltaTime;
 	}
-	if(countPlayer >= 2)
+
+	if (!HasEnoughPlayers() && m_data->state != STATE_WAITING)
 	{
-		if (m_data->round > MAX_ROUND || leftPlayer == 0)
+		m_data->state = STATE_WAITING;
+		return;
+	}
+
+	switch (m_data->state)
+	{
+	case STATE_WAITING:
+		if (HasEnoughPlayers())
 		{
-			if(SomeOneWon() && leftPlayer == 1)
+			m_data->state = STATE_PLAYING;
+			StartNewRound();
+		}
+		break;
+
+	case STATE_PLAYING:
+		m_data->roundTimer.Update(_deltaTime);
+		m_data->inputChangeTimer.Update(_deltaTime);
+
+		// Update timer text
+		char timerBuffer[20];
+		std::snprintf(timerBuffer, 20, "Time: %.2f", m_data->roundTimer.GetRemainingTime());
+		m_data->timerText.setString(timerBuffer);
+		m_data->timerText.setOrigin(m_data->timerText.getLocalBounds().width / 2, m_data->timerText.getLocalBounds().height / 2);
+
+		// Change required input randomly
+		if (m_data->inputChangeTimer.IsFinished() && m_data->roundTimer.GetRemainingTime() > 1.0f)
+		{
+			ChangeRequiredInput();
+		}
+
+		// Check if round is over
+		if (m_data->roundTimer.IsFinished())
+		{
+			EvaluateRound();
+		}
+		break;
+
+	case STATE_ROUND_END:
+		m_data->roundTimer.Update(_deltaTime);
+
+		if (m_data->roundTimer.IsFinished())
+		{
+			if (m_data->currentRound >= MAX_ROUND || m_data->playersRemaining <= 1)
 			{
-				std::cout << "We have a winner " << GetWinerID()+1 << std::endl;
+				m_data->state = STATE_GAME_OVER;
+				m_data->roundTimer.SetTimeTarget(ROUND_END_TIME, true);
 			}
-			else if(leftPlayer > 1)
+			else
 			{
-				std::cout << "No one won the game." << std::endl;
-				for(FlagGamePlayer* player : allPlayers)
+				m_data->state = STATE_PLAYING;
+				StartNewRound();
+			}
+		}
+		break;
+
+	case STATE_GAME_OVER:
+		m_data->roundTimer.Update(_deltaTime);
+
+		if (m_data->roundTimer.IsFinished())
+		{
+			// Return to board
+			if (m_data->gameData)
+			{
+				// Award winner if there is one (first in m_winIndex)
+				if (m_data->playersRemaining == 1)
 				{
-					EleminatePlayer(player->GetID());
+					for (int playerID : m_data->gameData->m_gonnaPlayIndex)
+					{
+						if (!m_data->playerData[playerID].isEliminated)
+						{
+							m_data->gameData->AddPlayerWin(playerID);
+							std::cout << "Player " << (playerID + 1) << " wins!" << std::endl;
+							break;
+						}
+					}
+				}
+
+				// Add losers in REVERSE order of elimination (last eliminated first, first eliminated last)
+				// Create a list of eliminated players sorted by elimination order
+				std::vector<std::pair<int, int>> eliminatedPlayers; // <playerID, eliminationOrder>
+
+				for (int playerID : m_data->gameData->m_gonnaPlayIndex)
+				{
+					if (m_data->playerData[playerID].isEliminated && m_data->playerData[playerID].eliminationOrder > 0)
+					{
+						eliminatedPlayers.push_back({ playerID, m_data->playerData[playerID].eliminationOrder });
+					}
+				}
+
+				// Sort by elimination order in DESCENDING order (last eliminated first)
+				std::sort(eliminatedPlayers.begin(), eliminatedPlayers.end(),
+					[](const std::pair<int, int>& a, const std::pair<int, int>& b) {
+						return a.second > b.second; // Reversed: higher order first
+					});
+
+				// Add all losers in reverse order (first eliminated will be last)
+				for (const auto& player : eliminatedPlayers)
+				{
+					m_data->gameData->AddPlayerWin(player.first);
+					std::cout << "Player " << (player.first + 1) << " added as loser (order "
+						<< player.second << ", time: "
+						<< m_data->playerData[player.first].eliminationTime << "s)" << std::endl;
 				}
 			}
-			ResetFlagGame();
-			return;
+
+			ChangeScene("Board", false);
 		}
-		m_data->timerBeforeNextRound -= _deltaTime;
-		m_data->randomDelayforChangeInput -= _deltaTime;
-		m_data->timerText->setString(StringFormat::Format("Time: %.2f", m_data->timerBeforeNextRound));
-		m_data->timerText->setOrigin(m_data->timerText->getLocalBounds().width / 2, m_data->timerText->getLocalBounds().height / 2);
-		if(m_data->timerBeforeNextRound <= 0.f)
-		{
-			NextRound();
-		}
-		if(m_data->randomDelayforChangeInput <= 0.f)
-		{
-			NextInput();
-		}
-		FlagGamePlayer::UpdateAllPlayers(_deltaTime);
+		break;
 	}
 }
 
 void FlagGame::Draw(sf::RenderWindow& _renderWindow)
 {
-	short countPlayer = 0;
-	for (short i = 0; i < (short)sf::Joystick::Count; ++i)
+	if (!HasEnoughPlayers())
 	{
-		if (sf::Joystick::isConnected(i))
-		{
-			countPlayer++;
-		}
-	}
-	if (countPlayer < 2)
-	{
-		_renderWindow.draw(*m_data->noEnoughtPlayer);
+		_renderWindow.draw(m_data->notEnoughPlayersText);
 		return;
 	}
 
-	_renderWindow.draw(*m_data->titleText);
-	_renderWindow.draw(*m_data->countRoundText);
-	_renderWindow.draw(*m_data->timerText);
-	_renderWindow.draw(*m_data->InputText);
-	FlagGamePlayer::DrawAllPlayers(_renderWindow);
-}
+	_renderWindow.draw(m_data->titleText);
 
-FlagGamePlayer::FlagGamePlayer(short _id)
-{
-	id = _id;
-	inGame = true;
-	savedInput = (GamePadBindList)(-1);
-	std::cout << "FlagGamePlayer " << id << " created." << std::endl;
-	inputText = new sf::Text();
-	inputText->setFont(StringFormat::GetDefaultFont());
-	inputText->setCharacterSize(20);
-	inputText->setFillColor(sf::Color::Green);
-	inputText->setString(StringFormat::Format("Player %d Input", id + 1));
-	inputText->setPosition(SCREEN_WIDTH/5*(id + 1), 100.f);
-	inputText->setOrigin(inputText->getLocalBounds().width / 2, inputText->getLocalBounds().height / 2);
-
-	allPlayers.push_back(this);
-}
-
-FlagGamePlayer::~FlagGamePlayer()
-{
-	delete inputText;
-	inputText = nullptr;
-	for (auto it = std::remove(allPlayers.begin(), allPlayers.end(), this); it != allPlayers.end(); ++it)
+	if (m_data->state == STATE_PLAYING || m_data->state == STATE_ROUND_END)
 	{
-		if (*it == this)
+		_renderWindow.draw(m_data->roundText);
+		_renderWindow.draw(m_data->timerText);
+		_renderWindow.draw(m_data->requiredInputText);
+
+		// Draw only participating players' texts
+		if (m_data->gameData)
 		{
-			allPlayers.erase(it);
-			return;
-		}
-	}
-}
-
-short FlagGamePlayer::GetID(void) const
-{
-	return id;
-}
-
-void FlagGamePlayer::UpdateAllPlayers(float _dt)
-{
-	for (FlagGamePlayer* player : allPlayers)
-	{
-		if (player) player->Update(_dt);
-	}
-}
-
-void FlagGamePlayer::DrawAllPlayers(sf::RenderWindow& _renderWindow)
-{
-	for (FlagGamePlayer* player : allPlayers)
-	{
-		if (player) player->Draw(_renderWindow);
-	}
-}
-
-void FlagGamePlayer::Update(float _dt)
-{
-	if(!inGame)
-	{
-		inputText->setFillColor(sf::Color::Red);
-		return;
-	}
-	inputText->setFillColor(sf::Color::Green);
-	for(GamePadBindList btn = GAMEPAD_A; btn < MAX_GAMEPAD_BIND_LIST; btn = (GamePadBindList)(btn + 1))
-	{
-		if(GetGamePadPressed(btn, id, true))
-		{
-			inputText->setString(StringFormat::Format("Player %d\nInput: %s", id + 1, GetGamePadButtonName(btn)));
-			inputText->setOrigin(inputText->getLocalBounds().width / 2, inputText->getLocalBounds().height / 2);
-			savedInput = btn;
-			return;
-		}
-	}
-}
-
-void FlagGamePlayer::Draw(sf::RenderWindow& _renderWindow)
-{
-	_renderWindow.draw(*inputText);
-}
-
-bool FlagGamePlayer::IsInGame(void) const
-{
-	return inGame;
-}
-
-void FlagGamePlayer::SetInGame(bool _inGame)
-{
-	inGame = _inGame;
-}
-
-void FlagGame::NextRound(void)
-{
-	m_data->round++;
-	m_data->countRoundText->setString(StringFormat::Format("Round: %d", m_data->round));
-	m_data->countRoundText->setOrigin(m_data->countRoundText->getLocalBounds().width / 2, m_data->countRoundText->getLocalBounds().height / 2);
-	m_data->timerBeforeNextRound = 5.0f;
-	for(FlagGamePlayer* player : allPlayers)
-	{
-		if (player->IsInGame())
-		{
-			std::cout << "Player " << player->GetID() << " chose " << GetGamePadButtonName(player->GetSavedInput()) << ", required was " << GetGamePadButtonName((GamePadBindList)m_data->randomInputID) << std::endl;
-			if (player->GetSavedInput() != (GamePadBindList)m_data->randomInputID)
+			for (int playerID : m_data->gameData->m_gonnaPlayIndex)
 			{
-				EleminatePlayer(player->GetID());
+				if (playerID >= 0 && playerID < 4)
+				{
+					_renderWindow.draw(m_data->playerData[playerID].inputText);
+				}
 			}
 		}
 	}
-}
 
-void EleminatePlayer(short _playerID)
-{
-	allPlayers[_playerID]->SetInGame(false);
-	leftPlayer--;
-}
-
-bool SomeOneWon(void)
-{
-	for(FlagGamePlayer* player : allPlayers)
+	if (m_data->state == STATE_GAME_OVER)
 	{
-		if (player->IsInGame())
+		_renderWindow.draw(m_data->resultText);
+	}
+}
+
+void FlagGame::StartNewRound(void)
+{
+	m_data->currentRound++;
+
+	// Update round text
+	char roundBuffer[50];
+	std::snprintf(roundBuffer, 50, "Round: %d / %d", m_data->currentRound, MAX_ROUND);
+	m_data->roundText.setString(roundBuffer);
+	m_data->roundText.setOrigin(m_data->roundText.getLocalBounds().width / 2, m_data->roundText.getLocalBounds().height / 2);
+
+	// Reset player inputs for participating players
+	if (m_data->gameData)
+	{
+		for (int playerID : m_data->gameData->m_gonnaPlayIndex)
 		{
-			return true;
+			if (playerID >= 0 && playerID < 4)
+			{
+				m_data->playerData[playerID].currentInput = (GamePadBindList)(-1);
+			}
 		}
 	}
-	return false;
+	UpdatePlayerInputTexts();
+
+	// Set timers
+	m_data->roundTimer.SetTimeTarget(ROUND_TIME, true);
+	ChangeRequiredInput();
 }
 
-void FlagGame::ResetFlagGame(void)
+void FlagGame::EvaluateRound(void)
 {
-	if(GetGamePadPressed(GAMEPAD_A,0,true))
+	// Check each participating player's input
+	if (m_data->gameData)
 	{
-		for(FlagGamePlayer* player : allPlayers)
+		for (int playerID : m_data->gameData->m_gonnaPlayIndex)
 		{
-			std::cout << "Resetting Player " << player->GetID() << std::endl;
-			player->SetInGame(true);
-		}
-		leftPlayer = (short)allPlayers.size();
-		m_data->timerBeforeNextRound = 5.0f;
-		m_data->timerText->setString(StringFormat::Format("Time: %.2f", m_data->timerBeforeNextRound));
-		m_data->round = 1;
-		m_data->countRoundText->setString(StringFormat::Format("Round: %d", m_data->round));
+			if (playerID >= 0 && playerID < 4 && !m_data->playerData[playerID].isEliminated)
+			{
+				if (m_data->playerData[playerID].currentInput != m_data->requiredInput)
+				{
+					m_data->playerData[playerID].isEliminated = true;
+					m_data->playersRemaining--;
+					m_data->eliminationCounter++;
 
-	}
-}
+					// Record elimination order and time
+					m_data->playerData[playerID].eliminationOrder = m_data->eliminationCounter;
+					m_data->playerData[playerID].eliminationTime = m_data->totalGameTime;
 
-void FlagGame::NextInput(void)
-{
-	if (m_data->timerBeforeNextRound > 1.25f)
-	{
-		m_data->randomDelayforChangeInput = random::RandomFloat(0.1f, m_data->timerBeforeNextRound);
-		m_data->randomInputID = (short)GetRandomGamePadInput();
-		m_data->InputText->setString(StringFormat::Format("Input: %s", GetGamePadButtonName((GamePadBindList)m_data->randomInputID)));
-		m_data->InputText->setOrigin(m_data->InputText->getLocalBounds().width / 2, m_data->InputText->getLocalBounds().height / 2);
-	}
-}
-
-FlagGamePlayer& FlagGamePlayer::GetPlayerByID(short _id)
-{
-	for (FlagGamePlayer* player : allPlayers)
-	{
-		if (player->GetID() == _id)
-		{
-			return *player;
+					std::cout << "Player " << (playerID + 1) << " eliminated! (Order: "
+						<< m_data->eliminationCounter << ", Time: "
+						<< m_data->totalGameTime << "s)" << std::endl;
+				}
+			}
 		}
 	}
-	throw std::runtime_error("Player with ID " + std::to_string(_id) + " not found.");
-}
 
-GamePadBindList GetRandomGamePadInput(void)
-{
-	short randInput = random::RandomInt(0, (short)MAX_GAMEPAD_BIND_LIST - 1);
-	while(!WhiteListGamePadInput((GamePadBindList)randInput))
-	{
-		randInput = random::RandomInt(0, (short)MAX_GAMEPAD_BIND_LIST - 1);
-	}
-	return (GamePadBindList)randInput;
-}
+	UpdatePlayerInputTexts();
 
-bool WhiteListGamePadInput(GamePadBindList _input)
-{
-	switch (_input)
+	// Prepare for next round or game over
+	if (m_data->playersRemaining == 1)
 	{
-	case GAMEPAD_A: return true;
-	case GAMEPAD_B: return true;
-	case GAMEPAD_X: return true;
-	case GAMEPAD_Y: return true;
-	case GAMEPAD_LB: return true;
-	case GAMEPAD_RB: return true;
-	default: return false;
-	}
-}
-
-short GetWinerID(void)
-{
-	for(FlagGamePlayer* player : allPlayers)
-	{
-		if (player->IsInGame())
+		// Find winner
+		if (m_data->gameData)
 		{
-			return player->GetID();
+			for (int playerID : m_data->gameData->m_gonnaPlayIndex)
+			{
+				if (playerID >= 0 && playerID < 4 && !m_data->playerData[playerID].isEliminated)
+				{
+					char resultBuffer[50];
+					std::snprintf(resultBuffer, 50, "Player %d Wins!", playerID + 1);
+					m_data->resultText.setString(resultBuffer);
+					m_data->resultText.setOrigin(m_data->resultText.getLocalBounds().width / 2, m_data->resultText.getLocalBounds().height / 2);
+					break;
+				}
+			}
 		}
 	}
-	return -1;
+	else if (m_data->playersRemaining == 0)
+	{
+		m_data->resultText.setString("No Winner!");
+		m_data->resultText.setOrigin(m_data->resultText.getLocalBounds().width / 2, m_data->resultText.getLocalBounds().height / 2);
+	}
+
+	m_data->state = STATE_ROUND_END;
+	m_data->roundTimer.SetTimeTarget(ROUND_END_TIME, true);
 }
 
-
-GamePadBindList FlagGamePlayer::GetSavedInput(void) const
+void FlagGame::ChangeRequiredInput(void)
 {
-	return savedInput;
+	m_data->requiredInput = GetRandomValidInput();
+
+	char inputBuffer[100];
+	std::snprintf(inputBuffer, 100, "Press: %s", GetGamePadButtonName(m_data->requiredInput));
+	m_data->requiredInputText.setString(inputBuffer);
+	m_data->requiredInputText.setOrigin(m_data->requiredInputText.getLocalBounds().width / 2, m_data->requiredInputText.getLocalBounds().height / 2);
+
+	float nextChangeDelay = random::RandomFloat(INPUT_CHANGE_MIN, INPUT_CHANGE_MAX);
+	m_data->inputChangeTimer.SetTimeTarget(nextChangeDelay, true);
+}
+
+GamePadBindList FlagGame::GetRandomValidInput(void)
+{
+	GamePadBindList validInputs[] = {
+		GAMEPAD_A, GAMEPAD_B, GAMEPAD_X, GAMEPAD_Y, GAMEPAD_LB, GAMEPAD_RB
+	};
+
+	int randomIndex = random::RandomInt(0, 5);
+	return validInputs[randomIndex];
+}
+
+bool FlagGame::IsInputValid(GamePadBindList _input)
+{
+	return (_input == GAMEPAD_A || _input == GAMEPAD_B ||
+		_input == GAMEPAD_X || _input == GAMEPAD_Y ||
+		_input == GAMEPAD_LB || _input == GAMEPAD_RB);
+}
+
+void FlagGame::UpdatePlayerInputTexts(void)
+{
+	if (!m_data->gameData)
+		return;
+
+	for (int playerID : m_data->gameData->m_gonnaPlayIndex)
+	{
+		if (playerID < 0 || playerID >= 4)
+			continue;
+
+		if (m_data->playerData[playerID].isEliminated)
+		{
+			m_data->playerData[playerID].inputText.setFillColor(sf::Color::Red);
+			char buffer[50];
+			std::snprintf(buffer, 50, "Player %d\nELIMINATED", playerID + 1);
+			m_data->playerData[playerID].inputText.setString(buffer);
+		}
+		else
+		{
+			m_data->playerData[playerID].inputText.setFillColor(sf::Color::Green);
+
+			if (m_data->playerData[playerID].currentInput != (GamePadBindList)(-1))
+			{
+				char buffer[100];
+				std::snprintf(buffer, 100, "Player %d\n%s", playerID + 1,
+					GetGamePadButtonName(m_data->playerData[playerID].currentInput));
+				m_data->playerData[playerID].inputText.setString(buffer);
+			}
+			else
+			{
+				char buffer[50];
+				std::snprintf(buffer, 50, "Player %d\nWaiting...", playerID + 1);
+				m_data->playerData[playerID].inputText.setString(buffer);
+			}
+		}
+
+		m_data->playerData[playerID].inputText.setOrigin(
+			m_data->playerData[playerID].inputText.getLocalBounds().width / 2,
+			m_data->playerData[playerID].inputText.getLocalBounds().height / 2
+		);
+	}
+}
+
+bool FlagGame::HasEnoughPlayers(void)
+{
+	if (!m_data->gameData)
+		return false;
+
+	return m_data->gameData->m_gonnaPlayIndex.size() >= 2;
+}
+
+int FlagGame::GetFirstEliminatedPlayer(void)
+{
+	int firstEliminatedID = -1;
+	int lowestOrder = INT_MAX;
+
+	if (!m_data->gameData)
+		return -1;
+
+	// Find player with elimination order of 1 (first eliminated)
+	for (int playerID : m_data->gameData->m_gonnaPlayIndex)
+	{
+		if (playerID >= 0 && playerID < 4)
+		{
+			if (m_data->playerData[playerID].isEliminated &&
+				m_data->playerData[playerID].eliminationOrder > 0 &&
+				m_data->playerData[playerID].eliminationOrder < lowestOrder)
+			{
+				lowestOrder = m_data->playerData[playerID].eliminationOrder;
+				firstEliminatedID = playerID;
+			}
+		}
+	}
+
+	return firstEliminatedID;
 }
