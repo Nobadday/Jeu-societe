@@ -21,7 +21,6 @@ void BaseGame::Load(void)
 		m_data->players[i].sprite.setTexture(m_data->players[i].texture);
 
 		//sf::FloatRect spriteBounds = m_data->players[i].sprite.getLocalBounds();
-
 		//m_data->players[i].sprite.setOrigin(spriteBounds.width / 2.0f, spriteBounds.height / 2.0f);
 
 		m_data->players[i].boardPosition = m_data->posCase[0].GetPosition();
