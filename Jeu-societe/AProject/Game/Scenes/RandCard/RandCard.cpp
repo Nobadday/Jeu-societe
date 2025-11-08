@@ -51,26 +51,42 @@ void RandCard::NextPlayer(void)
 	}
 	m_data->cardChosen = 0;
 	m_data->gameState = CHOOSE_CARD;
-
-
-
-
 }
 
 void RandCard::Load(void)
 {
 	m_data = new SceneData;
 
+	//m_data->menuSystem = new MenuSystem();
+	//m_data->menuSystem->MenuAdd("TestMenu", true);
 
 
-	//m_data->testTexture.LoadFromFile("Assets/Sprites/RussianRoulette/Damien.texanim", TextureAnimated::ANIMATION_TEXANIM);
-	//m_data->testButton.ButtonSetTexture(m_data->testTexture);
+	// Liaison au GameData passé dans m_keptData (comme dans RockPaperScissors)
+	m_data->gameData = (GameData*)this->m_keptData;
 
-	//DEBUG
-	m_data->players.push_back({ "Yann", 0});
-	m_data->players.push_back({ "Lorenzo", 1});
-	//m_data->players.push_back({ "Kyllian", 2});
-	//m_data->players.push_back({ "Player3", 3});
+	//Debug names
+	std::string playersNames[4] = { "Yann", "Lorenzo", "Kyllian", "Damien" };
+	//m_data->gameData->m_gonnaPlayIndex.push_back(0);
+	//m_data->gameData->m_gonnaPlayIndex.push_back(1);
+
+	int nbOfPlayers = m_data->gameData->m_gonnaPlayIndex.size();
+	std::cout << "nb of player " << nbOfPlayers << std::endl;
+
+	//Copy pnlayers playig from GameData
+	for (int i = 0; i < nbOfPlayers; ++i)
+	{
+		int playerId = (int)m_data->gameData->m_gonnaPlayIndex.at(i);
+		m_data->players.push_back({ playersNames[i],  (short)playerId });
+	}
+
+	//m_data->buttonTest = new Button();
+	//
+	//m_data->textanim = new TextureAnimated();
+	//m_data->textanim->LoadFromFile("Assets/Sprites/ButtonPlaceHolder.anim", TextureAnimated::AnimationType::ANIMATION_ANIM);
+	//m_data->buttonTest->setTexture(*m_data->textanim);
+
+	//m_data->menuSystem->MenuAddButton("TestMenu", "ButtonTest", m_data->buttonTest);
+	//m_data->menuSystem->SetMenuHolder("TestMenu");
 
 	//Font
 	m_data->font.loadFromFile("Assets/Fonts/Platinum Sign.ttf");
@@ -127,13 +143,11 @@ void RandCard::Load(void)
 	}
 
 }
-
 void RandCard::Unload(void)
 {
 	m_data->cards.clear();
 	m_data->players.clear();
-
-
+	m_data->deadPlayers.clear();
 
 	delete this->m_data;
 	this->m_data = NULL;
@@ -141,6 +155,8 @@ void RandCard::Unload(void)
 
 void RandCard::PollEvent(sf::Event& _event)
 {
+	//m_data->menuSystem->PollEvent(_event);
+
 	switch (m_data->gameState)
 	{
 		case CHOOSE_CARD:
@@ -222,6 +238,9 @@ void RandCard::PollEvent(sf::Event& _event)
 }
 void RandCard::Update(float _deltaTime)
 {
+	//m_data->buttonTest->Update(_deltaTime);
+	//m_data->menuSystem->Update(_deltaTime);
+
 	switch (m_data->gameState) 
 	{
 		case CHOOSE_CARD:
@@ -235,31 +254,41 @@ void RandCard::Update(float _deltaTime)
 			m_data->cardSprAnim.Update(_deltaTime);
 			if (m_data->cardSprAnim.IsFinished())
 			{
-				std::cout << "Current player : " << m_data->currentPlayer << std::endl;
-				//std::cout << "Card Vector size : " << m_data->cards.size() << std::endl;
-				std::cout << "Player Vector size : " << m_data->players.size() << std::endl;
-
+				//std::cout << "Current player : " << m_data->currentPlayer << std::endl;
+				//std::cout << "Player Vector size : " << m_data->players.size() << std::endl;
 
 				if (m_data->cards[m_data->cardChosen] == BOMB)
 				{
-					//DEBUG
+					m_data->deadPlayers.push_back(m_data->players.at(m_data->currentPlayer));
 					m_data->players.erase(m_data->players.begin() + m_data->currentPlayer);
 
+					NextPlayer();
+					
 					//Check if only one player left
 					if (m_data->players.size() <= 1)
 					{
-						//DEBUG
-						std::cout << "Player " << m_data->players[0].name << " is the winner !" << std::endl;
+						m_data->deadPlayers.push_back(m_data->players.at(0));
+						//Print if you want check
+						//std::cout << "Player " << m_data->players[0].name << " is the winner !" << std::endl;
 						m_data->gameState = END;
+
+
+						//Save data
+						int nbOfPlayers = m_data->gameData->m_gonnaPlayIndex.size();
+						for (int i = 0 ; i < nbOfPlayers; i++)
+						{
+							//Print if you want check
+							//std::cout << "END, player rank" << i << " player : " << m_data->deadPlayers.at(i).id << " name :" << m_data->deadPlayers.at(i).name << std::endl;
+							m_data->gameData->AddPlayerWin(m_data->deadPlayers.at(i).id);
+						}
+						ChangeScene(1);
 						return;
-					}
-					NextPlayer();
-					
+					}					
 				}
 				else
 				{
 					//DEBUG
-					std::cout << "Player " << m_data->players[m_data->currentPlayer].name << " survived !" << std::endl << std::endl;
+					//std::cout << "Player " << m_data->players[m_data->currentPlayer].name << " survived !" << std::endl << std::endl;
 					m_data->cards.erase(m_data->cards.begin() + m_data->cardChosen);
 
 
@@ -277,12 +306,11 @@ void RandCard::Update(float _deltaTime)
 			}
 			break;
 	}
-
-
-
 }
 void RandCard::Draw(sf::RenderWindow& _renderWindow)
 {
+	//
+	// m_data->menuSystem->Draw(_renderWindow, sf::RenderStates::Default);
 	_renderWindow.draw(m_data->text);
 	PrintCards(_renderWindow);
 }

@@ -94,8 +94,6 @@ void MainDataLoad(MainData& _mainData)
 
 	
 
-	//_mainData.scenes.AddScene(_mainData.sceneRussianRoulette, "RussianRoulette");
-	//_mainData.scenes.AddScene(_mainData.randCard, "RandCard");
 
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 
@@ -104,6 +102,8 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<ArmWrestling>("ArmWrestling");
 	_mainData.scenes.AddScene<Basket>("Basket");
 	_mainData.scenes.AddScene<FlagGame>("FlagGame");
+	_mainData.scenes.AddScene<RandCard>("RandCard");
+	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
 
 	_mainData.scenes.SelectScene("Board", true);
 

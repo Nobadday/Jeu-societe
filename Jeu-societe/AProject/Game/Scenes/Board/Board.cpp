@@ -304,6 +304,7 @@ void BaseGame::BoardStateUpdate()
 
 		m_data->state = WIN;
 		m_data->camera.Reset(m_gameData->m_renderWindow->getDefaultView());
+		m_gameData->m_renderWindow->setView(m_data->camera);
 		ChangeScene(RandomDuel(), true);
 		break;
 
@@ -314,10 +315,12 @@ void BaseGame::BoardStateUpdate()
 
 		m_data->state = WIN;
 		m_data->camera.Reset(m_gameData->m_renderWindow->getDefaultView());
+		m_gameData->m_renderWindow->setView(m_data->camera);
 		ChangeScene(RandomDuel(), true);
 		break;
 
 	case WIN:
+
 		SetBoardState(WIN_DEPLACEMENT, 1);
 		break;
 
@@ -365,14 +368,17 @@ std::string BaseGame::RandomDuel()
 		"rockPaperSizor",
 		"ArmWrestling",
 		"Basket",
-		"FlagGame"
+		"FlagGame",
+		"RandCard",
+		"RuRoul"
 	};
 
 	// Nombre de mini-jeux disponibles
-	const int miniGameCount = 4;
+	const int miniGameCount = 6;
 
 	// Sélection aléatoire d'un mini-jeu
-	int randomIndex = random::RandomInt(0, miniGameCount - 1);
+	int randomIndex = 5;
+	//int randomIndex = random::RandomInt(0, miniGameCount - 1);
 
 	std::cout << "Random minigame selected: " << miniGames[randomIndex] << std::endl;
 

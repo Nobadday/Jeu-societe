@@ -172,6 +172,7 @@
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Scenes\SceneHandler.cpp" />
     <ClCompile Include="Ui\Button.cpp" />
+    <ClCompile Include="Ui\MenuSystem.cpp" />
     <ClCompile Include="Utilities\AssetManager.cpp" />
     <ClCompile Include="Utilities\Binds.cpp" />
     <ClCompile Include="Utilities\Camera\Camera.cpp" />
@@ -221,6 +222,7 @@
     <ClInclude Include="Scenes\SceneHandler.hpp" />
     <ClInclude Include="Screen.hpp" />
     <ClInclude Include="Ui\Button.hpp" />
+    <ClInclude Include="Ui\MenuSystem.hpp" />
     <ClInclude Include="Utilities\AssetManager.hpp" />
     <ClInclude Include="Utilities\Binds.hpp" />
     <ClInclude Include="Utilities\Camera\Camera.hpp" />

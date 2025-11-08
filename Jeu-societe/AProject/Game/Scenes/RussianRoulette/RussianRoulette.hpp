@@ -44,6 +44,8 @@ class RussianRoulette : public SceneBase
 			//DEBUG
 			int currentPlayer = 0;
 			std::vector<Player> players;
+			std::vector<Player> deadPlayers;
+			GameData* gameData;
 			int nbOfPlayers = 4;
 			int playerKilled = -1;
 			sf::Font font;
