@@ -23,7 +23,7 @@ class MenuSystem
 
 		void MenuAdd(std::string _menuName, bool _selectionLoop);
 		void MenuRemove(std::string _menuName);
-		void MenuRemoveIndex(int _menuIndex);
+		void MenuRemove(int _menuIndex);
 
 
 		void MenuAddButton(std::string _menuName, std::string _buttonName, Button* _buttonPtr);
@@ -33,13 +33,15 @@ class MenuSystem
 		//Delete from map and destroy it, it will be unusable
 		void MenuDeleteButtonIndex(std::string _menuName, int _index);
 
+
+
 		MenuHolder& GetMenuHolder(std::string _menuName);
 		MenuHolder& GetMenuHolder(int _index);
 		MenuHolder& GetCurrentMenu(void);
 
 
-		void SetMenu(std::string _menuName);
-		void SetMenuIndex(int _index);
+		void SetMenuHolder(std::string _menuName);
+		void SetMenuHolder(int _index);
 
 		void SetSelection(int _selection);
 		void AddSelection(int _value);
@@ -50,7 +52,6 @@ class MenuSystem
 		void ResetSelectionAll(void);
 
 		bool IsSelected(std::string _menuName);
-		bool MenuExists(std::string _menuName);
 		Button& GetButton(std::string _buttonName);
 		Button& GetButton(int _value);
 		int GetButtonCount();

@@ -19,14 +19,6 @@ MenuHolder::~MenuHolder(void)
 		this->DestroyButton(name);
 	}
 	m_buttons.clear();
-
-	//Original
-	//for (int i = PyDictGetLen(_menu->buttons) - 1; i >= 0; i--)
-	//{
-	//	ButtonDestroy(PyDictPopIndex(_menu->buttons, i));
-	//}
-	//PyDictDestroy(_menu->buttons);
-	//free(_menu);
 }
 
 void MenuHolder::PollEvent(sf::Event& _event)
@@ -80,7 +72,6 @@ Button& MenuHolder::GetButton(std::string _name)
 	//Static object to return if error, BOUTTON SI SITUATION CACA
 	static Button nullButton;
 
-
 	//Ref : https://www.geeksforgeeks.org/cpp/map-find-function-in-c-stl/
 	auto key = m_buttons.find(_name);
 
@@ -100,8 +91,6 @@ Button& MenuHolder::GetButton(int _value)
 	//Static object to return if error, BOUTTON SI SITUATION CACA
 	static Button nullButton; 
 
-
-	//I think we can erase this function, map with index is bad idea no ?
 	int i = 0;
 	for (auto& [name, button] : m_buttons)
 	{
@@ -182,10 +171,6 @@ void MenuHolder::SetSelection(int _selection)
 	if (this->m_selection != -1)
 	{
 		Button& buttonREF = GetButton(this->m_selection);
-		//Button& buttonREF = PyDictGetValue(_menu->buttons, _menu->selection);
-		//buttonREF->stateIsON = sfFalse;
-		 
-		//ButtonUpdateTexture(buttonREF);
 		buttonREF.UpdateFrame();
 	}
 	this->m_selection = _selection;
@@ -214,15 +199,6 @@ MenuSystem::MenuSystem()
 
 MenuSystem::~MenuSystem()
 {
-
-	//for (auto& [name, button] : m_menus)
-	//{
-	//	this->m_menus(name);
-	//}
-	//m_menus.clear();
-
-
-
 	if (this->m_currentMenu != "")
 	{
 		this->m_currentMenu = "";
@@ -278,34 +254,41 @@ void MenuSystem::MenuAdd(std::string _menuName, bool _selectionLoop)
 
 		if (this->m_currentMenu == "")
 		{
-			this->SetMenu( _menuName);
+			this->SetMenuHolder( _menuName);
 		}
 	}
 	else
 	{
 		std::cout << "[WARNING] Menu System : Tried to add a menu name '" << _menuName << "' that already exists." << std::endl;
 	}
-
-	//if (!PyDictKeyExists(_menuSystem->menus, _menuName))
-	//{
-	//	PyDictUpdate(_menuSystem->menus, _menuName, MenuHolderCreate(_selectionLoop));
-	//	if (_menuSystem->currentMenu == NULL)
-	//	{
-	//		MenuSystemSetMenu(_menuSystem, _menuName);
-	//	}
-	//}
-	//else
-	//{
-	//	printf("[WARNING] Menu System : Tried to add a menu name '%s' that already exists.\n", _menuName);
-	//}
 }
+
+
+
 
 void MenuSystem::MenuRemove(std::string _menuName)
 {
+	if (MenuHolderExists(_menuName))
+	{
+		if (IsSelected(_menuName))
+		{
+			SetMenuHolder(_menuName);
+		}
+		MenuHolder& menuHolderRef = GetMenuHolder(_menuName);
+		menuHolderRef.~MenuHolder();
+		this->m_menus.erase(_menuName);		
+	}
+	else
+	{
+		std::cout << "[WARNING] Menu System : Tried to remove a menu name '" << _menuName << "' that doesn't exist." << std::endl;
+	}
 }
 
-void MenuSystem::MenuRemoveIndex(int _menuIndex)
+void MenuSystem::MenuRemove(int _menuIndex)
 {
+	GetMenuHolder(_menuIndex).~MenuHolder();
+	//this->m_menus.erase(_menuIndex);
+
 }
 
 void MenuSystem::MenuAddButton(std::string _menuName, std::string _buttonName, Button* _buttonPtr)
@@ -390,7 +373,7 @@ bool MenuSystem::MenuHolderExists(std::string _menuName)
 	return false;
 }
 
-void MenuSystem::SetMenu(std::string _menuName)
+void MenuSystem::SetMenuHolder(std::string _menuName)
 {
 	if (this->MenuHolderExists(_menuName))
 	{
@@ -409,7 +392,7 @@ void MenuSystem::SetMenu(std::string _menuName)
 	}
 }
 
-void MenuSystem::SetMenuIndex(int _index)
+void MenuSystem::SetMenuHolder(int _index)
 {
 }
 
@@ -470,6 +453,10 @@ void MenuSystem::ResetSelectionAll(void)
 }
 bool MenuSystem::IsSelected(std::string _menuName)
 {
+	if (this->m_currentMenu == _menuName)
+	{
+		return true;
+	}
 	return false;
 }
 #pragma endregion

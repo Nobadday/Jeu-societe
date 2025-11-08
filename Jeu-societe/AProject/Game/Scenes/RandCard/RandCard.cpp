@@ -60,6 +60,10 @@ void RandCard::Load(void)
 	m_data->menuSystem = new MenuSystem();
 	m_data->menuSystem->MenuAdd("TestMenu", true);
 
+
+	// Liaison au GameData passé dans m_keptData (comme dans RockPaperScissors)
+	m_data->gameData = (GameData*)this->m_keptData;
+
 	//Debug names
 	std::string playersNames[4] = { "Yann", "Lorenzo", "Kyllian", "Damien" };
 	((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(0);
@@ -82,7 +86,7 @@ void RandCard::Load(void)
 	m_data->buttonTest->setTexture(*m_data->textanim);
 
 	m_data->menuSystem->MenuAddButton("TestMenu", "ButtonTest", m_data->buttonTest);
-	m_data->menuSystem->SetMenu("TestMenu");
+	m_data->menuSystem->SetMenuHolder("TestMenu");
 
 	//Font
 	m_data->font.loadFromFile("Assets/Fonts/Platinum Sign.ttf");
@@ -270,12 +274,12 @@ void RandCard::Update(float _deltaTime)
 
 
 						//Save data
-						int nbOfPlayers = ((GameData*)this->m_keptData)->m_gonnaPlayIndex.size();
+						int nbOfPlayers = m_data->gameData->m_gonnaPlayIndex.size();
 						for (int i = 0 ; i < nbOfPlayers; i++)
 						{
 							//Print if you want check
 							//std::cout << "END, player rank" << i << " player : " << m_data->deadPlayers.at(i).id << " name :" << m_data->deadPlayers.at(i).name << std::endl;
-							((GameData*)this->m_keptData)->m_winIndex.push_back({ m_data->deadPlayers.at(i).id });
+							m_data->gameData->AddPlayerWin(m_data->deadPlayers.at(i).id);
 						}
 						ChangeScene(1);
 						return;

@@ -48,7 +48,7 @@ class RandCard : public SceneBase
 			std::vector<CardType> cards;
 			std::vector<Player> players;
 			std::vector<Player> deadPlayers;
-
+			GameData* gameData; 
 
 			GameState gameState = CHOOSE_CARD;
 			int cardChosen = 0;
