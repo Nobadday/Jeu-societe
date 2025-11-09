@@ -1,6 +1,7 @@
 #include "Common.hpp"
 #include "./Animation/Graphics.hpp"
 #include "./Utilities/BetterWindow/BW.hpp"
+#include "./Utilities/Camera/Camera.hpp"
 
 typedef struct MainData
 {
@@ -11,6 +12,7 @@ typedef struct MainData
 	TextAnimated tp;
 	GameData gameData;
 	
+	Camera cam;
 } MainData;
 
 
@@ -43,7 +45,10 @@ int main(void)
 	mainData.tp.SetCharactersPerLine(20);
 	mainData.tp.SetAlignement(TextPlus::Alignement::CENTER);
 	mainData.tp.Modify(8.5f, 24.0f, false);
-
+	
+	mainData.cam.Reset(mainData.renderWindow);
+	mainData.cam.SetLimitations(sf::FloatRect(0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT));
+	mainData.cam.SetZoom(1.5f);
 
 	while (mainData.renderWindow.isOpen())
 	{
@@ -112,6 +117,7 @@ void Draw(MainData& _mainData)
 {
 	_mainData.renderWindow.clear(sf::Color::Black);
 	
+	_mainData.renderWindow.setView(_mainData.cam);
 	sf::RectangleShape test(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
 	test.setFillColor(sf::Color(51, 215, 110));
 	_mainData.renderWindow.draw(test);

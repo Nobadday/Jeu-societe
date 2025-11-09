@@ -19,7 +19,10 @@ class RenderWindow : public sf::RenderWindow
 		sf::Image m_icon;
 		sf::View* m_view;
 
+		sf::Vector2u m_renderSize;
+
 		sf::VertexArray m_borders;
+		sf::Color m_borderColor;
 
 	public:
 		enum FullscreenMode
@@ -28,6 +31,8 @@ class RenderWindow : public sf::RenderWindow
 			FULLSCREEN
 		};
 
+
+	public:
 		RenderWindow(void);
 
 
@@ -38,32 +43,30 @@ class RenderWindow : public sf::RenderWindow
 		
 
 		void setIcon(const sf::Image& _image);
-		void setIcon(const sf::String& _filePath);
+		void setIcon(const std::string& _filePath);
 
 
-		// Modifies the texture
+		// Modifies the texture and copies the contents of the window onto it
 		void capture(sf::Texture& _texture);
 		void capture(sf::Image& _image);
 		bool Screenshot(const sf::String& _fileName);
+
 		void ResetView(void);
 
 
-		//void display(bool _drawBorders = true);
+		void DrawBorders(void);
+		//void display(bool _drawBorders = false);
 
 	protected:
 		virtual void onCreate(void);
 		virtual void onResize(void);
+
+	private:
+		void ApplyIcon(void);
 };
 
 
 }
-
-
-
-
-
-
-
 
 
 #endif
