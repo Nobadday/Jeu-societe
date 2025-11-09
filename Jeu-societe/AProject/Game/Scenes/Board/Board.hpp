@@ -8,6 +8,8 @@
 #include "../../Utilities/Random.hpp"
 #include "../../Animation/Animation/Animator.hpp"
 
+#define TIME_WIN_DISPLAY 3.0f
+
 class BaseGame : public SceneBase
 {
 	private:
@@ -53,6 +55,8 @@ class BaseGame : public SceneBase
 
 			State state;
 
+			float timeWin;
+
 			int currentPlayerIndex;
 
 		};
@@ -66,7 +70,7 @@ class BaseGame : public SceneBase
 
 		void SetBoardState(State _state, int _newIndex = 0);
 		
-		void BoardStateUpdate();
+		void BoardStateUpdate(float _dt);
 
 		int OnSameCase();
 

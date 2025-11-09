@@ -14,6 +14,8 @@ void BaseGame::Load(void)
 	m_data->players.resize(m_gameData->m_playerDataList.size());
 	m_data->state = START;
 
+	m_data->timeWin = TIME_WIN_DISPLAY;
+
 	// Initialisation des joueurs
 	for (size_t i = 0; i < m_data->players.size(); i++)
 	{
@@ -104,7 +106,9 @@ void BaseGame::Update(float _deltaTime)
 	m_data->animator2.Update(_deltaTime);
 
 	// Mise à jour de la logique du plateau
-	BoardStateUpdate();
+	BoardStateUpdate(_deltaTime);
+
+	//std::cout << "Current State: " << m_data->state << std::endl;
 
 	// Mise à jour de la caméra pour suivre le joueur actif
 	UpdateCameraFollowPlayer(_deltaTime);
@@ -199,11 +203,22 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 
 	case WIN_DEPLACEMENT :
 	{
+		std::cout << "Setting WIN_DEPLACEMENT state." << std::endl;
+
 		int winnerIndex = m_gameData->m_winIndex[0];
 		int loserIndex = m_gameData->m_winIndex[m_gameData->m_winIndex.size() - 1];
 
+		std::cout << "player winner CurrentCaseIndex before move: " << m_data->players[winnerIndex].currentCaseIndex << std::endl;
+		std::cout << "player loser CurrentCaseIndex before move: " << m_data->players[loserIndex].currentCaseIndex << std::endl;
+
 		m_data->players[winnerIndex].currentCaseIndex += _newIndex;
+
+		std::cout << "player winner CurrentCaseIndex after move: " << m_data->players[winnerIndex].currentCaseIndex << std::endl;
+
 		m_data->players[loserIndex].currentCaseIndex -= _newIndex;
+
+		std::cout << "player loser CurrentCaseIndex after move: " << m_data->players[loserIndex].currentCaseIndex << std::endl;
+
 		m_data->players[winnerIndex].currentCaseIndex %= m_data->posCase.size();
 		m_data->players[loserIndex].currentCaseIndex %= m_data->posCase.size();
 
@@ -228,7 +243,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 	}
 }
 
-void BaseGame::BoardStateUpdate()
+void BaseGame::BoardStateUpdate(float _dt)
 {
 	switch (m_data->state)
 	{
@@ -320,9 +335,13 @@ void BaseGame::BoardStateUpdate()
 
 	case WIN:
 
-		SetBoardState(WIN_DEPLACEMENT, 1);
+		m_data->timeWin -= _dt; // Approximation pour 60 FPS
+		if (m_data->timeWin <= 0)
+		{
+			m_data->timeWin = TIME_WIN_DISPLAY;
+			SetBoardState(WIN_DEPLACEMENT, 1);
+		}
 		break;
-
 	case WIN_DEPLACEMENT:
 	{
 		int winnerIndex = m_gameData->m_winIndex[0];
@@ -376,7 +395,7 @@ std::string BaseGame::RandomDuel()
 	const int miniGameCount = 6;
 
 	// Sélection aléatoire d'un mini-jeu
-	//int randomIndex = 4;
+	//int randomIndex = 5;
 	int randomIndex = random::RandomInt(0, miniGameCount - 1);
 
 	std::cout << "Random minigame selected: " << miniGames[randomIndex] << std::endl;

@@ -18,11 +18,11 @@ void RussianRoulette::Load(void)
 	//Copy players playing from GameData
 	for (int i = 0; i < nbOfPlayers; ++i)
 	{
-		int playerId = (int)((GameData*)this->m_keptData)->m_gonnaPlayIndex.at(i);
+		int playerId = m_data->gameData->m_gonnaPlayIndex.at(i);
 		m_data->players.push_back({ playersNames[i],  (short)playerId, true });
 	}
 
-
+	m_data->currentPlayer = 0;
 
 	m_data->bullet = random::RandomInt(1, 6);
 	
@@ -30,8 +30,6 @@ void RussianRoulette::Load(void)
 	m_data->text.setFont(m_data->font);
 	m_data->text.setCharacterSize(15u);
 	m_data->text.setOrigin(0,0);
-
-
 
 	//m_data->gunTexAnim.LoadFromFile("Assets/Sprites/RussianRoulette/PiouMort.json", TextureAnimated::ANIMATION_ASEPRITE);
 	m_data->gunTexAnim.LoadFromFile("Assets/Sprites/RussianRoulette/Damien.texanim", TextureAnimated::ANIMATION_TEXANIM);
@@ -49,6 +47,8 @@ void RussianRoulette::Unload(void)
 
 void RussianRoulette::PollEvent(sf::Event& _event)
 {
+	int joyId = m_data->gameData->m_playerDataList[m_data->players[m_data->currentPlayer].id].m_joystickId;
+
 	switch (m_data->gameState)
 	{
 		case WAITING:
@@ -63,9 +63,11 @@ void RussianRoulette::PollEvent(sf::Event& _event)
 				case sf::Event::JoystickButtonPressed:
 
 					//Check for each player, if it's their turn
-					for (int i = 0; i < m_data->players.size(); i++)
-					{
-						if (m_data->currentPlayer == i)
+					/*for (int i = 0; i < m_data->players.size(); i++)
+					{*/
+					
+
+						if (joyId == _event.joystickButton.joystickId)
 						{
 							//If it's their turn, check for input
 							//if (_event.joystickButton.joystickId == m_data->players[i].id)
@@ -75,13 +77,13 @@ void RussianRoulette::PollEvent(sf::Event& _event)
 
 								//DEBUG
 								std::cout << "nbRANDOM = " << randomNb << " bullet = " << m_data->bullet << std::endl;
-								std::cout << "player :  = " << m_data->players[i].name << std::endl;
+								std::cout << "player :  = " << m_data->players[m_data->currentPlayer].name << std::endl;
 
 								if (randomNb == m_data->bullet)
 								{
 									//DEBUG
-									std::cout << "player : " << m_data->players[i].name << " killed" << std::endl;
-									m_data->players[i].isAlive = false;
+									std::cout << "player : " << m_data->players[m_data->currentPlayer].name << " killed" << std::endl;
+									m_data->players[m_data->currentPlayer].isAlive = false;
 
 
 									//Launch sound
@@ -100,7 +102,7 @@ void RussianRoulette::PollEvent(sf::Event& _event)
 								m_data->gameState = SPINNING;
 							//}
 						}
-					}
+					/*}*/
 					break;
 				default:
 					break;
@@ -116,6 +118,7 @@ void RussianRoulette::PollEvent(sf::Event& _event)
 
 	}
 }
+
 void RussianRoulette::Update(float _deltaTime)
 {
 	switch (m_data->gameState)
