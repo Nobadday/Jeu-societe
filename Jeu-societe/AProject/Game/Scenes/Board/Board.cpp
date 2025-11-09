@@ -395,8 +395,8 @@ std::string BaseGame::RandomDuel()
 	const int miniGameCount = 6;
 
 	// Sélection aléatoire d'un mini-jeu
-	//int randomIndex = 5;
-	int randomIndex = random::RandomInt(0, miniGameCount - 1);
+	int randomIndex = 2;
+	//int randomIndex = random::RandomInt(0, miniGameCount - 1);
 
 	std::cout << "Random minigame selected: " << miniGames[randomIndex] << std::endl;
 

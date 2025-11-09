@@ -1,4 +1,6 @@
 #pragma once
+#ifndef _INC_BASKET_HPP
+#define _INC_BASKET_HPP
 
 #include "../../Common.hpp"
 #include "../../Scenes/Scene.hpp"
@@ -7,64 +9,56 @@
 class Basket : public SceneBase
 {
 private:
-	class BasketPlayer
+	enum GameState
 	{
-	public:
-		BasketPlayer(short _id, Basket* _basketScene);
-		~BasketPlayer();
+		STATE_PLAYING,
+		STATE_GAMEOVER
+	};
 
-		void Update(float _dt);
-		void Draw(sf::RenderWindow& _renderWindow);
+	struct BasketPlayer
+	{
+		short m_id;
+		bool m_won;
+		int m_winOrder;  // NOUVEAU: Ordre de victoire (1 = premier, 2 = deuxième, etc.)
 		
-		short GetID() const;
-		void SetWon(bool _won);
-		bool GetWon() const;
-		float GetWinTime() const;
+		sf::Sprite m_ballSprite;
+		sf::Sprite m_hoopSprite;
 
-	private:
-		short id;
-		float force;
-		bool won;
-		float winTime;  // Temps auquel le joueur a gagné
-		
-		sf::Sprite ballSprite;
-		sf::Sprite hoopSprite;
-		sf::VertexArray aimLine;
-		
-		Basket* basketScene;
+		sf::CircleShape m_ballShape;
+		sf::VertexArray m_aimLine;
 	};
 
 	struct SceneData
 	{
-		sf::Font font;
 		sf::Text timerText;
 		sf::Text winnerText;
-		short winnerPlayers;
-		float timerToReset;
-		float elapsedTime;  // Temps total écoulé depuis le début
+		sf::Font font;
 		
 		sf::Texture ballTexture;
 		sf::Texture hoopTexture;
 		
 		std::vector<BasketPlayer> players;
 		
-		// Ajouté pour gérer la communication avec GameData
-		GameData* gameData = nullptr;
+		GameData* gameData;
+		
+		GameState state;
+		float timer;
+		int winnerCount;  // NOUVEAU: Compteur de gagnants
 	};
 
 	SceneData* m_data;
 
 public:
-	virtual void Load();
-	virtual void Unload();
+	virtual void Load(void);
+	virtual void Unload(void);
+
 	virtual void PollEvent(sf::Event& _event);
 	virtual void Update(float _deltaTime);
 	virtual void Draw(sf::RenderWindow& _renderWindow);
 
 private:
-	void ResetBasketGame();
-	float JoystickToTargetPercentage(float _joystickY, float _ballY, float _axisAbsMax);
-	bool NearlyEqual(float _a, float _b, float _tolerance);
-	const char* GetWinnerID();
+	void ResetGame(void);
 };
+
+#endif // !_INC_BASKET_HPP
 

@@ -1,43 +1,66 @@
 #include "Basket.hpp"
-#include <algorithm>
 
-void Basket::Load()
+// Basket Scene Implementation
+void Basket::Load(void)
 {
 	m_data = new SceneData();
-
-	// Récupération du pointeur GameData depuis m_keptData
 	m_data->gameData = (GameData*)this->m_keptData;
-
-	m_data->font.loadFromFile("Assets/RockPaperSizor/Impact.ttf");
 	
+	m_data->ballTexture.loadFromFile("Assets/Images/ball.png");
+	m_data->hoopTexture.loadFromFile("Assets/Images/Placeholder.png");
+
+	m_data->font = StringFormat::GetDefaultFont();
+
 	m_data->timerText.setFont(m_data->font);
 	m_data->timerText.setCharacterSize(25);
 	m_data->timerText.setFillColor(sf::Color::Yellow);
 	m_data->timerText.setString("Basket Scene");
 	m_data->timerText.setOrigin(m_data->timerText.getLocalBounds().width / 2.f, 0);
-	m_data->timerText.setPosition(SCREEN_WIDTH / 2, 0);
+	m_data->timerText.setPosition(SCREEN_WIDTH / 2.f, 0);
 
 	m_data->winnerText.setFont(m_data->font);
 	m_data->winnerText.setCharacterSize(30);
 	m_data->winnerText.setFillColor(sf::Color::Green);
-	m_data->winnerText.setOrigin(m_data->winnerText.getLocalBounds().width / 2.f, m_data->winnerText.getLocalBounds().height / 2.f);
-	m_data->winnerText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
-	m_data->winnerPlayers = 0;
-	m_data->timerToReset = 5.f;
-	m_data->elapsedTime = 0.f;
+	m_data->state = STATE_PLAYING;
+	m_data->timer = 15.f;
+	m_data->winnerCount = 0;  // NOUVEAU: Initialiser le compteur
 
-	m_data->ballTexture.loadFromFile("Assets/Images/ball.png");
-	m_data->hoopTexture.loadFromFile("Assets/Images/Placeholder.png");
-
-	// Créer les joueurs uniquement pour ceux qui participent
-	for (int playerIndex : m_data->gameData->m_gonnaPlayIndex)
+	// Créer les joueurs basés sur m_gonnaPlayIndex
+	for (size_t i = 0; i < m_data->gameData->m_gonnaPlayIndex.size(); ++i)
 	{
-		m_data->players.emplace_back(playerIndex, this);
+		int playerIndex = m_data->gameData->m_gonnaPlayIndex[i];
+		
+		BasketPlayer player;
+		player.m_id = playerIndex;
+		player.m_won = false;
+		player.m_winOrder = -1;  // NOUVEAU: -1 = n'a pas encore gagné
+		player.m_aimLine = sf::VertexArray(sf::Lines, 2);
+
+		player.m_ballSprite.setTexture(m_data->ballTexture);
+		player.m_hoopSprite.setTexture(m_data->hoopTexture);
+
+		float spacing = SCREEN_WIDTH / (m_data->gameData->m_gonnaPlayIndex.size() + 1);
+		short randY = std::rand() % 400;
+
+		player.m_ballSprite.setPosition((i + 1) * spacing, SCREEN_HEIGHT - 300.f);
+		player.m_ballSprite.setOrigin(player.m_ballSprite.getLocalBounds().width / 2.f, 
+			player.m_ballSprite.getLocalBounds().height / 2.f);
+
+		player.m_hoopSprite.setPosition((i + 1) * spacing, (float)randY);
+		player.m_hoopSprite.setOrigin(player.m_hoopSprite.getLocalBounds().width / 2.f, 
+			player.m_hoopSprite.getLocalBounds().height / 2.f);
+
+		player.m_ballShape.setRadius(player.m_ballSprite.getLocalBounds().width / 2.f);
+		player.m_ballShape.setOrigin(player.m_ballShape.getRadius(), player.m_ballShape.getRadius());
+		player.m_ballShape.setPosition(player.m_ballSprite.getPosition());
+		player.m_ballShape.setFillColor(sf::Color::Transparent);
+
+		m_data->players.push_back(player);
 	}
 }
 
-void Basket::Unload()
+void Basket::Unload(void)
 {
 	delete m_data;
 	m_data = nullptr;
@@ -45,226 +68,169 @@ void Basket::Unload()
 
 void Basket::PollEvent(sf::Event& _event)
 {
-	// Exemple d'utilisation : vérifier les événements des joueurs participants
-	if (_event.type == sf::Event::JoystickButtonPressed)
+	if (m_data->state == STATE_PLAYING)
 	{
-		int playerID = m_data->gameData->GetPlayerIDFromJoystick(_event.joystickButton.joystickId);
-		if (m_data->gameData->IsPlayerParticipating(playerID))
+		// Les joueurs peuvent jouer pendant la phase de jeu
+	}
+	else if (m_data->state == STATE_GAMEOVER)
+	{
+		if (_event.type == sf::Event::JoystickButtonPressed)
 		{
-			// Traiter l'événement du joueur participant
+			if (_event.joystickButton.button == GAMEPAD_A)
+			{
+				// Retour au Board avec les résultats
+				ChangeScene("Board", false);
+			}
 		}
 	}
 }
 
 void Basket::Update(float _deltaTime)
 {
-	// Incrémenter le temps total écoulé
-	if (m_data->timerToReset > 0.f)
-	{
-		m_data->elapsedTime += _deltaTime;
-	}
-
-	char buffer[50];
-	std::snprintf(buffer, 50, "Timer %.2f", m_data->timerToReset);
+	char buffer[100];
+	std::snprintf(buffer, 50, "Timer %.2f", m_data->timer);
 	m_data->timerText.setString(buffer);
-	
-	std::snprintf(buffer, 50, "Winners player: %s\nPress A to Restart", GetWinnerID());
-	m_data->winnerText.setString(buffer);
-	m_data->winnerText.setOrigin(m_data->winnerText.getLocalBounds().width / 2.f, m_data->winnerText.getLocalBounds().height / 2.f);
-	
-	if (m_data->timerToReset <= 0.f)
+
+	if (m_data->state == STATE_PLAYING)
 	{
-		m_data->timerToReset = 0.f;
-		if (GetGamePadPressed(GAMEPAD_A, 0, true))
-		{
-			ResetBasketGame();
-		}
-		m_data->winnerText.setFillColor(sf::Color::Red);
-		
-		// Créer une copie triée des joueurs par ordre de victoire
-		std::vector<BasketPlayer*> sortedPlayers;
-		for (BasketPlayer& player : m_data->players)
-		{
-			sortedPlayers.push_back(&player);
-		}
+		m_data->timer -= _deltaTime;
 
-		// Trier : les gagnants d'abord par ordre de temps de victoire, puis les perdants
-		std::sort(sortedPlayers.begin(), sortedPlayers.end(), 
-			[](const BasketPlayer* a, const BasketPlayer* b) {
-				// Si les deux ont gagné, trier par temps de victoire
-				if (a->GetWon() && b->GetWon())
-				{
-					return a->GetWinTime() < b->GetWinTime();
-				}
-				// Les gagnants avant les perdants
-				if (a->GetWon() && !b->GetWon()) return true;
-				if (!a->GetWon() && b->GetWon()) return false;
-				// Les perdants gardent leur ordre original
-				return false;
-			});
-
-		// Enregistrer les résultats dans GameData dans l'ordre trié
-		bool hasWinner = false;
-		for (BasketPlayer* player : sortedPlayers)
+		if (m_data->timer <= 0.f)
 		{
-			if (player->GetWon())
+			m_data->timer = 0.f;
+			m_data->state = STATE_GAMEOVER;
+
+			// Trier les joueurs par ordre de victoire et mettre à jour m_winIndex
+			m_data->gameData->m_winIndex.clear();
+			
+			// Créer un vecteur de paires (winOrder, playerID) pour trier
+			std::vector<std::pair<int, int>> winOrderList;
+			
+			for (BasketPlayer& player : m_data->players)
 			{
-				m_data->winnerText.setFillColor(sf::Color::Green);
+				if (player.m_won)
+				{
+					// Les gagnants ont un winOrder positif
+					winOrderList.push_back({player.m_winOrder, player.m_id});
+				}
+				else
+				{
+					// Les perdants ont un winOrder très élevé (fin de liste)
+					winOrderList.push_back({9999, player.m_id});
+				}
+			}
+			
+			// Trier par ordre de victoire (1er, 2ème, 3ème, puis perdants)
+			std::sort(winOrderList.begin(), winOrderList.end());
+			
+			// Remplir m_winIndex dans l'ordre
+			for (const auto& pair : winOrderList)
+			{
+				m_data->gameData->AddPlayerWin(pair.second);
+			}
+
+			// Mise à jour du texte gagnant
+			std::string winners;
+			bool hasWinner = false;
+			
+			// Afficher par ordre de victoire
+			std::vector<BasketPlayer*> sortedWinners;
+			for (BasketPlayer& player : m_data->players)
+			{
+				if (player.m_won)
+					sortedWinners.push_back(&player);
+			}
+			std::sort(sortedWinners.begin(), sortedWinners.end(), 
+				[](BasketPlayer* a, BasketPlayer* b) { return a->m_winOrder < b->m_winOrder; });
+			
+			for (BasketPlayer* player : sortedWinners)
+			{
+				if (hasWinner) winners += ", ";
+				winners += std::to_string(player->m_id + 1);
 				hasWinner = true;
 			}
-			// Ajouter tous les joueurs dans l'ordre (gagnants puis perdants)
-			m_data->gameData->AddPlayerWin(player->GetID());
+			
+			if (!hasWinner) winners = "nobody";
+
+			std::snprintf(buffer, 100, "Winners: Player %s\nPress A to Continue", winners.c_str());
+			m_data->winnerText.setString(buffer);
+			m_data->winnerText.setOrigin(m_data->winnerText.getLocalBounds().width / 2.f, 
+				m_data->winnerText.getLocalBounds().height / 2.f);
+			m_data->winnerText.setPosition(SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f);
 		}
-		
-		if (hasWinner)
+
+		// Mise à jour de tous les joueurs
+		for (size_t i = 0; i < m_data->players.size(); ++i)
 		{
-			// Retour au Board après la victoire
-			ChangeScene("Board", false);
+			BasketPlayer& player = m_data->players[i];
+
+			if (player.m_won)
+			{
+				player.m_aimLine[0].color = sf::Color::Green;
+				player.m_aimLine[1].color = sf::Color::Green;
+				player.m_ballShape.setFillColor(sf::Color::Green);
+				continue;
+			}
+
+			// Vérifier si le joueur participe
+			if (!m_data->gameData->IsPlayerParticipating(m_data->players[i].m_id))
+				continue;
+
+			float joy = GetAxis2D(m_data->gameData->m_playerDataList[m_data->players[i].m_id].m_joystickId).y;
+			float force = ABS(joy);
+			float forceCircle = (short)(force / 0.00392f);
+			float targetY = Rescale(player.m_hoopSprite.getPosition().y, player.m_ballSprite.getPosition().y, 0);
+
+			player.m_ballShape.setFillColor(sf::Color(255, 0, 0, (sf::Uint8)forceCircle));
+
+			player.m_aimLine[0].position = player.m_ballSprite.getPosition();
+			player.m_aimLine[0].color = sf::Color::White;
+			player.m_aimLine[1].position = sf::Vector2f(player.m_ballSprite.getPosition().x, 
+				player.m_ballSprite.getPosition().y - (force * (player.m_ballSprite.getPosition().y - targetY)));
+			player.m_aimLine[1].color = sf::Color::White;
+
+			if (GetGamePadPressed(GAMEPAD_A, m_data->gameData->m_playerDataList[m_data->players[i].m_id].m_joystickId, true))
+			{
+				if (ABS(force - targetY) <= 0.015f)
+				{
+					// NOUVEAU: Enregistrer l'ordre de victoire
+					player.m_won = true;
+					m_data->winnerCount++;
+					player.m_winOrder = m_data->winnerCount;
+					
+					std::cout << "Player " << player.m_id + 1 << " won! (Order: " << player.m_winOrder << ")" << std::endl;
+				}
+			}
 		}
-		return;
-	}
-	m_data->timerToReset -= _deltaTime;
-	
-	for (BasketPlayer& player : m_data->players)
-	{
-		player.Update(_deltaTime);
 	}
 }
 
 void Basket::Draw(sf::RenderWindow& _renderWindow)
 {
 	_renderWindow.draw(m_data->timerText);
-	if (m_data->timerToReset <= 0.f)
+
+	for (BasketPlayer& player : m_data->players)
+	{
+		_renderWindow.draw(player.m_ballSprite);
+		_renderWindow.draw(player.m_hoopSprite);
+		_renderWindow.draw(player.m_ballShape);
+	}
+
+	if (m_data->state == STATE_GAMEOVER)
 	{
 		_renderWindow.draw(m_data->winnerText);
 	}
-	
+}
+
+void Basket::ResetGame(void)
+{
+	m_data->timer = 15.f;
+	m_data->state = STATE_PLAYING;
+	m_data->winnerCount = 0;
+
 	for (BasketPlayer& player : m_data->players)
 	{
-		player.Draw(_renderWindow);
+		player.m_won = false;
+		player.m_winOrder = -1;
 	}
-}
-
-void Basket::ResetBasketGame()
-{
-	m_data->winnerPlayers = 0;
-	m_data->timerToReset = 5.f;
-	m_data->elapsedTime = 0.f;
-	for (BasketPlayer& player : m_data->players)
-	{
-		player.SetWon(false);
-	}
-}
-
-float Basket::JoystickToTargetPercentage(float _joystickY, float _ballY, float _axisAbsMax)
-{
-	float raw = ABS(_joystickY);
-	float inputPercent = Rescale(raw, 0.f, _axisAbsMax);
-	return inputPercent;
-}
-
-bool Basket::NearlyEqual(float _a, float _b, float _tolerance)
-{
-	return ABS(_a - _b) <= ABS(_tolerance);
-}
-
-const char* Basket::GetWinnerID()
-{
-	static std::string buffer;
-	buffer.clear();
-
-	bool any = false;
-	for (BasketPlayer& player : m_data->players)
-	{
-		if (player.GetWon())
-		{
-			if (any) buffer += ", ";
-			buffer += std::to_string(player.GetID());
-			any = true;
-		}
-	}
-
-	if (!any) buffer = "nobody";
-
-	return buffer.c_str();
-}
-
-// BasketPlayer Implementation
-Basket::BasketPlayer::BasketPlayer(short _id, Basket* _basketScene)
-	: id(_id), force(0.0f), won(false), winTime(-1.0f), basketScene(_basketScene), aimLine(sf::Lines, 2)
-{
-	ballSprite.setTexture(basketScene->m_data->ballTexture);
-	hoopSprite.setTexture(basketScene->m_data->hoopTexture);
-
-	float rootSpace = 200.f;
-	short rand = std::rand() % 400;
-	ballSprite.setPosition((id + 1) * rootSpace, SCREEN_HEIGHT - 300.f);
-	ballSprite.setOrigin(ballSprite.getLocalBounds().width / 2.f, ballSprite.getLocalBounds().height / 2.f);
-
-	hoopSprite.setPosition((id + 1) * rootSpace, rand);
-	hoopSprite.setOrigin(hoopSprite.getLocalBounds().width / 2.f, hoopSprite.getLocalBounds().height / 2.f);
-}
-
-Basket::BasketPlayer::~BasketPlayer()
-{
-}
-
-short Basket::BasketPlayer::GetID() const
-{
-	return id;
-}
-
-void Basket::BasketPlayer::Update(float _dt)
-{
-	if (won)
-	{
-		aimLine[0].color = sf::Color::Green;
-		aimLine[1].color = sf::Color::Green;
-		return;
-	}
-	
-	float joy = GetAxis2D(id).y;
-	float force = basketScene->JoystickToTargetPercentage(joy, ballSprite.getPosition().y, 1);
-	float targetY = Rescale(hoopSprite.getPosition().y, ballSprite.getPosition().y, 0);
-
-	aimLine[0].position = ballSprite.getPosition();
-	aimLine[0].color = sf::Color::White;
-	aimLine[1].position = sf::Vector2f(ballSprite.getPosition().x, ballSprite.getPosition().y - (force * (ballSprite.getPosition().y - targetY)));
-	aimLine[1].color = sf::Color::White;
-
-	if (GetGamePadPressed(GAMEPAD_A, id, true))
-	{
-		if (basketScene->NearlyEqual(force, targetY, 0.015f))
-		{
-			won = true;
-			// Enregistrer le temps de victoire
-			winTime = basketScene->m_data->elapsedTime;
-		}
-	}
-}
-
-void Basket::BasketPlayer::Draw(sf::RenderWindow& _renderWindow)
-{
-	_renderWindow.draw(ballSprite);
-	_renderWindow.draw(hoopSprite);
-	_renderWindow.draw(aimLine);
-}
-
-void Basket::BasketPlayer::SetWon(bool _won)
-{
-	won = _won;
-	if (!_won)
-	{
-		winTime = -1.0f;
-	}
-}
-
-bool Basket::BasketPlayer::GetWon() const
-{
-	return won;
-}
-
-float Basket::BasketPlayer::GetWinTime() const
-{
-	return winTime;
 }
