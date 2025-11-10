@@ -2,7 +2,6 @@
 
 
 #pragma region TextureAtlas
-
 TextureAtlas::TextureAtlas(void) : sf::Texture(), AtlasContainer()
 {
 
@@ -245,7 +244,6 @@ AtlasFrame& TextureAtlas::GetFrameByGroup(const std::string& _name, int _index)
 }
 
 
-
 const sf::Texture* TextureAtlas::GetTexture(void) const
 {
 	return this;
@@ -263,8 +261,8 @@ TextureAtlas::operator const sf::Texture& () const
 	return this->GetTextureRef();
 }
 
+
 #pragma endregion
 
 
-
-// Texture Atlases for C++ & SFML v1.1
+// Texture Atlases for C++ & SFML v1.1.2

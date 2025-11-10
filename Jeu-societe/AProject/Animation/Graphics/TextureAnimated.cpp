@@ -1,6 +1,7 @@
 #include "TextureAnimated.hpp"
 
 
+
 TextureAnimated::AnimationProperties::AnimationProperties(void) :
 m_name		 (""),
 m_atlasName	 (""),
@@ -24,7 +25,7 @@ m_animations ()
 
 TextureAnimated::~TextureAnimated(void)
 {
-	this->ClearAll();
+	this->ClearAnimations();
 }
 
 bool TextureAnimated::LoadFromFile(const std::string& _fileName, TextureAnimated::AnimationType _animationFormat)
@@ -42,7 +43,7 @@ bool TextureAnimated::LoadFromFile(std::fstream& _file, const std::string& _dirP
 	{
 		return false;
 	}
-	this->ClearAll();
+	this->ClearAnimations();
 	
 
 	switch (_animationFormat)
@@ -74,8 +75,10 @@ bool TextureAnimated::LoadFromFile(std::fstream& _file, const std::string& _dirP
 		case ANIMATION_ANIM:
 			{
 			nlohmann::json jsonBase = nlohmann::json::parse(_file);
-			this->m_textureAtlas.LoadFromFile(_dirPath + (std::string)jsonBase["assetPath"], TextureAtlas::PARSE_JSON_ARRAY);
+			TextureAtlas::ParseType parseType = (TextureAtlas::ParseType)jsonBase.value("parseType", TextureAtlas::ParseType::PARSE_JSON_ARRAY);
+			this->m_textureAtlas.LoadFromFile(_dirPath + (std::string)jsonBase["assetPath"], parseType);
 
+			float baseFPS = (float)jsonBase.value("framerate", ANIMATION_DEFAULT_FPS);
 			nlohmann::json& array = jsonBase["animations"];
 			size_t arraySize = array.size();
 			this->m_animations.resize(arraySize);
@@ -87,8 +90,8 @@ bool TextureAnimated::LoadFromFile(std::fstream& _file, const std::string& _dirP
 				newAnim.m_name = object["name"];
 				newAnim.m_atlasName = object.value("atlas", newAnim.m_name);
 				newAnim.m_loop = object.value("loop", ANIMATION_DEFAULT_LOOP);
-				newAnim.m_framerate = object.value("fps", (float)jsonBase.value("framerate", ANIMATION_DEFAULT_FPS));
-					
+				newAnim.m_framerate = object.value("fps", baseFPS);
+				
 
 				newAnim.m_atlasIndex = this->m_textureAtlas.FindFrameGroupIndex(newAnim.m_atlasName);
 				newAnim.m_frameCount = this->m_textureAtlas.FindFrameGroupLenght(newAnim.m_atlasName, newAnim.m_atlasIndex);
@@ -190,37 +193,41 @@ bool TextureAnimated::LoadFromFile(std::fstream& _file, const std::string& _dirP
 }
 
 
-//bool TextureAnimated::LoadFromFile(const std::string& _fileName, TextureAtlas::ParseType _atlasParseType)
-//{
-//	std::fstream file(_fileName);
-//	std::string dirPath = filetools::GetDirName(_fileName);
-//	bool success = this->LoadFromFile(file, dirPath, _atlasParseType);
-//	file.close();
-//	return success;
-//}
-//
-//bool TextureAnimated::LoadFromFile(std::fstream& _file, const std::string& _dirPath, TextureAtlas::ParseType _atlasParseType)
-//{
-//	if (_file.fail())
-//	{
-//		return false;
-//	}
-//	this->ClearAll();
-//
-//
-//	this->m_textureAtlas.LoadFromFile(_file, _dirPath, _atlasParseType);
-//	
-//	AnimationProperties* newAnim = new AnimationProperties();
-//	newAnim->m_atlasName = "";
-//	newAnim->m_atlasIndex = 0;
-//	newAnim->m_frameCount = this->m_textureAtlas.GetFrameCount();
-//	newAnim->m_framerate = 24.0f;
-//
-//	this->m_animations.Append(newAnim);
-//	return true;
-//}
+bool TextureAnimated::LoadFromFile(const std::string& _fileName, TextureAtlas::ParseType _atlasParseType)
+{
+	std::fstream file(_fileName);
+	std::string dirPath = filetools::GetDirName(_fileName);
+	bool success = this->LoadFromFile(file, dirPath, _atlasParseType);
+	file.close();
+	return success;
+}
+bool TextureAnimated::LoadFromFile(std::fstream& _file, const std::string& _dirPath, TextureAtlas::ParseType _atlasParseType)
+{
+	if (_file.fail())
+	{
+		return false;
+	}
+	this->ClearAnimations();
 
-void TextureAnimated::ClearAll(void)
+
+	if (this->m_textureAtlas.LoadFromFile(_file, _dirPath, _atlasParseType))
+	{
+		size_t index = this->m_animations.size();
+		this->m_animations.resize(index + 1);
+		AnimationProperties& newAnim = this->m_animations[index];
+		newAnim.m_atlasName = "";
+		newAnim.m_atlasIndex = 0;
+		newAnim.m_frameCount = (int)this->m_textureAtlas.GetAtlasFrameCount();
+		newAnim.m_framerate = ANIMATION_DEFAULT_FPS;
+		newAnim.m_loop = ANIMATION_DEFAULT_LOOP;
+	}
+	
+
+	return true;
+}
+
+
+void TextureAnimated::ClearAnimations(void)
 {
 	this->m_animations.clear();
 	this->m_animations.shrink_to_fit();
@@ -281,4 +288,4 @@ size_t TextureAnimated::GetAnimationCount(void)
 #pragma endregion
 
 
-// Texture Animated v1.1
+// Texture Animated v1.2.2

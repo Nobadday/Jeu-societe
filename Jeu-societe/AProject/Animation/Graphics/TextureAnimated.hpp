@@ -58,9 +58,7 @@ class TextureAnimated
 
 	private:
 		TextureAtlas m_textureAtlas;
-
 		std::vector<AnimationProperties> m_animations;
-		
 
 	public:
 		TextureAnimated(void);
@@ -72,13 +70,16 @@ class TextureAnimated
 		// Load an animation file of any of the supported formats given with _animationFormat
 		bool LoadFromFile(std::fstream& _file, const std::string& _dirPath, TextureAnimated::AnimationType _animationFormat);
 
+		// [INTENT TO BE DEPRECATED]
 		// Load only a texture atlas and creates an animation of the entire atlas
-		//bool LoadFromFile(const std::string& _fileName, TextureAtlas::ParseType _atlasParseType);
+		bool LoadFromFile(const std::string& _fileName, TextureAtlas::ParseType _atlasParseType);
+		// [INTENT TO BE DEPRECATED]
 		// Load only a texture atlas and creates an animation of the entire atlas
-		//bool LoadFromFile(std::fstream& _file, const std::string& _dirPath, TextureAtlas::ParseType _atlasParseType);
+		bool LoadFromFile(std::fstream& _file, const std::string& _dirPath, TextureAtlas::ParseType _atlasParseType);
 		
 
-		void ClearAll(void);
+		//void AddAnimation(const std::string& _name, const std::vector<int>& _frameArrays, bool _loop = false, float _framerate = 24.0f);
+		//void AddAnimation(const std::string& _name, const std::vector<std::string>& _frameNames, bool _loop, float _framerate);
 
 		AnimationProperties& GetAnimation(int _index);
 		AnimationProperties& GetAnimation(const std::string& _name);
@@ -96,9 +97,10 @@ class TextureAnimated
 		size_t GetAnimationCount(void);
 	
 	protected:
-		
+		void ClearAnimations(void);
 };
 
 
 #endif
-// Texture Animated v1.1
+// Texture Animated v1.2.2
+// TODO : Remake to be accessible everywhere, ability to AddAnimations like AxeFlixel

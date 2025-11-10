@@ -6,24 +6,23 @@
 
 // C++
 #include <iostream>
-#include <string>
 #include <fstream>
-//#include <vector>
+#include <string>
+#include <vector>
 
 // SFML 2.6.2
 #include <SFML/Graphics.hpp>
 
 // Nlohamnn JSON
 #include <nlohmann/json.hpp>
-
 // XML
 #include <rapidxml/rapidxml.hpp>
 #include <rapidxml/rapidxml_utils.hpp>
 
-// Yamelo Libs (me :3 )
-#include "../../Utilities/Lists/DynaList.hpp"
+// Yamelo Libs (mine :3 )
 #include "../../Utilities/FileTools.hpp"
 #include "./AtlasContainer.hpp"
+
 
 
 // Texture containing multiple images
@@ -100,11 +99,9 @@ class TextureAtlas : private sf::Texture, public AtlasContainer
 		operator const sf::Texture*() const;
 		operator const sf::Texture&() const;
 
-	protected:
-		
 		
 };
 
 #endif
 
-// Texture Atlases for C++ & SFML v1.1
+// Texture Atlases for C++ & SFML v1.1.2

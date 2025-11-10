@@ -65,4 +65,4 @@ class AtlasContainer
 
 
 #endif
-// AtlasContainer C++ || v1.0
+// AtlasContainer C++ || v1.0.2
