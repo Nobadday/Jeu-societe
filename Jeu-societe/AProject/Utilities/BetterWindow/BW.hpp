@@ -35,6 +35,7 @@ class RenderWindow : public sf::RenderWindow
 	public:
 		RenderWindow(void);
 
+		//virtual void create(sf::VideoMode mode, const sf::String& title, sf::Uint32 style = sf::Style::Default);
 
 		void SetFullscreenMode(FullscreenMode _mode);
 		void SetFullscreen(bool _condition);
