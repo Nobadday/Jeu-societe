@@ -69,7 +69,7 @@ void RandCard::Load(void)
 	//m_data->gameData->m_gonnaPlayIndex.push_back(0);
 	//m_data->gameData->m_gonnaPlayIndex.push_back(1);
 
-	int nbOfPlayers = m_data->gameData->m_gonnaPlayIndex.size();
+	int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size();
 	std::cout << "nb of player " << nbOfPlayers << std::endl;
 
 	//Copy pnlayers playig from GameData
@@ -274,7 +274,7 @@ void RandCard::Update(float _deltaTime)
 
 
 						//Save data
-						int nbOfPlayers = m_data->gameData->m_gonnaPlayIndex.size() - 1;
+						int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size() - 1;
 						for (int i = 0 ; i < nbOfPlayers; i++)
 						{
 							//Print if you want check

@@ -313,7 +313,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 
 	case BATTLE_ACTION:
 		m_gameData->InitMiniGamePlayer();
-		for (size_t i = 0; i < m_data->players.size(); i++)
+		for (int i = 0; i < m_data->players.size(); i++)
 			m_gameData->AddPlayerPlaying(i);
 
 		m_data->state = WIN;
@@ -367,7 +367,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 
 int BaseGame::OnSameCase()
 {
-	for (size_t i = 0; i < m_data->players.size(); i++)
+	for (int i = 0; i < m_data->players.size(); i++)
 	{
 		if (m_data->players[i].currentCaseIndex == m_data->players[m_data->currentPlayerIndex].currentCaseIndex
 			&& i != m_data->currentPlayerIndex)
@@ -395,8 +395,8 @@ std::string BaseGame::RandomDuel()
 	const int miniGameCount = 6;
 
 	// Sélection aléatoire d'un mini-jeu
-	int randomIndex = 2;
-	//int randomIndex = random::RandomInt(0, miniGameCount - 1);
+	//int randomIndex = 2;
+	int randomIndex = random::RandomInt(0, miniGameCount - 1);
 
 	std::cout << "Random minigame selected: " << miniGames[randomIndex] << std::endl;
 

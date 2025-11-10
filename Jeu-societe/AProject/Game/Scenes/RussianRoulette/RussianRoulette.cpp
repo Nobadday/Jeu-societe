@@ -168,7 +168,7 @@ void RussianRoulette::Update(float _deltaTime)
 
 
 					//Save data
-					int nbOfPlayers = m_data->gameData->m_gonnaPlayIndex.size() - 1;
+					int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size() - 1;
 					std::cout << "nb player : " << nbOfPlayers << std::endl;
 
 					for (int i = 0; i < nbOfPlayers; i++)

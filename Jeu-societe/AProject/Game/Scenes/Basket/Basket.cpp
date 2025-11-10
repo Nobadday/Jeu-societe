@@ -40,7 +40,7 @@ void Basket::Load(void)
 		player.m_ballSprite.setTexture(m_data->ballTexture);
 		player.m_hoopSprite.setTexture(m_data->hoopTexture);
 
-		float spacing = SCREEN_WIDTH / (m_data->gameData->m_gonnaPlayIndex.size() + 1);
+		float spacing = SCREEN_WIDTH / ((float)m_data->gameData->m_gonnaPlayIndex.size() + 1);
 		short randY = std::rand() % 400;
 
 		player.m_ballSprite.setPosition((i + 1) * spacing, SCREEN_HEIGHT - 300.f);

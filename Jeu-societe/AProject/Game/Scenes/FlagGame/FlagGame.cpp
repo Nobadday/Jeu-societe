@@ -85,7 +85,7 @@ void FlagGame::Load(void)
 
 				// Position text based on number of participating players
 				m_data->playerData[playerID].inputText.setPosition(
-					SCREEN_WIDTH / (m_data->gameData->m_gonnaPlayIndex.size() + 1) * (i + 1),
+					SCREEN_WIDTH / ((float)m_data->gameData->m_gonnaPlayIndex.size() + 1) * (i + 1),
 					100.f
 				);
 			}

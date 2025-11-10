@@ -17,9 +17,9 @@ private:
 
 	struct BasketPlayer
 	{
-		short m_id;
-		bool m_won;
-		int m_winOrder;  // NOUVEAU: Ordre de victoire (1 = premier, 2 = deuxième, etc.)
+		short m_id = 0;
+		bool m_won = 0;
+		int m_winOrder = 0;  // NOUVEAU: Ordre de victoire (1 = premier, 2 = deuxième, etc.)
 		
 		sf::Sprite m_ballSprite;
 		sf::Sprite m_hoopSprite;
@@ -39,11 +39,11 @@ private:
 		
 		std::vector<BasketPlayer> players;
 		
-		GameData* gameData;
+		GameData* gameData = NULL;
 		
-		GameState state;
+		GameState state = STATE_PLAYING;
 		float timer;
-		int winnerCount;  // NOUVEAU: Compteur de gagnants
+		int winnerCount = 0;  // NOUVEAU: Compteur de gagnants
 	};
 
 	SceneData* m_data;
