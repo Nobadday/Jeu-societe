@@ -9,7 +9,9 @@
 //#include "../../Utilities/Random.hpp"
 #include "../../Animation/Animation/Animator.hpp"
 #include "../../Animation/Graphics/SpriteAnimated.hpp"
+#include "../../Animation/Graphics/AnimatedObject.hpp"
 #include "../../Animation/Graphics/TextureAnimated.hpp"
+#include "../../Animation/Graphics/TextureAtlas.hpp"
 
 #define TIME_WIN_DISPLAY 3.0f
 
