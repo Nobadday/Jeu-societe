@@ -17,7 +17,7 @@ void FlagGame::Load(void)
 	m_data->totalGameTime = 0.0f;
 
 	// Load font
-	m_data->font.loadFromFile("Assets/Fonts/arial.ttf");
+	m_data->font.loadFromFile("Assets/Font.ttf");
 
 	// Initialize title text
 	m_data->titleText.setFont(m_data->font);
