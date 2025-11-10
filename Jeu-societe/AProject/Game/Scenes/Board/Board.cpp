@@ -17,9 +17,10 @@ void BaseGame::Load(void)
 	m_data->timeWin = TIME_WIN_DISPLAY;
 
 	// Initialisation des joueurs
-	for (size_t i = 0; i < m_data->players.size(); i++)
+	for (int i = 0; i < m_data->players.size(); i++)
 	{
-		m_data->players[i].texture.loadFromFile("Assets/Images/Placeholder.png");
+		m_data->players[i].texture.LoadFromFile("Assets/Sprites/Anim_final.json", TextureAtlas::PARSE_JSON_ARRAY);
+
 		m_data->players[i].sprite.setTexture(m_data->players[i].texture);
 
 		//sf::FloatRect spriteBounds = m_data->players[i].sprite.getLocalBounds();

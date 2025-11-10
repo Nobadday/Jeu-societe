@@ -147,6 +147,7 @@
     <ClCompile Include="Animation\Animation\Animator.cpp" />
     <ClCompile Include="Animation\Animation\Timer.cpp" />
     <ClCompile Include="Animation\Graphics\AnimatedObject.cpp" />
+    <ClCompile Include="Animation\Graphics\AtlasContainer.cpp" />
     <ClCompile Include="Animation\Graphics\GraphicAddons.cpp" />
     <ClCompile Include="Animation\Graphics\SpriteAnimated.cpp" />
     <ClCompile Include="Animation\Graphics\TextAnimated.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="Animation\Common.hpp" />
     <ClInclude Include="Animation\Graphics.hpp" />
     <ClInclude Include="Animation\Graphics\AnimatedObject.hpp" />
+    <ClInclude Include="Animation\Graphics\AtlasContainer.hpp" />
     <ClInclude Include="Animation\Graphics\GraphicAddons.hpp" />
     <ClInclude Include="Animation\Graphics\SpriteAnimated.hpp" />
     <ClInclude Include="Animation\Graphics\TextAnimated.hpp" />
