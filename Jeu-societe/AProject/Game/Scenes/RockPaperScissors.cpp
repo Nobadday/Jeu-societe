@@ -108,26 +108,23 @@ void RockPaperScissors::Update(float _deltaTime)
 	{
 		if (m_data->timer.IsFinished())
 		{
+			this->UpdatePlayerChoiceTexture();
+			this->m_data->timer.SetTimeTarget(PAUSE_TIME, true);
+			
 			if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] == this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]])
 			{
 				if (this->m_data->roundNB < 2)
 				{
-					this->UpdatePlayerChoiceTexture();
 					this->m_data->state = STATE_PAUSE;
 					this->m_data->roundNB++;
-					this->m_data->timer.SetTimeTarget(PAUSE_TIME, true);
 				}
 				else
 				{
-					this->UpdatePlayerChoiceTexture();
 					this->m_data->state = STATE_EQUALITY;
-					this->m_data->timer.SetTimeTarget(PAUSE_TIME, true);
 				}
 			}
 			else
 			{
-				this->UpdatePlayerChoiceTexture();
-				this->m_data->timer.SetTimeTarget(PAUSE_TIME, true);
 				this->m_data->state = STATE_VICTORY;	
 			}
 		}
