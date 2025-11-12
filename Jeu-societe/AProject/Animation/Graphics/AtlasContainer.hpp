@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _INC_ATLASCONTAINER_HPP
-#define _INC_ATLASCONTAINER_HPP
+#ifndef _INC_ANIMATION_ATLASCONTAINER_HPP
+#define _INC_ANIMATION_ATLASCONTAINER_HPP
 
 
 #include "../Common.hpp"
@@ -44,7 +44,7 @@ class AtlasContainer
 		AtlasContainer(void);
 
 
-		// Appens an atlas frame into the container and gets it's reference
+		// Appends an atlas frame into the container and gets it's reference
 		// If it already exists, gets that reference
 		AtlasFrame& ModifyAtlasFrame(const std::string& _name);
 
@@ -65,4 +65,4 @@ class AtlasContainer
 
 
 #endif
-// AtlasContainer C++ || v0.2
+// AtlasContainer C++ || v1.0.2
