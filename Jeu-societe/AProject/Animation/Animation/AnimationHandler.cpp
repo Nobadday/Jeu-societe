@@ -1,7 +1,5 @@
 #include "AnimationHandler.hpp"
 
-#define ANIMATION_MINIMUM_FPS 0.01f
-
 
 #pragma region Animation Class
 
@@ -11,13 +9,13 @@
 Animation::Animation(void) :
 m_frame			(0.0f),
 m_frameCount	(0),
-m_frameTime		(0.0f),
+m_frameTime		(ANIMATION_DEFAULT_FPS_SECONDS),
 m_loop			(false),
 m_shouldUpdate	(false)
 {
 
 }
-Animation::Animation(Animation& _copy) : DeltaClock(_copy),
+Animation::Animation(const Animation& _copy) : DeltaClock(_copy),
 m_frame			(_copy.m_frame),
 m_frameCount	(_copy.m_frameCount),
 m_frameTime		(_copy.m_frameTime),
@@ -47,13 +45,36 @@ void Animation::Modify(int _frameCount, float _framerate, bool _loop, float _spe
 	this->m_loop = _loop;
 	this->m_speed = _speed;
 
-	this->SetFramerate(_framerate);
-	
 	this->m_shouldUpdate = true;
+
+	this->SetFramerate(_framerate);
+	this->OnFrameChange();
+}
+void Animation::Modify(int _frameCount, float _framerate, bool _loop)
+{
+	this->m_frame = 0.0f;
+	this->m_frameCount = _frameCount;
+	this->m_loop = _loop;
+
+	this->m_shouldUpdate = true;
+
+	this->SetFramerate(_framerate);
+	this->OnFrameChange();
 }
 void Animation::Modify(float _durationSeconds, float _framerate, bool _loop, float _speed)
 {
 	this->Modify((int)anim::AniMath::SecondsToFrameTime(_durationSeconds, _framerate), _framerate, _loop, _speed);
+}
+void Animation::Modify(float _durationSeconds, float _framerate, bool _loop)
+{
+	this->m_frame = 0.0f;
+	this->m_frameCount = (int)anim::AniMath::SecondsToFrameTime(_durationSeconds, _framerate);
+	this->m_loop = _loop;
+
+	this->m_shouldUpdate = true;
+
+	this->SetFramerate(_framerate);
+	this->OnFrameChange();
 }
 
 #pragma endregion
@@ -67,6 +88,7 @@ void Animation::Update(float _deltaTime)
 	// AND if the animation isn't looped & finished
 	if (this->m_play && !(this->IsFinished() && !this->m_loop))
 	{
+		// TODO : Appeler DeltaClock avec onTimeUpdate
 		this->m_timeElapsed += _deltaTime * this->m_speed;
 		this->UpdateFrame();
 	}
@@ -84,7 +106,6 @@ void Animation::UpdateFrame(void)
 	if (this->m_loop)
 	{
 		// Frame will always have proper values
-		// Modulo always positive :
 		newFrame = anim::AniMath::ModuloPositiveF(newFrame, (float)m_frameCount);
 	}
 	else
@@ -96,22 +117,21 @@ void Animation::UpdateFrame(void)
 		}
 		else if (newFrame > m_frameCount - 1)
 		{
-			// ( Convert number to index -> [-1])
+			// -1 to convert number to index
 			newFrame = (float)(m_frameCount - 1);
 		}
 	}
 
-	// Checks shouldUpdate
+	// Checks for frameUpdates
 	if (this->m_frame != newFrame)
 	{
-		if ((int)this->m_frame != (int)newFrame)
+		bool frameChanged = (int)this->m_frame != (int)newFrame;
+
+		this->m_frame = newFrame;
+		if (frameChanged)
 		{
 			this->m_shouldUpdate = true;
-		}
-		this->m_frame = newFrame;
-		if (this->m_shouldUpdate)
-		{
-			this->FrameChanged();
+			this->OnFrameChange();
 		}
 	}
 }
@@ -175,7 +195,7 @@ void Animation::SetDuration(float _seconds)
 
 void Animation::SetFramerate(float _framerate)
 {
-	if (_framerate <= 0.0f)
+	if (_framerate < ANIMATION_MINIMUM_FPS)
 	{
 		_framerate = ANIMATION_MINIMUM_FPS;
 	}
@@ -189,8 +209,11 @@ void Animation::SetFramerate(int _framerate)
 
 void Animation::AddFramerate(float _value)
 {
-	this->m_frameTime += anim::AniMath::FPSToFrameTime(_value);
-	this->SetFrame(this->m_frame);
+	this->SetFramerate(this->GetFramerate() + _value);
+}
+void Animation::AddFramerate(int _value)
+{
+	this->AddFramerate((float)_value);
 }
 
 void Animation::SetLoop(bool _condition)
@@ -238,10 +261,7 @@ void Animation::SetShouldUpdate(void)
 {
 	this->m_shouldUpdate = true;
 }
-void Animation::SetShouldUpdateProtected(bool _condition)
-{
-	this->m_shouldUpdate = this->m_shouldUpdate || _condition;
-}
+
 
 #pragma endregion
 
@@ -250,7 +270,7 @@ void Animation::SetShouldUpdateProtected(bool _condition)
 
 float Animation::GetCurrentFrameUncapped(void)
 {
-	if (this->m_frameTime != 0.0f)
+	if (this->m_frameTime > 0.0f)
 	{
 		return this->m_timeElapsed / this->m_frameTime;
 	}
@@ -258,14 +278,13 @@ float Animation::GetCurrentFrameUncapped(void)
 	return this->m_frame;
 }
 
-float Animation::GetCurrentFrame(void)
-{
-	return this->m_frame;
-}
-
-int Animation::GetCurrentFrameInt(void)
+int Animation::GetCurrentFrame(void)
 {
 	return (int)this->m_frame;
+}
+float Animation::GetCurrentFramePrecise(void)
+{
+	return this->m_frame;
 }
 
 int Animation::GetFrameCount(void)
@@ -324,7 +343,7 @@ float Animation::GetFrameCoefficient(void)
 	if (this->m_frameCount > 1)
 	{
 		// Troncate the float values to truely be frame by frame
-		return (float)((float)this->GetCurrentFrameInt() / (float)(this->m_frameCount - 1));
+		return (float)((float)this->GetCurrentFrame() / (float)(this->m_frameCount - 1));
 	}
 	return 1.0f;
 }
@@ -408,23 +427,22 @@ bool Animation::IsFinished(void)
 	return this->IsFinished(this->IsReversed());
 }
 
-//bool Animation::IsOnStartFrame(void)
-//{
-//	if (this->IsReversed())
-//	{
-//		return this->GetCurrentFrameInt() == this->m_frameCount-1;
-//	}
-//	return this->GetCurrentFrameInt() == 0;
-//}
-//
-//bool Animation::IsOnEndFrame(void)
-//{
-//	if (this->IsReversed())
-//	{
-//		return this->GetCurrentFrameInt() == 0;
-//	}
-//	return this->GetCurrentFrameInt() == this->m_frameCount - 1;
-//}
+bool Animation::IsOnStartFrame(void)
+{
+	if (this->IsReversed())
+	{
+		return this->GetCurrentFrame() == (this->m_frameCount - 1);
+	}
+	return this->GetCurrentFrame() == 0;
+}
+bool Animation::IsOnEndFrame(void)
+{
+	if (this->IsReversed())
+	{
+		return this->GetCurrentFrame() == 0;
+	}
+	return this->GetCurrentFrame() == (this->m_frameCount - 1);
+}
 
 bool Animation::ShouldUpdate(void)
 {
@@ -441,18 +459,13 @@ bool Animation::ShouldUpdateFixed(void)
 	return this->m_shouldUpdate;
 }
 
-bool Animation::ShouldUpdateOnce(void)
-{
-	return this->ShouldUpdate();
-}
-
 #pragma endregion
 
-void Animation::FrameChanged(void)
+void Animation::OnFrameChange(void)
 {
 	// Virtual method, does nothing here
 }
 
 #pragma endregion Animation Class End
 
-// AnimationHandler C++ || v2.1
+// AnimationHandler C++ || v2.2.2

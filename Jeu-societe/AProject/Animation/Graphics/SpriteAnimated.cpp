@@ -1,34 +1,41 @@
 #include "SpriteAnimated.hpp"
 
 
-SpriteAnimated::SpriteAnimated(void) : sf::Sprite(),
+SpriteAnimated::SpriteAnimated(void) : sf::Sprite(), AnimatedObject(),
 m_originCoefficient (0.0f,0.0f),
 m_animTransform		()
 {
 
 }
+SpriteAnimated::SpriteAnimated(const SpriteAnimated& _copy) : sf::Sprite(_copy), AnimatedObject(_copy),
+m_originCoefficient (_copy.m_originCoefficient),
+m_animTransform		(_copy.m_animTransform)
+{
 
-void SpriteAnimated::FrameChanged(void)
+}
+
+
+void SpriteAnimated::OnFrameChange(void)
 {
 	if (this->m_animationSelected != -1)
 	{
-		TextureAnimated::AnimationProperties* anim = this->AnimatedObject::m_texture->GetAnimation(this->m_animationSelected);
-		AtlasFrame* frame = this->AnimatedObject::m_texture->GetFrame(anim->m_atlasIndex, this->GetCurrentFrameInt());
+		TextureAnimated::AnimationProperties& anim = this->AnimatedObject::m_texture->GetAnimation(this->m_animationSelected);
+		AtlasFrame& frame = this->AnimatedObject::m_texture->GetFrame(anim.m_atlasIndex, this->GetCurrentFrame());
 		
-		this->setTextureRect(frame->m_textureRect);
+		this->setTextureRect(frame.m_textureRect);
 		sf::Vector2f scale = this->getScale();
 
 		float a = 1.0f;
 		float b = 0.0f;
 		float c = 0.0f;
 		float d = 1.0f;
-		float x = -((frame->m_frameOffset.left + anim->m_offset.x)) * scale.x;
-		float y = -((frame->m_frameOffset.top + anim->m_offset.y) * (1.0f - this->m_originCoefficient.y)) * scale.y;
+		float x = -((frame.m_frameOffset.left + anim.m_offset.x)) * scale.x;
+		float y = -((frame.m_frameOffset.top + anim.m_offset.y) * (1.0f - this->m_originCoefficient.y)) * scale.y;
 
 		//std::cout << "x : " << 1.0f-(2.0f*this->m_originCoefficient.x) << " ";
 		//std::cout << "y : " << (1.0f - this->m_originCoefficient.y) << "\n";
 
-		if (frame->m_rotated && false)
+		if (frame.m_rotated && false)
 		{
 			sf::Vector2f position = this->getPosition();
 			a = 0.0f;
@@ -48,11 +55,11 @@ void SpriteAnimated::FrameChanged(void)
 												c, d, y,
 												0.0f, 0.0f, 1.0f);
 		sf::Vector2f size = this->getGlobalBounds().getSize();
-		if (frame->m_flipX)
+		if (frame.m_flipX)
 		{
 			
 		}
-		if (frame->m_rotated)
+		if (frame.m_rotated)
 		{
 			//this->m_animTransform.combine(sf::Transform(0.0f, 1.0f, 0.0f,
 			//											-1.0f, 0.0f, 0.0f,
@@ -70,14 +77,14 @@ void SpriteAnimated::FrameChanged(void)
 			//										0.0f, 0.0f, 1.0f);
 
 		}
-		this->sf::Transformable::setOrigin(frame->m_textureRect.width * this->m_originCoefficient.x, frame->m_textureRect.height * this->m_originCoefficient.y);
+		this->sf::Transformable::setOrigin(frame.m_textureRect.width * this->m_originCoefficient.x, frame.m_textureRect.height * this->m_originCoefficient.y);
 	}
 }
 
 void SpriteAnimated::setTexture(TextureAnimated& _texture, bool _keepAnimation)
 {
 	this->AnimatedObject::SetTexture(_texture, _keepAnimation);
-	this->sf::Sprite::setTexture(_texture.GetTextureRef());
+	this->sf::Sprite::setTexture(_texture.GetTextureAtlas().GetTextureRef());
 }
 
 sf::FloatRect SpriteAnimated::getGlobalBounds(void) const
@@ -91,4 +98,5 @@ void SpriteAnimated::draw(sf::RenderTarget& target, sf::RenderStates states) con
 	states.transform.combine(this->m_animTransform);
 	target.draw((sf::Sprite)(*this), states);
 }
-// SpriteAnimated v1.1.2
+
+// SpriteAnimated v1.2.2

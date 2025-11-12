@@ -9,7 +9,7 @@ m_play			(true)
 {
 
 }
-DeltaClock::DeltaClock(DeltaClock& _copy) : 
+DeltaClock::DeltaClock(const DeltaClock& _copy) :
 m_timeElapsed	(_copy.m_timeElapsed),
 m_speed			(_copy.m_speed),
 m_play			(_copy.m_play)
@@ -26,16 +26,18 @@ m_play			(_play)
 
 #pragma endregion
 
-void DeltaClock::SyncTime(DeltaClock& _timer)
+void DeltaClock::SyncTime(DeltaClock& _clock)
 {
-	this->m_timeElapsed = _timer.m_timeElapsed;
+	this->m_timeElapsed = _clock.m_timeElapsed;
+	OnTimeChange();
 }
 
 void DeltaClock::Update(float _deltaTime)
 {
-	if (this->m_play)
+	if (this->IsPlaying())
 	{
 		this->m_timeElapsed += _deltaTime * this->m_speed;
+		OnTimeChange();
 	}
 }
 
@@ -43,26 +45,28 @@ void DeltaClock::Update(float _deltaTime)
 void DeltaClock::SetTime(float _seconds)
 {
 	this->m_timeElapsed = _seconds;
+	OnTimeChange();
 }
 
 void DeltaClock::SetTime(float _minutes, float _seconds)
 {
-	this->m_timeElapsed = (_minutes * 60.0f) + _seconds;
+	this->SetTime((_minutes * 60.0f) + _seconds);
 }
 
-void DeltaClock::SetTime(float _minutes, float _seconds, float _miliseconds)
+void DeltaClock::SetTime(float _hours, float _minutes, float _seconds)
 {
-	this->m_timeElapsed = (_minutes * 60.0f) + _seconds + (_miliseconds/1000.0f);
+	this->SetTime((_hours * 3600.0f) + (_minutes * 60.0f) + _seconds);
 }
 
 void DeltaClock::AddTime(float _seconds)
 {
 	this->m_timeElapsed += _seconds;
+	this->OnTimeChange();
 }
 
-void DeltaClock::SetSpeed(float _value)
+void DeltaClock::SetSpeed(float _speed)
 {
-	this->m_speed = _value;
+	this->m_speed = _speed;
 }
 
 void DeltaClock::AddSpeed(float _value)
@@ -75,6 +79,7 @@ void DeltaClock::AddSpeed(float _value)
 void DeltaClock::Restart(float _offset)
 {
 	this->m_timeElapsed = 0.0f + _offset;
+	OnTimeChange();
 }
 
 #pragma region Conditions
@@ -113,45 +118,69 @@ float DeltaClock::GetSpeed(void)
 	return this->m_speed;
 }
 
-float DeltaClock::TimeDifference(DeltaClock& _dtClock)
-{
-	return this->m_timeElapsed - _dtClock.m_timeElapsed;
-}
 float DeltaClock::TimeDifference(float _seconds)
 {
 	return this->m_timeElapsed - _seconds;
 }
 #pragma endregion
 
-#pragma region Is Conditions
+#pragma region Is (Conditions)
 bool DeltaClock::IsPlaying(void)
 {
-	return this->m_play && this->m_speed != 0.0f;
+	return this->m_play && (this->m_speed != 0.0f);
 }
-
 bool DeltaClock::IsPaused(void)
 {
 	return !this->IsPlaying();
 }
+
+bool DeltaClock::IsWantingToPlay(void)
+{
+	return this->m_play;
+}
+bool DeltaClock::IsWantingToPause(void)
+{
+	return !this->IsWantingToPlay();
+}
+
 
 bool DeltaClock::IsReversed(void)
 {
 	return this->m_speed < 0.0f;
 }
 
+
 void DeltaClock::operator+=(float _seconds)
 {
 	this->AddTime(_seconds);
 }
-
 void DeltaClock::operator-=(float _seconds)
 {
 	this->AddTime(-_seconds);
 }
-
 void DeltaClock::operator=(float _seconds)
 {
 	this->SetTime(_seconds);
+}
+float DeltaClock::operator+(float _seconds)
+{
+	return this->m_timeElapsed + _seconds;
+}
+float DeltaClock::operator-(float _seconds)
+{
+	return this->TimeDifference(_seconds);
+}
+bool DeltaClock::operator==(float _seconds)
+{
+	return this->m_timeElapsed == _seconds;
+}
+bool DeltaClock::operator<=(float _seconds)
+{
+	return this->m_timeElapsed <= _seconds;
+}
+bool DeltaClock::operator>=(float _seconds)
+{
+	return this->m_timeElapsed >= _seconds;
 }
 
 DeltaClock::operator float()
@@ -159,9 +188,13 @@ DeltaClock::operator float()
 	return this->m_timeElapsed;
 }
 
+void DeltaClock::OnTimeChange(void)
+{
+}
+
 #pragma endregion
 
-#pragma endregion // DeltaTime
+#pragma endregion END DeltaClock
 
 #pragma region Timer
 Timer::Timer() : DeltaClock(),
@@ -201,19 +234,19 @@ bool Timer::IsFinished(void)
 	return this->m_timeElapsed >= this->m_timeTarget;
 }
 
-float Timer::GetExcessTime(void)
-{
-	if (this->IsFinished())
-	{
-		return this->m_timeElapsed - this->m_timeTarget;
-	}
-	return 0.0f;
-}
 float Timer::GetRemainingTime(void)
 {
 	if (!this->IsFinished())
 	{
 		return this->m_timeTarget - this->m_timeElapsed;
+	}
+	return 0.0f;
+}
+float Timer::GetExcessTime(void)
+{
+	if (this->IsFinished())
+	{
+		return this->m_timeElapsed - this->m_timeTarget;
 	}
 	return 0.0f;
 }
@@ -254,5 +287,8 @@ float Timer::GetTimeTargetAccurate(void)
 	}
 	return 0.0f;
 }
-#pragma endregion
-// Timer & DeltaClock C++ v1.1
+
+#pragma endregion END Timer
+
+
+// Timer & DeltaClock C++ v1.3.2

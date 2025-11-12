@@ -7,10 +7,14 @@
 #include "../Animation/AnimationHandler.hpp"
 #include "./TextureAnimated.hpp"
 
-class AnimationPRO : public Animation
+
+class AnimationFixed : public Animation
 {
 	public:
-		AnimationPRO(void) : Animation() {};
+		AnimationFixed(void) : Animation() {};
+		AnimationFixed(const AnimationFixed& _copy) : Animation(_copy) {};
+
+
 
 	protected:
 		using Animation::Modify;
@@ -20,11 +24,12 @@ class AnimationPRO : public Animation
 		using Animation::SetFramerate;
 		using Animation::AddFramerate;
 		using Animation::SetShouldUpdate;
-		using Animation::SetShouldUpdateProtected;
+		//using Animation::SetShouldUpdateProtected;
 
 };
 
-class AnimatedObject : public AnimationPRO
+
+class AnimatedObject : public AnimationFixed
 {
 	protected:
 		TextureAnimated* m_texture;
@@ -32,6 +37,8 @@ class AnimatedObject : public AnimationPRO
 
 	public:
 		AnimatedObject(void);
+		AnimatedObject(const AnimatedObject& _copy);
+
 
 		// Set the animation of the sprite using the index
 		// If _resetAnimation is true, if the animation is already selected, resets that animation
@@ -54,8 +61,8 @@ class AnimatedObject : public AnimationPRO
 		// If keepAnimation true; set's animation to last anim
 		void SetTexture(TextureAnimated& _texture, bool _keepAnimation = false);
 
-		virtual void AnimationChanged(void);
+		virtual void OnAnimationChange(void);
 };
 
 #endif
-// AnimatedObject || v1.2.2
+// AnimatedObject || v1.3.2

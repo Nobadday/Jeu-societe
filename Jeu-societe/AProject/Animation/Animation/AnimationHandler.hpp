@@ -1,15 +1,14 @@
 #pragma once
+#ifndef _INC_ANIMATION_ANIMATIONHANDLER_HPP
+#define _INC_ANIMATION_ANIMATIONHANDLER_HPP
 
-#ifndef _INC_ANIMATION_HANDLER_HPP
-#define _INC_ANIMATION_HANDLER_HPP
 
 #include "../Common.hpp"
 #include "Timer.hpp"
 #include "../Utilities/Math.hpp"
 
 
-class Animation : protected DeltaClock
-//class Animation : private DeltaClock
+class Animation : private DeltaClock
 {
 	private:
 		float m_frame;
@@ -25,22 +24,25 @@ class Animation : protected DeltaClock
 		//Default constructor
 		Animation(void);
 		// Copy constructor
-		Animation(Animation& _copy);
+		Animation(const Animation& _copy);
 
 		// Create a frame-based animation object
 		Animation(int _frameCount, float _framerate, bool _loop = false, float _speed = 1.0f);
 		// Create a time-based animation object
-		Animation(float _durationSeconds, float _framerate = 24.0f, bool _loop = false, float _speed = 1.0f);
-	
+		Animation(float _durationSeconds, float _framerate = ANIMATION_DEFAULT_FPS, bool _loop = false, float _speed = 1.0f);
+		
+
 	#pragma endregion
 
 
 	#pragma region Modifiers
 		// Frame-based animation
-		void Modify(int _frameCount, float _framerate, bool _loop = false, float _speed = 1.0f);
+		void Modify(int _frameCount, float _framerate, bool _loop, float _speed);
+		void Modify(int _frameCount, float _framerate, bool _loop = false);
 		// Time-based animation object
-		void Modify(float _durationSeconds, float _framerate = 24.0f, bool _loop = false, float _speed = 1.0f);
-	
+		void Modify(float _durationSeconds, float _framerate, bool _loop, float _speed);
+		void Modify(float _durationSeconds, float _framerate, bool _loop = false);
+
 	#pragma endregion
 
 
@@ -81,11 +83,13 @@ class Animation : protected DeltaClock
 		void SetDuration(float _seconds);
 
 		// Set the framerate, positive only (FPS)
+		// The default framerate is 24.0 FPS
 		void SetFramerate(float _framerate);
 		void SetFramerate(int _framerate);
 
 		// Add Framerate (FPS)
 		void AddFramerate(float _value);
+		void AddFramerate(int _value);
 
 		// Set animation Speed (negative for reverse animation)
 		using DeltaClock::SetSpeed;
@@ -117,8 +121,6 @@ class Animation : protected DeltaClock
 		// Set ShouldUpdate to true: should tell animated objects to update themselves.
 		void SetShouldUpdate(void);
 
-		// Only set shouldUpdate to true if _condition is true
-		void SetShouldUpdateProtected(bool _condition);
 
 	#pragma endregion
 		
@@ -128,11 +130,11 @@ class Animation : protected DeltaClock
 		// Time/(1/framerate)
 		float GetCurrentFrameUncapped(void);
 
-		// Get the current frame CAPPED as Float (starts at 0.0f, precise gets updated/capped every update)
-		float GetCurrentFrame(void);
-
 		// Get the current frame CAPPED as Int (starts at 0)
-		int GetCurrentFrameInt(void);
+		int GetCurrentFrame(void);
+
+		// Get the current frame CAPPED as Float (starts at 0.0f, precise gets updated/capped every update)
+		float GetCurrentFramePrecise(void);
 
 		// Get the count of frames
 		int GetFrameCount(void);
@@ -157,6 +159,7 @@ class Animation : protected DeltaClock
 		// Get the current framerate multiplied by |speed|
 		float GetFramerateSpeedPositive(void);
 		
+
 		// Get currentFrame / frameCount
 		float GetProgress(void);
 		// Get currentFrame / frameCount
@@ -206,13 +209,13 @@ class Animation : protected DeltaClock
 		// else, finishes normally
 		bool IsFinished(void);
 
+		// Return true if the animation is on it's first frame
+		// If it's reversed, first frame is End frame
+		bool IsOnStartFrame(void);
+		// Return true if the animation is on it's last frame
+		// If it's reversed, last frame is First frame
+		bool IsOnEndFrame(void);
 
-		//// Return true if the animation is on it's first frame
-		//// If it's reversed, first frame is End frame
-		//bool IsOnStartFrame(void);
-		//// Return true if the animation is on it's last frame
-		//// If it's reversed, last frame is First frame
-		//bool IsOnEndFrame(void);
 
 		// Returns true if the frame has changed since the last update and resets the boolean
 		bool ShouldUpdate(void);
@@ -220,18 +223,16 @@ class Animation : protected DeltaClock
 		// Returns true if the frame has changed since the last update
 		// Use ShouldUpdate() instead for optimisation purposes
 		bool ShouldUpdateFixed(void);
-		
-		// DEPRECATED, use ShouldUpdate() Instead !
-		// Returns true if the frame has changed since the last update and resets the boolean
-		bool ShouldUpdateOnce(void);
 
 	#pragma endregion
 
 	protected:
-		virtual void FrameChanged(void);
+		using DeltaClock::OnTimeChange;
+		// Virtual method called everytime the frame is changed
+		virtual void OnFrameChange(void);
 };
 
 
 #endif
 
-// AnimationHandler C++ || v2.1
+// AnimationHandler C++ || v2.2.2

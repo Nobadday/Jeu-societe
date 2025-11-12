@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _INC_SPRITE_ANIMATED_HPP
-#define _INC_SPRITE_ANIMATED_HPP
+#ifndef _INC_ANIMATION_SPRITEANIMATED_HPP
+#define _INC_ANIMATION_SPRITEANIMATED_HPP
 
 
 #include <SFML/Graphics.hpp>
@@ -20,6 +20,8 @@ class SpriteAnimated : public sf::Sprite, public AnimatedObject
 	public:
 		// Default constructor
 		SpriteAnimated(void);
+		// Copy constructor
+		SpriteAnimated(const SpriteAnimated& _copy);
 
 		// If keepAnimation true; set's animation to last anim
 		void setTexture(TextureAnimated& _texture, bool _keepAnimation = false);
@@ -27,7 +29,7 @@ class SpriteAnimated : public sf::Sprite, public AnimatedObject
 		sf::FloatRect getGlobalBounds(void) const;
 
 	protected:
-		virtual void FrameChanged(void);
+		virtual void OnFrameChange(void);
 
 	private:
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
@@ -35,4 +37,5 @@ class SpriteAnimated : public sf::Sprite, public AnimatedObject
 
 
 #endif
-// SpriteAnimated v1.1.2
+
+// SpriteAnimated v1.2.2

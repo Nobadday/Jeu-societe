@@ -7,10 +7,9 @@ Button::Button():SpriteAnimated()
 }
 
 
-
 void Button::FrameChanged(void)
 {
-	this->SpriteAnimated::FrameChanged();
+	this->SpriteAnimated::OnFrameChange();
 }
 
 void Button::PollEvent(sf::Event& _event)

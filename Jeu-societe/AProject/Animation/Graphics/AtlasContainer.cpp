@@ -16,7 +16,10 @@ m_frameTilt		(0, 0)
 
 void AtlasFrame::SetTextureRect(int _x, int _y, int _w, int _h)
 {
-	this->m_textureRect = { _x, _y, _w, _h };
+	this->m_textureRect.left = _x;
+	this->m_textureRect.top = _y;
+	this->m_textureRect.width = _w;
+	this->m_textureRect.height = _h;
 }
 
 
@@ -82,4 +85,4 @@ size_t AtlasContainer::GetAtlasFrameCount(void)
 }
 
 
-// AtlasContainer C++ || v0.2
+// AtlasContainer C++ || v1.0.2

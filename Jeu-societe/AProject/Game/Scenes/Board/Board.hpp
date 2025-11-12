@@ -1,12 +1,17 @@
 #ifndef _INC_BOARD_HPP
 #define _INC_BOARD_HPP
 
-#include "../../Scenes/Scene.hpp"
+#include "../../Common.hpp"
+//#include "../../Scenes/Scene.hpp"
 #include "../../Map/Tiled.h"
 #include "../../Utilities/Camera/Camera.hpp"
-#include "../../Utilities/MathPlus.hpp"
-#include "../../Utilities/Random.hpp"
+//#include "../../Utilities/MathPlus.hpp"
+//#include "../../Utilities/Random.hpp"
 #include "../../Animation/Animation/Animator.hpp"
+#include "../../Animation/Graphics/SpriteAnimated.hpp"
+#include "../../Animation/Graphics/AnimatedObject.hpp"
+#include "../../Animation/Graphics/TextureAnimated.hpp"
+#include "../../Animation/Graphics/TextureAtlas.hpp"
 
 #define TIME_WIN_DISPLAY 3.0f
 
@@ -29,9 +34,9 @@ class BaseGame : public SceneBase
 
 		struct Player
 		{
-			sf::Sprite sprite;
+			SpriteAnimated sprite;
 			
-			sf::Texture texture;
+			TextureAnimated texture;
 			
 			sf::Vector2f boardPosition;
 			

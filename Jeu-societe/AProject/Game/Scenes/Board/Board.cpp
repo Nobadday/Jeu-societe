@@ -17,9 +17,10 @@ void BaseGame::Load(void)
 	m_data->timeWin = TIME_WIN_DISPLAY;
 
 	// Initialisation des joueurs
-	for (size_t i = 0; i < m_data->players.size(); i++)
+	for (int i = 0; i < m_data->players.size(); i++)
 	{
-		m_data->players[i].texture.loadFromFile("Assets/Images/Placeholder.png");
+		m_data->players[i].texture.LoadFromFile("Assets/Sprites/Anim_final.anim", TextureAnimated::ANIMATION_ANIM);
+
 		m_data->players[i].sprite.setTexture(m_data->players[i].texture);
 
 		//sf::FloatRect spriteBounds = m_data->players[i].sprite.getLocalBounds();
@@ -107,6 +108,7 @@ void BaseGame::Update(float _deltaTime)
 
 	// Mise à jour de la logique du plateau
 	BoardStateUpdate(_deltaTime);
+	m_data->players[m_data->currentPlayerIndex].sprite.Update(_deltaTime);
 
 	//std::cout << "Current State: " << m_data->state << std::endl;
 
@@ -186,6 +188,11 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 	{
 	case START:
 		break;
+	case PLAY:
+		[[fallthrough]];
+	case WIN:
+		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
+		break;
 
 	case DEPLACEMENT:
 		[[fallthrough]];
@@ -198,6 +205,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 		m_data->animator.Restart();
 
 		m_data->players[m_data->currentPlayerIndex].currentCaseIndex = _newIndex;
+		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Right_Walk");
 	}
 	break;
 
@@ -227,12 +235,14 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 		sf::Vector2f endPos = m_data->posCase[m_data->players[winnerIndex].currentCaseIndex].GetPosition();
 		m_data->animator.SetGoTo(startPos, endPos);
 		m_data->animator.Restart();
+		m_data->players[winnerIndex].sprite.SetAnimation("Right_Walk");
 
 		// Animation du perdant
 		startPos = m_data->players[loserIndex].boardPosition;
 		endPos = m_data->posCase[m_data->players[loserIndex].currentCaseIndex].GetPosition();
 		m_data->animator2.SetGoTo(startPos, endPos);
 		m_data->animator2.Restart();
+		m_data->players[loserIndex].sprite.SetAnimation("Right_Walk");
 	}
 	break;
 
@@ -290,7 +300,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 			}
 			m_gameData->m_playerDataList = std::move(sortedPlayerData);
 
-			m_data->state = PLAY;
+			SetBoardState(PLAY, 0);
 		}
 	}
 	break;
@@ -316,7 +326,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 		for (int i = 0; i < m_data->players.size(); i++)
 			m_gameData->AddPlayerPlaying(i);
 
-		m_data->state = WIN;
+		SetBoardState(WIN);
 		m_data->camera.Reset(m_gameData->m_renderWindow->getDefaultView());
 		m_gameData->m_renderWindow->setView(m_data->camera);
 		ChangeScene(RandomDuel(), true);
@@ -327,7 +337,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 		m_gameData->AddPlayerPlaying(m_data->currentPlayerIndex);
 		m_gameData->AddPlayerPlaying(OnSameCase());
 
-		m_data->state = WIN;
+		SetBoardState(WIN);
 		m_data->camera.Reset(m_gameData->m_renderWindow->getDefaultView());
 		m_gameData->m_renderWindow->setView(m_data->camera);
 		ChangeScene(RandomDuel(), true);
@@ -356,7 +366,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 	break;
 
 	case CASE_ACTION_END:
-		m_data->state = PLAY;
+		SetBoardState(PLAY, 0);
 		m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
 		break;
 
