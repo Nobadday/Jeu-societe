@@ -13,7 +13,7 @@ class DeltaClock
 	public:
 		//Default constructor
 		DeltaClock(void);
-		DeltaClock(DeltaClock& _copy);
+		DeltaClock(const DeltaClock& _copy);
 		DeltaClock(float _currentTime, float _speed = 1.0f, bool _play = true);
 
 		// Synchronise this clock with another one
@@ -129,4 +129,4 @@ class Timer : public DeltaClock
 
 #endif
 
-// DeltaClock & Timer C++ || v1.3
+// DeltaClock & Timer C++ || v1.3.2

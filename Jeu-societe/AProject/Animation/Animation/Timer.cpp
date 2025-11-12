@@ -9,7 +9,7 @@ m_play			(true)
 {
 
 }
-DeltaClock::DeltaClock(DeltaClock& _copy) : 
+DeltaClock::DeltaClock(const DeltaClock& _copy) :
 m_timeElapsed	(_copy.m_timeElapsed),
 m_speed			(_copy.m_speed),
 m_play			(_copy.m_play)
@@ -291,4 +291,4 @@ float Timer::GetTimeTargetAccurate(void)
 #pragma endregion END Timer
 
 
-// Timer & DeltaClock C++ v1.3
+// Timer & DeltaClock C++ v1.3.2

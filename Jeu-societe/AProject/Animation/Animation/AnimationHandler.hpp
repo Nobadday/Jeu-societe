@@ -24,13 +24,14 @@ class Animation : private DeltaClock
 		//Default constructor
 		Animation(void);
 		// Copy constructor
-		Animation(Animation& _copy);
+		Animation(const Animation& _copy);
 
 		// Create a frame-based animation object
 		Animation(int _frameCount, float _framerate, bool _loop = false, float _speed = 1.0f);
 		// Create a time-based animation object
 		Animation(float _durationSeconds, float _framerate = ANIMATION_DEFAULT_FPS, bool _loop = false, float _speed = 1.0f);
-	
+		
+
 	#pragma endregion
 
 
@@ -234,4 +235,4 @@ class Animation : private DeltaClock
 
 #endif
 
-// AnimationHandler C++ || v2.2
+// AnimationHandler C++ || v2.2.2

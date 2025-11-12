@@ -20,6 +20,8 @@ class SpriteAnimated : public sf::Sprite, public AnimatedObject
 	public:
 		// Default constructor
 		SpriteAnimated(void);
+		// Copy constructor
+		SpriteAnimated(const SpriteAnimated& _copy);
 
 		// If keepAnimation true; set's animation to last anim
 		void setTexture(TextureAnimated& _texture, bool _keepAnimation = false);
@@ -36,4 +38,4 @@ class SpriteAnimated : public sf::Sprite, public AnimatedObject
 
 #endif
 
-// SpriteAnimated v1.2
+// SpriteAnimated v1.2.2

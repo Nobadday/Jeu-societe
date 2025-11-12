@@ -1,12 +1,19 @@
 #include "SpriteAnimated.hpp"
 
 
-SpriteAnimated::SpriteAnimated(void) : sf::Sprite(),
+SpriteAnimated::SpriteAnimated(void) : sf::Sprite(), AnimatedObject(),
 m_originCoefficient (0.0f,0.0f),
 m_animTransform		()
 {
 
 }
+SpriteAnimated::SpriteAnimated(const SpriteAnimated& _copy) : sf::Sprite(_copy), AnimatedObject(_copy),
+m_originCoefficient (_copy.m_originCoefficient),
+m_animTransform		(_copy.m_animTransform)
+{
+
+}
+
 
 void SpriteAnimated::OnFrameChange(void)
 {
@@ -92,4 +99,4 @@ void SpriteAnimated::draw(sf::RenderTarget& target, sf::RenderStates states) con
 	target.draw((sf::Sprite)(*this), states);
 }
 
-// SpriteAnimated v1.2
+// SpriteAnimated v1.2.2

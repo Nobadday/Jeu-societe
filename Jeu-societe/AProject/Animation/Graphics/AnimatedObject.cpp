@@ -1,12 +1,19 @@
 #include "AnimatedObject.hpp"
 
 
-AnimatedObject::AnimatedObject(void) :
+AnimatedObject::AnimatedObject(void) : AnimationFixed(),
 m_texture			(NULL),
 m_animationSelected (-1)
 {
 
 }
+AnimatedObject::AnimatedObject(const AnimatedObject& _copy) : AnimationFixed(_copy),
+m_texture			(_copy.m_texture),
+m_animationSelected (_copy.m_animationSelected)
+{
+
+}
+
 
 void AnimatedObject::SetAnimation(int _animationIndex, bool _resetAnimation)
 {
@@ -94,4 +101,4 @@ void AnimatedObject::OnAnimationChange(void)
 	this->OnFrameChange();
 }
 
-// AnimatedObject || v1.3
+// AnimatedObject || v1.3.2

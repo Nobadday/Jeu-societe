@@ -15,7 +15,7 @@ m_shouldUpdate	(false)
 {
 
 }
-Animation::Animation(Animation& _copy) : DeltaClock(_copy),
+Animation::Animation(const Animation& _copy) : DeltaClock(_copy),
 m_frame			(_copy.m_frame),
 m_frameCount	(_copy.m_frameCount),
 m_frameTime		(_copy.m_frameTime),
@@ -468,4 +468,4 @@ void Animation::OnFrameChange(void)
 
 #pragma endregion Animation Class End
 
-// AnimationHandler C++ || v2.2
+// AnimationHandler C++ || v2.2.2

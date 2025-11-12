@@ -36,6 +36,7 @@ int main(void)
 	font.loadFromFile("./Assets/Fonts/OMORI_GAME2.ttf");
 	
 	
+	
 	mainData.tp.setFont(font);
 	mainData.tp.setString("CLAP BONJOUR ! C'est Amixem, le sexy, je sais pas. Très long string now. évitezdefairedesphrasessansespaceslesenfants!");
 	mainData.tp.setCharacterSize(60u);
