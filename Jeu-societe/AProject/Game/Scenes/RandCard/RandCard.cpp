@@ -57,8 +57,8 @@ void RandCard::Load(void)
 {
 	m_data = new SceneData;
 
-	m_data->menuSystem = new MenuSystem();
-	m_data->menuSystem->MenuAdd("TestMenu", true);
+	//m_data->menuSystem = new MenuSystem();
+	//m_data->menuSystem->MenuAdd("TestMenu", true);
 
 
 	// Liaison au GameData passé dans m_keptData (comme dans RockPaperScissors)
@@ -66,27 +66,27 @@ void RandCard::Load(void)
 
 	//Debug names
 	std::string playersNames[4] = { "Yann", "Lorenzo", "Kyllian", "Damien" };
-	((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(0);
-	((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(1);
+	//m_data->gameData->m_gonnaPlayIndex.push_back(0);
+	//m_data->gameData->m_gonnaPlayIndex.push_back(1);
 
-	int nbOfPlayers = ((GameData*)this->m_keptData)->m_gonnaPlayIndex.size();
+	int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size();
 	std::cout << "nb of player " << nbOfPlayers << std::endl;
 
-	//Copy players playing from GameData
+	//Copy pnlayers playig from GameData
 	for (int i = 0; i < nbOfPlayers; ++i)
 	{
-		int playerId = (int)((GameData*)this->m_keptData)->m_gonnaPlayIndex.at(i);
+		int playerId = (int)m_data->gameData->m_gonnaPlayIndex.at(i);
 		m_data->players.push_back({ playersNames[i],  (short)playerId });
 	}
 
-	m_data->buttonTest = new Button();
-	
-	m_data->textanim = new TextureAnimated();
-	m_data->textanim->LoadFromFile("Assets/Sprites/ButtonPlaceHolder.anim", TextureAnimated::AnimationType::ANIMATION_ANIM);
-	m_data->buttonTest->setTexture(*m_data->textanim);
+	//m_data->buttonTest = new Button();
+	//
+	//m_data->textanim = new TextureAnimated();
+	//m_data->textanim->LoadFromFile("Assets/Sprites/ButtonPlaceHolder.anim", TextureAnimated::AnimationType::ANIMATION_ANIM);
+	//m_data->buttonTest->setTexture(*m_data->textanim);
 
-	m_data->menuSystem->MenuAddButton("TestMenu", "ButtonTest", m_data->buttonTest);
-	m_data->menuSystem->SetMenuHolder("TestMenu");
+	//m_data->menuSystem->MenuAddButton("TestMenu", "ButtonTest", m_data->buttonTest);
+	//m_data->menuSystem->SetMenuHolder("TestMenu");
 
 	//Font
 	m_data->font.loadFromFile("Assets/Fonts/Platinum Sign.ttf");
@@ -155,7 +155,7 @@ void RandCard::Unload(void)
 
 void RandCard::PollEvent(sf::Event& _event)
 {
-	m_data->menuSystem->PollEvent(_event);
+	//m_data->menuSystem->PollEvent(_event);
 
 	switch (m_data->gameState)
 	{
@@ -239,7 +239,7 @@ void RandCard::PollEvent(sf::Event& _event)
 void RandCard::Update(float _deltaTime)
 {
 	//m_data->buttonTest->Update(_deltaTime);
-	m_data->menuSystem->Update(_deltaTime);
+	//m_data->menuSystem->Update(_deltaTime);
 
 	switch (m_data->gameState) 
 	{
@@ -274,14 +274,14 @@ void RandCard::Update(float _deltaTime)
 
 
 						//Save data
-						int nbOfPlayers = m_data->gameData->m_gonnaPlayIndex.size();
+						int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size() - 1;
 						for (int i = 0 ; i < nbOfPlayers; i++)
 						{
 							//Print if you want check
 							//std::cout << "END, player rank" << i << " player : " << m_data->deadPlayers.at(i).id << " name :" << m_data->deadPlayers.at(i).name << std::endl;
-							m_data->gameData->AddPlayerWin(m_data->deadPlayers.at(i).id);
+							m_data->gameData->AddPlayerWin(m_data->deadPlayers.at(nbOfPlayers - i).id);
 						}
-						ChangeScene(1);
+						SceneBase::ChangeScene("Board", false);
 						return;
 					}					
 				}
@@ -309,7 +309,8 @@ void RandCard::Update(float _deltaTime)
 }
 void RandCard::Draw(sf::RenderWindow& _renderWindow)
 {
-	m_data->menuSystem->Draw(_renderWindow, sf::RenderStates::Default);
+	//
+	// m_data->menuSystem->Draw(_renderWindow, sf::RenderStates::Default);
 	_renderWindow.draw(m_data->text);
 	PrintCards(_renderWindow);
 }

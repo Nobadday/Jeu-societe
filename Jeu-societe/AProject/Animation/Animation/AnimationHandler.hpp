@@ -8,8 +8,8 @@
 #include "../Utilities/Math.hpp"
 
 
-//class Animation : protected DeltaClock
-class Animation : private DeltaClock
+class Animation : protected DeltaClock
+//class Animation : private DeltaClock
 {
 	private:
 		float m_frame;

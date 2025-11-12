@@ -8,6 +8,8 @@
 #include "../../Utilities/Random.hpp"
 #include "../../Animation/Animation/Animator.hpp"
 
+#define TIME_WIN_DISPLAY 3.0f
+
 class BaseGame : public SceneBase
 {
 	private:
@@ -19,8 +21,9 @@ class BaseGame : public SceneBase
 			DEPLACEMENT_ACTION,
 			CASE_ACTION,
 			BATTLE_ACTION,
+			DUEL,
 			WIN,
-			LOST,
+			WIN_DEPLACEMENT,
 			CASE_ACTION_END,
 		};
 
@@ -48,20 +51,35 @@ class BaseGame : public SceneBase
 			std::vector<Player> players;
 
 			anim::Animator animator;
+			anim::Animator animator2;
 
 			State state;
+
+			float timeWin;
 
 			int currentPlayerIndex;
 
 		};
 
+		GameData* m_gameData;
+
 		SceneData* m_data;
 
+	private:
 		void CaseAction();
 
 		void SetBoardState(State _state, int _newIndex = 0);
 		
-		void BoardStateUpdate();
+		void BoardStateUpdate(float _dt);
+
+		int OnSameCase();
+
+		std::string RandomDuel();
+
+		// Fonctions de gestion de la caméra
+		void UpdateCameraToShowAllPlayers();
+		
+		void UpdateCameraFollowPlayer(float _deltaTime);
 
 	public:
 		virtual void Load(void);

@@ -63,12 +63,12 @@ class RandCard : public SceneBase
 
 			int playerCountLeft = 0;
 
-			MenuSystem* menuSystem;
-			Button* buttonTest;
-			TextureAnimated* textanim;
-
-			//Button testButton;
-			//TextureAnimated& testTexture;
+			//Just to test MenuSystem
+			//We dont need for real game
+			// 
+			//MenuSystem* menuSystem;
+			//Button* buttonTest;
+			//TextureAnimated* textanim;
 		};
 		SceneData* m_data;
 		void PrintCards(sf::RenderWindow& _renderWindow);

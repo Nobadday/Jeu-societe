@@ -392,7 +392,7 @@ sf::Vector3f EulerFormQuaternion(const Quaternion& _q)
     // Pitch (Y-axis rotation)
     float sinp = 2 * (_q.w * _q.y - _q.z * _q.x);
     if (ABS(sinp) >= 1)
-        euler.y = RadiansToDegrees(copysignf(M_PI / 2, sinp)); // use 90 degrees if out of range
+        euler.y = RadiansToDegrees(copysignf(M_PI / 2.f, sinp)); // use 90 degrees if out of range
     else
         euler.y = RadiansToDegrees(asinf(sinp));
     // Yaw (Z-axis rotation)

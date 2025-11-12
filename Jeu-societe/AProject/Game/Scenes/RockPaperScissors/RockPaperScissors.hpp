@@ -24,7 +24,8 @@ class RockPaperScissors : public SceneBase
 		STATE_WARMUP,
 		STATE_PLAY,
 		STATE_PAUSE,
-		STATE_VICTORY
+		STATE_VICTORY,
+		STATE_EQUALITY
 	};
 
 	struct SceneData
@@ -32,8 +33,7 @@ class RockPaperScissors : public SceneBase
 		sf::Sprite spriteTab[6];                                                                                                                             
 		sf::Texture textureTab[6];
 
-		sf::Sprite player1ChoiceSprite;
-		sf::Sprite player2ChoiceSprite;
+		sf::Sprite playerChoiceSprite[2];
 		Timer timer;
 
 		sf::Text timerText;
@@ -55,6 +55,9 @@ public:
 	virtual void PollEvent(sf::Event& _event);
 	virtual void Update(float _deltaTime);
 	virtual void Draw(sf::RenderWindow& _renderWindow);
+
+private:
+	void UpdatePlayerChoiceTexture(void);
 };
 
 

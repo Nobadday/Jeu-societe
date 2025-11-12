@@ -6,26 +6,23 @@ void RussianRoulette::Load(void)
 {
 	m_data = new SceneData;
 
-	//DEBUG
-	const char* players[] = { "Player1", "Player2", "Player3", "Player4" };
-	int nbOfPlayers = sizeof(players) / sizeof(players[0]);
-
+	m_data->gameData = (GameData*)this->m_keptData;
 
 	//DEBUG
 	std::string playersNames[4] = { "Yann", "Lorenzo", "Kyllian", "Damien" };
-	((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(0);
-	((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(1);
+	//m_data->gameData->m_gonnaPlayIndex.push_back(0);
+	//m_data->gameData->m_gonnaPlayIndex.push_back(1);
 
-	int nbOfPlayers = ((GameData*)this->m_keptData)->m_gonnaPlayIndex.size();
+	int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size();
 
 	//Copy players playing from GameData
 	for (int i = 0; i < nbOfPlayers; ++i)
 	{
-		int playerId = (int)((GameData*)this->m_keptData)->m_gonnaPlayIndex.at(i);
+		int playerId = m_data->gameData->m_gonnaPlayIndex.at(i);
 		m_data->players.push_back({ playersNames[i],  (short)playerId, true });
 	}
 
-
+	m_data->currentPlayer = 0;
 
 	m_data->bullet = random::RandomInt(1, 6);
 	
@@ -33,8 +30,6 @@ void RussianRoulette::Load(void)
 	m_data->text.setFont(m_data->font);
 	m_data->text.setCharacterSize(15u);
 	m_data->text.setOrigin(0,0);
-
-
 
 	//m_data->gunTexAnim.LoadFromFile("Assets/Sprites/RussianRoulette/PiouMort.json", TextureAnimated::ANIMATION_ASEPRITE);
 	m_data->gunTexAnim.LoadFromFile("Assets/Sprites/RussianRoulette/Damien.texanim", TextureAnimated::ANIMATION_TEXANIM);
@@ -52,6 +47,8 @@ void RussianRoulette::Unload(void)
 
 void RussianRoulette::PollEvent(sf::Event& _event)
 {
+	int joyId = m_data->gameData->m_playerDataList[m_data->players[m_data->currentPlayer].id].m_joystickId;
+
 	switch (m_data->gameState)
 	{
 		case WAITING:
@@ -66,25 +63,27 @@ void RussianRoulette::PollEvent(sf::Event& _event)
 				case sf::Event::JoystickButtonPressed:
 
 					//Check for each player, if it's their turn
-					for (int i = 0; i < m_data->players.size(); i++)
-					{
-						if (m_data->currentPlayer == i)
+					/*for (int i = 0; i < m_data->players.size(); i++)
+					{*/
+					
+
+						if (joyId == _event.joystickButton.joystickId)
 						{
 							//If it's their turn, check for input
-							if (_event.joystickButton.joystickId == m_data->players[i].id)
-							{
+							//if (_event.joystickButton.joystickId == m_data->players[i].id)
+							//{
 								m_data->text.setString("");
 								int randomNb = random::RandomInt(1,6);
 
 								//DEBUG
 								std::cout << "nbRANDOM = " << randomNb << " bullet = " << m_data->bullet << std::endl;
-								std::cout << "player :  = " << m_data->players[i].name << std::endl;
+								std::cout << "player :  = " << m_data->players[m_data->currentPlayer].name << std::endl;
 
 								if (randomNb == m_data->bullet)
 								{
 									//DEBUG
-									std::cout << "player : " << m_data->players[i].name << " killed" << std::endl;
-									m_data->players[i].isAlive = false;
+									std::cout << "player : " << m_data->players[m_data->currentPlayer].name << " killed" << std::endl;
+									m_data->players[m_data->currentPlayer].isAlive = false;
 
 
 									//Launch sound
@@ -101,9 +100,9 @@ void RussianRoulette::PollEvent(sf::Event& _event)
 									m_data->gunSprAnim.SetAnimation("Left_Walk");
 								}
 								m_data->gameState = SPINNING;
-							}
+							//}
 						}
-					}
+					/*}*/
 					break;
 				default:
 					break;
@@ -119,6 +118,7 @@ void RussianRoulette::PollEvent(sf::Event& _event)
 
 	}
 }
+
 void RussianRoulette::Update(float _deltaTime)
 {
 	switch (m_data->gameState)
@@ -146,6 +146,39 @@ void RussianRoulette::Update(float _deltaTime)
 
 					std::cout << "Game Over ! Player " << m_data->players[m_data->currentPlayer].name << " is dead !" << std::endl;
 					m_data->deadPlayers.push_back(m_data->players[m_data->currentPlayer]);
+					
+
+					//DEBUG juste pour faire fonctionner
+					//Va falloir que j'améliore car pas beau
+					// 
+					//Add next player to dead player, its winer
+					if (m_data->currentPlayer + 1 < m_data->players.size())
+					{
+						m_data->currentPlayer++;
+					}
+					else
+					{
+						m_data->currentPlayer = 0;
+					}
+
+					m_data->deadPlayers.push_back(m_data->players[m_data->currentPlayer]);
+
+
+
+
+
+					//Save data
+					int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size() - 1;
+					std::cout << "nb player : " << nbOfPlayers << std::endl;
+
+					for (int i = 0; i < nbOfPlayers; i++)
+					{
+
+						m_data->gameData->AddPlayerWin(m_data->deadPlayers.at(nbOfPlayers - i).id);
+					}
+
+
+
 
 					//Load bullet for next game, its not useful
 					m_data->bullet = random::RandomInt(1, 6);
@@ -172,16 +205,14 @@ void RussianRoulette::Update(float _deltaTime)
 	case END:
 
 		std::cout << "FINI, CHANGEMENT De SCENE ICI" << std::endl;
-		SceneBase::ChangeScene("RandCard", false);
+		SceneBase::ChangeScene("Board", false);
 		break;
-
 	}
-
-
-
 }
 void RussianRoulette::Draw(sf::RenderWindow& _renderWindow)
 {
+
+
 	_renderWindow.draw(m_data->gunSprAnim);
 	_renderWindow.draw(m_data->text);
 }

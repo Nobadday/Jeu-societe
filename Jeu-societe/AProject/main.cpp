@@ -1,15 +1,17 @@
-#include "./Common.hpp"
+#include "Common.hpp"
 
-#include "./Game/Scenes/Board.hpp"
+#include "Game/Scenes/Board/Board.hpp"
 
-#include "./Game/scenes/RockPaperScissors.hpp"
+// passage de données entre les scènes fait ici 
+#include "./Game/scenes/RockPaperScissors/RockPaperScissors.hpp"
+#include "Game/Scenes/ArmWrestling/ArmWrestling.hpp"
+#include "Game/Scenes/Basket/Basket.hpp"
 
+// données du jeu a faire passer entre les scènes ici
 #include "./Game/Scenes/RussianRoulette/RussianRoulette.hpp"
 #include "./Game/Scenes/RandCard/RandCard.hpp"
 
-#include "./Game/Scenes/ArmWrestling.hpp"
-#include "./Game/Scenes/Basket.hpp"
-#include "./Game/Scenes/FlagGame.hpp"
+#include "Game/Scenes/FlagGame/FlagGame.hpp"
 
 
 typedef struct MainData
@@ -18,9 +20,18 @@ typedef struct MainData
 	sf::Clock clock;
 	SceneHandler scenes;
 
+	RussianRoulette sceneRussianRoulette;
+	RandCard randCard;
+
+	SceneBase* armWrestlingScene;
+	SceneBase* basketScene;
+	SceneBase* flagGameScene;
+
 	GameData gameData;
 } MainData;
 
+
+Binds* binds = nullptr;
 
 int main(void);
 
@@ -34,8 +45,20 @@ void Draw(MainData& _mainData);
 int main(void)
 {
 	random::SetSeedPID();
-	
+
+	StringFormat::Load();
+	binds = new Binds();
+
 	MainData mainData;
+
+	for (short i = 0; i < 2; i++)
+	{
+		PlayerData newPlayer;
+		newPlayer.m_joystickId = i;
+		mainData.gameData.m_playerDataList.push_back(newPlayer);
+	}
+
+
 	MainDataLoad(mainData);
 
 
@@ -53,6 +76,11 @@ int main(void)
 		}
 	}
 
+
+	StringFormat::Unload();
+	delete binds;
+	binds = nullptr;
+	
 	return EXIT_SUCCESS;
 }
 
@@ -61,20 +89,23 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "SFML", sf::Style::Close);
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
 
-	_mainData.scenes.SetTransferedData(&_mainData.gameData);
-
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
-	
-	_mainData.scenes.AddScene<RandCard>("RandCard");
-	_mainData.scenes.AddScene<BaseGame>("Board");
-	_mainData.scenes.AddScene<RussianRoulette>("RussianRoulette");
-	_mainData.scenes.AddScene<FlagGame>("FlagGame");
-	_mainData.scenes.AddScene<ArmWrestling>("ArmWrestling");
-	_mainData.scenes.AddScene<Basket>("Basket");
-	_mainData.scenes.AddScene<RockPaperScissors>("RockPaperScissors");
 
 	
+
+
+	_mainData.scenes.SetTransferedData(&_mainData.gameData);
+
+	_mainData.scenes.AddScene<BaseGame>("Board");
+	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
+	_mainData.scenes.AddScene<ArmWrestling>("ArmWrestling");
+	_mainData.scenes.AddScene<Basket>("Basket");
+	_mainData.scenes.AddScene<FlagGame>("FlagGame");
+	_mainData.scenes.AddScene<RandCard>("RandCard");
+	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
+
+	_mainData.scenes.SelectScene("Board", true);
 
 	_mainData.clock.restart();
 }
@@ -96,7 +127,6 @@ void PollEvent(MainData& _mainData)
 			default:
 				_mainData.scenes.PollEvent(event);
 				break;
-
 		}
 	}
 }
