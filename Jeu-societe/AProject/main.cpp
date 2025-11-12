@@ -96,6 +96,7 @@ void PollEvent(MainData& _mainData)
 				return;
 				break;
 			case sf::Event::KeyPressed:
+				_mainData.renderWindow.ToggleFullscreen();
 				break;
 
 			default:
@@ -118,7 +119,6 @@ void Draw(MainData& _mainData)
 {
 	_mainData.renderWindow.clear(sf::Color::Black);
 	
-	_mainData.renderWindow.setView(_mainData.cam);
 	sf::RectangleShape test(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
 	test.setFillColor(sf::Color(51, 215, 110));
 	_mainData.renderWindow.draw(test);

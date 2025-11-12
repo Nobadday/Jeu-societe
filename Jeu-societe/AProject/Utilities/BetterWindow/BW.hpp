@@ -11,19 +11,6 @@ namespace sfMod
 
 class RenderWindow : public sf::RenderWindow
 {
-	private:
-		bool m_isFullscreen;
-		sf::Uint32 m_baseStyle;
-		sf::VideoMode m_baseVideoMode;
-		sf::Vector2f m_aspectRatio;
-		sf::Image m_icon;
-		sf::View* m_view;
-
-		sf::Vector2u m_renderSize;
-
-		sf::VertexArray m_borders;
-		sf::Color m_borderColor;
-
 	public:
 		enum FullscreenMode
 		{
@@ -32,10 +19,30 @@ class RenderWindow : public sf::RenderWindow
 		};
 
 
+
+	private:
+		bool m_isFullscreen;
+		FullscreenMode m_fullscreenMode;
+		sf::Uint32 m_baseStyle;
+		sf::VideoMode m_baseVideoMode;
+		sf::Vector2f m_aspectRatio;
+		sf::Image m_icon;
+		sf::View* m_view;
+
+		sf::Vector2u m_renderSize;
+
+
+		sf::VertexArray m_borders;
+		sf::Color m_borderColor;
+
+
 	public:
 		RenderWindow(void);
 
+		
 		//virtual void create(sf::VideoMode mode, const sf::String& title, sf::Uint32 style = sf::Style::Default);
+
+
 
 		void SetFullscreenMode(FullscreenMode _mode);
 		void SetFullscreen(bool _condition);
@@ -51,6 +58,7 @@ class RenderWindow : public sf::RenderWindow
 		void capture(sf::Texture& _texture);
 		void capture(sf::Image& _image);
 		bool Screenshot(const sf::String& _fileName);
+
 
 		void ResetView(void);
 
