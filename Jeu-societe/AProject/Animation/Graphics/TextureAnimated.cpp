@@ -63,8 +63,8 @@ bool TextureAnimated::LoadFromFile(std::fstream& _file, const std::string& _dirP
 				AnimationProperties& newAnim = this->m_animations[i];
 				newAnim.m_name = object["animationName"];
 				newAnim.m_atlasName = object.value("texName", newAnim.m_name);
-				newAnim.m_loop = object.value("loop", ANIMATION_DEFAULT_FPS);
-				newAnim.m_framerate = object.value("fps", ANIMATION_DEFAULT_LOOP);
+				newAnim.m_loop = object.value("loop", ANIMATION_DEFAULT_LOOP);
+				newAnim.m_framerate = object.value("fps", ANIMATION_DEFAULT_FPS);
 
 				newAnim.m_atlasIndex = this->m_textureAtlas.FindFrameGroupIndex(newAnim.m_atlasName);
 				newAnim.m_frameCount = this->m_textureAtlas.FindFrameGroupLenght(newAnim.m_atlasName, newAnim.m_atlasIndex);
@@ -116,7 +116,7 @@ bool TextureAnimated::LoadFromFile(std::fstream& _file, const std::string& _dirP
 
 				AnimationProperties& newAnim = this->m_animations[i];
 				newAnim.m_name = object["name"];
-				newAnim.m_loop = object.value("loop", false);
+				newAnim.m_loop = object.value("loop", ANIMATION_DEFAULT_LOOP);
 				newAnim.m_atlasIndex = object["from"];
 				newAnim.m_frameCount = (object["to"] - newAnim.m_atlasIndex) + 1;
 				
@@ -288,4 +288,4 @@ size_t TextureAnimated::GetAnimationCount(void)
 #pragma endregion
 
 
-// Texture Animated v1.2.2
+// Texture Animated v1.2.3
