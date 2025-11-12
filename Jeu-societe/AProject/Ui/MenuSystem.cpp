@@ -304,6 +304,7 @@ void MenuSystem::MenuAddButton(std::string _menuName, std::string _buttonName, B
 	}
 }
 
+
 void MenuSystem::MenuDeleteButton(std::string _menuName, std::string _buttonName)
 {
 

@@ -1,0 +1,73 @@
+#include "Menu.hpp"
+
+
+
+
+Button* CreateButton(std::string _texturePath, TextureAnimated::AnimationType _textureType)
+{
+	return new Button();
+}
+
+void Menu::LoadUI(void)
+{
+	m_data->menuSystem = new MenuSystem();
+
+
+	m_data->ui.playBtn = new Button();
+	m_data->ui.playBtnTexAnim.LoadFromFile("Assets/Sprites/Menu/PlayButton.anim", TextureAnimated::AnimationType::ANIMATION_ANIM);
+	m_data->ui.settingsBtn = new Button();
+	m_data->ui.settingsBtnTexAnim.LoadFromFile("Assets/Sprites/Menu/PlayButton.anim", TextureAnimated::AnimationType::ANIMATION_ANIM);
+	m_data->ui.leaveBtn = new Button();
+	m_data->ui.leaveBtnTexAnim.LoadFromFile("Assets/Sprites/Menu/PlayButton.anim", TextureAnimated::AnimationType::ANIMATION_ANIM);
+		
+
+
+
+
+	m_data->menuSystem->MenuAddButton("MainMenu", "Play", m_data->ui.playBtn);
+	m_data->menuSystem->MenuAddButton("MainMenu", "Settings", m_data->ui.settingsBtn);
+	m_data->menuSystem->MenuAddButton("MainMenu", "Leave", m_data->ui.leaveBtn);
+
+}
+
+void Menu::Load(void)
+{
+	m_data = new SceneData;
+	m_data->gameData = (GameData*)this->m_keptData;
+
+
+
+
+
+
+	TextureAnimated* playBtnAnim = new TextureAnimated();
+	playBtnAnim->LoadFromFile("Assets/Sprites/PlayButton.anim", TextureAnimated::AnimationType::ANIMATION_ANIM);
+	//playBtnAnim->LoadFr("Assets/Sprites/PlayButton.anim", TextureAnimated::AnimationType::ANIMATION_ANIM);
+
+
+//m_data->buttonTest = new Button();
+//
+//m_data->textanim = new TextureAnimated();
+//m_data->textanim->LoadFromFile("Assets/Sprites/ButtonPlaceHolder.anim", TextureAnimated::AnimationType::ANIMATION_ANIM);
+//m_data->buttonTest->setTexture(*m_data->textanim);
+
+
+
+}
+void Menu::Unload(void)
+{
+
+}
+
+void Menu::PollEvent(sf::Event& _event)
+{
+
+}
+void Menu::Update(float _deltaTime)
+{
+
+}
+void Menu::Draw(sf::RenderWindow& _renderWindow)
+{
+
+}
