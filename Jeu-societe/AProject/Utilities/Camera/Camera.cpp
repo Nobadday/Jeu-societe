@@ -189,7 +189,7 @@ const sf::View& Camera::GetView(void)
 		{
 			// Fit Size
 			float widthRatio = targetSize.x / this->m_limits.width;
-			float heightRatio = targetSize.x / this->m_limits.width;
+			float heightRatio = targetSize.y / this->m_limits.height;
 			if (widthRatio > 1.0f || heightRatio > 1.0f)
 			{
 				if (widthRatio > heightRatio)

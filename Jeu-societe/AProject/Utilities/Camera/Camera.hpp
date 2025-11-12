@@ -1,12 +1,12 @@
 #pragma once
-
 #ifndef _INC_CAMERA_HPP
 #define _INC_CAMERA_HPP
 
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 
-// 2D Camera with sf::View
+
+// 2D Camera using an sf::View
 class Camera
 {
 	private:
@@ -47,7 +47,7 @@ class Camera
 		
 		// Enables or not limitations
 		void SetLimitationCondition(bool _condition);
-		// Enable ON/OFF limitations
+		// Toggles ON or OFF limitations
 		void ToggleLimitations(void);
 		
 		void SetViewport(const sf::FloatRect& _viewport);
