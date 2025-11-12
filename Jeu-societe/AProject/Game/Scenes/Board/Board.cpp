@@ -19,7 +19,7 @@ void BaseGame::Load(void)
 	// Initialisation des joueurs
 	for (int i = 0; i < m_data->players.size(); i++)
 	{
-		m_data->players[i].texture.LoadFromFile("Assets/Sprites/Anim_final.json", TextureAtlas::PARSE_JSON_ARRAY);
+		m_data->players[i].texture.LoadFromFile("Assets/Sprites/Anim_final.anim", TextureAnimated::ANIMATION_ANIM);
 
 		m_data->players[i].sprite.setTexture(m_data->players[i].texture);
 
@@ -108,6 +108,7 @@ void BaseGame::Update(float _deltaTime)
 
 	// Mise à jour de la logique du plateau
 	BoardStateUpdate(_deltaTime);
+	m_data->players[m_data->currentPlayerIndex].sprite.Update(_deltaTime);
 
 	//std::cout << "Current State: " << m_data->state << std::endl;
 
@@ -187,6 +188,9 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 	{
 	case START:
 		break;
+	case PLAY:
+		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
+		break;
 
 	case DEPLACEMENT:
 		[[fallthrough]];
@@ -199,6 +203,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 		m_data->animator.Restart();
 
 		m_data->players[m_data->currentPlayerIndex].currentCaseIndex = _newIndex;
+		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Right_Walk");
 	}
 	break;
 
