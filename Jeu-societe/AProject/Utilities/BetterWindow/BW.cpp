@@ -8,10 +8,17 @@ m_isFullscreen	(false),
 m_fullscreenMode(BORDERLESS),
 m_baseStyle		(0),
 m_baseVideoMode	(0, 0),
-m_aspectRatio	(16, 9),
-m_view			(NULL)
+m_aspectRatio	(16, 9)
 {
 
+}
+
+void RenderWindow::createCooler(sf::VideoMode _mode, const sf::String& _title, sf::Uint32 _style)
+{
+	if (_style == sf::Style::Fullscreen)
+	{
+		
+	}
 }
 
 
@@ -112,6 +119,7 @@ void RenderWindow::onCreate(void)
 }
 void RenderWindow::onResize(void)
 {
+	printf("Resize called\n");
 	// Get the new view from the RenderTexture
 	sf::View newView = this->getView();
 	
@@ -144,8 +152,12 @@ void RenderWindow::onResize(void)
 
 void RenderWindow::ApplyIcon(void)
 {
-	sf::Vector2u size = this->m_icon.getSize();
-	this->sf::RenderWindow::setIcon(size.x, size.y, this->m_icon.getPixelsPtr());
+	const sf::Uint8* pixels = this->m_icon.getPixelsPtr();
+	if (pixels != NULL)
+	{
+		sf::Vector2u size = this->m_icon.getSize();
+		this->sf::RenderWindow::setIcon(size.x, size.y, pixels);
+	}
 }
 
 }
