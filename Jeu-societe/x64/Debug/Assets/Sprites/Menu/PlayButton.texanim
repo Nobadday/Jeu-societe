@@ -1,0 +1,12 @@
+{
+    "filePath":"PlayButton.texsheet",
+    "fileType":0,
+	"animations": [
+        {
+            "animationName":"ON",
+            "texName":"ON",
+            "loop": true,
+            "fps": 10
+        }
+    ]
+}

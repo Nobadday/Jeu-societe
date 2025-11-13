@@ -70,6 +70,7 @@ private:
 	};
 	SceneData* m_data;
 	void LoadUI(void);
+	void CheckButtons(void);
 
 public:
 	virtual void Load(void);

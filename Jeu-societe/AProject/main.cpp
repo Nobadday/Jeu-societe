@@ -12,6 +12,7 @@
 #include "./Game/Scenes/RandCard/RandCard.hpp"
 
 #include "Game/Scenes/FlagGame/FlagGame.hpp"
+#include "Game/Scenes/Menu/Menu.hpp"
 
 
 typedef struct MainData
@@ -104,8 +105,10 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<FlagGame>("FlagGame");
 	_mainData.scenes.AddScene<RandCard>("RandCard");
 	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
+	_mainData.scenes.AddScene<Menu>("Menu");
 
-	_mainData.scenes.SelectScene("Board", true);
+	//_mainData.scenes.SelectScene("Board", true);
+	_mainData.scenes.SelectScene("Menu", true);
 
 	_mainData.clock.restart();
 }

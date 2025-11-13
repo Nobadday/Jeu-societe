@@ -2,7 +2,6 @@
 
 
 
-
 Button* CreateButton(std::string _texturePath, TextureAnimated::AnimationType _textureType)
 {
 	return new Button();
@@ -11,7 +10,6 @@ Button* CreateButton(std::string _texturePath, TextureAnimated::AnimationType _t
 void Menu::LoadUI(void)
 {
 	m_data->menuSystem = new MenuSystem();
-
 
 	m_data->ui.playBtn = new Button();
 	m_data->ui.playBtnTexAnim.LoadFromFile("Assets/Sprites/Menu/PlayButton.anim", TextureAnimated::AnimationType::ANIMATION_ANIM);
@@ -27,6 +25,16 @@ void Menu::LoadUI(void)
 	m_data->menuSystem->MenuAddButton("MainMenu", "Play", m_data->ui.playBtn);
 	m_data->menuSystem->MenuAddButton("MainMenu", "Settings", m_data->ui.settingsBtn);
 	m_data->menuSystem->MenuAddButton("MainMenu", "Leave", m_data->ui.leaveBtn);
+
+}
+
+void Menu::CheckButtons(void)
+{
+	if (m_data->menuSystem->GetButton("Play").HasBeenClicked())
+	{
+		std::cout << "Eheh you click on play" << std::endl;
+
+	}
 
 }
 
@@ -61,13 +69,16 @@ void Menu::Unload(void)
 
 void Menu::PollEvent(sf::Event& _event)
 {
+	m_data->menuSystem->PollEvent(_event);
 
 }
 void Menu::Update(float _deltaTime)
 {
-
+	CheckButtons();
+	m_data->menuSystem->Update(_deltaTime);
 }
 void Menu::Draw(sf::RenderWindow& _renderWindow)
 {
+	m_data->menuSystem->Draw(_renderWindow, sf::RenderStates::Default);
 
 }
