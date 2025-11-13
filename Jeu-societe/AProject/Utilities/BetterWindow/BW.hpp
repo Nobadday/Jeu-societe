@@ -23,46 +23,49 @@ class RenderWindow : public sf::RenderWindow
 			PAN
 		};
 
-		// WindowMode
-		enum FullscreenMode
+
+		enum WindowMode
 		{
+			// Windowed mode
 			WINDOWED,
+			// Fullscreen mode
+			FULLSCREEN,
 			// Borderless fullscreen
-			BORDERLESS,
-			// Fullscreen
-			FULLSCREEN
+			BORDERLESS
 		};
 
 	private:
-		bool m_isFullscreen;
-		FullscreenMode m_windowMode;
+		WindowMode m_windowMode;
 
 		// Resolution & BPP
 		sf::VideoMode m_baseVideoMode;
 		
-		sf::Uint32 m_baseStyle;
 
 		sf::Vector2u m_renderSize;
 
-		// Window Bar stuff
+		// Window
 
 		sf::Image m_icon;
 		sf::String m_title;
 		
+		// Window Mode only
+
+		sf::Uint32 m_windowModeStyle;
+		sf::Vector2i m_windowModePosition;
 		sf::Vector2u m_windowModeSize;
 
 		// View & display mode
 
 		sf::View m_userView;
-		sf::FloatRect m_displayViewport;
 
 		DisplayMode m_displayMode;
+		sf::FloatRect m_displayViewport;
+
+		// Graphics
 
 		sf::VertexArray m_borders;
 		sf::Color m_borderColor;
 		bool m_bordersNeedUpdate;
-
-		// WindowMode
 
 	public:
 		RenderWindow(void);
@@ -71,21 +74,23 @@ class RenderWindow : public sf::RenderWindow
 		//virtual void create(sf::VideoMode mode, const sf::String& title, sf::Uint32 style = sf::Style::Default);
 		
 
-		// Mode = resolution/BPP
+		// Mode = resolution/BPP, style
+		// style is the default style only in windowed mode
 		virtual void createCooler(sf::VideoMode _mode, const sf::String& _title, sf::Uint32 _style = sf::Style::Default);
+		//virtual void create2(sf::VideoMode _mode, const sf::String& _title, sf::Uint32 _style = sf::Style::Default);
 
+		void ReCreateExistingWindow(void);
 
 		// Open the window, if it's already opened, closes it and reopens it
 		virtual void ReOpen(void);
 
-		// Opens the window
+		// Opens the window if it's closed
 		virtual void Open(void);
-		
-		
 
-		//void realCreate(FullscreenMode _mode);
 
-		void SetFullscreenMode(FullscreenMode _mode);
+		void SetWindowMode(WindowMode _mode);
+
+		void SetFullscreenMode(WindowMode _mode);
 		void SetFullscreen(bool _condition);
 		void ToggleFullscreen(void);
 		
@@ -123,7 +128,7 @@ class RenderWindow : public sf::RenderWindow
 
 	private:
 		void ApplyIcon(void);
-
+		
 		
 };
 

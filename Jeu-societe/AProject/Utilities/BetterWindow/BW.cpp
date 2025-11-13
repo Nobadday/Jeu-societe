@@ -4,25 +4,45 @@ namespace sfMod
 {
 
 RenderWindow::RenderWindow(void) : sf::RenderWindow(),
-m_isFullscreen	(false),
-m_windowMode(BORDERLESS),
-m_baseStyle		(0),
-m_baseVideoMode	(0, 0)
+m_baseVideoMode		(0, 0),
+m_windowMode		(WINDOWED),
+
+m_icon				(),
+m_title				(""),
+
+m_windowModeStyle	(sf::Style::Default),
+m_windowModePosition(0, 0),
+m_windowModeSize	(500, 400),
+
+m_userView			(),
+m_displayMode		(LETTERBOX),
+m_displayViewport	(0,0,1,1)
+
 {
 
 }
 
 void RenderWindow::createCooler(sf::VideoMode _mode, const sf::String& _title, sf::Uint32 _style)
 {
+	this->m_title = _title;
+	this->m_baseVideoMode = _mode;
 	if (_style == sf::Style::Fullscreen)
 	{
-		this->m_baseVideoMode = _mode;
-		
+		this->m_windowModeStyle = sf::Style::Default;
+		this->m_windowMode = WindowMode::FULLSCREEN;
 	}
 	else
 	{
-		this->m_baseVideoMode = _mode;
+		this->m_windowModeStyle = _style;
+		
+	}
+}
 
+void RenderWindow::ReCreateExistingWindow(void)
+{
+	if (this->isOpen())
+	{
+		this->ReOpen();
 	}
 }
 
@@ -30,19 +50,20 @@ void RenderWindow::ReOpen(void)
 {
 	switch (this->m_windowMode)
 	{
-		case FullscreenMode::FULLSCREEN:
+		case WindowMode::FULLSCREEN:
 			this->create(sf::VideoMode::getFullscreenModes()[0], this->m_title, sf::Style::Fullscreen);
 			break;
 
-		case FullscreenMode::BORDERLESS:
+		case WindowMode::BORDERLESS:
 			this->create(sf::VideoMode::getDesktopMode(), this->m_title, sf::Style::None);
 			break;
 
-		case FullscreenMode::WINDOWED:
+		case WindowMode::WINDOWED:
 		default:
-			this->create(sf::VideoMode(this->m_windowModeSize.x, this->m_windowModeSize.y, this->m_baseVideoMode.bitsPerPixel), this->m_title, this->m_baseStyle);
+			this->create(sf::VideoMode(this->m_windowModeSize.x, this->m_windowModeSize.y, this->m_baseVideoMode.bitsPerPixel), this->m_title, this->m_windowModeStyle);
 			break;
 	}
+	ApplyIcon();
 }
 
 void RenderWindow::Open(void)
@@ -54,54 +75,35 @@ void RenderWindow::Open(void)
 }
 
 
-void RenderWindow::SetFullscreen(bool _condition)
+void RenderWindow::SetWindowMode(WindowMode _mode)
 {
-	if (this->m_isFullscreen != _condition)
+	if (this->m_windowMode != _mode)
 	{
-		if (_condition)
+		if (this->isOpen() && (this->m_windowMode == WindowMode::WINDOWED))
 		{
-			const std::vector<sf::VideoMode>& vModes = sf::VideoMode::getFullscreenModes();
-
-			int valid = -1;
-			for (int i = 0; i < vModes.size(); i++)
-			{
-				const sf::VideoMode& mode = vModes[i];
-				if ((valid != -1) && mode.isValid())
-				{
-					valid = i;
-				}
-			}
-			if (valid == -1)
-			{
-				valid = 0;
-			}
-
-			const sf::VideoMode& modeTMP = sf::VideoMode::getDesktopMode();
-			
-			switch (this->m_windowMode)
-			{
-				case FullscreenMode::BORDERLESS:
-					this->create(modeTMP, "Uh oh!", sf::Style::None);
-					break;
-				case FullscreenMode::FULLSCREEN:
-					this->create(vModes[valid], "Uh oh!", sf::Style::Fullscreen);
-					break;
-			}
-			
-			
+			// Remember the old window...
+			this->m_windowModePosition = this->getPosition();
+			this->m_windowModeSize = this->getSize();
 		}
-		else
-		{
-			this->create(sf::VideoMode(200,300), "fuck you", sf::Style::Default);
-		}
-
-		this->m_isFullscreen = _condition;
+		this->m_windowMode = _mode;
+		this->ReOpen();
 	}
 }
 
+void RenderWindow::SetFullscreenMode(WindowMode _mode)
+{
+}
+void RenderWindow::SetFullscreen(bool _condition)
+{
+	if (this->IsFullscreen() != _condition)
+	{
+		this->m_windowMode = (WindowMode)(_condition);
+		this->ReOpen();
+	}
+}
 void RenderWindow::ToggleFullscreen(void)
 {
-	this->SetFullscreen(!this->m_isFullscreen);
+	this->SetFullscreen(!this->IsFullscreen());
 }
 
 void RenderWindow::setIcon(const sf::Image& _image)
@@ -120,7 +122,8 @@ void RenderWindow::capture(sf::Texture& _texture)
 {
 	const sf::Vector2u size = this->getSize();
 	_texture.create(size.x, size.y);
-	_texture.update(*this);
+	sf::Vector2u renderSize = this->GetRenderedSize();
+	_texture.update(*this, renderSize.x, renderSize.y);
 }
 void RenderWindow::capture(sf::Image& _image)
 {
@@ -144,7 +147,7 @@ void RenderWindow::ResetView(void)
 
 bool RenderWindow::IsFullscreen(void)
 {
-	return this->m_windowMode != FullscreenMode::WINDOWED;
+	return this->m_windowMode != WindowMode::WINDOWED;
 }
 
 sf::Vector2u RenderWindow::GetRenderedSize(void)

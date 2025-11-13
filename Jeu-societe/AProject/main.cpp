@@ -95,10 +95,25 @@ void PollEvent(MainData& _mainData)
 				_mainData.renderWindow.close();
 				return;
 				break;
-			case sf::Event::KeyPressed:
-				_mainData.renderWindow.ToggleFullscreen();
-				break;
 
+			case sf::Event::KeyPressed:
+				switch (event.key.code)
+				{
+					case sf::Keyboard::Enter:
+						if (!sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt))
+						{
+							break;
+						}
+						[[fallthrough]];
+					case sf::Keyboard::F11:
+						_mainData.renderWindow.ToggleFullscreen();
+						break;
+
+					default:
+						break;
+				}
+
+				[[fallthrough]];
 			default:
 				_mainData.scenes.PollEvent(event);
 				break;
