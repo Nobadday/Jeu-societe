@@ -27,18 +27,20 @@ class RenderWindow : public sf::RenderWindow
 		enum FullscreenMode
 		{
 			WINDOWED,
+			// Borderless fullscreen
 			BORDERLESS,
+			// Fullscreen
 			FULLSCREEN
 		};
 
 	private:
 		bool m_isFullscreen;
-		FullscreenMode m_fullscreenMode;
+		FullscreenMode m_windowMode;
 
-		sf::Uint32 m_baseStyle;
-		// Resolution
+		// Resolution & BPP
 		sf::VideoMode m_baseVideoMode;
-		sf::Vector2f m_aspectRatio;
+		
+		sf::Uint32 m_baseStyle;
 
 		sf::Vector2u m_renderSize;
 
@@ -47,15 +49,18 @@ class RenderWindow : public sf::RenderWindow
 		sf::Image m_icon;
 		sf::String m_title;
 		
+		sf::Vector2u m_windowModeSize;
+
 		// View & display mode
 
 		sf::View m_userView;
 		sf::FloatRect m_displayViewport;
-		DisplayMode m_displayMode;
 
+		DisplayMode m_displayMode;
 
 		sf::VertexArray m_borders;
 		sf::Color m_borderColor;
+		bool m_bordersNeedUpdate;
 
 		// WindowMode
 
@@ -64,8 +69,21 @@ class RenderWindow : public sf::RenderWindow
 
 		
 		//virtual void create(sf::VideoMode mode, const sf::String& title, sf::Uint32 style = sf::Style::Default);
+		
+
+		// Mode = resolution/BPP
 		virtual void createCooler(sf::VideoMode _mode, const sf::String& _title, sf::Uint32 _style = sf::Style::Default);
 
+
+		// Open the window, if it's already opened, closes it and reopens it
+		virtual void ReOpen(void);
+
+		// Opens the window
+		virtual void Open(void);
+		
+		
+
+		//void realCreate(FullscreenMode _mode);
 
 		void SetFullscreenMode(FullscreenMode _mode);
 		void SetFullscreen(bool _condition);
@@ -90,12 +108,23 @@ class RenderWindow : public sf::RenderWindow
 		void DrawBorders(void);
 		//void display(bool _drawBorders = false);
 
+		
+		bool IsFullscreen(void);
+
+
+		// Get the size of the rendered area
+		sf::Vector2u GetRenderedSize(void);
+		
+		sf::Vector2u GetRenderedPosition(void);
+
 	protected:
 		virtual void onCreate(void);
 		virtual void onResize(void);
 
 	private:
 		void ApplyIcon(void);
+
+		
 };
 
 
@@ -103,3 +132,4 @@ class RenderWindow : public sf::RenderWindow
 
 
 #endif
+// BetterWindow SFML || v0.0

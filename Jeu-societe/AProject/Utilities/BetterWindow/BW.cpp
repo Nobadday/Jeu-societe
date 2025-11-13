@@ -5,10 +5,9 @@ namespace sfMod
 
 RenderWindow::RenderWindow(void) : sf::RenderWindow(),
 m_isFullscreen	(false),
-m_fullscreenMode(BORDERLESS),
+m_windowMode(BORDERLESS),
 m_baseStyle		(0),
-m_baseVideoMode	(0, 0),
-m_aspectRatio	(16, 9)
+m_baseVideoMode	(0, 0)
 {
 
 }
@@ -17,7 +16,40 @@ void RenderWindow::createCooler(sf::VideoMode _mode, const sf::String& _title, s
 {
 	if (_style == sf::Style::Fullscreen)
 	{
+		this->m_baseVideoMode = _mode;
 		
+	}
+	else
+	{
+		this->m_baseVideoMode = _mode;
+
+	}
+}
+
+void RenderWindow::ReOpen(void)
+{
+	switch (this->m_windowMode)
+	{
+		case FullscreenMode::FULLSCREEN:
+			this->create(sf::VideoMode::getFullscreenModes()[0], this->m_title, sf::Style::Fullscreen);
+			break;
+
+		case FullscreenMode::BORDERLESS:
+			this->create(sf::VideoMode::getDesktopMode(), this->m_title, sf::Style::None);
+			break;
+
+		case FullscreenMode::WINDOWED:
+		default:
+			this->create(sf::VideoMode(this->m_windowModeSize.x, this->m_windowModeSize.y, this->m_baseVideoMode.bitsPerPixel), this->m_title, this->m_baseStyle);
+			break;
+	}
+}
+
+void RenderWindow::Open(void)
+{
+	if (!this->isOpen())
+	{
+		this->ReOpen();
 	}
 }
 
@@ -43,11 +75,10 @@ void RenderWindow::SetFullscreen(bool _condition)
 			{
 				valid = 0;
 			}
-			//if (this->m) Fullscreen mode :)
 
 			const sf::VideoMode& modeTMP = sf::VideoMode::getDesktopMode();
 			
-			switch (this->m_fullscreenMode)
+			switch (this->m_windowMode)
 			{
 				case FullscreenMode::BORDERLESS:
 					this->create(modeTMP, "Uh oh!", sf::Style::None);
@@ -111,10 +142,26 @@ void RenderWindow::ResetView(void)
 }
 
 
+bool RenderWindow::IsFullscreen(void)
+{
+	return this->m_windowMode != FullscreenMode::WINDOWED;
+}
+
+sf::Vector2u RenderWindow::GetRenderedSize(void)
+{
+	sf::Vector2u size = this->getSize();
+	
+	size.x = (unsigned)((float)size.x * this->m_displayViewport.width);
+	size.y = (unsigned)((float)size.y * this->m_displayViewport.height);
+
+	return size;
+}
+
 void RenderWindow::onCreate(void)
 {
 	this->sf::RenderWindow::onCreate();
 	this->m_renderSize = this->getSize();
+	this->ApplyIcon();
 	this->onResize();
 }
 void RenderWindow::onResize(void)
@@ -126,7 +173,10 @@ void RenderWindow::onResize(void)
 	sf::Vector2u windowSize = this->getSize();
 
 	sf::FloatRect viewPort(0.0f, 0.0f, 1.0f, 1.0f);
-
+	this->m_displayViewport.left = 0.0f;
+	this->m_displayViewport.top = 0.0f;
+	this->m_displayViewport.width = 1.0f;
+	this->m_displayViewport.height = 1.0f;
 
 	sf::Vector2f newSize = (sf::Vector2f)this->m_renderSize;
 	
@@ -161,3 +211,5 @@ void RenderWindow::ApplyIcon(void)
 }
 
 }
+
+// BetterWindow SFML || v0.0
