@@ -21,6 +21,8 @@ class RockPaperScissors : public SceneBase
 
 	enum State
 	{
+		STATE_NONE,
+
 		STATE_WARMUP,
 		STATE_PLAY,
 		STATE_PAUSE,
@@ -40,11 +42,11 @@ class RockPaperScissors : public SceneBase
 		sf::Font font;
 
 		sf::Text victoryText;
-		State state;
-		GameData* gameData;
+		State state = STATE_NONE;
+		GameData* gameData = NULL;
 
 		RPS_Choice playersChoice[4];
-		int roundNB;
+		int roundNB = 0;
 	};
 	SceneData* m_data;
 
