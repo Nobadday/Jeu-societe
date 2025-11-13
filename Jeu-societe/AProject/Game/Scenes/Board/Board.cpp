@@ -331,14 +331,25 @@ void BaseGame::BoardStateUpdate(float _dt)
 		break;
 	case WIN_DEPLACEMENT:
 	{
-		int winnerIndex = m_gameData->m_winIndex[0];
-		int loserIndex = m_gameData->m_winIndex[m_gameData->m_winIndex.size() - 1];
+		if (!m_gameData->m_winIndex.empty())
+		{
+			int winnerIndex = m_gameData->m_winIndex[0];
+			int loserIndex = m_gameData->m_winIndex[m_gameData->m_winIndex.size() - 1];
 
-		m_data->players[winnerIndex].boardPosition = m_data->animator.GetGoTo();
-		m_data->players[loserIndex].boardPosition = m_data->animator2.GetGoTo();
+			m_data->players[winnerIndex].boardPosition = m_data->animator.GetGoTo();
+			m_data->players[loserIndex].boardPosition = m_data->animator2.GetGoTo();
 
-		if (m_data->animator.IsFinished() && m_data->animator2.IsFinished())
+			if (m_data->animator.IsFinished() && m_data->animator2.IsFinished())
+			{
+				m_data->players[winnerIndex].sprite.SetAnimation("Idle");
+				m_data->players[loserIndex].sprite.SetAnimation("Idle");
+				SetBoardState(CASE_ACTION_END);
+			}
+		}
+		else
+		{
 			SetBoardState(CASE_ACTION_END);
+		}
 	}
 	break;
 

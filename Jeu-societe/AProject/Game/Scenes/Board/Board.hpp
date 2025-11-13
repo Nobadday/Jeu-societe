@@ -13,7 +13,7 @@
 #include "../../Animation/Graphics/TextureAnimated.hpp"
 #include "../../Animation/Graphics/TextureAtlas.hpp"
 
-#define TIME_WIN_DISPLAY 3.0f
+#define TIME_WIN_DISPLAY 1.0f
 
 class BaseGame : public SceneBase
 {
