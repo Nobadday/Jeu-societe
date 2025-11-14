@@ -56,7 +56,7 @@ int main(void)
 	for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
 	{
 		mainData.gameData.m_playerDataList[i].SetJoystickID(i);
-		mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 8));
+		mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 4));
 	}
 
 

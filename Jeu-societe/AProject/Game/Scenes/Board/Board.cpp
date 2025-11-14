@@ -26,8 +26,27 @@ void BaseGame::Load(void)
 	// Initialisation des joueurs
 	for (int i = 0; i < m_data->players.size(); i++)
 	{
-		m_data->players[i].texture.LoadFromFile("Assets/Sprites/Anim_final.anim", TextureAnimated::ANIMATION_ANIM);
+		switch (m_gameData->m_playerDataList[i].GetPlayerSkin())
+		{
+			case PlayerData::CHARACTER_1_1:
+				m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso1-1.anim", TextureAnimated::ANIMATION_ANIM);
+				break;
+			case PlayerData::CHARACTER_2_1:
+				m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso2-1.anim", TextureAnimated::ANIMATION_ANIM);
+				break;
+			case PlayerData::CHARACTER_3_1:
+				m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso3-1.anim", TextureAnimated::ANIMATION_ANIM);
+				break;
+			case PlayerData::CHARACTER_4_1:
+				m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso4-1.anim", TextureAnimated::ANIMATION_ANIM);
+				break;
+			default:
+				m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso1-1.anim", TextureAnimated::ANIMATION_ANIM);
+				break;
+		}
 
+		
+				
 		m_data->players[i].sprite.setTexture(m_data->players[i].texture);
 
 		m_data->players[i].sprite.setOrigin({ 0.5f,1.f });
@@ -79,6 +98,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 				}
 				else
 				{
+					m_data->players[m_data->currentPlayerIndex].sprite.setScale({ -1.f,1.f });
 					newIndex = mathp::ModuloPositiveI(player.currentCaseIndex - rando, posCaseCount);
 				}
 
@@ -226,6 +246,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 	case START:
 		break;
 	case PLAY:
+		m_data->players[m_data->currentPlayerIndex].sprite.setScale({ 1.f,1.f });
 		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
 		m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
 		break;
@@ -357,13 +378,16 @@ void BaseGame::BoardStateUpdate(float _dt)
 			int winnerIndex = m_gameData->m_winIndex[0];
 			int loserIndex = m_gameData->m_winIndex[m_gameData->m_winIndex.size() - 1];
 
+			m_data->players[loserIndex].sprite.setScale({ -1.f,1.f });
+
 			m_data->players[winnerIndex].boardPosition = m_data->animator.GetGoTo();
 			m_data->players[loserIndex].boardPosition = m_data->animator2.GetGoTo();
-
+			
 			if (m_data->animator.IsFinished() && m_data->animator2.IsFinished())
 			{
 				m_data->players[winnerIndex].sprite.SetAnimation("Idle");
 				m_data->players[loserIndex].sprite.SetAnimation("Idle");
+				m_data->players[loserIndex].sprite.setScale({ 1.f,1.f });
 				SetBoardState(CASE_ACTION_END);
 			}
 		}
@@ -602,6 +626,8 @@ void BaseGame::Malus(int _chance)
 		std::cout << "Recule de : " << rando << "!" << std::endl;
 
 		newIndex = mathp::ModuloPositiveI((currentIndex - rando), m_data->posCase.size());
+
+		m_data->players[m_data->currentPlayerIndex].sprite.setScale({ -1.f,1.f });
 
 		SetBoardState(DEPLACEMENT_ACTION, newIndex);
 	}
