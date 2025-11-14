@@ -129,6 +129,16 @@ void BaseGame::Update(float _deltaTime)
 
 		// Mise à jour de la caméra pour suivre le joueur actif
 		UpdateCameraFollowPlayer(_deltaTime);
+
+		if (m_data->players[m_data->currentPlayerIndex].state != NONE)
+		{
+			m_data->players[m_data->currentPlayerIndex].tourstate += 1;
+			if (m_data->players[m_data->currentPlayerIndex].tourstate >= MAX_TOUR_EFFECT)
+			{
+				m_data->players[m_data->currentPlayerIndex].tourstate = 0;
+				m_data->players[m_data->currentPlayerIndex].state = StatePlayer::NONE;
+			}
+		}
 	}
 	else
 	{
@@ -168,16 +178,6 @@ void BaseGame::CaseAction()
 			BonusMalusLuck(false);
 
 		}
-		else
-		{
-			m_data->players[m_data->currentPlayerIndex].tourstate++;
-
-			if (m_data->players[m_data->currentPlayerIndex].tourstate == MAX_TOUR_EFFECT)
-			{
-				m_data->players[m_data->currentPlayerIndex].tourstate = 0;
-				m_data->players[m_data->currentPlayerIndex].state = StatePlayer::NONE;
-			}
-		}
 
 		break;
 
@@ -189,17 +189,6 @@ void BaseGame::CaseAction()
 
 			BonusMalusLuck(true);
 		}
-		else
-		{
-			m_data->players[m_data->currentPlayerIndex].tourstate++;
-
-			if (m_data->players[m_data->currentPlayerIndex].tourstate == MAX_TOUR_EFFECT)
-			{
-				m_data->players[m_data->currentPlayerIndex].tourstate = 0;
-				m_data->players[m_data->currentPlayerIndex].state = StatePlayer::NONE;
-			}
-		}
-
 		break;
 
 	case hash("Luck"):
@@ -596,6 +585,7 @@ void BaseGame::Bonus(int _chance)
 		std::cout << "Swap de place avec : Player " << swapIndex << std::endl;
 
 		std::swap(m_data->players[m_data->currentPlayerIndex].currentCaseIndex, m_data->players[swapIndex].currentCaseIndex);
+		std::swap(m_data->players[m_data->currentPlayerIndex].boardPosition, m_data->players[swapIndex].boardPosition);
 
 		SetBoardState(CASE_ACTION_END);
 	}
@@ -641,6 +631,8 @@ void BaseGame::Malus(int _chance)
 		std::cout << "Swap de place avec : Player " << swapIndex << std::endl;
 
 		std::swap(m_data->players[m_data->currentPlayerIndex].currentCaseIndex, m_data->players[swapIndex].currentCaseIndex);
+		std::swap(m_data->players[m_data->currentPlayerIndex].boardPosition, m_data->players[swapIndex].boardPosition);
+
 		SetBoardState(CASE_ACTION_END);
 	}
 	else if (_chance <= 100)
