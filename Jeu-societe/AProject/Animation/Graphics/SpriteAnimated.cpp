@@ -87,6 +87,12 @@ void SpriteAnimated::setTexture(TextureAnimated& _texture, bool _keepAnimation)
 	this->sf::Sprite::setTexture(_texture.GetTextureAtlas().GetTextureRef());
 }
 
+void SpriteAnimated::setOrigin(const sf::Vector2f& _origin)
+{
+	this->m_originCoefficient = _origin;
+	OnFrameChange();
+}
+
 sf::FloatRect SpriteAnimated::getGlobalBounds(void) const
 {
 	return this->m_animTransform.transformRect(this->sf::Sprite::getGlobalBounds());
@@ -99,4 +105,4 @@ void SpriteAnimated::draw(sf::RenderTarget& target, sf::RenderStates states) con
 	target.draw((sf::Sprite)(*this), states);
 }
 
-// SpriteAnimated v1.2.2
+// SpriteAnimated v1.2.3

@@ -58,9 +58,11 @@ void MapLayer::Draw(sf::RenderTarget& _target, TilesetManager& _tilesetManager, 
     if (!m_visible)
         return;
 
+    sf::Vector2f parallax = sf::Vector2f(m_parallaxX - 1.f, m_parallaxY - 1.f );
+
     // Calculer l'offset de la caméra avec parallaxe
-    float parallaxOffsetX = _camera.x * m_parallaxX;
-    float parallaxOffsetY = _camera.y * m_parallaxY;
+    float parallaxOffsetX = _camera.x * parallax.x;
+    float parallaxOffsetY = _camera.y * parallax.y;
 
     for (const auto& object : m_objects)
     {

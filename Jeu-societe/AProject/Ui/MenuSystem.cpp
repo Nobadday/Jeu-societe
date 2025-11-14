@@ -304,7 +304,6 @@ void MenuSystem::MenuAddButton(std::string _menuName, std::string _buttonName, B
 	}
 }
 
-
 void MenuSystem::MenuDeleteButton(std::string _menuName, std::string _buttonName)
 {
 
@@ -341,7 +340,6 @@ void MenuSystem::Draw(sf::RenderWindow& _renderWindow, sf::RenderStates _states)
 	}
 }
 
-//dont use
 void MenuSystem::DrawName(MenuSystem* _menuSystem, std::string _menuName, sf::RenderWindow& _renderWindow, sf::RenderStates& _states)
 {
 }
