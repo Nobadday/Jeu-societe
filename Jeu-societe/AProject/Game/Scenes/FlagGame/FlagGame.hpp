@@ -38,10 +38,7 @@ private:
 		sf::Text requiredInputText;
 		sf::Text resultText;
 
-		sf::Texture buttonTexture[6];
 		sf::Sprite buttonSprite;
-		
-		sf::Font font;
 		
 		State state;
 		GameData* gameData;
@@ -56,6 +53,7 @@ private:
 		Timer inputChangeTimer;
 		
 		GamePadBindList requiredInput;
+		sf::String stringTab[6];
 	};
 	
 	SceneData* m_data;

@@ -26,7 +26,7 @@ void BaseGame::Load(void)
 	// Initialisation des joueurs
 	for (int i = 0; i < m_data->players.size(); i++)
 	{
-		m_data->players[ i].texture.LoadFromFile("Assets/Sprites/Anim_final.anim", TextureAnimated::ANIMATION_ANIM);
+		m_data->players[ i].texture.LoadFromFile("Assets/Sprites/Board/Anim_final.anim", TextureAnimated::ANIMATION_ANIM);
 
 		m_data->players[i].sprite.setTexture(m_data->players[i].texture);
 
