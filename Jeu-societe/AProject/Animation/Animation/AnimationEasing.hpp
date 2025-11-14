@@ -43,4 +43,4 @@ namespace ANIMATION_NAMESPACE
 }
 #endif
 
-// Animation Easing C++ v1.0
+// Animation Easing C++ v1.0.2

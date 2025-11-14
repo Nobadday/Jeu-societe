@@ -1,7 +1,7 @@
 #pragma once
+#ifndef _INC_ANIMATION_TEXTUREANIMATED_HPP
+#define _INC_ANIMATION_TEXTUREANIMATED_HPP
 
-#ifndef _INC_ANIMATION_TEXTURE_HPP
-#define _INC_ANIMATION_TEXTURE_HPP
 
 #include "../Common.hpp"
 #include "TextureAtlas.hpp"
@@ -9,22 +9,7 @@
 #include "../Utilities/Math.hpp"
 #include <string>
 
-#define ANIM_DEFAULT_FPS 24.0f
-#define ANIM_DEFAULT_LOOP false
 
-class AnimationProperties
-{
-	public:
-		std::string m_name;
-		std::string m_atlasName;
-		int m_atlasIndex;
-		int m_frameCount;
-		float m_framerate;
-		bool m_loop;
-		sf::Vector2f m_offset;
-		
-		AnimationProperties(void);
-};
 
 // Data for spritesheet animations
 // contains all animations details like
@@ -32,6 +17,22 @@ class AnimationProperties
 class TextureAnimated
 {
 	public:
+		class AnimationProperties
+		{
+			public:
+				std::string m_name;
+				std::string m_atlasName;
+				int m_atlasIndex;
+				int m_frameCount;
+				float m_framerate;
+				bool m_loop;
+				sf::Vector2f m_offset;
+			
+			public:
+				AnimationProperties(void);
+
+		};
+
 		enum AnimationType
 		{
 			// Old animation format :
@@ -54,38 +55,52 @@ class TextureAnimated
 
 			ANIMATIONTYPES_COUNT
 		};
+
+	private:
+		TextureAtlas m_textureAtlas;
+		std::vector<AnimationProperties> m_animations;
+
+	public:
 		TextureAnimated(void);
 		~TextureAnimated(void);
 		
+
+		// Load an animation file of any of the supported formats given with _animationFormat
 		bool LoadFromFile(const std::string& _fileName, TextureAnimated::AnimationType _animationFormat);
+		// Load an animation file of any of the supported formats given with _animationFormat
 		bool LoadFromFile(std::fstream& _file, const std::string& _dirPath, TextureAnimated::AnimationType _animationFormat);
 
+		// [INTENT TO BE DEPRECATED]
 		// Load only a texture atlas and creates an animation of the entire atlas
 		bool LoadFromFile(const std::string& _fileName, TextureAtlas::ParseType _atlasParseType);
+		// [INTENT TO BE DEPRECATED]
 		// Load only a texture atlas and creates an animation of the entire atlas
 		bool LoadFromFile(std::fstream& _file, const std::string& _dirPath, TextureAtlas::ParseType _atlasParseType);
+		
 
-		void ClearAll(void);
+		//void AddAnimation(const std::string& _name, const std::vector<int>& _frameArrays, bool _loop = false, float _framerate = 24.0f);
+		//void AddAnimation(const std::string& _name, const std::vector<std::string>& _frameNames, bool _loop, float _framerate);
 
-		AnimationProperties* GetAnimation(int _index);
-		AnimationProperties* GetAnimation(const std::string& _name);
+		AnimationProperties& GetAnimation(int _index);
+		AnimationProperties& GetAnimation(const std::string& _name);
 		// -1 if not found
 		int FindAnimationIndex(const std::string& _name);
 		bool AnimationExists(const std::string& _name);
 		bool AnimationExists(int _index);
 
-		AtlasFrame* GetFrame(int _atlasIndex, int _frame);
+		AtlasFrame& GetFrame(int _atlasIndex, int _frame);
 
-		const sf::Texture* GetTexture(void);
-		const sf::Texture& GetTextureRef(void);
+		const TextureAtlas& GetTextureAtlas(void);
+		const sf::Texture& GetTexture(void);
 
-		int GetAnimationCount(void);
 
-	private:
-		TextureAtlas m_textureAtlas;
-		// List of AnimationProperties*
-		DynaList m_animations;
+		size_t GetAnimationCount(void);
+	
+	protected:
+		void ClearAnimations(void);
 };
 
+
 #endif
-// Texture Animated v1.0
+// Texture Animated v1.2.2
+// TODO : Remake to be accessible everywhere, ability to AddAnimations like AxeFlixel
