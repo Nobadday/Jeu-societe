@@ -40,14 +40,14 @@ private:
 	};
 	struct UI
 	{
-		Button* playBtn;
-		TextureAnimated playBtnTexAnim;
+		//Button playBtn;
+		TextureAnimated* playBtnTexAnim;
 
-		Button* settingsBtn;
-		TextureAnimated settingsBtnTexAnim;
+		//Button settingsBtn;
+		TextureAnimated* settingsBtnTexAnim;
 
-		Button* leaveBtn;
-		TextureAnimated leaveBtnTexAnim;
+		//Button leaveBtn;
+		TextureAnimated* leaveBtnTexAnim;
 
 
 		TextureAnimated gameNameTexAnim;

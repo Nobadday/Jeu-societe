@@ -2,7 +2,7 @@
 #define _INC_MENU_SYSTEM_HPP
 
 #include "./Button.hpp"
-
+#include <map>
 
 class MenuHolder;
 
@@ -26,7 +26,8 @@ class MenuSystem
 		void MenuRemove(int _menuIndex);
 
 
-		void MenuAddButton(std::string _menuName, std::string _buttonName, Button* _buttonPtr);
+		void MenuAddButton(std::string _menuName, std::string _buttonName, Button& _buttonRef);
+		Button& MenuCreateButton(std::string _menuName, std::string _buttonName);
 
 		//Delete from map and destroy it, it will be unusable
 		void MenuDeleteButton(std::string _menuName, std::string _buttonName);
@@ -88,7 +89,7 @@ class MenuHolder
 		void Draw(sf::RenderWindow& _renderWindow, sf::RenderStates _states);
 
 		//Create button from imported button
-		void AddButton(std::string _name, Button* _button);
+		void AddButton(std::string _name, Button _button);
 		//Create button and return reference
 		Button& CreateButton(std::string _name);
 		Button& GetButton(std::string _name);
@@ -110,7 +111,7 @@ class MenuHolder
 		int m_selection;
 		bool m_selectionLooping;
 		//List dynamic here
-		std::map<std::string, Button*> m_buttons;
+		std::map<std::string, Button> m_buttons;
 };
 
 

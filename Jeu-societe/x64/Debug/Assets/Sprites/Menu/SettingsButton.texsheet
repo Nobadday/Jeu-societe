@@ -1,6 +1,6 @@
 { "frames": [
    {
-    "filename": "ON0",
+    "filename": "IDLE0",
     "frame": { "x": 0, "y": 0, "w": 398, "h": 283 },
     "rotated": false,
     "trimmed": false,
@@ -9,7 +9,7 @@
     "duration": 100
    },
    {
-    "filename": "IDLE1",
+    "filename": "ON1",
     "frame": { "x": 398, "y": 0, "w": 398, "h": 283 },
     "rotated": false,
     "trimmed": false,
@@ -18,7 +18,7 @@
     "duration": 100
    },
    {
-    "filename": "OFF2",
+    "filename": "HELD2",
     "frame": { "x": 796, "y": 0, "w": 398, "h": 283 },
     "rotated": false,
     "trimmed": false,

@@ -109,6 +109,7 @@ void MainDataLoad(MainData& _mainData)
 
 	//_mainData.scenes.SelectScene("Board", true);
 	_mainData.scenes.SelectScene("Menu", true);
+	//_mainData.scenes.SelectScene("RandCard", true);
 
 	_mainData.clock.restart();
 }
