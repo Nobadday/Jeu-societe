@@ -1,5 +1,4 @@
 #include "RockPaperScissors.hpp"
-#include "../../Utilities/Random.hpp"
 
 #define PLAY_TIME 5
 #define PAUSE_TIME 2
