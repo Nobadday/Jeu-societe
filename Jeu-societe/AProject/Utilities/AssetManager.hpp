@@ -183,4 +183,4 @@ inline T* AssetManager::GetAsset(const std::string& _name, AssetType _type)
 }
 
 #endif
-// Asset Manager C++ v1.0.4
+// Asset Manager C++ v1.0.5

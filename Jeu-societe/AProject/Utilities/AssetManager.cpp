@@ -332,6 +332,7 @@ void* AssetManager::GetAsset(const std::string& _name, AssetType _type)
 			return (void*)container.m_assets[id].object.get();
 		}
 	}
+	printf("[WARNING] AssetManager : Asset \"%s\" not found of type \"%s\"\n", _name.c_str(), GetAssetTypeName(_type));
 	return NULL;
 }
 void* AssetManager::GetAsset(const std::string& _name, AssetType _type, const std::string& _placeholder)
@@ -357,4 +358,4 @@ void* AssetManager::GetAssetOrPlaceholder(const std::string& _name, AssetType _t
 #pragma endregion
 
 
-// Asset Manager C++ v1.0.4
+// Asset Manager C++ v1.0.5
