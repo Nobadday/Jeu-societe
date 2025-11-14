@@ -11,6 +11,7 @@
 #include "Game/Scenes/ArmWrestling.hpp"
 #include "Game/Scenes/Basket.hpp"
 #include "Game/Scenes/FlagGame.hpp"
+#include "Game/Scenes/Podium/Podium.hpp"
 
 
 typedef struct MainData
@@ -100,6 +101,8 @@ void MainDataLoad(MainData& _mainData)
 
 	_mainData.scenes.AddScene<BaseGame>("Board");
 	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
+
+	_mainData.scenes.AddScene<Podium>("podium");
 
 	_mainData.scenes.SelectScene("rockPaperSizor", true);
 	_mainData.clock.restart();

@@ -115,6 +115,7 @@ void RockPaperScissors::Update(float _deltaTime)
 				if (true)
 				{
 					std::cout << "Warmup not implemanted" << std::endl;
+					this->m_data->state == STATE_PAUSE;
 					return;
 				}
 				break;
