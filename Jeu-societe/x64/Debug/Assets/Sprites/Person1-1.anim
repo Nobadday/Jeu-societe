@@ -1,6 +1,6 @@
 {
     "assetPath":"Anim_final.json",
-    "framerate": 24,
+    "framerate": 25,
 	"animations": [
         {
             "name":"Idle",
@@ -9,7 +9,6 @@
         },
         {
             "name":"Right_Walk",
-	    "atlas":"Right_Walk",
             "loop": true
         }
     ]
