@@ -23,7 +23,6 @@ class RenderWindow : public sf::RenderWindow
 			PAN
 		};
 
-
 		enum WindowMode
 		{
 			// Windowed mode
@@ -40,9 +39,8 @@ class RenderWindow : public sf::RenderWindow
 		// Resolution & BPP
 		sf::VideoMode m_baseVideoMode;
 		
-		sf::Vector2u m_renderSize;
 
-		// Window
+		// Window Visual Properties
 
 		sf::Image m_icon;
 		sf::String m_title;
@@ -75,7 +73,7 @@ class RenderWindow : public sf::RenderWindow
 
 		// Mode = resolution/BPP, style
 		// style is the default style only in windowed mode
-		virtual void createCooler(sf::VideoMode _mode, const sf::String& _title, sf::Uint32 _style = sf::Style::Default);
+		virtual void create(sf::VideoMode _mode, const sf::String& _title, sf::Uint32 _style = sf::Style::Default);
 		//virtual void create2(sf::VideoMode _mode, const sf::String& _title, sf::Uint32 _style = sf::Style::Default);
 
 		void ReCreateExistingWindow(void);
@@ -97,7 +95,7 @@ class RenderWindow : public sf::RenderWindow
 		void setIcon(const sf::Image& _image);
 		void setIcon(const std::string& _filePath);
 
-		//void setTitle(const sf::String& _title);
+		void setTitle(const sf::String& _title);
 
 		// Modifies the texture and copies the contents of the window onto it
 		void capture(sf::Texture& _texture);
@@ -131,7 +129,7 @@ class RenderWindow : public sf::RenderWindow
 
 	private:
 		void ApplyIcon(void);
-		
+		void UpdateViewport(void);
 		void ApplyView(void);
 };
 

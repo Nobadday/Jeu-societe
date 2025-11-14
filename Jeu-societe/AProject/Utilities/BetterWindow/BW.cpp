@@ -12,20 +12,28 @@ m_title				(""),
 
 m_windowModeStyle	(sf::Style::Default),
 m_windowModePosition(0, 0),
-m_windowModeSize	(500, 400),
+m_windowModeSize	(1, 1),
 
 m_userView			(),
 m_displayMode		(LETTERBOX),
-m_displayViewport	(0,0,1,1)
-
+m_displayViewport	(0, 0, 1, 1)
 {
 
 }
 
-void RenderWindow::createCooler(sf::VideoMode _mode, const sf::String& _title, sf::Uint32 _style)
+void RenderWindow::create(sf::VideoMode _mode, const sf::String& _title, sf::Uint32 _style)
 {
 	this->m_title = _title;
 	this->m_baseVideoMode = _mode;
+	this->m_windowModeSize.x = _mode.width;
+	this->m_windowModeSize.y = _mode.height;
+	this->m_userView.reset(sf::FloatRect(	0.0f						,	  0.0f,
+											(float)this->m_windowModeSize.x	, (float)this->m_windowModeSize.y));
+	// Position
+	sf::VideoMode vid = sf::VideoMode::getDesktopMode();
+	this->m_windowModePosition.x = (int)(vid.width / 2) - (int)(this->m_windowModeSize.x / 2);
+	this->m_windowModePosition.y = (int)(vid.height / 2) - (int)(this->m_windowModeSize.y / 2);
+
 	if (_style == sf::Style::Fullscreen)
 	{
 		this->m_windowModeStyle = sf::Style::Default;
@@ -36,6 +44,7 @@ void RenderWindow::createCooler(sf::VideoMode _mode, const sf::String& _title, s
 		this->m_windowModeStyle = _style;
 		this->m_windowMode = WindowMode::WINDOWED;
 	}
+	this->ReOpen();
 }
 
 void RenderWindow::ReCreateExistingWindow(void)
@@ -51,19 +60,22 @@ void RenderWindow::ReOpen(void)
 	switch (this->m_windowMode)
 	{
 		case WindowMode::FULLSCREEN:
-			this->create(sf::VideoMode::getFullscreenModes()[0], this->m_title, sf::Style::Fullscreen);
+			this->sf::RenderWindow::create(sf::VideoMode::getFullscreenModes()[0], this->m_title, sf::Style::Fullscreen);
 			break;
 
 		case WindowMode::BORDERLESS:
-			this->create(sf::VideoMode::getDesktopMode(), this->m_title, sf::Style::None);
+			this->sf::RenderWindow::create(sf::VideoMode::getDesktopMode(), this->m_title, sf::Style::None);
 			break;
 
 		case WindowMode::WINDOWED:
 		default:
-			this->create(sf::VideoMode(this->m_windowModeSize.x, this->m_windowModeSize.y, this->m_baseVideoMode.bitsPerPixel), this->m_title, this->m_windowModeStyle);
+			this->sf::RenderWindow::create(sf::VideoMode(this->m_windowModeSize.x, this->m_windowModeSize.y, this->m_baseVideoMode.bitsPerPixel), this->m_title, this->m_windowModeStyle);
+			this->sf::RenderWindow::setPosition(this->m_windowModePosition);
 			break;
 	}
-	ApplyIcon();
+	this->sf::RenderWindow::setTitle(this->m_title);
+	this->ApplyIcon();
+	this->UpdateViewport();
 }
 
 void RenderWindow::Open(void)
@@ -97,8 +109,7 @@ void RenderWindow::SetFullscreen(bool _condition)
 {
 	if (this->IsFullscreen() != _condition)
 	{
-		this->m_windowMode = (WindowMode)(_condition);
-		this->ReOpen();
+		this->SetWindowMode((WindowMode)_condition);
 	}
 }
 void RenderWindow::ToggleFullscreen(void)
@@ -115,6 +126,12 @@ void RenderWindow::setIcon(const std::string& _filePath)
 {
 	this->m_icon.loadFromFile(_filePath);
 	this->ApplyIcon();
+}
+
+void RenderWindow::setTitle(const sf::String& _title)
+{
+	this->m_title = _title;
+	this->setTitle(this->m_title);
 }
 
 
@@ -142,7 +159,7 @@ bool RenderWindow::Screenshot(const sf::String& _fileName)
 void RenderWindow::setView(const sf::View& _view)
 {
 	this->m_userView = _view;
-	
+	this->UpdateViewport();
 }
 
 void RenderWindow::ResetView(void)
@@ -169,24 +186,40 @@ sf::Vector2u RenderWindow::GetRenderedSize(void)
 void RenderWindow::onCreate(void)
 {
 	this->sf::RenderWindow::onCreate();
-	this->m_renderSize = this->getSize();
-	this->ApplyIcon();
-	this->onResize();
 }
 void RenderWindow::onResize(void)
 {
 	printf("Resize called\n");
-	
+	if (this->m_windowMode == WindowMode::WINDOWED)
+	{
+		// Get the last window mode size
+		this->m_windowModeSize = this->getSize();
+	}
+	UpdateViewport();
+}
+
+void RenderWindow::ApplyIcon(void)
+{
+	const sf::Uint8* pixels = this->m_icon.getPixelsPtr();
+	if (pixels != NULL)
+	{
+		sf::Vector2u size = this->m_icon.getSize();
+		this->sf::RenderWindow::setIcon(size.x, size.y, pixels);
+	}
+}
+
+void RenderWindow::UpdateViewport(void)
+{
 	sf::Vector2u windowSize = this->getSize();
 
 	sf::FloatRect& viewPort = this->m_displayViewport;
-	this->m_displayViewport.left = 0.0f;
-	this->m_displayViewport.top = 0.0f;
-	this->m_displayViewport.width = 1.0f;
-	this->m_displayViewport.height = 1.0f;
+	viewPort.left = 0.0f;
+	viewPort.top = 0.0f;
+	viewPort.width = 1.0f;
+	viewPort.height = 1.0f;
 
-	sf::Vector2f newSize = (sf::Vector2f)this->m_renderSize;
-	
+	sf::Vector2f newSize = sf::Vector2f(this->m_baseVideoMode.width, this->m_baseVideoMode.height);
+
 	float widthRatio = (float)newSize.x / (float)windowSize.x;
 	float heightRatio = (float)newSize.y / (float)windowSize.y;
 	if (widthRatio > heightRatio)
@@ -203,16 +236,6 @@ void RenderWindow::onResize(void)
 	}
 
 	ApplyView();
-}
-
-void RenderWindow::ApplyIcon(void)
-{
-	const sf::Uint8* pixels = this->m_icon.getPixelsPtr();
-	if (pixels != NULL)
-	{
-		sf::Vector2u size = this->m_icon.getSize();
-		this->sf::RenderWindow::setIcon(size.x, size.y, pixels);
-	}
 }
 
 void RenderWindow::ApplyView(void)

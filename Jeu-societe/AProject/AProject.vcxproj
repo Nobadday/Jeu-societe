@@ -156,6 +156,7 @@
     <ClCompile Include="Animation\Utilities\Math.cpp" />
     <ClCompile Include="Animation\Graphics\TextAnimated.cpp" />
     <ClCompile Include="Animation\Graphics\TextPlus.cpp" />
+    <ClCompile Include="Graphics\HealthBar.cpp" />
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Scenes\SceneHandler.cpp" />
     <ClCompile Include="Utilities\AssetManager.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="Game\GameData.hpp" />
     <ClInclude Include="Animation\Graphics\TextAnimated.hpp" />
     <ClInclude Include="Animation\Graphics\TextPlus.hpp" />
+    <ClInclude Include="Graphics\HealthBar.hpp" />
     <ClInclude Include="Scenes\Scene.hpp" />
     <ClInclude Include="Scenes\SceneHandler.hpp" />
     <ClInclude Include="Screen.hpp" />

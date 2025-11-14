@@ -11,7 +11,8 @@ typedef struct MainData
 
 	TextAnimated tp;
 	GameData gameData;
-	
+	sf::Texture tstTex;
+
 	Camera cam;
 } MainData;
 
@@ -34,7 +35,7 @@ int main(void)
 
 	sf::Font font;
 	font.loadFromFile("./Assets/Fonts/OMORI_GAME2.ttf");
-	
+	mainData.tstTex.loadFromFile("./Assets/Images/Placeholder.png");
 	mainData.renderWindow.setIcon("./Assets/Images/Placeholder.png");
 	
 	mainData.tp.setFont(font);
@@ -135,6 +136,7 @@ void Draw(MainData& _mainData)
 	_mainData.renderWindow.clear(sf::Color::Black);
 	
 	sf::RectangleShape test(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
+	test.setTexture(&_mainData.tstTex, true);
 	test.setFillColor(sf::Color(51, 215, 110));
 	_mainData.renderWindow.draw(test);
 
