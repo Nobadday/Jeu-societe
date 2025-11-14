@@ -6,13 +6,13 @@
 #include "./Game/scenes/RockPaperScissors/RockPaperScissors.hpp"
 #include "Game/Scenes/ArmWrestling/ArmWrestling.hpp"
 #include "Game/Scenes/Basket/Basket.hpp"
-
-// données du jeu a faire passer entre les scènes ici
 #include "./Game/Scenes/RussianRoulette/RussianRoulette.hpp"
 #include "./Game/Scenes/RandCard/RandCard.hpp"
 
 #include "Game/Scenes/FlagGame/FlagGame.hpp"
+//Pue la merde (faut un bon menu systeme)
 #include "Game/Scenes/Menu/Menu.hpp"
+
 
 
 
@@ -126,9 +126,9 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
 	_mainData.scenes.AddScene<Menu>("Menu");
 
-	//_mainData.scenes.SelectScene("Board", true);
+	_mainData.scenes.SelectScene("Board", true);
 	//_mainData.scenes.SelectScene("Menu", true);
-	_mainData.scenes.SelectScene("RandCard", true);
+	//_mainData.scenes.SelectScene("RandCard", true);
 
 	_mainData.clock.restart();
 }
