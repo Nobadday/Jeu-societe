@@ -150,12 +150,15 @@ void AssetManager::Clear(bool _secured)
 }
 void AssetManager::DeleteContainer(int _index, bool _secured)
 {
-	Container& container = this->m_containers[_index];
-	container.Clear();
-
-	if (!_secured && (_index != 0))
+	if (_index >= 0 && _index < this->m_containers.size())
 	{
-		this->m_containers.erase(this->m_containers.begin()+_index);
+		Container& container = this->m_containers[_index];
+		container.Clear();
+
+		if (!_secured && (_index != 0))
+		{
+			this->m_containers.erase(this->m_containers.begin() + _index);
+		}
 	}
 }
 void AssetManager::DeleteContainer(int _index)
@@ -227,11 +230,13 @@ bool AssetManager::LoadManifest(const std::string& _filePath, const std::string&
 		{
 			assetType = (AssetType)object.value("type", (int)AssetType::UNKNOWN);
 		}
-		
+
 
 		// TODO : Change this and use a function instead of mindless copy pastes
 		// Func that uses shared_ptr
 		void* clsObj = NULL;
+		// TEMP
+		int sub = -1;
 		switch (assetType)
 		{
 			case AssetType::IMAGE:
@@ -262,18 +267,30 @@ bool AssetManager::LoadManifest(const std::string& _filePath, const std::string&
 
 			case AssetType::TEXTURE_ATLAS:
 				clsObj = new TextureAtlas();
+				sub = object.value("subType", -1);
+				if (sub == -1)
+				{
+					printf("[WARNING] AssetManager : Textures Atlas (\"%s\") needs an \"subType\" key indicating the parse type, defaults to 0.\n", assetName.c_str());
+					sub = 0;
+				}
 				((TextureAtlas*)clsObj)->LoadFromFile(assetPath, (TextureAtlas::ParseType)object["subType"]);
 				container.AddAsset<TextureAtlas>(assetName, (TextureAtlas*)clsObj, assetType);
 				break;
 			case AssetType::TEXTURE_ANIMATED:
 				clsObj = new TextureAnimated();
-				((TextureAnimated*)clsObj)->LoadFromFile(assetPath, (TextureAnimated::AnimationType)object["subType"]);
+				sub = object.value("subType", -1);
+				if (sub == -1)
+				{
+					printf("[WARNING] AssetManager : Textures Animated (\"%s\") needs an \"subType\" key indicating the parse type, defaults to 0.\n", assetName.c_str());
+					sub = 0;
+				}
+				((TextureAnimated*)clsObj)->LoadFromFile(assetPath, (TextureAnimated::AnimationType)sub);
 				container.AddAsset<TextureAnimated>(assetName, (TextureAnimated*)clsObj, assetType);
 				break;
 
 			default:
 			case AssetType::UNKNOWN:
-				printf("[WARNING] AssetManager : Impossible to create an object because an unknown asset type was given\n");
+				printf("[WARNING] AssetManager : Impossible to create an object from the manifest because an unknown asset type was given\n");
 				container.AddAsset<TextureAnimated>(assetName, NULL, assetType);
 				break;
 		}
@@ -311,9 +328,9 @@ void* AssetManager::GetAsset(const std::string& _name, AssetType _type, const st
 	void* content = this->GetAsset(_name, _type);
 	if (content == NULL)
 	{
-		return this->GetAsset(_placeholder, _type);
+		content = this->GetAsset(_placeholder, _type);
 	}
-	return NULL;
+	return content;
 }
 
 void* AssetManager::GetAssetOrPlaceholder(const std::string& _name, AssetType _type)
@@ -321,12 +338,12 @@ void* AssetManager::GetAssetOrPlaceholder(const std::string& _name, AssetType _t
 	void* content = this->GetAsset(_name, _type);
 	if ((content == NULL) && AssetTypeIsValid(_type))
 	{
-		return this->GetAsset(GetAssetTypePlaceholder(_type), _type);
+		content = this->GetAsset(GetAssetTypePlaceholder(_type), _type);
 	}
-	return NULL;
+	return content;
 }
 
 #pragma endregion
 
 
-// Asset Manager C++ v1.0.2
+// Asset Manager C++ v1.0.3

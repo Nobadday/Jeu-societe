@@ -34,7 +34,7 @@ void RenderWindow::createCooler(sf::VideoMode _mode, const sf::String& _title, s
 	else
 	{
 		this->m_windowModeStyle = _style;
-		
+		this->m_windowMode = WindowMode::WINDOWED;
 	}
 }
 
@@ -139,6 +139,12 @@ bool RenderWindow::Screenshot(const sf::String& _fileName)
 }
 
 
+void RenderWindow::setView(const sf::View& _view)
+{
+	this->m_userView = _view;
+	
+}
+
 void RenderWindow::ResetView(void)
 {
 	this->setView(this->getDefaultView());
@@ -170,12 +176,10 @@ void RenderWindow::onCreate(void)
 void RenderWindow::onResize(void)
 {
 	printf("Resize called\n");
-	// Get the new view from the RenderTexture
-	sf::View newView = this->getView();
 	
 	sf::Vector2u windowSize = this->getSize();
 
-	sf::FloatRect viewPort(0.0f, 0.0f, 1.0f, 1.0f);
+	sf::FloatRect& viewPort = this->m_displayViewport;
 	this->m_displayViewport.left = 0.0f;
 	this->m_displayViewport.top = 0.0f;
 	this->m_displayViewport.width = 1.0f;
@@ -198,9 +202,7 @@ void RenderWindow::onResize(void)
 		viewPort.left = 0.5f - (viewPort.width / 2.0f);
 	}
 
-	newView.setViewport(viewPort);
-
-	this->setView(newView);
+	ApplyView();
 }
 
 void RenderWindow::ApplyIcon(void)
@@ -211,6 +213,19 @@ void RenderWindow::ApplyIcon(void)
 		sf::Vector2u size = this->m_icon.getSize();
 		this->sf::RenderWindow::setIcon(size.x, size.y, pixels);
 	}
+}
+
+void RenderWindow::ApplyView(void)
+{
+	sf::View newView = this->m_userView;
+	sf::FloatRect userViewport = newView.getViewport();
+	userViewport.left += this->m_displayViewport.left;
+	userViewport.top += this->m_displayViewport.top;
+	userViewport.width *= this->m_displayViewport.width;
+	userViewport.height *= this->m_displayViewport.height;
+	newView.setViewport(userViewport);
+	
+	this->sf::RenderWindow::setView(newView);
 }
 
 }

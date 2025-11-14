@@ -40,7 +40,6 @@ class RenderWindow : public sf::RenderWindow
 		// Resolution & BPP
 		sf::VideoMode m_baseVideoMode;
 		
-
 		sf::Vector2u m_renderSize;
 
 		// Window
@@ -107,6 +106,10 @@ class RenderWindow : public sf::RenderWindow
 		bool Screenshot(const sf::String& _fileName);
 
 
+		// Set the current view, will be applied
+		void setView(const sf::View& _view);
+
+
 		void ResetView(void);
 
 
@@ -119,7 +122,7 @@ class RenderWindow : public sf::RenderWindow
 
 		// Get the size of the rendered area
 		sf::Vector2u GetRenderedSize(void);
-		
+
 		sf::Vector2u GetRenderedPosition(void);
 
 	protected:
@@ -129,7 +132,7 @@ class RenderWindow : public sf::RenderWindow
 	private:
 		void ApplyIcon(void);
 		
-		
+		void ApplyView(void);
 };
 
 
