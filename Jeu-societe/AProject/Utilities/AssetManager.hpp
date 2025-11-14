@@ -1,5 +1,4 @@
 #pragma once
-
 #ifndef _INC_ASSETMANAGER_HPP
 #define _INC_ASSETMANAGER_HPP
 
@@ -184,4 +183,4 @@ inline T* AssetManager::GetAsset(const std::string& _name, AssetType _type)
 }
 
 #endif
-// Asset Manager C++ v1.0.3
+// Asset Manager C++ v1.0.4

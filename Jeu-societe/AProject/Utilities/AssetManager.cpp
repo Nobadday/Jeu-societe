@@ -300,6 +300,17 @@ bool AssetManager::LoadManifest(const std::string& _filePath, const std::string&
 	return true;
 }
 
+bool AssetManager::AssetExists(const std::string& _name, AssetManager::AssetType _type)
+{
+	for (int i = ((int)this->m_containers.size()) - 1; i >= 0; i--)
+	{
+		if (this->m_containers[i].AssetExists(_name, _type))
+		{
+			return true;
+		}
+	}
+	return false;
+}
 
 AssetManager::Container& AssetManager::GetContainer(int _index)
 {
@@ -346,4 +357,4 @@ void* AssetManager::GetAssetOrPlaceholder(const std::string& _name, AssetType _t
 #pragma endregion
 
 
-// Asset Manager C++ v1.0.3
+// Asset Manager C++ v1.0.4
