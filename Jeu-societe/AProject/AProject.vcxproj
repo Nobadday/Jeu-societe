@@ -161,6 +161,7 @@
     <ClCompile Include="Game\Scenes\ArmWrestling.cpp" />
     <ClCompile Include="Game\Scenes\Basket.cpp" />
     <ClCompile Include="Game\Scenes\Board.cpp" />
+    <ClCompile Include="Game\Scenes\Podium.cpp" />
     <ClCompile Include="Game\Scenes\FlagGame.cpp" />
     <ClCompile Include="Game\Scenes\RandCard\RandCard.cpp" />
     <ClCompile Include="Game\Scenes\RockPaperScissors.cpp" />
@@ -205,6 +206,7 @@
     <ClInclude Include="Animation\Graphics\TextureAtlas.hpp" />
     <ClInclude Include="Animation\Utilities\Bezier.hpp" />
     <ClInclude Include="Animation\Utilities\Math.hpp" />
+    <ClInclude Include="Game\Scenes\Podium.hpp" />
     <ClInclude Include="Game\GameData.hpp" />
     <ClInclude Include="Game\PlayerData.hpp" />
     <ClInclude Include="Game\Scenes\ArmWrestling.hpp" />
