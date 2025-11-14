@@ -15,7 +15,11 @@
 #include "Utilities/StringFormat.hpp"
 #include "Utilities/Binds.hpp"
 
+#include "Utilities/AssetManager.hpp"
+
+
 #include <vector>
 #include <string>
 #include <numeric>
-
+#include <map>
+#include <SFML/Audio.hpp>

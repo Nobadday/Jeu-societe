@@ -18,6 +18,9 @@
 typedef struct MainData
 {
 	sf::RenderWindow renderWindow;
+	AssetManager assetManager;
+	AudioEngine audioEngine;
+
 	sf::Clock clock;
 	SceneHandler scenes;
 
@@ -92,6 +95,9 @@ void MainDataLoad(MainData& _mainData)
 
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
+	_mainData.gameData.m_assetManager = &_mainData.assetManager;
+	_mainData.gameData.m_audioEngine = &_mainData.audioEngine;
+	_mainData.audioEngine.SetAssetManager(_mainData.assetManager);
 
 	
 
@@ -108,8 +114,8 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<Menu>("Menu");
 
 	//_mainData.scenes.SelectScene("Board", true);
-	_mainData.scenes.SelectScene("Menu", true);
-	//_mainData.scenes.SelectScene("RandCard", true);
+	//_mainData.scenes.SelectScene("Menu", true);
+	_mainData.scenes.SelectScene("RandCard", true);
 
 	_mainData.clock.restart();
 }

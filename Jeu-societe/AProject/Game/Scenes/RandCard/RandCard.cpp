@@ -1,5 +1,7 @@
 #include "RandCard.hpp"
 #include "../../../Utilities/MathPlus.hpp"
+#include "../../../Utilities/AudioEngine/AudioEngine.hpp"
+
 
 #define CARD_SIZE_X 40.f
 #define CARD_SIZE_Y 80.f
@@ -63,6 +65,24 @@ void RandCard::Load(void)
 
 	// Liaison au GameData passé dans m_keptData (comme dans RockPaperScissors)
 	m_data->gameData = (GameData*)this->m_keptData;
+
+
+	//I TEST HERE AUDIO ENGINE
+	sf::SoundBuffer* soundBuffTest = new sf::SoundBuffer();
+	//soundBuffTest->loadFromFile("./Assets/soundBufferPlaceholder.ogg");
+	soundBuffTest->loadFromFile("./Assets/Bomb.wav");
+	m_data->gameData->m_assetManager->AddAsset("sonTest", soundBuffTest, AssetManager::SOUND_BUFFER);
+
+	sf::Music* musicTest = new sf::Music();
+	//soundBuffTest->loadFromFile("./Assets/soundBufferPlaceholder.ogg");
+	musicTest->openFromFile("./Assets/PlaceHolder.mp3");
+	m_data->gameData->m_assetManager->AddAsset("musicTest", musicTest, AssetManager::MUSIC);
+
+	sf::Music* musicTest2 = new sf::Music();
+	//soundBuffTest->loadFromFile("./Assets/soundBufferPlaceholder.ogg");
+	musicTest2->openFromFile("./Assets/Bomber Maze - Ship.ogg");
+	m_data->gameData->m_assetManager->AddAsset("musicTest2", musicTest2, AssetManager::MUSIC);
+
 
 	//Debug names
 	std::string playersNames[4] = { "Yann", "Lorenzo", "Kyllian", "Damien" };
@@ -156,6 +176,23 @@ void RandCard::Unload(void)
 void RandCard::PollEvent(sf::Event& _event)
 {
 	//m_data->menuSystem->PollEvent(_event);
+
+	if (_event.type == sf::Event::MouseButtonPressed)
+	{
+		//m_data->gameData->m_audioEngine->PlaySound("sonTest");
+		((AudioEngine*)(m_data->gameData->m_audioEngine))->PlaySound("sonTest");
+	}
+	if (_event.type == sf::Event::MouseWheelScrolled)
+	{
+		((AudioEngine*)(m_data->gameData->m_audioEngine))->PlayMusic("musicTest");
+	}
+	if (_event.type == sf::Event::KeyPressed)
+	{
+		((AudioEngine*)(m_data->gameData->m_audioEngine))->PlayMusic("musicTest2");
+	}
+
+
+
 
 	switch (m_data->gameState)
 	{
