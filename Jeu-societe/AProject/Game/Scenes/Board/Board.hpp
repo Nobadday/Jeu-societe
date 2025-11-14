@@ -92,6 +92,12 @@ class BaseGame : public SceneBase
 		
 		void UpdateCameraFollowPlayer(float _deltaTime);
 
+		void BonusMalusLuck(bool _malus);
+
+		void Bonus(int _chance);
+		
+		void Malus(int _chance);
+
 	public:
 		virtual void Load(void);
 		

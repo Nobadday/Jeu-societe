@@ -26,6 +26,8 @@ class SpriteAnimated : public sf::Sprite, public AnimatedObject
 		// If keepAnimation true; set's animation to last anim
 		void setTexture(TextureAnimated& _texture, bool _keepAnimation = false);
 
+		void setOrigin(const sf::Vector2f& _origin);
+
 		sf::FloatRect getGlobalBounds(void) const;
 
 	protected:
@@ -38,4 +40,4 @@ class SpriteAnimated : public sf::Sprite, public AnimatedObject
 
 #endif
 
-// SpriteAnimated v1.2.2
+// SpriteAnimated v1.2.3

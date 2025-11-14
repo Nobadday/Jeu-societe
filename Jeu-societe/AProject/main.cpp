@@ -45,6 +45,7 @@ void Draw(MainData& _mainData);
 int main(void)
 {
 	random::SetSeedPID();
+	randmt::SetSeedPID();
 
 	StringFormat::Load();
 	binds = new Binds();
@@ -91,9 +92,6 @@ void MainDataLoad(MainData& _mainData)
 
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
-
-	
-
 
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 
