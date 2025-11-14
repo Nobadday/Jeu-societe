@@ -182,11 +182,5 @@ inline T* AssetManager::GetAsset(const std::string& _name, AssetType _type)
 	return (T*)this->GetAssetOrPlaceholder(_name, _type);
 }
 
-template<typename T>
-inline T* AssetManager::GetAsset(const std::string& _name, AssetType _type)
-{
-	return (T*)this->GetAssetOrPlaceholder(_name, _type);
-}
-
 #endif
 // Asset Manager C++ v1.0.3

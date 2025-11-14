@@ -30,7 +30,7 @@
             "name" : "PLACEHOLDER:Texture Animated",
             "type" : "Texture Animated",
             "path" : "Assets/Sprites/PlaceHolder.anim", 
-            "subType" : 0
+            "subType" : 1
         }
     ]
 }

@@ -40,13 +40,13 @@ void RockPaperScissors::Load()
 		m_data->spriteTab[i].setPosition({ (float)100 * i, 100.f });
 	}
 
-	m_data->timerText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("Font", AssetManager::AssetType::FONT));
+	m_data->timerText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("RPSFont", AssetManager::AssetType::FONT));
 
 	//a retirer plus tard
 	m_data->playerChoiceSprite[0].setPosition({SCREEN_WIDTH * 0.66f, SCREEN_HEIGHT * 0.66f});
 	m_data->playerChoiceSprite[1].setPosition({SCREEN_WIDTH * 0.33f, SCREEN_HEIGHT * 0.66f});
 
-	m_data->victoryText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("Font", AssetManager::AssetType::FONT));
+	m_data->victoryText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("RPSFont", AssetManager::AssetType::FONT));
 	m_data->victoryText.setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 });
 
 	

@@ -3,37 +3,37 @@
          {
             "name": "Abutton",
             "type": "Texture",
-            "path":  "./Assets/Scenes/RockPaperScissor/A.png"
+            "path":  "./Assets/Sprites/RockPaperScissor/A.png"
         },
         {
             "name": "Bbutton",
             "type": "Texture",
-            "path":  "./Assets/Scenes/RockPaperScissor/B.png"
+            "path":  "./Assets/Sprites/RockPaperScissor/B.png"
         },
         {
             "name": "Xbutton",
             "type": "Texture",
-            "path":  "./Assets/Scenes/RockPaperScissor/X.png"
+            "path":  "./Assets/Sprites/RockPaperScissor/X.png"
         },
         {
             "name": "Pierre",
             "type": "Texture",
-            "path":  "./Assets/Scenes/RockPaperScissor/caillou.png"
+            "path":  "./Assets/Sprites/RockPaperScissor/caillou.png"
         },
         {
             "name": "Feuille",
             "type": "Texture",
-            "path":  "./Assets/Scenes/RockPaperScissor/papier.png"
+            "path":  "./Assets/Sprites/RockPaperScissor/papier.png"
         },
         {
             "name": "Ciseaux",
             "type": "Texture",
-            "path":  "./Assets/Scenes/RockPaperScissor/ciseaux.png"
+            "path":  "./Assets/Sprites/RockPaperScissor/ciseaux.png"
         },
         {
-            "name": "Font",
+            "name": "RPSFont",
             "type": "Font",
-            "path": "./Assets/Scenes/RockPaperScissor/impact.ttf"
+            "path": "./Assets/Fonts/Font.ttf"
         }
     ]
 }

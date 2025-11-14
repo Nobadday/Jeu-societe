@@ -14,7 +14,6 @@
 #include "Map/JsonReader.h"
 
 #include "Utilities/NewMath.hpp"
-#include "Utilities/StringFormat.hpp"
 #include "Utilities/Binds.hpp"
 
 #include <vector>

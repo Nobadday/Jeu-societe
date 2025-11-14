@@ -188,7 +188,6 @@
     <ClCompile Include="Utilities\MathPlus.cpp" />
     <ClCompile Include="Utilities\NewMath.cpp" />
     <ClCompile Include="Utilities\Random.cpp" />
-    <ClCompile Include="Utilities\StringFormat.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation\Animation.hpp" />
@@ -241,7 +240,6 @@
     <ClInclude Include="Utilities\MathPlus.hpp" />
     <ClInclude Include="Utilities\NewMath.hpp" />
     <ClInclude Include="Utilities\Random.hpp" />
-    <ClInclude Include="Utilities\StringFormat.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
