@@ -2,32 +2,35 @@
     "assets": 
     [
         {
-            "name": "SYSTEM:WINDOW:Icon",
-            "type": 2,
-            "path": "./Assets/Images/icon.png"
+            "name" : "PLACEHOLDER:Font",
+            "type" : "Font",
+            "path" : "Assets/Fonts/Font.ttf"
         },
         {
-            "name": "SYSTEM:Placeholder",
-            "type": 1,
-            "path": "./Assets/Images/Placeholder.png"
+            "name" : "PLACEHOLDER:Texture",
+            "type" : "Texture",
+            "path" : "Assets/Images/PlaceHolder.png"
         },
         {
-            "name":"SYSTEM:Placeholder:Animated",
-            "type": 6,
-            "path": "./Assets/Sprites/Placeholder.texanim"
-        }
-    ],
-    "byType":
-    [
+            "name" : "PLACEHOLDER:Image",
+            "type" : "Image",
+            "path" : "Assets/Images/PlaceHolder.png"
+        },
         {
-            "type":"Test",
-            "assets":
-            [
-                {
-                    "name":"Test",
-                    "path":"./Assets/Images/Placeholder.png"
-                }
-            ]
+            "name" : "PLACEHOLDER:Sound Buffer",
+            "type" : "Sound Buffer",
+            "path" : "Assets/Audio/Sounds/PlaceHolder.mp3"
+        },
+        {
+            "name" : "PLACEHOLDER:Music",
+            "type" : "Music",
+            "path" : "Assets/Audio/Musics/PlaceHolder.mp3"
+        },
+        {
+            "name" : "PLACEHOLDER:Texture Animated",
+            "type" : "Texture Animated",
+            "path" : "Assets/Sprites/PlaceHolder.anim", 
+            "subType" : 0
         }
     ]
 }

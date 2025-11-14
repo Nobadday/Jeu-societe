@@ -96,16 +96,17 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
 	_mainData.gameData.m_assetManager = &_mainData.assetManager;
 
+	_mainData.assetManager.LoadManifest("Manifests/Main.json", "main");
 
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 
 	_mainData.scenes.AddScene<BaseGame>("Board");
 	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
-	_mainData.scenes.AddScene<ArmWrestling>("ArmWrestling");
-	_mainData.scenes.AddScene<Basket>("Basket");
-	_mainData.scenes.AddScene<FlagGame>("FlagGame");
-	_mainData.scenes.AddScene<RandCard>("RandCard");
-	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
+	//_mainData.scenes.AddScene<ArmWrestling>("ArmWrestling");
+	//_mainData.scenes.AddScene<Basket>("Basket");
+	//_mainData.scenes.AddScene<FlagGame>("FlagGame");
+	//_mainData.scenes.AddScene<RandCard>("RandCard");
+	//_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
 
 	_mainData.scenes.SelectScene("rockPaperSizor", true);
 
