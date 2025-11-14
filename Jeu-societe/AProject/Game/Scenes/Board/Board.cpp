@@ -30,7 +30,7 @@ void BaseGame::Load(void)
 
 		m_data->players[i].sprite.setTexture(m_data->players[i].texture);
 
-		m_data->players[i].sprite.setOrigin();
+		m_data->players[i].sprite.setOrigin({0.5f,1.f});
 
 		m_data->players[i].boardPosition = m_data->posCase[0].GetPosition();
 		m_data->players[i].currentCaseIndex = 0;
@@ -143,56 +143,46 @@ void BaseGame::CaseAction()
 	
 	switch (hash(caseType.c_str()))
 	{
-	case hash("Bonus"):
-		std::cout << "Landed on a Bonus case!" << std::endl;
-		{
-			int rando = randmt::RandomInt(1, 3);
-			int newIndex = (m_data->players[m_data->currentPlayerIndex].currentCaseIndex + rando) % m_data->posCase.size();
-			SetBoardState(DEPLACEMENT_ACTION, newIndex);
-		}
-		break;
+		case hash("Bonus"):
+			std::cout << "Landed on a Bonus case!" << std::endl;
 
-	case hash("Malus"):
-		std::cout << "Landed on a Malus case!" << std::endl;
-		{
-			int rando = randmt::RandomInt(1, 3);
-			int newIndex = (m_data->players[m_data->currentPlayerIndex].currentCaseIndex - rando) % m_data->posCase.size();
-			SetBoardState(DEPLACEMENT_ACTION, newIndex);
-		}
-		break;
+			BonusMalusLuck(false);
+			
+			break;
 
-	case hash("Luck"):
-		std::cout << "Landed on a Luck case!" << std::endl;
-		{
-			int rando = random::RandomInt(1, 3);
+		case hash("Malus"):
+			std::cout << "Landed on a Malus case!" << std::endl;
+			
+			BonusMalusLuck(true);
+			
+			break;
 
-			if (randmt::RandomInt(0, 2) == 0)
-				rando = -rando;
+		case hash("Luck"):
+			std::cout << "Landed on a Luck case!" << std::endl;
 
-			int newIndex = (m_data->players[m_data->currentPlayerIndex].currentCaseIndex + rando) % m_data->posCase.size();
-			SetBoardState(DEPLACEMENT_ACTION, newIndex);
-		}
-		break;
+			BonusMalusLuck(randmt::Chance(0.5f));
 
-	case hash("Battle"):
-		std::cout << "Landed on a Battle case!" << std::endl;
-		SetBoardState(BATTLE_ACTION, 0);
-		break;
+			break;
 
-	default:
-		{
-			int sameCase = OnSameCase();
-			if (sameCase != -1)
+		case hash("Battle"):
+			std::cout << "Landed on a Battle case!" << std::endl;
+			SetBoardState(BATTLE_ACTION, 0);
+			break;
+
+		default:
 			{
-				SetBoardState(DUEL, 0);
+				int sameCase = OnSameCase();
+				if (sameCase != -1)
+				{
+					SetBoardState(DUEL, 0);
+				}
+				else
+				{
+					SetBoardState(PLAY, 0);
+					m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
+				}
 			}
-			else
-			{
-				SetBoardState(PLAY, 0);
-				m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
-			}
-		}
-		break;
+			break;
 	}
 }
 
@@ -202,37 +192,37 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 
 	switch (m_data->state)
 	{
-	case START:
-		break;
-	case PLAY:
-		[[fallthrough]];
-	case WIN:
-		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
-		break;
+		case START:
+			break;
+		case PLAY:
+			[[fallthrough]];
+		case WIN:
+			m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
+			break;
 
-	case DEPLACEMENT:
-		[[fallthrough]];
-	case DEPLACEMENT_ACTION:
-	{
-		sf::Vector2f startPos = m_data->players[m_data->currentPlayerIndex].boardPosition;
-		sf::Vector2f endPos = m_data->posCase[_newIndex].GetPosition();
+		case DEPLACEMENT:
+			[[fallthrough]];
+		case DEPLACEMENT_ACTION:
+		{
+			sf::Vector2f startPos = m_data->players[m_data->currentPlayerIndex].boardPosition;
+			sf::Vector2f endPos = m_data->posCase[_newIndex].GetPosition();
 
-		m_data->animator.SetGoTo(startPos, endPos);
-		m_data->animator.Restart();
+			m_data->animator.SetGoTo(startPos, endPos);
+			m_data->animator.Restart();
 
-		m_data->players[m_data->currentPlayerIndex].currentCaseIndex = _newIndex;
-		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Right_Walk");
-	}
-	break;
-
-	case WIN_DEPLACEMENT:
-		SetWinDeplacement(_newIndex);
+			m_data->players[m_data->currentPlayerIndex].currentCaseIndex = _newIndex;
+			m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Right_Walk");
+		}
 		break;
 
-	case CASE_ACTION:
-	case CASE_ACTION_END:
-	default:
-		break;
+		case WIN_DEPLACEMENT:
+			SetWinDeplacement(_newIndex);
+			break;
+
+		case CASE_ACTION:
+		case CASE_ACTION_END:
+		default:
+			break;
 	}
 }
 
@@ -278,87 +268,87 @@ void BaseGame::BoardStateUpdate(float _dt)
 {
 	switch (m_data->state)
 	{
-	case START:
-		SortStart();
-		break;
-	case DEPLACEMENT:
-		m_data->players[m_data->currentPlayerIndex].boardPosition = m_data->animator.GetGoTo();
-		if (m_data->animator.IsFinished())
-			SetBoardState(CASE_ACTION);
-		break;
+		case START:
+			SortStart();
+			break;
+		case DEPLACEMENT:
+			m_data->players[m_data->currentPlayerIndex].boardPosition = m_data->animator.GetGoTo();
+			if (m_data->animator.IsFinished())
+				SetBoardState(CASE_ACTION);
+			break;
 
-	case DEPLACEMENT_ACTION:
-		m_data->players[m_data->currentPlayerIndex].boardPosition = m_data->animator.GetGoTo();
-		if (m_data->animator.IsFinished())
-			SetBoardState(CASE_ACTION_END);
-		break;
+		case DEPLACEMENT_ACTION:
+			m_data->players[m_data->currentPlayerIndex].boardPosition = m_data->animator.GetGoTo();
+			if (m_data->animator.IsFinished())
+				SetBoardState(CASE_ACTION_END);
+			break;
 
-	case CASE_ACTION:
-		CaseAction();
-		break;
+		case CASE_ACTION:
+			CaseAction();
+			break;
 
-	case BATTLE_ACTION:
-		m_gameData->InitMiniGamePlayer();
-		for (int i = 0; i < m_data->players.size(); i++)
-			m_gameData->AddPlayerPlaying(i);
+		case BATTLE_ACTION:
+			m_gameData->InitMiniGamePlayer();
+			for (int i = 0; i < m_data->players.size(); i++)
+				m_gameData->AddPlayerPlaying(i);
 
-		SetBoardState(WIN);
-		m_data->camera.Reset(m_gameData->m_renderWindow->getDefaultView());
-		m_gameData->m_renderWindow->setView(m_data->camera);
-		ChangeScene(RandomBattle(), true);
-		break;
+			SetBoardState(WIN);
+			m_data->camera.Reset(m_gameData->m_renderWindow->getDefaultView());
+			m_gameData->m_renderWindow->setView(m_data->camera);
+			ChangeScene(RandomBattle(), true);
+			break;
 
-	case DUEL:
-		m_gameData->InitMiniGamePlayer();
-		m_gameData->AddPlayerPlaying(m_data->currentPlayerIndex);
-		m_gameData->AddPlayerPlaying(OnSameCase());
+		case DUEL:
+			m_gameData->InitMiniGamePlayer();
+			m_gameData->AddPlayerPlaying(m_data->currentPlayerIndex);
+			m_gameData->AddPlayerPlaying(OnSameCase());
 
-		SetBoardState(WIN);
-		m_data->camera.Reset(m_gameData->m_renderWindow->getDefaultView());
-		m_gameData->m_renderWindow->setView(m_data->camera);
-		ChangeScene(RandomDuel(), true);
-		break;
+			SetBoardState(WIN);
+			m_data->camera.Reset(m_gameData->m_renderWindow->getDefaultView());
+			m_gameData->m_renderWindow->setView(m_data->camera);
+			ChangeScene(RandomDuel(), true);
+			break;
 
-	case WIN:
+		case WIN:
 
-		m_data->timeWin -= _dt; // Approximation pour 60 FPS
-		if (m_data->timeWin <= 0)
-		{
-			m_data->timeWin = TIME_WIN_DISPLAY;
-			SetBoardState(WIN_DEPLACEMENT, 1);
-		}
-		break;
-	case WIN_DEPLACEMENT:
-	{
-		if (!m_gameData->m_winIndex.empty())
-		{
-			int winnerIndex = m_gameData->m_winIndex[0];
-			int loserIndex = m_gameData->m_winIndex[m_gameData->m_winIndex.size() - 1];
-
-			m_data->players[winnerIndex].boardPosition = m_data->animator.GetGoTo();
-			m_data->players[loserIndex].boardPosition = m_data->animator2.GetGoTo();
-
-			if (m_data->animator.IsFinished() && m_data->animator2.IsFinished())
+			m_data->timeWin -= _dt; // Approximation pour 60 FPS
+			if (m_data->timeWin <= 0)
 			{
-				m_data->players[winnerIndex].sprite.SetAnimation("Idle");
-				m_data->players[loserIndex].sprite.SetAnimation("Idle");
+				m_data->timeWin = TIME_WIN_DISPLAY;
+				SetBoardState(WIN_DEPLACEMENT, 1);
+			}
+			break;
+		case WIN_DEPLACEMENT:
+		{
+			if (!m_gameData->m_winIndex.empty())
+			{
+				int winnerIndex = m_gameData->m_winIndex[0];
+				int loserIndex = m_gameData->m_winIndex[m_gameData->m_winIndex.size() - 1];
+
+				m_data->players[winnerIndex].boardPosition = m_data->animator.GetGoTo();
+				m_data->players[loserIndex].boardPosition = m_data->animator2.GetGoTo();
+
+				if (m_data->animator.IsFinished() && m_data->animator2.IsFinished())
+				{
+					m_data->players[winnerIndex].sprite.SetAnimation("Idle");
+					m_data->players[loserIndex].sprite.SetAnimation("Idle");
+					SetBoardState(CASE_ACTION_END);
+				}
+			}
+			else
+			{
 				SetBoardState(CASE_ACTION_END);
 			}
 		}
-		else
-		{
-			SetBoardState(CASE_ACTION_END);
-		}
-	}
-	break;
-
-	case CASE_ACTION_END:
-		SetBoardState(PLAY, 0);
-		m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
 		break;
 
-	default:
-		break;
+		case CASE_ACTION_END:
+			SetBoardState(PLAY, 0);
+			m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
+			break;
+
+		default:
+			break;
 	}
 }
 
@@ -520,4 +510,49 @@ void BaseGame::UpdateCameraFollowPlayer(float _deltaTime)
 	newPos.y = currentPos.y + (targetPos.y - currentPos.y) * smoothSpeed * _deltaTime;
 
 	m_data->camera.SetCenter(newPos);
+}
+
+void BaseGame::BonusMalusLuck(bool _malus)
+{
+
+	int chance = randmt::RandomInt(1, 100);
+
+	if (_malus)
+	{
+		Malus(chance);
+	}
+	else
+	{
+		Bonus(chance);
+	}
+
+}
+
+void BaseGame::Bonus(int _chance)
+{
+	if (_chance <= 40)
+	{
+		int rando = randmt::RandomInt(1, 3);
+		int currentIndex = m_data->players[m_data->currentPlayerIndex].currentCaseIndex;
+		int newIndex;
+
+		newIndex = (currentIndex + rando) % m_data->posCase.size();
+
+		SetBoardState(DEPLACEMENT_ACTION, newIndex);
+	}
+	
+}
+
+void BaseGame::Malus(int _chance)
+{
+	if (_chance <= 40)
+	{
+		int rando = randmt::RandomInt(1, 3);
+		int currentIndex = m_data->players[m_data->currentPlayerIndex].currentCaseIndex;
+		int newIndex;
+
+		newIndex = (currentIndex - rando) % m_data->posCase.size();
+
+		SetBoardState(DEPLACEMENT_ACTION, newIndex);
+	}
 }
