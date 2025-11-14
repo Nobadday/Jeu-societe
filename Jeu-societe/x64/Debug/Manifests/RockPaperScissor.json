@@ -1,0 +1,39 @@
+{
+    "assets": [
+         {
+            "name": "Abutton",
+            "type": "Texture",
+            "path":  "./Assets/Scenes/RockPaperScissor/A.png"
+        },
+        {
+            "name": "Bbutton",
+            "type": "Texture",
+            "path":  "./Assets/Scenes/RockPaperScissor/B.png"
+        },
+        {
+            "name": "Xbutton",
+            "type": "Texture",
+            "path":  "./Assets/Scenes/RockPaperScissor/X.png"
+        },
+        {
+            "name": "Pierre",
+            "type": "Texture",
+            "path":  "./Assets/Scenes/RockPaperScissor/caillou.png"
+        },
+        {
+            "name": "Feuille",
+            "type": "Texture",
+            "path":  "./Assets/Scenes/RockPaperScissor/papier.png"
+        },
+        {
+            "name": "Ciseaux",
+            "type": "Texture",
+            "path":  "./Assets/Scenes/RockPaperScissor/ciseaux.png"
+        },
+        {
+            "name": "Font",
+            "type": "Font",
+            "path": "./Assets/Scenes/RockPaperScissor/impact.ttf"
+        }
+    ]
+}

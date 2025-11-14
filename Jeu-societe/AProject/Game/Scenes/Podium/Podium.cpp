@@ -21,7 +21,7 @@ void Podium::Load()
 		 
 
 		char buffer[10];
-		sprintf(buffer, "player%d", m_data->playerOrder[i]);
+		sprintf_s(buffer, "player%d", m_data->playerOrder[i]);
 		m_data->playerTab[i].setString(buffer);
 	}
 }

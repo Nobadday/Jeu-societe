@@ -1,4 +1,6 @@
 #pragma once
+#ifndef _INC_COMMON_HPP
+#define _INC_COMMON_HPP
 
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
@@ -19,3 +21,4 @@
 #include <string>
 #include <numeric>
 
+#endif // !_INC_COMMON_HPP

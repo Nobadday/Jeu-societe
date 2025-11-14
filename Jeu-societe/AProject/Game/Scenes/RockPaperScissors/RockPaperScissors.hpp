@@ -2,6 +2,7 @@
 #ifndef _INC_ROCKPAPERSCISSORS_HPP
 #define _INC_ROCKPAPERSCISSORS_HPP
 
+
 #include "../../Common.hpp"
 #include "../../Scenes/Scene.hpp"
 #include "../../Animation/Animation/Timer.hpp" 
@@ -33,13 +34,11 @@ class RockPaperScissors : public SceneBase
 	struct SceneData
 	{
 		sf::Sprite spriteTab[6];                                                                                                                             
-		sf::Texture textureTab[6];
+		sf::Text timerText;
 
 		sf::Sprite playerChoiceSprite[2];
 		Timer timer;
 
-		sf::Text timerText;
-		sf::Font font;
 
 		sf::Text victoryText;
 		State state = STATE_NONE;

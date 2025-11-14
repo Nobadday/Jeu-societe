@@ -30,7 +30,7 @@ void BaseGame::Load(void)
 
 		m_data->players[i].sprite.setTexture(m_data->players[i].texture);
 
-		m_data->players[i].sprite.setOrigin();
+		//m_data->players[i].sprite.setOrigin();
 
 		m_data->players[i].boardPosition = m_data->posCase[0].GetPosition();
 		m_data->players[i].currentCaseIndex = 0;

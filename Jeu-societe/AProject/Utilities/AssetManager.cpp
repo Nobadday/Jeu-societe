@@ -323,7 +323,7 @@ void* AssetManager::GetAssetOrPlaceholder(const std::string& _name, AssetType _t
 	{
 		return this->GetAsset(GetAssetTypePlaceholder(_type), _type);
 	}
-	return NULL;
+	return content;
 }
 
 #pragma endregion

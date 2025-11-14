@@ -141,7 +141,7 @@ class AssetManager
 		// Get an asset associated with this name from last to first container,
 		// If the asset is not found, gets the default placeholder available for this type
 		template <typename T>
-		T* GetAsset(const std::string& _name, AssetType _type);
+		T* GetAsset(const std::string& _name, AssetType _type = AssetType::UNKNOWN);
 
 	private:
 		std::vector<Container> m_containers;
@@ -176,6 +176,11 @@ inline void AssetManager::AddAsset(const std::string& _name, T* _object, AssetTy
 	this->GetContainer(_containerID).AddAsset<T>(_name, _object, _type);
 }
 
+template<typename T>
+inline T* AssetManager::GetAsset(const std::string& _name, AssetType _type)
+{
+	return (T*)this->GetAssetOrPlaceholder(_name, _type);
+}
 
 
 #endif

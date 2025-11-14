@@ -17,6 +17,8 @@
 typedef struct MainData
 {
 	sf::RenderWindow renderWindow;
+	AssetManager assetManager;
+
 	sf::Clock clock;
 	SceneHandler scenes;
 
@@ -92,6 +94,8 @@ void MainDataLoad(MainData& _mainData)
 
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
+	_mainData.gameData.m_assetManager = &_mainData.assetManager;
+
 
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 
@@ -103,7 +107,7 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<RandCard>("RandCard");
 	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
 
-	_mainData.scenes.SelectScene("Board", true);
+	_mainData.scenes.SelectScene("rockPaperSizor", true);
 
 	_mainData.clock.restart();
 }
