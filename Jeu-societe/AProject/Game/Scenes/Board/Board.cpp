@@ -30,8 +30,7 @@ void BaseGame::Load(void)
 
 		m_data->players[i].sprite.setTexture(m_data->players[i].texture);
 
-		//sf::FloatRect spriteBounds = m_data->players[i].sprite.getLocalBounds();
-		//m_data->players[i].sprite.setOrigin(spriteBounds.width / 2.0f, spriteBounds.height / 2.0f);
+		m_data->players[i].sprite.setOrigin();
 
 		m_data->players[i].boardPosition = m_data->posCase[0].GetPosition();
 		m_data->players[i].currentCaseIndex = 0;
@@ -67,7 +66,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 		{
 			if (_event.joystickButton.button == 0 && m_data->animator.IsFinished())
 			{
-				int rando = random::RandomInt(1, 6);
+				int rando = randmt::RandomInt(1, 6);
 				std::cout << "Roll Dice: " << rando << std::endl;
 				std::cout << "Playe : " << m_data->players[m_data->currentPlayerIndex].startRandom << std::endl;
 
@@ -90,7 +89,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 	{
 		if (_event.key.code == sf::Keyboard::Space && m_data->animator.IsFinished())
 		{
-			int rando = random::RandomInt(1, 6);
+			int rando = randmt::RandomInt(1, 6);
 			std::cout << "Roll Dice: " << rando << std::endl;
 			std::cout << "Playe : " << m_data->players[m_data->currentPlayerIndex].startRandom << std::endl;
 
@@ -147,7 +146,7 @@ void BaseGame::CaseAction()
 	case hash("Bonus"):
 		std::cout << "Landed on a Bonus case!" << std::endl;
 		{
-			int rando = random::RandomInt(1, 3);
+			int rando = randmt::RandomInt(1, 3);
 			int newIndex = (m_data->players[m_data->currentPlayerIndex].currentCaseIndex + rando) % m_data->posCase.size();
 			SetBoardState(DEPLACEMENT_ACTION, newIndex);
 		}
@@ -156,7 +155,7 @@ void BaseGame::CaseAction()
 	case hash("Malus"):
 		std::cout << "Landed on a Malus case!" << std::endl;
 		{
-			int rando = random::RandomInt(1, 3);
+			int rando = randmt::RandomInt(1, 3);
 			int newIndex = (m_data->players[m_data->currentPlayerIndex].currentCaseIndex - rando) % m_data->posCase.size();
 			SetBoardState(DEPLACEMENT_ACTION, newIndex);
 		}
@@ -167,7 +166,7 @@ void BaseGame::CaseAction()
 		{
 			int rando = random::RandomInt(1, 3);
 
-			if (random::RandomInt(0, 2) == 0)
+			if (randmt::RandomInt(0, 2) == 0)
 				rando = -rando;
 
 			int newIndex = (m_data->players[m_data->currentPlayerIndex].currentCaseIndex + rando) % m_data->posCase.size();
@@ -401,7 +400,7 @@ std::string BaseGame::RandomDuel()
 
 	// Sélection aléatoire d'un mini-jeu
 	//int randomIndex = 2;
-	int randomIndex = random::RandomInt(0, miniGameCount - 1);
+	int randomIndex = randmt::RandomInt(0, miniGameCount - 1);
 
 	std::cout << "Random minigame selected: " << miniGames[randomIndex] << std::endl;
 
@@ -472,7 +471,7 @@ std::string BaseGame::RandomBattle()
 
 	// Sélection aléatoire d'un mini-jeu
 	//int randomIndex = 2;
-	int randomIndex = random::RandomInt(0, miniGameCount - 1);
+	int randomIndex = randmt::RandomInt(0, miniGameCount - 1);
 
 	std::cout << "Random minigame selected: " << miniGames[randomIndex] << std::endl;
 
