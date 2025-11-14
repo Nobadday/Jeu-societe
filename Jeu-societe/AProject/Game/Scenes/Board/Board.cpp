@@ -87,6 +87,8 @@ void BaseGame::PollEvent(sf::Event& _event)
 
 			const int posCaseCount = static_cast<int>(m_data->posCase.size());
 
+			m_data->animator.Modify((float)rando, 60.0f, false, 1.0f);
+
 			if (m_data->state != START)
 			{
 				auto& player = m_data->players[m_data->currentPlayerIndex];
@@ -294,9 +296,11 @@ void BaseGame::SetWinDeplacement(int _newIndex)
 	std::cout << "player loser CurrentCaseIndex before move: " << m_data->players[loserIndex].currentCaseIndex << std::endl;
 
 	m_data->players[winnerIndex].currentCaseIndex += _newIndex;
+	m_data->animator.Modify((float)_newIndex, 60.0f, false, 1.0f);
 	std::cout << "player winner CurrentCaseIndex after move: " << m_data->players[winnerIndex].currentCaseIndex << std::endl;
 
 	m_data->players[loserIndex].currentCaseIndex -= _newIndex;
+	m_data->animator2.Modify((float)_newIndex, 60.0f, false, 1.0f);
 	std::cout << "player loser CurrentCaseIndex after move: " << m_data->players[loserIndex].currentCaseIndex << std::endl;
 
 	m_data->players[winnerIndex].currentCaseIndex %= m_data->posCase.size();
@@ -587,6 +591,8 @@ void BaseGame::Bonus(int _chance)
 
 		std::cout << "Avance de : " << rando << "!" << std::endl;
 
+		m_data->animator.Modify((float)rando, 60.0f, false, 1.0f);
+
 		newIndex = (currentIndex + rando) % m_data->posCase.size();
 
 		SetBoardState(DEPLACEMENT_ACTION, newIndex);
@@ -624,6 +630,8 @@ void BaseGame::Malus(int _chance)
 		int newIndex;
 
 		std::cout << "Recule de : " << rando << "!" << std::endl;
+
+		m_data->animator.Modify((float)rando, 60.0f, false, 1.0f);
 
 		newIndex = mathp::ModuloPositiveI((currentIndex - rando), m_data->posCase.size());
 

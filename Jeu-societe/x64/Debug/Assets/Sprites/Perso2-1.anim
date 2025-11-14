@@ -1,6 +1,6 @@
 {
     "assetPath":"Perso2-1.json",
-    "framerate": 25,
+    "framerate": 10,
 	"animations": [
         {
             "name":"Idle",
