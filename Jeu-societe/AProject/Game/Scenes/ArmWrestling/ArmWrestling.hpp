@@ -24,7 +24,6 @@ private:
 	sf::Text nameText;
 
 
-
 	short GetOtherPlayerID(short _callerID, const std::vector<ArmWrestlingPlayer>& allPlayers) const;
 };
 

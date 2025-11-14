@@ -28,13 +28,6 @@ class RussianRoulette : public SceneBase
 		};
 		struct SceneData
 		{
-			sf::Texture backgroundTex;
-			sf::Sprite backgroundSpr;
-
-			//sf::Texture gunTex;
-			//sf::Sprite gunSpr;
-
-			TextureAnimated gunTexAnim;
 			SpriteAnimated gunSprAnim;
 
 			GameState gameState = WAITING;
