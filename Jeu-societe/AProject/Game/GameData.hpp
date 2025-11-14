@@ -1,4 +1,5 @@
 #pragma once
+
 #ifndef _INC_GAMEDATA_HPP
 #define _INC_GAMEDATA_HPP
 
@@ -10,8 +11,6 @@
 #include "../Utilities/AudioEngine/AudioEngine.hpp"
 
 
-//class AudioEngine;
-
 class GameData
 {
 	private:
@@ -20,6 +19,7 @@ class GameData
 		sf::RenderWindow* m_renderWindow;
 		AssetManager* m_assetManager;
 		void* m_audioEngine;
+
 
 		std::vector<PlayerData> m_playerDataList;
 		std::vector<int> m_gonnaPlayIndex;

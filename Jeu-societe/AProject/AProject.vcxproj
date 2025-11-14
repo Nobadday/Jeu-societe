@@ -162,7 +162,7 @@
     <ClCompile Include="Game\Scenes\Basket\Basket.cpp" />
     <ClCompile Include="Game\Scenes\Board\Board.cpp" />
     <ClCompile Include="Game\Scenes\FlagGame\FlagGame.cpp" />
-    <ClCompile Include="Game\Scenes\Menu\Menu.cpp" />
+    <ClCompile Include="Game\Scenes\Podium\Podium.cpp" />
     <ClCompile Include="Game\Scenes\RandCard\RandCard.cpp" />
     <ClCompile Include="Game\Scenes\RockPaperScissors\RockPaperScissors.cpp" />
     <ClCompile Include="Game\Scenes\RussianRoulette\RussianRoulette.cpp" />
@@ -176,7 +176,6 @@
     <ClCompile Include="Ui\Button.cpp" />
     <ClCompile Include="Ui\MenuSystem.cpp" />
     <ClCompile Include="Utilities\AssetManager.cpp" />
-    <ClCompile Include="Utilities\AudioEngine\AudioEngine.cpp" />
     <ClCompile Include="Utilities\BetterWindow\BW.cpp" />
     <ClCompile Include="Utilities\Binds.cpp" />
     <ClCompile Include="Utilities\Camera\Camera.cpp" />
@@ -189,7 +188,6 @@
     <ClCompile Include="Utilities\MathPlus.cpp" />
     <ClCompile Include="Utilities\NewMath.cpp" />
     <ClCompile Include="Utilities\Random.cpp" />
-    <ClCompile Include="Utilities\StringFormat.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation\Animation.hpp" />
@@ -215,7 +213,7 @@
     <ClInclude Include="Game\Scenes\Basket\Basket.hpp" />
     <ClInclude Include="Game\Scenes\Board\Board.hpp" />
     <ClInclude Include="Game\Scenes\FlagGame\FlagGame.hpp" />
-    <ClInclude Include="Game\Scenes\Menu\Menu.hpp" />
+    <ClInclude Include="Game\Scenes\Podium\Podium.hpp" />
     <ClInclude Include="Game\Scenes\RandCard\RandCard.hpp" />
     <ClInclude Include="Game\Scenes\RockPaperScissors\RockPaperScissors.hpp" />
     <ClInclude Include="Game\Scenes\RussianRoulette\RussianRoulette.hpp" />
@@ -230,7 +228,6 @@
     <ClInclude Include="Ui\Button.hpp" />
     <ClInclude Include="Ui\MenuSystem.hpp" />
     <ClInclude Include="Utilities\AssetManager.hpp" />
-    <ClInclude Include="Utilities\AudioEngine\AudioEngine.hpp" />
     <ClInclude Include="Utilities\BetterWindow\BW.hpp" />
     <ClInclude Include="Utilities\Binds.hpp" />
     <ClInclude Include="Utilities\Camera\Camera.hpp" />
@@ -243,7 +240,6 @@
     <ClInclude Include="Utilities\MathPlus.hpp" />
     <ClInclude Include="Utilities\NewMath.hpp" />
     <ClInclude Include="Utilities\Random.hpp" />
-    <ClInclude Include="Utilities\StringFormat.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

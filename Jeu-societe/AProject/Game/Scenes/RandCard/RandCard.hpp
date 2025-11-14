@@ -35,14 +35,7 @@ class RandCard : public SceneBase
 		};
 		struct SceneData
 		{
-			sf::Texture backgroundTex;
-			sf::Sprite backgroundSpr;
-
-			sf::Texture staticCardTex;
 			sf::Sprite staticCardSpr;
-
-
-			TextureAnimated cardTexAnim;
 			SpriteAnimated cardSprAnim;
 
 			std::vector<CardType> cards;
@@ -58,7 +51,6 @@ class RandCard : public SceneBase
 
 			//DEBUG
 			int currentPlayer = 0;
-			sf::Font font;
 			sf::Text text;
 
 			int playerCountLeft = 0;

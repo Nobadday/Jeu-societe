@@ -102,5 +102,5 @@ class TextureAnimated
 
 
 #endif
-// Texture Animated v1.2.2
+// Texture Animated v1.2.3
 // TODO : Remake to be accessible everywhere, ability to AddAnimations like AxeFlixel

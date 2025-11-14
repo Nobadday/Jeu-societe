@@ -1,10 +1,10 @@
 #ifndef FLAGGAME_H
 #define FLAGGAME_H
 
-#include "../../Common.hpp"
-#include "../../Scenes/Scene.hpp"
-#include "../../Utilities/StringFormat.hpp"
-#include "../../Animation/Animation/Timer.hpp" 
+#include "../../../Common.hpp"
+#include "../../../Scenes/Scene.hpp"
+#include "../../../Utilities/StringFormat.hpp"
+#include "../../../Animation/Animation/Timer.hpp" 
 
 #define MAX_ROUND 3
 
@@ -26,6 +26,7 @@ private:
 		sf::Text inputText;
 		int eliminationOrder; // Order of elimination (0 = not eliminated, 1 = first eliminated, etc.)
 		float eliminationTime; // Time when player was eliminated
+		sf::Sprite buttonSprite;
 	};
 
 	struct SceneData
@@ -36,6 +37,9 @@ private:
 		sf::Text notEnoughPlayersText;
 		sf::Text requiredInputText;
 		sf::Text resultText;
+
+		sf::Texture buttonTexture[6];
+		sf::Sprite buttonSprite;
 		
 		sf::Font font;
 		

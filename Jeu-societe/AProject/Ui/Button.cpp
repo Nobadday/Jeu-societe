@@ -7,7 +7,8 @@ Button::Button():SpriteAnimated()
 }
 
 
-void Button::FrameChanged(void)
+
+void Button::OnFrameChanged(void)
 {
 	this->SpriteAnimated::OnFrameChange();
 }

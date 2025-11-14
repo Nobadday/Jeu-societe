@@ -15,11 +15,13 @@
 #include "Game/Scenes/Menu/Menu.hpp"
 
 
+
 typedef struct MainData
 {
 	sf::RenderWindow renderWindow;
 	AssetManager assetManager;
 	AudioEngine audioEngine;
+
 
 	sf::Clock clock;
 	SceneHandler scenes;
@@ -49,8 +51,8 @@ void Draw(MainData& _mainData);
 int main(void)
 {
 	random::SetSeedPID();
+	randmt::SetSeedPID();
 
-	StringFormat::Load();
 	binds = new Binds();
 
 	MainData mainData;
@@ -81,7 +83,6 @@ int main(void)
 	}
 
 
-	StringFormat::Unload();
 	delete binds;
 	binds = nullptr;
 	
@@ -99,7 +100,19 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.gameData.m_audioEngine = &_mainData.audioEngine;
 	_mainData.audioEngine.SetAssetManager(_mainData.assetManager);
 
-	
+	_mainData.assetManager.LoadManifest("Manifests/Main.json", "main");
+
+	_mainData.scenes.SetTransferedData(&_mainData.gameData);
+
+	_mainData.scenes.AddScene<BaseGame>("Board");
+	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
+	_mainData.scenes.AddScene<ArmWrestling>("ArmWrestling");
+	_mainData.scenes.AddScene<Basket>("Basket");
+	_mainData.scenes.AddScene<FlagGame>("FlagGame");
+	_mainData.scenes.AddScene<RandCard>("RandCard");
+	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
+
+	_mainData.scenes.SelectScene("RandCard", true);
 
 
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);

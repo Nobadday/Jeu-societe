@@ -1,5 +1,4 @@
 #pragma once
-
 #ifndef _INC_ASSETMANAGER_HPP
 #define _INC_ASSETMANAGER_HPP
 
@@ -141,7 +140,7 @@ class AssetManager
 		// Get an asset associated with this name from last to first container,
 		// If the asset is not found, gets the default placeholder available for this type
 		template <typename T>
-		T* GetAsset(const std::string& _name, AssetType _type);
+		T* GetAsset(const std::string& _name, AssetType _type = AssetType::UNKNOWN);
 
 	private:
 		std::vector<Container> m_containers;
@@ -176,7 +175,6 @@ inline void AssetManager::AddAsset(const std::string& _name, T* _object, AssetTy
 	this->GetContainer(_containerID).AddAsset<T>(_name, _object, _type);
 }
 
-
 template<typename T>
 inline T* AssetManager::GetAsset(const std::string& _name, AssetType _type)
 {
@@ -184,4 +182,4 @@ inline T* AssetManager::GetAsset(const std::string& _name, AssetType _type)
 }
 
 #endif
-// Asset Manager C++ v1.0.3
+// Asset Manager C++ v1.0.5

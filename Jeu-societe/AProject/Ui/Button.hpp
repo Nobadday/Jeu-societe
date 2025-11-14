@@ -20,7 +20,7 @@ class Button : public SpriteAnimated
 
 		Button();
 
-		virtual void FrameChanged(void);
+		virtual void OnFrameChanged(void);
 		void PollEvent(sf::Event& _event);
 
 		bool IsMouseOn(const sf::Vector2f& _mousePos);

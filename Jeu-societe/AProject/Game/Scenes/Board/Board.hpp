@@ -13,7 +13,7 @@
 #include "../../Animation/Graphics/TextureAnimated.hpp"
 #include "../../Animation/Graphics/TextureAtlas.hpp"
 
-#define TIME_WIN_DISPLAY 3.0f
+#define TIME_WIN_DISPLAY 1.0f
 
 class BaseGame : public SceneBase
 {
@@ -74,12 +74,18 @@ class BaseGame : public SceneBase
 		void CaseAction();
 
 		void SetBoardState(State _state, int _newIndex = 0);
-		
+
+		void SetWinDeplacement(int _newIndex);
+
 		void BoardStateUpdate(float _dt);
 
 		int OnSameCase();
 
 		std::string RandomDuel();
+
+		void SortStart();
+
+		std::string RandomBattle();
 
 		// Fonctions de gestion de la caméra
 		void UpdateCameraToShowAllPlayers();
@@ -99,3 +105,4 @@ class BaseGame : public SceneBase
 };
 
 #endif // _INC_BOARD_HPP
+
