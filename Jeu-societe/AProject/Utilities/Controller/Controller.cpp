@@ -1,10 +1,19 @@
 #include "Controller.hpp"
 
-namespace sf
-{
-	bool ControllerManager::LoadMap(const std::string& _filePath)
-	{
 
-		return false;
-	}
+
+
+
+namespace sfMod
+{
+
+bool Controller::LoadMap(const std::string& _filePath)
+{
+
+	return false;
 }
+
+
+}
+
+// Controller Mappings SFML || v0.0
