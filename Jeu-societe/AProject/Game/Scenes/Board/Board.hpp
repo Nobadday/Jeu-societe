@@ -2,11 +2,10 @@
 #define _INC_BOARD_HPP
 
 #include "../../Common.hpp"
-//#include "../../Scenes/Scene.hpp"
+
 #include "../../Map/Tiled.h"
 #include "../../Utilities/Camera/Camera.hpp"
-//#include "../../Utilities/MathPlus.hpp"
-//#include "../../Utilities/Random.hpp"
+
 #include "../../Animation/Animation/Animator.hpp"
 #include "../../Animation/Graphics/SpriteAnimated.hpp"
 #include "../../Animation/Graphics/AnimatedObject.hpp"
@@ -14,6 +13,7 @@
 #include "../../Animation/Graphics/TextureAtlas.hpp"
 
 #define TIME_WIN_DISPLAY 1.0f
+#define MAX_TOUR_EFFECT 2
 
 class BaseGame : public SceneBase
 {
@@ -32,6 +32,15 @@ class BaseGame : public SceneBase
 			CASE_ACTION_END,
 		};
 
+		enum StatePlayer
+		{
+			NONE = -1,
+			INFEC,
+			IMMUN,
+			CANT_PLAY,
+			CONFUSED
+		};
+
 		struct Player
 		{
 			SpriteAnimated sprite;
@@ -43,6 +52,11 @@ class BaseGame : public SceneBase
 			int currentCaseIndex;
 
 			int startRandom;
+
+			StatePlayer state;
+
+			int tourstate;
+
 		};
 
 		struct SceneData
