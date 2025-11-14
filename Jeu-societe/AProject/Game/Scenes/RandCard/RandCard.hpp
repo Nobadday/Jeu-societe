@@ -6,7 +6,7 @@
 #include "../../../Common.hpp"
 #include "../../../Animation/Graphics/SpriteAnimated.hpp"
 #include "../../../Animation/Graphics/TextureAnimated.hpp"
-#include "../../../Utilities/Button.hpp"
+#include "../../../Ui/MenuSystem.hpp"
 
 
 
@@ -14,7 +14,7 @@ class RandCard : public SceneBase
 {
 	private:
 
-		//DEBUG, REMOVE WHEN PLAYER STRUCT FROM GAMEDATA COMME
+		//Final ;)
 		struct Player
 		{
 			std::string name;
@@ -47,7 +47,8 @@ class RandCard : public SceneBase
 
 			std::vector<CardType> cards;
 			std::vector<Player> players;
-
+			std::vector<Player> deadPlayers;
+			GameData* gameData; 
 
 			GameState gameState = CHOOSE_CARD;
 			int cardChosen = 0;
@@ -60,9 +61,14 @@ class RandCard : public SceneBase
 			sf::Font font;
 			sf::Text text;
 
+			int playerCountLeft = 0;
 
-			//Button testButton;
-			//TextureAnimated& testTexture;
+			//Just to test MenuSystem
+			//We dont need for real game
+			// 
+			//MenuSystem* menuSystem;
+			//Button* buttonTest;
+			//TextureAnimated* textanim;
 		};
 		SceneData* m_data;
 		void PrintCards(sf::RenderWindow& _renderWindow);
@@ -81,3 +87,9 @@ class RandCard : public SceneBase
 };
 
 #endif // _INC_RAND_CARD_HPP
+
+
+//How it works ? 
+//Copy players data by gameData
+//With this copy, i delete players when he dies, and add it to deadPlayers
+//At the end, delete player have winner, and we can save the order of players die with deadPlayers

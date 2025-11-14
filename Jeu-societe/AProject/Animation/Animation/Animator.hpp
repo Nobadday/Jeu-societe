@@ -1,5 +1,4 @@
 #pragma once
-
 #ifndef _INC_ANIMATION_ANIMATOR_HPP
 #define _INC_ANIMATION_ANIMATOR_HPP
 
@@ -14,6 +13,15 @@ namespace ANIMATION_NAMESPACE
 {
 class Animator : public Animation
 {
+	private:
+		struct AnimatorData
+		{
+			// [0] Start position, [1] End position
+			sf::Vector2f goTo[2];
+			sf::Color colorTransition[2];
+			//sf::Vector2f scale[2];
+		};
+
 	public:
 		enum Animations
 		{
@@ -23,6 +31,14 @@ class Animator : public Animation
 
 			ANIMATION_COUNT
 		};
+
+	private:
+		AnimatorData m_data;
+		bool m_usedAnims[ANIMATION_COUNT];
+		Easing::Type m_animEasings[ANIMATION_COUNT];
+
+
+	public:
 		Animator(void);
 		Animator(float _durationSeconds, float _framerate, bool _loop, float _speed);
 
@@ -55,21 +71,9 @@ class Animator : public Animation
 		sf::Color GetColorTransition(void);
 		
 		//static sf::Color GetColorTransition(const sf::Color& _startColor, const sf::Color& _endColor, float _coefficient, Easing::Type _easing);
-
-	private:
-		struct AnimatorData
-		{
-			// [0] Start position, [1] End position
-			sf::Vector2f goTo[2];
-			sf::Color colorTransition[2];
-			//sf::Vector2f scale[2];
-		};
-		AnimatorData m_data;
-		bool m_usedAnims[ANIMATION_COUNT];
-		Easing::Type m_animEasings[ANIMATION_COUNT];
 };
 
 }
 
 #endif
-// Animator v1.0
+// Animator v1.0.2

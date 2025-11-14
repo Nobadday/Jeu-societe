@@ -13,9 +13,28 @@ class GameData
 	public:
 		sf::RenderWindow* m_renderWindow;
 
-
 		std::vector<PlayerData> m_playerDataList;
+		std::vector<int> m_gonnaPlayIndex;
+		std::vector<int> m_winIndex;
+
+	public:
+		GameData(void);
+
+
+		void InitMiniGamePlayer();
+
+		void SetPlayerPlaying(std::vector<int> _gonnaPlayeIndex);
+
+		void AddPlayerPlaying(int _goneAPlayeIndex);
+
+		void AddPlayerWin(int _winIndex);
+
+		// Gets the player's index from joystick ID
+		// returns -1 if not found
+		int GetPlayerIDFromJoystick(unsigned int _joystickId);
+
+		bool IsPlayerParticipating(int _playerID);
 
 };
 
-#endif
+#endif 

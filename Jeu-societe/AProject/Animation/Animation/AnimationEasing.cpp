@@ -28,6 +28,7 @@ const char* easingNames[anim::Easing::EASINGS+1] = {
 	"Nope"
 };
 
+
 namespace ANIMATION_NAMESPACE
 {
 
@@ -137,3 +138,5 @@ const char*& Easing::GetName(Easing::Type _easing)
 	return easingNames[EASINGS];
 }
 }
+
+// Animation Easing C++ v1.0.2

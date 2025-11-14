@@ -9,18 +9,18 @@
          "objects":[
                 {
                  "gid":2,
-                 "height":860,
+                 "height":1732.72727272727,
                  "id":1,
                  "name":"",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":2106.03,
-                 "x":-487.667,
-                 "y":657.091
+                 "width":3833.30272727273,
+                 "x":-963.424575757576,
+                 "y":1529.81827272727
                 }],
          "opacity":1,
-         "parallaxx":1,
+         "parallaxx":1.4,
          "parallaxy":1.1,
          "type":"objectgroup",
          "visible":true,
@@ -41,10 +41,11 @@
                  "type":"",
                  "visible":true,
                  "width":2877.55,
-                 "x":-625.667,
-                 "y":419.697
+                 "x":-509.667,
+                 "y":427.697
                 }],
          "opacity":1,
+         "parallaxx":1.3,
          "parallaxy":1.1,
          "tintcolor":"#00aa00",
          "type":"objectgroup",
@@ -71,6 +72,7 @@
                  "y":735.576
                 }],
          "opacity":1,
+         "parallaxx":1.2,
          "parallaxy":1.1,
          "tintcolor":"#ffffff",
          "type":"objectgroup",
@@ -92,8 +94,8 @@
                  "type":"Case",
                  "visible":true,
                  "width":0,
-                 "x":-27.651515151515,
-                 "y":486.636363636364
+                 "x":18.348484848485,
+                 "y":474.636363636364
                 }, 
                 {
                  "height":0,
@@ -101,11 +103,11 @@
                  "name":"1",
                  "point":true,
                  "rotation":0,
-                 "type":"Case",
+                 "type":"Battle",
                  "visible":true,
                  "width":0,
-                 "x":146.515151515152,
-                 "y":481.636363636364
+                 "x":114.515151515152,
+                 "y":479.636363636364
                 }, 
                 {
                  "height":0,
@@ -116,8 +118,8 @@
                  "type":"Bonus",
                  "visible":true,
                  "width":0,
-                 "x":334,
-                 "y":482
+                 "x":218,
+                 "y":478
                 }, 
                 {
                  "height":0,
@@ -128,7 +130,7 @@
                  "type":"Case",
                  "visible":true,
                  "width":0,
-                 "x":513,
+                 "x":329,
                  "y":478
                 }, 
                 {
@@ -140,8 +142,8 @@
                  "type":"Malus",
                  "visible":true,
                  "width":0,
-                 "x":674,
-                 "y":480
+                 "x":424,
+                 "y":476
                 }, 
                 {
                  "height":0,
@@ -152,8 +154,68 @@
                  "type":"Case",
                  "visible":true,
                  "width":0,
-                 "x":882,
+                 "x":506,
                  "y":476
+                }, 
+                {
+                 "height":0,
+                 "id":21,
+                 "name":"6",
+                 "point":true,
+                 "rotation":0,
+                 "type":"Luck",
+                 "visible":true,
+                 "width":0,
+                 "x":598,
+                 "y":478
+                }, 
+                {
+                 "height":0,
+                 "id":22,
+                 "name":"7",
+                 "point":true,
+                 "rotation":0,
+                 "type":"Luck",
+                 "visible":true,
+                 "width":0,
+                 "x":688,
+                 "y":476
+                }, 
+                {
+                 "height":0,
+                 "id":23,
+                 "name":"8",
+                 "point":true,
+                 "rotation":0,
+                 "type":"Battle",
+                 "visible":true,
+                 "width":0,
+                 "x":786,
+                 "y":478
+                }, 
+                {
+                 "height":0,
+                 "id":24,
+                 "name":"9",
+                 "point":true,
+                 "rotation":0,
+                 "type":"Case",
+                 "visible":true,
+                 "width":0,
+                 "x":874,
+                 "y":480
+                }, 
+                {
+                 "height":0,
+                 "id":25,
+                 "name":"10",
+                 "point":true,
+                 "rotation":0,
+                 "type":"Case",
+                 "visible":true,
+                 "width":0,
+                 "x":960,
+                 "y":478
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -168,7 +230,7 @@
          "objects":[
                 {
                  "gid":3,
-                 "height":292,
+                 "height":658.666666666667,
                  "id":5,
                  "name":"",
                  "rotation":0,
@@ -176,10 +238,10 @@
                  "visible":true,
                  "width":3249.79,
                  "x":-552.939,
-                 "y":876.788
+                 "y":1243.45466666667
                 }],
          "opacity":1,
-         "parallaxx":1,
+         "parallaxx":1.1,
          "parallaxy":1.1,
          "type":"objectgroup",
          "visible":true,
@@ -187,7 +249,7 @@
          "y":0
         }],
  "nextlayerid":7,
- "nextobjectid":21,
+ "nextobjectid":26,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.1",

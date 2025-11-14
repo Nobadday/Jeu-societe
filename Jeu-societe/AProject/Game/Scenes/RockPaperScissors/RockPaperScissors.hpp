@@ -1,44 +1,50 @@
 #pragma once
-#ifndef ROCKPAPERSIZOR_HPP
-#define ROCKPAPERSCISSORS_HPP
+#ifndef _INC_ROCKPAPERSCISSORS_HPP
+#define _INC_ROCKPAPERSCISSORS_HPP
 
 #include "../../Common.hpp"
 #include "../../Scenes/Scene.hpp"
 #include "../../Animation/Animation/Timer.hpp" 
 
-#include "../../Graphic/Button.hpp"
 
-typedef enum RPS_Choice
-{
-	RPS_NONE = -1,
-	RPS_ROCK,
-	RPS_PAPER,
-	RPS_SCISSORS,
-	RPS_CHOICE_COUNT
-} RPS_Choice;
-
-class RockPaperSizor : public SceneBase
+class RockPaperScissors : public SceneBase
 {
 	private:
+	enum RPS_Choice
+	{
+		RPS_NONE = -1,
+		RPS_ROCK,
+		RPS_PAPER,
+		RPS_SCISSORS,
+		RPS_CHOICE_COUNT
+	};
+
+	enum State
+	{
+		STATE_WARMUP,
+		STATE_PLAY,
+		STATE_PAUSE,
+		STATE_VICTORY,
+		STATE_EQUALITY
+	};
+
 	struct SceneData
 	{
 		sf::Sprite spriteTab[6];                                                                                                                             
 		sf::Texture textureTab[6];
 
-		int player1ID = 0;
-		RPS_Choice player1Choice = RPS_NONE;
-		sf::Sprite player1ChoiceSprite;
-
-		int player2ID = 0;
-		RPS_Choice player2Choice = RPS_NONE;
-		sf::Sprite player2ChoiceSprite;
-
+		sf::Sprite playerChoiceSprite[2];
 		Timer timer;
 
 		sf::Text timerText;
 		sf::Font font;
 
 		sf::Text victoryText;
+		State state;
+		GameData* gameData;
+
+		RPS_Choice playersChoice[4];
+		int roundNB;
 	};
 	SceneData* m_data;
 
@@ -49,6 +55,10 @@ public:
 	virtual void PollEvent(sf::Event& _event);
 	virtual void Update(float _deltaTime);
 	virtual void Draw(sf::RenderWindow& _renderWindow);
+
+private:
+	void UpdatePlayerChoiceTexture(void);
 };
 
-#endif // !ROCKPAPERSIZOR_HPP
+
+#endif // !_INC_ROCKPAPERSCISSORS_HPP
