@@ -87,7 +87,7 @@
     <ClCompile Include="Animation\Graphics\TextPlus.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Utilities\BetterWindow\BW.cpp">
+    <ClCompile Include="Utilities\BetterWindow\BetterWindow.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Animation\Graphics\TextAnimated.cpp">
@@ -188,7 +188,7 @@
     <ClInclude Include="Animation\Graphics\TextPlus.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Utilities\BetterWindow\BW.hpp">
+    <ClInclude Include="Utilities\BetterWindow\BetterWindow.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Animation\Graphics\TextAnimated.hpp">

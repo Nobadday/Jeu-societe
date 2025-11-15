@@ -1,6 +1,6 @@
 #include "Common.hpp"
 #include "./Animation/Graphics.hpp"
-#include "./Utilities/BetterWindow/BW.hpp"
+#include "./Utilities/BetterWindow/BetterWindow.hpp"
 #include "./Utilities/Camera/Camera.hpp"
 
 typedef struct MainData
@@ -11,9 +11,6 @@ typedef struct MainData
 
 	TextAnimated tp;
 	GameData gameData;
-	sf::Texture tstTex;
-
-	Camera cam;
 } MainData;
 
 
@@ -35,7 +32,7 @@ int main(void)
 
 	sf::Font font;
 	font.loadFromFile("./Assets/Fonts/OMORI_GAME2.ttf");
-	mainData.tstTex.loadFromFile("./Assets/Images/Placeholder.png");
+
 	mainData.renderWindow.setIcon("./Assets/Images/Placeholder.png");
 	
 	mainData.tp.setFont(font);
@@ -48,9 +45,6 @@ int main(void)
 	mainData.tp.SetAlignement(TextPlus::Alignement::CENTER);
 	mainData.tp.Modify(8.5f, 24.0f, false);
 	
-	mainData.cam.Reset(mainData.renderWindow);
-	mainData.cam.SetLimitations(sf::FloatRect(0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT));
-	mainData.cam.SetZoom(1.5f);
 
 	while (mainData.renderWindow.isOpen())
 	{
@@ -107,8 +101,27 @@ void PollEvent(MainData& _mainData)
 						}
 						[[fallthrough]];
 					case sf::Keyboard::F11:
-						_mainData.renderWindow.ToggleFullscreen();
+						_mainData.renderWindow.ToggleFullscreen(true);
 						break;
+
+					case sf::Keyboard::F2:
+						_mainData.renderWindow.Screenshot("Lol.png");
+						break;
+					case sf::Keyboard::G:
+						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
+						{
+							_mainData.renderWindow.SetDisplayMode(sfMod::RenderWindow::STRETCH);
+						}
+						else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
+						{
+							_mainData.renderWindow.SetDisplayMode(sfMod::RenderWindow::PAN);
+						}
+						else
+						{
+							_mainData.renderWindow.SetDisplayMode(sfMod::RenderWindow::LETTERBOX);
+						}
+						break;
+
 
 					default:
 						break;
@@ -127,22 +140,21 @@ void Update(MainData& _mainData)
 {
 	float deltaTime = _mainData.clock.restart().asSeconds();
 	//float dtFixed = deltaTime / (1.0f / 60.0f);
+	
 	_mainData.scenes.Update(deltaTime);
 	_mainData.tp.Update(deltaTime);
+
 }
 
 void Draw(MainData& _mainData)
 {
-	_mainData.renderWindow.clear(sf::Color::Black);
-	
-	sf::RectangleShape test(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
-	test.setTexture(&_mainData.tstTex, true);
-	test.setFillColor(sf::Color(51, 215, 110));
-	_mainData.renderWindow.draw(test);
+	_mainData.renderWindow.clear(sf::Color(0,0,0));
 
 	_mainData.scenes.Draw(_mainData.renderWindow);
 
 	_mainData.renderWindow.draw(_mainData.tp);
+
+
 
 	_mainData.renderWindow.display();
 }

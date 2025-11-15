@@ -160,7 +160,7 @@
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Scenes\SceneHandler.cpp" />
     <ClCompile Include="Utilities\AssetManager.cpp" />
-    <ClCompile Include="Utilities\BetterWindow\BW.cpp" />
+    <ClCompile Include="Utilities\BetterWindow\BetterWindow.cpp" />
     <ClCompile Include="Utilities\Camera\Camera.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Utilities\Controller\Controller.cpp" />
@@ -195,7 +195,7 @@
     <ClInclude Include="Scenes\SceneHandler.hpp" />
     <ClInclude Include="Screen.hpp" />
     <ClInclude Include="Utilities\AssetManager.hpp" />
-    <ClInclude Include="Utilities\BetterWindow\BW.hpp" />
+    <ClInclude Include="Utilities\BetterWindow\BetterWindow.hpp" />
     <ClInclude Include="Utilities\Camera\Camera.hpp" />
     <ClInclude Include="Common.hpp" />
     <ClInclude Include="Utilities\Controller\Controller.hpp" />
