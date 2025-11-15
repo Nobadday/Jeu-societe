@@ -28,37 +28,35 @@ void BaseGame::Load(void)
 	{
 		switch (m_gameData->m_playerDataList[i].GetPlayerSkin())
 		{
-			case PlayerData::CHARACTER_1_1:
-				m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso1-1.anim", TextureAnimated::ANIMATION_ANIM);
-				break;
-			case PlayerData::CHARACTER_2_1:
-				m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso2-1.anim", TextureAnimated::ANIMATION_ANIM);
-				break;
-			case PlayerData::CHARACTER_3_1:
-				m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso3-1.anim", TextureAnimated::ANIMATION_ANIM);
-				break;
-			case PlayerData::CHARACTER_4_1:
-				m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso4-1.anim", TextureAnimated::ANIMATION_ANIM);
-				break;
-			case PlayerData::CHARACTER_1_2:
-				m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso1-2.anim", TextureAnimated::ANIMATION_ANIM);
-				break;
-			case PlayerData::CHARACTER_2_2:
-				m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso2-2.anim", TextureAnimated::ANIMATION_ANIM);
-				break;
-			case PlayerData::CHARACTER_3_2:
-				m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso3-2.anim", TextureAnimated::ANIMATION_ANIM);
-				break;
-			case PlayerData::CHARACTER_4_2:
-				m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso4-2.anim", TextureAnimated::ANIMATION_ANIM);
-				break;
-			default:
-				m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso1-1.anim", TextureAnimated::ANIMATION_ANIM);
-				break;
+		case PlayerData::CHARACTER_1_1:
+			m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso1-1.anim", TextureAnimated::ANIMATION_ANIM);
+			break;
+		case PlayerData::CHARACTER_2_1:
+			m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso2-1.anim", TextureAnimated::ANIMATION_ANIM);
+			break;
+		case PlayerData::CHARACTER_3_1:
+			m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso3-1.anim", TextureAnimated::ANIMATION_ANIM);
+			break;
+		case PlayerData::CHARACTER_4_1:
+			m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso4-1.anim", TextureAnimated::ANIMATION_ANIM);
+			break;
+		case PlayerData::CHARACTER_1_2:
+			m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso1-2.anim", TextureAnimated::ANIMATION_ANIM);
+			break;
+		case PlayerData::CHARACTER_2_2:
+			m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso2-2.anim", TextureAnimated::ANIMATION_ANIM);
+			break;
+		case PlayerData::CHARACTER_3_2:
+			m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso3-2.anim", TextureAnimated::ANIMATION_ANIM);
+			break;
+		case PlayerData::CHARACTER_4_2:
+			m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso4-2.anim", TextureAnimated::ANIMATION_ANIM);
+			break;
+		default:
+			m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso1-1.anim", TextureAnimated::ANIMATION_ANIM);
+			break;
 		}
 
-		
-				
 		m_data->players[i].sprite.setTexture(m_data->players[i].texture);
 
 		m_data->players[i].sprite.setOrigin({ 0.5f,1.f });
@@ -187,7 +185,10 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 {
 	const sf::View& referenceView = m_data->camera.GetView();
 	_renderWindow.setView(referenceView);
-	m_data->tile.DrawMapLayers(_renderWindow, referenceView.getCenter());
+
+	std::string layer = "point";
+
+	m_data->tile.DrawMapLayers(_renderWindow, referenceView.getCenter(), layer);
 
 	// Affichage des joueurs
 	for (auto& player : m_data->players)
@@ -195,11 +196,21 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 		player.sprite.setPosition(player.boardPosition);
 		_renderWindow.draw(player.sprite);
 	}
+
+	m_data->tile.DrawMapLayers(_renderWindow, referenceView.getCenter(),"point");
 }
 
 void BaseGame::CaseAction()
 {
 	const std::string& caseType = m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType();
+
+	/*int sameCase = OnSameCase();
+	if (sameCase != -1)
+	{
+		SetBoardState(DUEL, 0);
+		return;
+	}*/
+
 
 	switch (hash(caseType.c_str()))
 	{
@@ -237,15 +248,7 @@ void BaseGame::CaseAction()
 
 	default:
 	{
-		/*int sameCase = OnSameCase();
-		if (sameCase != -1)
-		{
-			SetBoardState(DUEL, 0);
-		}
-		else
-		{*/
-			SetBoardState(PLAY, 0);
-		/*}*/
+		SetBoardState(PLAY, 0);
 	}
 	break;
 	}
@@ -273,7 +276,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 	case DEPLACEMENT_ACTION:
 	{
 		sf::Vector2f startPos = m_data->players[m_data->currentPlayerIndex].boardPosition;
-		sf::Vector2f endPos = m_data->posCase[_newIndex].GetPosition();
+		sf::Vector2f endPos = m_data->posCase[_newIndex].GetPosition() + sf::Vector2f{randmt::RandomFloat(-10, 10), randmt::RandomFloat(-10, 10)};
 
 		m_data->animator.SetGoTo(startPos, endPos);
 		m_data->animator.Restart();
@@ -320,14 +323,14 @@ void BaseGame::SetWinDeplacement(int _newIndex)
 
 	// Animation du gagnant
 	sf::Vector2f startPos = m_data->players[winnerIndex].boardPosition;
-	sf::Vector2f endPos = m_data->posCase[m_data->players[winnerIndex].currentCaseIndex].GetPosition();
+	sf::Vector2f endPos = m_data->posCase[m_data->players[winnerIndex].currentCaseIndex].GetPosition() + sf::Vector2f{ randmt::RandomFloat(-10, 10), randmt::RandomFloat(-10, 10) };
 	m_data->animator.SetGoTo(startPos, endPos);
 	m_data->animator.Restart();
 	m_data->players[winnerIndex].sprite.SetAnimation("Right_Walk");
 
 	// Animation du perdant
 	startPos = m_data->players[loserIndex].boardPosition;
-	endPos = m_data->posCase[m_data->players[loserIndex].currentCaseIndex].GetPosition();
+	endPos = m_data->posCase[m_data->players[loserIndex].currentCaseIndex].GetPosition() + sf::Vector2f{ randmt::RandomFloat(-10, 10), randmt::RandomFloat(-10, 10) };
 	m_data->animator2.SetGoTo(startPos, endPos);
 	m_data->animator2.Restart();
 	m_data->players[loserIndex].sprite.SetAnimation("Right_Walk");
@@ -398,7 +401,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 
 			m_data->players[winnerIndex].boardPosition = m_data->animator.GetGoTo();
 			m_data->players[loserIndex].boardPosition = m_data->animator2.GetGoTo();
-			
+
 			if (m_data->animator.IsFinished() && m_data->animator2.IsFinished())
 			{
 				m_data->players[winnerIndex].sprite.SetAnimation("Idle");
@@ -437,7 +440,7 @@ int BaseGame::OnSameCase()
 
 	if (!sameCasePlayersIndex.empty())
 	{
-		int randomIndex = random::RandomInt(0, (int)sameCasePlayersIndex.size() - 1);
+		int randomIndex = randmt::RandomInt(0, (int)sameCasePlayersIndex.size() - 1);
 		return sameCasePlayersIndex[randomIndex];
 	}
 
@@ -470,50 +473,48 @@ std::string BaseGame::RandomDuel()
 
 void BaseGame::SortStart()
 {
+	int somme = 1;
+	m_data->currentPlayerIndex = 0;
+
+	for (const auto& player : m_data->players)
 	{
-		int somme = 1;
-		m_data->currentPlayerIndex = 0;
+		if (player.startRandom != 0)
+			m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
 
-		for (const auto& player : m_data->players)
-		{
-			if (player.startRandom != 0)
-				m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
+		somme *= player.startRandom;
+	}
 
-			somme *= player.startRandom;
+	if (somme != 0)
+	{
+		// Tri des joueurs par ordre décroissant de jet de dé
+		// Créer un vecteur d'indices
+		std::vector<size_t> indices(m_data->players.size());
+		std::iota(indices.begin(), indices.end(), 0);
+
+		// Trier les indices par ordre décroissant de startRandom
+		std::sort(indices.begin(), indices.end(),
+			[this](size_t a, size_t b) { return m_data->players[a].startRandom > m_data->players[b].startRandom; });
+
+		// Réorganiser m_data->players
+		std::vector<Player> sortedPlayers(m_data->players.size());
+		for (size_t i = 0; i < indices.size(); ++i) {
+			sortedPlayers[i] = m_data->players[indices[i]];
+		}
+		m_data->players = std::move(sortedPlayers);
+
+		// CORRECTION : Réassigner les textures aux sprites après le déplacement
+		for (auto& player : m_data->players) {
+			player.sprite.setTexture(player.texture);
 		}
 
-		if (somme != 0)
-		{
-			// Tri des joueurs par ordre décroissant de jet de dé
-			// Créer un vecteur d'indices
-			std::vector<size_t> indices(m_data->players.size());
-			std::iota(indices.begin(), indices.end(), 0);
-
-			// Trier les indices par ordre décroissant de startRandom
-			std::sort(indices.begin(), indices.end(),
-				[this](size_t a, size_t b) { return m_data->players[a].startRandom > m_data->players[b].startRandom; });
-
-			// Réorganiser m_data->players
-			std::vector<Player> sortedPlayers(m_data->players.size());
-			for (size_t i = 0; i < indices.size(); ++i) {
-				sortedPlayers[i] = m_data->players[indices[i]];
-			}
-			m_data->players = std::move(sortedPlayers);
-
-			// CORRECTION : Réassigner les textures aux sprites après le déplacement
-			for (auto& player : m_data->players) {
-				player.sprite.setTexture(player.texture);
-			}
-
-			// Réorganiser m_gameData->m_playerDataList
-			std::vector<PlayerData> sortedPlayerData(m_gameData->m_playerDataList.size());
-			for (size_t i = 0; i < indices.size(); ++i) {
-				sortedPlayerData[i] = m_gameData->m_playerDataList[indices[i]];
-			}
-			m_gameData->m_playerDataList = std::move(sortedPlayerData);
-
-			SetBoardState(PLAY, 0);
+		// Réorganiser m_gameData->m_playerDataList
+		std::vector<PlayerData> sortedPlayerData(m_gameData->m_playerDataList.size());
+		for (size_t i = 0; i < indices.size(); ++i) {
+			sortedPlayerData[i] = m_gameData->m_playerDataList[indices[i]];
 		}
+		m_gameData->m_playerDataList = std::move(sortedPlayerData);
+
+		SetBoardState(PLAY, 0);
 	}
 }
 
