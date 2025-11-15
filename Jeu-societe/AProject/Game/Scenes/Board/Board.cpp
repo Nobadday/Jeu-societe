@@ -145,6 +145,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 			processDiceRoll(rando);
 		}
 	}
+
 }
 
 void BaseGame::Update(float _deltaTime)
@@ -190,11 +191,21 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 
 	m_data->tile.DrawMapLayers(_renderWindow, referenceView.getCenter(), layer);
 
-	// Affichage des joueurs
-	for (auto& player : m_data->players)
+	// Créer un vecteur d'indices pour trier les joueurs par position Y
+	std::vector<size_t> indices(m_data->players.size());
+	std::iota(indices.begin(), indices.end(), 0);
+
+	// Trier les indices par position Y croissante
+	std::sort(indices.begin(), indices.end(),
+		[this](size_t a, size_t b) {
+			return m_data->players[a].boardPosition.y < m_data->players[b].boardPosition.y;
+		});
+
+	// Affichage des joueurs dans l'ordre trié
+	for (size_t idx : indices)
 	{
-		player.sprite.setPosition(player.boardPosition);
-		_renderWindow.draw(player.sprite);
+		m_data->players[idx].sprite.setPosition(m_data->players[idx].boardPosition);
+		_renderWindow.draw(m_data->players[idx].sprite);
 	}
 
 	m_data->tile.DrawMapLayers(_renderWindow, referenceView.getCenter(),"point");
