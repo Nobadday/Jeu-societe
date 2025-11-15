@@ -148,12 +148,12 @@
                         {
                          "name":"nextPath1",
                          "type":"string",
-                         "value":"4"
+                         "value":"11"
                         }, 
                         {
                          "name":"nextPath2",
                          "type":"string",
-                         "value":"11"
+                         "value":"4"
                         }, 
                         {
                          "name":"pathId1",
