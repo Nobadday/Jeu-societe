@@ -122,6 +122,29 @@ void Tiled::InitTiled(const char* _Map)
 						mapObject.SetType(obj.value("type", ""));
 						mapObject.SetRotation(obj.value("rotation", 0.0f));
 						mapObject.SetVisible(obj.value("visible", true));
+						
+						if (obj.contains("properties") && obj["properties"].is_array())
+						{
+							const auto& properties = obj["properties"];
+							/*std::cout << "  Nombre d'objets: " << objects.size() << std::endl;*/
+
+							for (size_t j = 0; j < properties.size(); ++j)
+							{
+								const auto& pro = properties[j];
+
+								// Créer un nouvel objet
+								MapObjectProperty mapObjectProperty;
+
+								mapObjectProperty.SetName(pro.value("name", ""));
+								mapObjectProperty.SetType(pro.value("type", ""));
+								mapObjectProperty.SetValue(pro.value("value", ""));
+								
+
+								// Ajouter l'objet au layer
+								mapObject.AddProperty(mapObjectProperty);
+
+							}
+						}
 
 						// Ajouter l'objet au layer
 						mapLayer.AddObject(mapObject);

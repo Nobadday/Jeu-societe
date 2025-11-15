@@ -65,6 +65,8 @@ void BaseGame::Load(void)
 		m_data->players[i].currentCaseIndex = 0;
 		m_data->players[i].startRandom = 0;
 		m_data->players[i].state = StatePlayer::NONE;
+		m_data->players[i].pendingMovement = 0;      // Nouveau
+		m_data->players[i].currentPathId = -1;       // Nouveau : -1 = chemin principal
 	}
 
 	m_data->currentPlayerIndex = 0;
@@ -89,6 +91,50 @@ void BaseGame::Unload(void)
 
 void BaseGame::PollEvent(sf::Event& _event)
 {
+	// Si on attend un choix de chemin
+	if (m_data->state == WAITING_PATH_CHOICE)
+	{
+		// Gestion joystick
+		if (_event.type == sf::Event::JoystickMoved)
+		{
+			unsigned int joyId = _event.joystickMove.joystickId;
+			if (m_gameData->m_playerDataList[m_data->currentPlayerIndex].m_joystickId == joyId)
+			{
+				// Axe vertical (Y) : haut = choix 0, bas = choix 1
+				if (_event.joystickMove.axis == sf::Joystick::Y)
+				{
+					if (_event.joystickMove.position < -50.0f) // Haut
+					{
+						ProcessPathChoice(0);
+						std::cout << "Chemin du haut choisi (joystick)" << std::endl;
+					}
+					else if (_event.joystickMove.position > 50.0f) // Bas
+					{
+						ProcessPathChoice(1);
+						std::cout << "Chemin du bas choisi (joystick)" << std::endl;
+					}
+				}
+			}
+		}
+		
+		// DEBUG : Touches clavier
+		if (_event.type == sf::Event::KeyPressed)
+		{
+			if (_event.key.code == sf::Keyboard::Up || _event.key.code == sf::Keyboard::Z)
+			{
+				ProcessPathChoice(0);
+				std::cout << "Chemin du haut choisi (clavier)" << std::endl;
+			}
+			else if (_event.key.code == sf::Keyboard::Down || _event.key.code == sf::Keyboard::S)
+			{
+				ProcessPathChoice(1);
+				std::cout << "Chemin du bas choisi (clavier)" << std::endl;
+			}
+		}
+		
+		return; // Ne pas traiter d'autres événements pendant le choix
+	}
+
 	// Lambda pour factoriser le comportement du lancer de dé
 	auto processDiceRoll = [this](int rando)
 		{
@@ -97,24 +143,31 @@ void BaseGame::PollEvent(sf::Event& _event)
 
 			const int posCaseCount = static_cast<int>(m_data->posCase.size());
 
-			m_data->animator.Modify((float)rando, 60.0f, false, 1.0f);
+			//m_data->animator.Modify((float)rando, 60.0f, false, 1.0f);
 
 			if (m_data->state != START)
 			{
 				auto& player = m_data->players[m_data->currentPlayerIndex];
-				int newIndex = 0;
+				
+				// CORRECTION : Initialiser le mouvement restant
+				player.pendingMovement = rando;
+				
+				// Calculer le prochain index (première case du déplacement)
+				int nextIndex = 0;
 
 				if (player.state != StatePlayer::CONFUSED)
 				{
-					newIndex = mathp::ModuloPositiveI(player.currentCaseIndex + rando, posCaseCount);
+					// Avancer d'une seule case pour commencer
+					nextIndex = mathp::ModuloPositiveI(player.currentCaseIndex + 1, posCaseCount);
 				}
 				else
 				{
 					m_data->players[m_data->currentPlayerIndex].sprite.setScale({ -1.f,1.f });
-					newIndex = mathp::ModuloPositiveI(player.currentCaseIndex - rando, posCaseCount);
+					// Reculer d'une seule case pour commencer
+					nextIndex = mathp::ModuloPositiveI(player.currentCaseIndex - 1, posCaseCount);
 				}
 
-				SetBoardState(DEPLACEMENT, newIndex);
+				SetBoardState(DEPLACEMENT, nextIndex);
 			}
 			else
 			{
@@ -267,48 +320,82 @@ void BaseGame::CaseAction()
 
 void BaseGame::SetBoardState(State _state, int _newIndex)
 {
-	m_data->state = _state;
+    m_data->state = _state;
 
-	switch (m_data->state)
-	{
-	case START:
-		break;
-	case PLAY:
-		m_data->players[m_data->currentPlayerIndex].sprite.setScale({ 1.f,1.f });
-		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
-		m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
-		break;
-	case WIN:
-		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
-		break;
+    switch (m_data->state)
+    {
+    case START:
+        break;
+    case PLAY:
+        m_data->players[m_data->currentPlayerIndex].sprite.setScale({ 1.f,1.f });
+        m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
+        m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
+        break;
+    case WIN:
+        m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
+        break;
 
-	case DEPLACEMENT:
-		[[fallthrough]];
-	case DEPLACEMENT_ACTION:
-	{
-		sf::Vector2f startPos = m_data->players[m_data->currentPlayerIndex].boardPosition;
-		sf::Vector2f endPos = m_data->posCase[_newIndex].GetPosition() + sf::Vector2f{randmt::RandomFloat(-10, 10), randmt::RandomFloat(-10, 10)};
+    case DEPLACEMENT:
+        [[fallthrough]];
+    case DEPLACEMENT_ACTION:
+    {
+        auto& player = m_data->players[m_data->currentPlayerIndex];
+        
+        // Vérifier s'il y a un choix de chemin à cette case
+        if (HasPathChoice(player.currentCaseIndex) && player.pendingMovement > 0)
+        {
+            m_data->pathChoices = GetAvailablePaths(player.currentCaseIndex);
+            m_data->state = WAITING_PATH_CHOICE;
+            std::cout << "Choix de chemin requis : " << m_data->pathChoices.size() << " options" << std::endl;
+            return;
+        }
+        
+        // Pas de choix : avancer automatiquement
+        std::vector<int> availablePaths = GetAvailablePaths(player.currentCaseIndex);
+        if (availablePaths.empty())
+        {
+            std::cout << "Erreur : aucun chemin disponible!" << std::endl;
+            SetBoardState(CASE_ACTION_END);
+            return;
+        }
+        
+        int nextIndex = availablePaths[0]; // Un seul chemin disponible
+        
+        sf::Vector2f startPos = player.boardPosition;
+        sf::Vector2f endPos = m_data->posCase[nextIndex].GetPosition() + 
+            sf::Vector2f{randmt::RandomFloat(-10, 10), randmt::RandomFloat(-10, 10)};
 
-		m_data->animator.SetGoTo(startPos, endPos);
-		m_data->animator.Restart();
+        m_data->animator.SetGoTo(startPos, endPos);
+        m_data->animator.Restart();
 
-		m_data->players[m_data->currentPlayerIndex].currentCaseIndex = _newIndex;
-		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Right_Walk");
-	}
-	break;
+        player.currentCaseIndex = nextIndex;
+        player.sprite.SetAnimation("Right_Walk");
+        
+        // Vérifier si on arrive sur une convergence
+        const MapObject& nextCase = m_data->posCase[nextIndex];
+        if (nextCase.GetType() == "merge")
+        {
+            player.currentPathId = -1; // Retour au chemin principal
+        }
+    }
+    break;
 
-	case WIN_DEPLACEMENT:
-		SetWinDeplacement(_newIndex);
-		break;
+    case WAITING_PATH_CHOICE:
+        // Attente de l'entrée du joueur
+        break;
 
-	case CASE_ACTION:
-		break;
-	case CASE_ACTION_END:
-		SetBoardState(PLAY, 0);
-		break;
-	default:
-		break;
-	}
+    case WIN_DEPLACEMENT:
+        SetWinDeplacement(_newIndex);
+        break;
+
+    case CASE_ACTION:
+        break;
+    case CASE_ACTION_END:
+        SetBoardState(PLAY, 0);
+        break;
+    default:
+        break;
+    }
 }
 
 void BaseGame::SetWinDeplacement(int _newIndex)
@@ -322,11 +409,11 @@ void BaseGame::SetWinDeplacement(int _newIndex)
 	std::cout << "player loser CurrentCaseIndex before move: " << m_data->players[loserIndex].currentCaseIndex << std::endl;
 
 	m_data->players[winnerIndex].currentCaseIndex += _newIndex;
-	m_data->animator.Modify((float)_newIndex, 60.0f, false, 1.0f);
+	//m_data->animator.Modify((float)_newIndex, 60.0f, false, 1.0f);
 	std::cout << "player winner CurrentCaseIndex after move: " << m_data->players[winnerIndex].currentCaseIndex << std::endl;
 
 	m_data->players[loserIndex].currentCaseIndex -= _newIndex;
-	m_data->animator2.Modify((float)_newIndex, 60.0f, false, 1.0f);
+	//m_data->animator2.Modify((float)_newIndex, 60.0f, false, 1.0f);
 	std::cout << "player loser CurrentCaseIndex after move: " << m_data->players[loserIndex].currentCaseIndex << std::endl;
 
 	m_data->players[winnerIndex].currentCaseIndex %= m_data->posCase.size();
@@ -354,10 +441,40 @@ void BaseGame::BoardStateUpdate(float _dt)
 	case START:
 		SortStart();
 		break;
+		
 	case DEPLACEMENT:
 		m_data->players[m_data->currentPlayerIndex].boardPosition = m_data->animator.GetGoTo();
 		if (m_data->animator.IsFinished())
-			SetBoardState(CASE_ACTION);
+		{
+			// CORRECTION : Décrémenter le mouvement après avoir atteint la case
+			auto& player = m_data->players[m_data->currentPlayerIndex];
+			player.pendingMovement--;
+			
+			std::cout << "Mouvement restant : " << player.pendingMovement << std::endl;
+			
+			if (player.pendingMovement > 0)
+			{
+				// Continuer le déplacement vers la prochaine case
+				int nextIndex;
+				const int posCaseCount = static_cast<int>(m_data->posCase.size());
+				
+				if (player.state != StatePlayer::CONFUSED)
+				{
+					nextIndex = mathp::ModuloPositiveI(player.currentCaseIndex + 1, posCaseCount);
+				}
+				else
+				{
+					nextIndex = mathp::ModuloPositiveI(player.currentCaseIndex - 1, posCaseCount);
+				}
+				
+				SetBoardState(DEPLACEMENT, nextIndex);
+			}
+			else
+			{
+				// Déplacement terminé, exécuter l'action de case
+				SetBoardState(CASE_ACTION);
+			}
+		}
 		break;
 
 	case DEPLACEMENT_ACTION:
@@ -393,7 +510,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 		break;
 
 	case WIN:
-		m_data->timeWin -= _dt; // Approximation pour 60 FPS
+		m_data->timeWin -= _dt;
 		if (m_data->timeWin <= 0)
 		{
 			m_data->timeWin = TIME_WIN_DISPLAY;
@@ -521,7 +638,7 @@ void BaseGame::SortStart()
 		// Réorganiser m_gameData->m_playerDataList
 		std::vector<PlayerData> sortedPlayerData(m_gameData->m_playerDataList.size());
 		for (size_t i = 0; i < indices.size(); ++i) {
-			sortedPlayerData[i] = m_gameData->m_playerDataList[indices[i]];
+		 sortedPlayerData[i] = m_gameData->m_playerDataList[indices[i]];
 		}
 		m_gameData->m_playerDataList = std::move(sortedPlayerData);
 
@@ -615,7 +732,7 @@ void BaseGame::Bonus(int _chance)
 
 		std::cout << "Avance de : " << rando << "!" << std::endl;
 
-		m_data->animator.Modify((float)rando, 60.0f, false, 1.0f);
+		//m_data->animator.Modify((float)rando, 60.0f, false, 1.0f);
 
 		newIndex = (currentIndex + rando) % m_data->posCase.size();
 
@@ -655,7 +772,7 @@ void BaseGame::Malus(int _chance)
 
 		std::cout << "Recule de : " << rando << "!" << std::endl;
 
-		m_data->animator.Modify((float)rando, 60.0f, false, 1.0f);
+		//m_data->animator.Modify((float)rando, 60.0f, false, 1.0f);
 
 		newIndex = mathp::ModuloPositiveI((currentIndex - rando), m_data->posCase.size());
 
@@ -706,4 +823,157 @@ void BaseGame::Malus(int _chance)
 		}
 		SetBoardState(CASE_ACTION_END);
 	}
+}
+
+bool BaseGame::HasPathChoice(int caseIndex)
+{
+    const MapObject& currentCase = m_data->posCase[caseIndex];
+	if (currentCase.GetPropertyByName("type") == nullptr)
+	{
+		return false;
+	}
+    std::string caseType = currentCase.GetPropertyByName("type")->GetStringValue();
+    return (caseType == "split");
+}
+
+std::vector<int> BaseGame::GetAvailablePaths(int caseIndex)
+{
+    std::vector<int> paths;
+    const MapObject& currentCase = m_data->posCase[caseIndex];
+	std::string caseType = "";
+	if (currentCase.GetPropertyByName("type") != nullptr)
+	{
+		caseType = currentCase.GetPropertyByName("type")->GetStringValue();
+	}
+   
+    
+    if (caseType == "split")
+    {
+        // Récupérer les deux chemins possibles
+        std::string path1Str = currentCase.GetPropertyByName("nextPath1")->GetStringValue();
+        std::string path2Str = currentCase.GetPropertyByName("nextPath2")->GetStringValue();
+        
+        if (!path1Str.empty())
+            paths.push_back(std::stoi(path1Str));
+        if (!path2Str.empty())
+            paths.push_back(std::stoi(path2Str));
+    }
+    else if (caseType == "merge")
+    {
+        // Une seule sortie après convergence
+        std::string nextPathStr = currentCase.GetPropertyByName("nextPath")->GetStringValue();
+        if (!nextPathStr.empty())
+            paths.push_back(std::stoi(nextPathStr));
+    }
+    else
+    {
+        // Chemin normal : case suivante
+        std::string nextPathStr = currentCase.GetPropertyByName("nextPath")->GetStringValue();
+        if (!nextPathStr.empty())
+        {
+            paths.push_back(std::stoi(nextPathStr));
+        }
+        else
+        {
+            // Fallback : index suivant (modulo pour boucler)
+            paths.push_back(mathp::ModuloPositiveI(caseIndex + 1, m_data->posCase.size()));
+        }
+    }
+    
+    return paths;
+}
+
+int BaseGame::GetNextCaseIndex(int currentIndex, int pathChoice)
+{
+    const MapObject& currentCase = m_data->posCase[currentIndex];
+
+	std::string caseType = "";
+	if (currentCase.GetPropertyByName("type") != nullptr)
+	{
+		caseType = currentCase.GetPropertyByName("type")->GetStringValue();
+	}
+    
+    if (caseType == "split")
+    {
+        // Choix entre deux chemins
+        if (pathChoice == 0)
+        {
+            std::string path1Str = currentCase.GetPropertyByName("nextPath1")->GetStringValue();
+            return !path1Str.empty() ? std::stoi(path1Str) : -1;
+        }
+        else
+        {
+            std::string path2Str = currentCase.GetPropertyByName("nextPath2")->GetStringValue();
+            return !path2Str.empty() ? std::stoi(path2Str) : -1;
+        }
+    }
+    else if (caseType == "merge")
+    {
+        // Une seule sortie
+        std::string nextPathStr = currentCase.GetPropertyByName("nextPath")->GetStringValue();
+        return !nextPathStr.empty() ? std::stoi(nextPathStr) : -1;
+    }
+    else
+    {
+        // Chemin normal
+        std::string nextPathStr = currentCase.GetPropertyByName("nextPath")->GetStringValue();
+        if (!nextPathStr.empty())
+            return std::stoi(nextPathStr);
+        else
+            return mathp::ModuloPositiveI(currentIndex + 1, m_data->posCase.size());
+    }
+}
+
+void BaseGame::ProcessPathChoice(int choiceIndex)
+{
+    auto& player = m_data->players[m_data->currentPlayerIndex];
+    const MapObject& currentCase = m_data->posCase[player.currentCaseIndex];
+    
+    // Récupérer le prochain index
+    int nextIndex = GetNextCaseIndex(player.currentCaseIndex, choiceIndex);
+    
+    if (nextIndex == -1)
+    {
+        std::cout << "Erreur : chemin invalide!" << std::endl;
+        SetBoardState(CASE_ACTION_END);
+        return;
+    }
+    
+    // Mettre à jour le pathId si on est sur une bifurcation
+    std::string caseType = currentCase.GetType();
+    if (caseType == "split")
+    {
+        std::string pathIdKey = (choiceIndex == 0) ? "pathId1" : "pathId2";
+        std::string pathIdStr = currentCase.GetPropertyByName(pathIdKey)->GetStringValue();
+        player.currentPathId = !pathIdStr.empty() ? std::stoi(pathIdStr) : -1;
+        
+        std::cout << "Joueur a choisi le chemin " << player.currentPathId << std::endl;
+    }
+    
+    // Vérifier si on arrive sur une convergence
+    const MapObject& nextCase = m_data->posCase[nextIndex];
+    if (nextCase.GetType() == "merge")
+    {
+        std::cout << "Convergence des chemins détectée!" << std::endl;
+        player.currentPathId = -1; // Retour au chemin principal
+    }
+    
+    // Décrémenter le mouvement restant
+    player.pendingMovement--;
+    
+    if (player.pendingMovement > 0)
+    {
+        // Continuer le déplacement
+        SetBoardState(DEPLACEMENT, nextIndex);
+    }
+    else
+    {
+        // Déplacement terminé
+        player.currentCaseIndex = nextIndex;
+        player.boardPosition = m_data->posCase[nextIndex].GetPosition() + 
+            sf::Vector2f{randmt::RandomFloat(-10, 10), randmt::RandomFloat(-10, 10)};
+        SetBoardState(CASE_ACTION);
+    }
+    
+    m_data->pathChoices.clear();
 }

@@ -35,6 +35,7 @@ class BaseGame : public SceneBase
 			WIN,
 			WIN_DEPLACEMENT,
 			CASE_ACTION_END,
+			WAITING_PATH_CHOICE
 		};
 
 		enum StatePlayer
@@ -62,6 +63,8 @@ class BaseGame : public SceneBase
 
 			int tourstate;
 
+			int pendingMovement;  // Nouveau : mouvement restant
+			int currentPathId;    // Nouveau : ID du chemin actuel (-1 = chemin principal)
 		};
 
 		struct SceneData
@@ -83,6 +86,7 @@ class BaseGame : public SceneBase
 
 			int currentPlayerIndex;
 
+			std::vector<int> pathChoices;  // Nouveau : choix de chemins disponibles
 		};
 
 		GameData* m_gameData;
@@ -116,6 +120,14 @@ class BaseGame : public SceneBase
 		void Bonus(int _chance);
 		
 		void Malus(int _chance);
+
+		bool HasPathChoice(int caseIndex);
+
+		std::vector<int> GetAvailablePaths(int caseIndex);
+
+		int GetNextCaseIndex(int currentIndex, int pathChoice);
+
+		void ProcessPathChoice(int choiceIndex);
 
 	public:
 		virtual void Load(void);
