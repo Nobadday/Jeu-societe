@@ -40,6 +40,18 @@ void BaseGame::Load(void)
 			case PlayerData::CHARACTER_4_1:
 				m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso4-1.anim", TextureAnimated::ANIMATION_ANIM);
 				break;
+			case PlayerData::CHARACTER_1_2:
+				m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso1-2.anim", TextureAnimated::ANIMATION_ANIM);
+				break;
+			case PlayerData::CHARACTER_2_2:
+				m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso2-2.anim", TextureAnimated::ANIMATION_ANIM);
+				break;
+			case PlayerData::CHARACTER_3_2:
+				m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso3-2.anim", TextureAnimated::ANIMATION_ANIM);
+				break;
+			case PlayerData::CHARACTER_4_2:
+				m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso4-2.anim", TextureAnimated::ANIMATION_ANIM);
+				break;
 			default:
 				m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso1-1.anim", TextureAnimated::ANIMATION_ANIM);
 				break;
