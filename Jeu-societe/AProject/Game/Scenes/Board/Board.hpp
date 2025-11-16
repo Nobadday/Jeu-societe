@@ -28,13 +28,17 @@ class BaseGame : public SceneBase
 			START,
 			PLAY,
 			DEPLACEMENT,
+			DEPLACEMENT_SPLIT,
+			DEPLACEMENT_BRIGE,
 			DEPLACEMENT_ACTION,
+			DEPLACEMENT_ACTION_BACK,
 			CASE_ACTION,
 			BATTLE_ACTION,
 			DUEL,
 			WIN,
 			WIN_DEPLACEMENT,
 			CASE_ACTION_END,
+			WAITING_BRIDGE_ROLL,
 			WAITING_PATH_CHOICE
 		};
 
@@ -65,6 +69,7 @@ class BaseGame : public SceneBase
 
 			int pendingMovement;  // Nouveau : mouvement restant
 			int currentPathId;    // Nouveau : ID du chemin actuel (-1 = chemin principal)
+			bool waitingBridgeRoll;  // Nouveau : en attente du lancer pour le pont
 		};
 
 		struct SceneData
@@ -125,9 +130,13 @@ class BaseGame : public SceneBase
 
 		std::vector<int> GetAvailablePaths(int caseIndex);
 
+		std::vector<int> GetAvailablePathsBack(int caseIndex);
+
 		int GetNextCaseIndex(int currentIndex, int pathChoice);
 
 		void ProcessPathChoice(int choiceIndex);
+
+		void ProcessBridgeRoll();
 
 	public:
 		virtual void Load(void);

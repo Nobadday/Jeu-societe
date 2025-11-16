@@ -92,6 +92,11 @@
                  "point":true,
                  "properties":[
                         {
+                         "name":"backPath",
+                         "type":"string",
+                         "value":"0"
+                        }, 
+                        {
                          "name":"nextPath",
                          "type":"string",
                          "value":"1"
@@ -109,6 +114,11 @@
                  "name":"1",
                  "point":true,
                  "properties":[
+                        {
+                         "name":"backPath",
+                         "type":"string",
+                         "value":"0"
+                        }, 
                         {
                          "name":"nextPath",
                          "type":"string",
@@ -128,6 +138,11 @@
                  "point":true,
                  "properties":[
                         {
+                         "name":"backPath",
+                         "type":"string",
+                         "value":"1"
+                        }, 
+                        {
                          "name":"nextPath",
                          "type":"string",
                          "value":"3"
@@ -145,6 +160,11 @@
                  "name":"3",
                  "point":true,
                  "properties":[
+                        {
+                         "name":"backPath",
+                         "type":"string",
+                         "value":"2"
+                        }, 
                         {
                          "name":"nextPath1",
                          "type":"string",
@@ -184,6 +204,11 @@
                  "point":true,
                  "properties":[
                         {
+                         "name":"backPath",
+                         "type":"string",
+                         "value":"3"
+                        }, 
+                        {
                          "name":"nextPath",
                          "type":"string",
                          "value":"5"
@@ -202,12 +227,17 @@
                  "point":true,
                  "properties":[
                         {
+                         "name":"backPath",
+                         "type":"string",
+                         "value":"4"
+                        }, 
+                        {
                          "name":"nextPath",
                          "type":"string",
                          "value":"6"
                         }],
                  "rotation":0,
-                 "type":"Case",
+                 "type":"Malus",
                  "visible":true,
                  "width":0,
                  "x":492.666666666667,
@@ -219,6 +249,11 @@
                  "name":"6",
                  "point":true,
                  "properties":[
+                        {
+                         "name":"backPath",
+                         "type":"string",
+                         "value":"5"
+                        }, 
                         {
                          "name":"nextPath",
                          "type":"string",
@@ -238,6 +273,11 @@
                  "point":true,
                  "properties":[
                         {
+                         "name":"backPath",
+                         "type":"string",
+                         "value":"6"
+                        }, 
+                        {
                          "name":"nextPath",
                          "type":"string",
                          "value":"8"
@@ -255,6 +295,11 @@
                  "name":"8",
                  "point":true,
                  "properties":[
+                        {
+                         "name":"backPath",
+                         "type":"string",
+                         "value":"15"
+                        }, 
                         {
                          "name":"mergeFrom",
                          "type":"string",
@@ -284,6 +329,11 @@
                  "point":true,
                  "properties":[
                         {
+                         "name":"backPath",
+                         "type":"string",
+                         "value":"8"
+                        }, 
+                        {
                          "name":"nextPath",
                          "type":"string",
                          "value":"10"
@@ -302,9 +352,19 @@
                  "point":true,
                  "properties":[
                         {
-                         "name":"nextPath",
+                         "name":"backPath",
                          "type":"string",
                          "value":"9"
+                        }, 
+                        {
+                         "name":"nextPath",
+                         "type":"string",
+                         "value":"16"
+                        }, 
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"bridge"
                         }],
                  "rotation":0,
                  "type":"Case",
@@ -319,6 +379,11 @@
                  "name":"11",
                  "point":true,
                  "properties":[
+                        {
+                         "name":"backPath",
+                         "type":"string",
+                         "value":"3"
+                        }, 
                         {
                          "name":"nextPath",
                          "type":"string",
@@ -338,12 +403,17 @@
                  "point":true,
                  "properties":[
                         {
+                         "name":"backPath",
+                         "type":"string",
+                         "value":"11"
+                        }, 
+                        {
                          "name":"nextPath",
                          "type":"string",
                          "value":"13"
                         }],
                  "rotation":0,
-                 "type":"Case",
+                 "type":"Malus",
                  "visible":true,
                  "width":0,
                  "x":443.333666666667,
@@ -355,6 +425,11 @@
                  "name":"13",
                  "point":true,
                  "properties":[
+                        {
+                         "name":"backPath",
+                         "type":"string",
+                         "value":"12"
+                        }, 
                         {
                          "name":"nextPath",
                          "type":"string",
@@ -374,6 +449,11 @@
                  "point":true,
                  "properties":[
                         {
+                         "name":"backPath",
+                         "type":"string",
+                         "value":"14"
+                        }, 
+                        {
                          "name":"nextPath",
                          "type":"string",
                          "value":"15"
@@ -392,16 +472,67 @@
                  "point":true,
                  "properties":[
                         {
+                         "name":"backPath",
+                         "type":"string",
+                         "value":"14"
+                        }, 
+                        {
                          "name":"nextPath",
                          "type":"string",
                          "value":"8"
                         }],
                  "rotation":0,
-                 "type":"Case",
+                 "type":"Malus",
                  "visible":true,
                  "width":0,
                  "x":709.333333333333,
                  "y":398.666666666667
+                }, 
+                {
+                 "height":0,
+                 "id":31,
+                 "name":"16",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"backPath",
+                         "type":"string",
+                         "value":"10"
+                        }, 
+                        {
+                         "name":"nextPath",
+                         "type":"string",
+                         "value":"17"
+                        }],
+                 "rotation":0,
+                 "type":"Case",
+                 "visible":true,
+                 "width":0,
+                 "x":1032,
+                 "y":476
+                }, 
+                {
+                 "height":0,
+                 "id":32,
+                 "name":"17",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"backPath",
+                         "type":"string",
+                         "value":"16"
+                        }, 
+                        {
+                         "name":"nextPath",
+                         "type":"string",
+                         "value":"17"
+                        }],
+                 "rotation":0,
+                 "type":"Case",
+                 "visible":true,
+                 "width":0,
+                 "x":1125.33333333333,
+                 "y":470.666666666667
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -435,7 +566,7 @@
          "y":0
         }],
  "nextlayerid":7,
- "nextobjectid":31,
+ "nextobjectid":33,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.1",
