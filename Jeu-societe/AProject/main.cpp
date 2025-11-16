@@ -104,30 +104,11 @@ void PollEvent(MainData& _mainData)
 						_mainData.renderWindow.ToggleFullscreen(true);
 						break;
 
-					case sf::Keyboard::F2:
-						_mainData.renderWindow.Screenshot("Lol.png");
-						break;
-					case sf::Keyboard::G:
-						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
-						{
-							_mainData.renderWindow.SetDisplayMode(sfMod::RenderWindow::STRETCH);
-						}
-						else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
-						{
-							_mainData.renderWindow.SetDisplayMode(sfMod::RenderWindow::PAN);
-						}
-						else
-						{
-							_mainData.renderWindow.SetDisplayMode(sfMod::RenderWindow::LETTERBOX);
-						}
-						break;
-
-
 					default:
 						break;
 				}
-
 				[[fallthrough]];
+
 			default:
 				_mainData.scenes.PollEvent(event);
 				break;
@@ -148,13 +129,11 @@ void Update(MainData& _mainData)
 
 void Draw(MainData& _mainData)
 {
-	_mainData.renderWindow.clear(sf::Color(0,0,0));
+	_mainData.renderWindow.clear(sf::Color::Black);
 
 	_mainData.scenes.Draw(_mainData.renderWindow);
 
 	_mainData.renderWindow.draw(_mainData.tp);
-
-
 
 	_mainData.renderWindow.display();
 }
