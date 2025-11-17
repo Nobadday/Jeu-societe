@@ -623,8 +623,6 @@ void BaseGame::BoardStateUpdate(float _dt)
 			if (player.pendingMovement > 0)
 			{
 				// Continuer le déplacement vers la prochaine case
-			/*	int nextIndex = 0;
-				const int posCaseCount = static_cast<int>(m_data->posCase.size());*/
 				SetBoardState(DEPLACEMENT);
 			}
 			else
@@ -648,18 +646,6 @@ void BaseGame::BoardStateUpdate(float _dt)
 			if (player.pendingMovement > 0)
 			{
 				//// Continuer le déplacement vers la prochaine case
-				//int nextIndex;
-				//const int posCaseCount = static_cast<int>(m_data->posCase.size());
-
-				//if (player.state != StatePlayer::CONFUSED)
-				//{
-				//	nextIndex = mathp::ModuloPositiveI(player.currentCaseIndex + 1, posCaseCount);
-				//}
-				//else
-				//{
-				//	nextIndex = mathp::ModuloPositiveI(player.currentCaseIndex - 1, posCaseCount);
-				//}
-
 				SetBoardState(DEPLACEMENT_ACTION);
 			}
 			else
@@ -681,19 +667,6 @@ void BaseGame::BoardStateUpdate(float _dt)
 
 			if (player.pendingMovement > 0)
 			{
-				// Continuer le déplacement vers la prochaine case
-				/*int nextIndex;
-				const int posCaseCount = static_cast<int>(m_data->posCase.size());*/
-
-				/*if (player.state != StatePlayer::CONFUSED)
-				{
-					nextIndex = mathp::ModuloPositiveI(player.currentCaseIndex + 1, posCaseCount);
-				}
-				else
-				{
-					nextIndex = mathp::ModuloPositiveI(player.currentCaseIndex - 1, posCaseCount);
-				}*/
-
 				SetBoardState(DEPLACEMENT_ACTION_BACK);
 			}
 			else
@@ -1232,13 +1205,7 @@ void BaseGame::ProcessPathChoice(int choiceIndex)
 		}
 	}
 
-	// CORRECTION : Ne pas décrémenter ici, car on n'a pas encore bougé
-	// Le mouvement sera décrémenté dans BoardStateUpdate après l'animation
-
 	std::cout << "Mouvement restant avant animation : " << player.pendingMovement << std::endl;
-
-	// Continuer le déplacement vers la case choisie
-	//SetBoardState(DEPLACEMENT_SPLIT, nextIndex);
 
 	m_data->pathChoices.clear();
 }
@@ -1264,18 +1231,7 @@ void BaseGame::ProcessBridgeRoll()
 		// Si le joueur a encore du mouvement, continuer
 		if (player.pendingMovement > 0)
 		{
-			int nextIndex;
-			const int posCaseCount = static_cast<int>(m_data->posCase.size());
-
-			if (player.state != StatePlayer::CONFUSED)
-			{
-				nextIndex = mathp::ModuloPositiveI(player.currentCaseIndex + 1, posCaseCount);
-			}
-			else
-			{
-				nextIndex = mathp::ModuloPositiveI(player.currentCaseIndex - 1, posCaseCount);
-			}
-			SetBoardState(DEPLACEMENT_BRIGE, nextIndex);
+			SetBoardState(DEPLACEMENT_BRIGE);
 		}
 		else
 		{

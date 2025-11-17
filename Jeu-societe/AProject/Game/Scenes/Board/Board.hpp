@@ -91,7 +91,7 @@ class BaseGame : public SceneBase
 
 			int currentPlayerIndex;
 
-			std::vector<int> pathChoices;  // Nouveau : choix de chemins disponibles
+			std::vector<int> pathChoices;
 		};
 
 		GameData* m_gameData;
