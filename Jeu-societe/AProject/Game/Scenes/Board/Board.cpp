@@ -319,47 +319,47 @@ void BaseGame::CaseAction()
 {
 	const std::string& caseType = m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType();
 
-/*	int sameCase = OnSameCase();
+	int sameCase = OnSameCase();
 	if (sameCase != -1)
 	{
 		SetBoardState(DUEL, 0);
 		return;
-	}*/
+	}
 
 
 	switch (hash(caseType.c_str()))
 	{
-	case hash("Bonus"):
+		case hash("Bonus"):
 
-		if (m_data->players[m_data->currentPlayerIndex].state != StatePlayer::INFEC)
-		{
-			std::cout << "Landed on a Bonus case!" << std::endl;
+			if (m_data->players[m_data->currentPlayerIndex].state != StatePlayer::INFEC)
+			{
+				std::cout << "Landed on a Bonus case!" << std::endl;
 
-			BonusMalusLuck(false);
+				BonusMalusLuck(false);
 
-		}
+			}
 
-		break;
+			break;
 
-	case hash("Malus"):
+		case hash("Malus"):
 
-		if (m_data->players[m_data->currentPlayerIndex].state != StatePlayer::IMMUN)
-		{
-			std::cout << "Landed on a Malus case!" << std::endl;
+			if (m_data->players[m_data->currentPlayerIndex].state != StatePlayer::IMMUN)
+			{
+				std::cout << "Landed on a Malus case!" << std::endl;
 
-			BonusMalusLuck(true);
-		}
-		break;
+				BonusMalusLuck(true);
+			}
+			break;
 
-	case hash("Luck"):
-		std::cout << "Landed on a Luck case!" << std::endl;
-		BonusMalusLuck(randmt::Chance(0.5f));
-		break;
+		case hash("Luck"):
+			std::cout << "Landed on a Luck case!" << std::endl;
+			BonusMalusLuck(randmt::Chance(0.5f));
+			break;
 
-	case hash("Battle"):
-		std::cout << "Landed on a Battle case!" << std::endl;
-		SetBoardState(BATTLE_ACTION, 0);
-		break;
+		case hash("Battle"):
+			std::cout << "Landed on a Battle case!" << std::endl;
+			SetBoardState(BATTLE_ACTION);
+			break;
 
 	default:
 	{
@@ -544,38 +544,59 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 
 void BaseGame::SetWinDeplacement(int _newIndex)
 {
-	std::cout << "Setting WIN_DEPLACEMENT state." << std::endl;
-
 	int winnerIndex = m_gameData->m_winIndex[0];
 	int loserIndex = m_gameData->m_winIndex[m_gameData->m_winIndex.size() - 1];
 
-	std::cout << "player winner CurrentCaseIndex before move: " << m_data->players[winnerIndex].currentCaseIndex << std::endl;
-	std::cout << "player loser CurrentCaseIndex before move: " << m_data->players[loserIndex].currentCaseIndex << std::endl;
+	auto& playerWin = m_data->players[winnerIndex];
+	auto& playerLose = m_data->players[loserIndex];
 
-	m_data->players[winnerIndex].currentCaseIndex += _newIndex;
-	//m_data->animator.Modify((float)_newIndex, 60.0f, false, 1.0f);
-	std::cout << "player winner CurrentCaseIndex after move: " << m_data->players[winnerIndex].currentCaseIndex << std::endl;
 
-	m_data->players[loserIndex].currentCaseIndex -= _newIndex;
-	//m_data->animator2.Modify((float)_newIndex, 60.0f, false, 1.0f);
-	std::cout << "player loser CurrentCaseIndex after move: " << m_data->players[loserIndex].currentCaseIndex << std::endl;
+	std::vector<int> availablePaths = GetAvailablePaths(playerWin.currentCaseIndex);
+	if (availablePaths.empty())
+	{
+		std::cout << "Erreur : aucun chemin disponible!" << std::endl;
+		SetBoardState(CASE_ACTION_END);
+		return;
+	}
 
-	m_data->players[winnerIndex].currentCaseIndex %= m_data->posCase.size();
-	m_data->players[loserIndex].currentCaseIndex %= m_data->posCase.size();
+	std::vector<int> availablePathsLose = GetAvailablePathsBack(playerLose.currentCaseIndex);
+	if (availablePaths.empty())
+	{
+		std::cout << "Erreur : aucun chemin disponible!" << std::endl;
+		SetBoardState(CASE_ACTION_END);
+		return;
+	}
 
-	// Animation du gagnant
-	sf::Vector2f startPos = m_data->players[winnerIndex].boardPosition;
-	sf::Vector2f endPos = m_data->posCase[m_data->players[winnerIndex].currentCaseIndex].GetPosition() + sf::Vector2f{ randmt::RandomFloat(-10, 10), randmt::RandomFloat(-10, 10) };
-	m_data->animator.SetGoTo(startPos, endPos);
+	int nextIndex = availablePaths[0];
+	int nextIndexLose = availablePathsLose[0];
+
+	sf::Vector2f startPosWin = playerWin.boardPosition;
+	sf::Vector2f endPosWin = m_data->posCase[nextIndex].GetPosition() +
+		sf::Vector2f{ randmt::RandomFloat(-10, 10), randmt::RandomFloat(-10, 10) };
+
+	sf::Vector2f startPosLose = playerLose.boardPosition;
+	sf::Vector2f endPosLose = m_data->posCase[nextIndexLose].GetPosition() +
+		sf::Vector2f{ randmt::RandomFloat(-10, 10), randmt::RandomFloat(-10, 10) };
+
+	m_data->animator.SetGoTo(startPosWin, endPosWin);
 	m_data->animator.Restart();
-	m_data->players[winnerIndex].sprite.SetAnimation("Right_Walk");
-
-	// Animation du perdant
-	startPos = m_data->players[loserIndex].boardPosition;
-	endPos = m_data->posCase[m_data->players[loserIndex].currentCaseIndex].GetPosition() + sf::Vector2f{ randmt::RandomFloat(-10, 10), randmt::RandomFloat(-10, 10) };
-	m_data->animator2.SetGoTo(startPos, endPos);
+	m_data->animator2.SetGoTo(startPosLose, endPosLose);
 	m_data->animator2.Restart();
-	m_data->players[loserIndex].sprite.SetAnimation("Right_Walk");
+
+	playerWin.currentCaseIndex = nextIndex;
+	playerWin.sprite.SetAnimation("Right_Walk");
+	//player.sprite.setScale(-1, 1);
+
+	playerLose.currentCaseIndex = nextIndexLose;
+	playerLose.sprite.SetAnimation("Right_Walk");
+	playerLose.sprite.setScale(-1, 1);
+
+	// Vérifier si on arrive sur une convergence
+	const MapObject& nextCase = m_data->posCase[nextIndex];
+	if (nextCase.GetType() == "merge")
+	{
+		playerWin.currentPathId = -1; // Retour au chemin principal
+	}
 }
 
 void BaseGame::BoardStateUpdate(float _dt)
@@ -602,9 +623,9 @@ void BaseGame::BoardStateUpdate(float _dt)
 			if (player.pendingMovement > 0)
 			{
 				// Continuer le déplacement vers la prochaine case
-				int nextIndex = 0;
-				const int posCaseCount = static_cast<int>(m_data->posCase.size());
-				SetBoardState(DEPLACEMENT, nextIndex);
+			/*	int nextIndex = 0;
+				const int posCaseCount = static_cast<int>(m_data->posCase.size());*/
+				SetBoardState(DEPLACEMENT);
 			}
 			else
 			{
@@ -626,20 +647,20 @@ void BaseGame::BoardStateUpdate(float _dt)
 
 			if (player.pendingMovement > 0)
 			{
-				// Continuer le déplacement vers la prochaine case
-				int nextIndex;
-				const int posCaseCount = static_cast<int>(m_data->posCase.size());
+				//// Continuer le déplacement vers la prochaine case
+				//int nextIndex;
+				//const int posCaseCount = static_cast<int>(m_data->posCase.size());
 
-				if (player.state != StatePlayer::CONFUSED)
-				{
-					nextIndex = mathp::ModuloPositiveI(player.currentCaseIndex + 1, posCaseCount);
-				}
-				else
-				{
-					nextIndex = mathp::ModuloPositiveI(player.currentCaseIndex - 1, posCaseCount);
-				}
+				//if (player.state != StatePlayer::CONFUSED)
+				//{
+				//	nextIndex = mathp::ModuloPositiveI(player.currentCaseIndex + 1, posCaseCount);
+				//}
+				//else
+				//{
+				//	nextIndex = mathp::ModuloPositiveI(player.currentCaseIndex - 1, posCaseCount);
+				//}
 
-				SetBoardState(DEPLACEMENT_ACTION, nextIndex);
+				SetBoardState(DEPLACEMENT_ACTION);
 			}
 			else
 			{
@@ -661,19 +682,19 @@ void BaseGame::BoardStateUpdate(float _dt)
 			if (player.pendingMovement > 0)
 			{
 				// Continuer le déplacement vers la prochaine case
-				int nextIndex;
-				const int posCaseCount = static_cast<int>(m_data->posCase.size());
+				/*int nextIndex;
+				const int posCaseCount = static_cast<int>(m_data->posCase.size());*/
 
-				if (player.state != StatePlayer::CONFUSED)
+				/*if (player.state != StatePlayer::CONFUSED)
 				{
 					nextIndex = mathp::ModuloPositiveI(player.currentCaseIndex + 1, posCaseCount);
 				}
 				else
 				{
 					nextIndex = mathp::ModuloPositiveI(player.currentCaseIndex - 1, posCaseCount);
-				}
+				}*/
 
-				SetBoardState(DEPLACEMENT_ACTION_BACK, nextIndex);
+				SetBoardState(DEPLACEMENT_ACTION_BACK);
 			}
 			else
 			{
@@ -713,8 +734,21 @@ void BaseGame::BoardStateUpdate(float _dt)
 		m_data->timeWin -= _dt;
 		if (m_data->timeWin <= 0)
 		{
+			if (!m_gameData->m_winIndex.empty())
+			{
+				int winnerIndex = m_gameData->m_winIndex[0];
+				int loserIndex = m_gameData->m_winIndex[m_gameData->m_winIndex.size() - 1];
+
+				auto& playerWin = m_data->players[winnerIndex];
+				auto& playerLose = m_data->players[loserIndex];
+
+				playerWin.pendingMovement = 1;
+				playerLose.pendingMovement = 1;
+
+			}
+
 			m_data->timeWin = TIME_WIN_DISPLAY;
-			SetBoardState(WIN_DEPLACEMENT, 1);
+			SetBoardState(WIN_DEPLACEMENT);
 		}
 		break;
 
@@ -729,13 +763,28 @@ void BaseGame::BoardStateUpdate(float _dt)
 
 			m_data->players[winnerIndex].boardPosition = m_data->animator.GetGoTo();
 			m_data->players[loserIndex].boardPosition = m_data->animator2.GetGoTo();
-
 			if (m_data->animator.IsFinished() && m_data->animator2.IsFinished())
 			{
-				m_data->players[winnerIndex].sprite.SetAnimation("Idle");
-				m_data->players[loserIndex].sprite.SetAnimation("Idle");
-				m_data->players[loserIndex].sprite.setScale({ 1.f,1.f });
-				SetBoardState(CASE_ACTION_END);
+				// CORRECTION : Décrémenter le mouvement après avoir atteint la case
+				auto& playerWin = m_data->players[winnerIndex];
+				auto& playerLose = m_data->players[loserIndex];
+				playerWin.pendingMovement--;
+				playerLose.pendingMovement--;
+
+				//std::cout << "Mouvement restant : " << player.pendingMovement << std::endl;
+
+				if (playerWin.pendingMovement > 0 or playerLose.pendingMovement > 0)
+				{
+					SetBoardState(WIN_DEPLACEMENT);
+				}
+				else
+				{
+					// Déplacement terminé, exécuter l'action de case
+					m_data->players[winnerIndex].sprite.SetAnimation("Idle");
+					m_data->players[loserIndex].sprite.SetAnimation("Idle");
+					m_data->players[loserIndex].sprite.setScale({ 1.f,1.f });
+					SetBoardState(CASE_ACTION_END);
+				}
 			}
 		}
 		else
@@ -1226,7 +1275,6 @@ void BaseGame::ProcessBridgeRoll()
 			{
 				nextIndex = mathp::ModuloPositiveI(player.currentCaseIndex - 1, posCaseCount);
 			}
-
 			SetBoardState(DEPLACEMENT_BRIGE, nextIndex);
 		}
 		else

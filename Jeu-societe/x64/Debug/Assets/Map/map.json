@@ -125,7 +125,7 @@
                          "value":"2"
                         }],
                  "rotation":0,
-                 "type":"case",
+                 "type":"Battle",
                  "visible":true,
                  "width":0,
                  "x":114.515151515152,
@@ -316,7 +316,7 @@
                          "value":"merge"
                         }],
                  "rotation":0,
-                 "type":"case",
+                 "type":"Battle",
                  "visible":true,
                  "width":0,
                  "x":786,
@@ -413,7 +413,7 @@
                          "value":"13"
                         }],
                  "rotation":0,
-                 "type":"Malus",
+                 "type":"Battle",
                  "visible":true,
                  "width":0,
                  "x":443.333666666667,
@@ -569,7 +569,7 @@
  "nextobjectid":33,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.10.1",
+ "tiledversion":"1.11.2",
  "tileheight":32,
  "tilesets":[
         {
