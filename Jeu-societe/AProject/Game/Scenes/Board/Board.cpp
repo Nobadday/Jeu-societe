@@ -208,12 +208,24 @@ void BaseGame::PollEvent(sf::Event& _event)
 				// Calculer le prochain index (première case du déplacement)
 				int nextIndex = 0;
 
+				if (player.state != NONE)
+				{
+					player.tourstate += 1;
+					if (player.tourstate >= MAX_TOUR_EFFECT)
+					{
+						player.tourstate = 0;
+						player.state = StatePlayer::NONE;
+					}
+				}
+
 				if (player.state != StatePlayer::CONFUSED)
 				{
 					SetBoardState(DEPLACEMENT, nextIndex);
 				}
 				else
 				{
+					player.tourstate = 0;
+					player.state = StatePlayer::NONE;
 					SetBoardState(DEPLACEMENT_ACTION_BACK, nextIndex);
 				}
 			}
@@ -254,10 +266,6 @@ void BaseGame::Update(float _deltaTime)
 	// Mise à jour des animations
 	if (m_data->players[m_data->currentPlayerIndex].state != CANT_PLAY)
 	{
-		if (m_data->players[m_data->currentPlayerIndex].state == CONFUSED && m_data->state != PLAY)
-		{
-			SetBoardState(DEPLACEMENT_ACTION_BACK);
-		}
 		m_data->animator.Update(_deltaTime);
 		m_data->animator2.Update(_deltaTime);
 
@@ -268,15 +276,6 @@ void BaseGame::Update(float _deltaTime)
 		// Mise à jour de la caméra pour suivre le joueur actif
 		UpdateCameraFollowPlayer(_deltaTime);
 
-		if (m_data->players[m_data->currentPlayerIndex].state != NONE)
-		{
-			m_data->players[m_data->currentPlayerIndex].tourstate += 1;
-			if (m_data->players[m_data->currentPlayerIndex].tourstate >= MAX_TOUR_EFFECT)
-			{
-				m_data->players[m_data->currentPlayerIndex].tourstate = 0;
-				m_data->players[m_data->currentPlayerIndex].state = StatePlayer::NONE;
-			}
-		}
 	}
 	else
 	{
@@ -320,7 +319,7 @@ void BaseGame::CaseAction()
 {
 	const std::string& caseType = m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType();
 
-	/*int sameCase = OnSameCase();
+/*	int sameCase = OnSameCase();
 	if (sameCase != -1)
 	{
 		SetBoardState(DUEL, 0);
