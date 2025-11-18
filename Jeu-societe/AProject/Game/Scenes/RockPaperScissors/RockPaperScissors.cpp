@@ -72,6 +72,8 @@ void RockPaperScissors::Load()
 
 	m_data->state = STATE_PLAY;
 	m_data->roundNB = 0;
+
+
 }                               
 
 void RockPaperScissors::Unload()
@@ -207,7 +209,7 @@ void RockPaperScissors::Update(float _deltaTime)
 	{
 		for (short i = 0; i < 2; i++)
 		{
-			//this->m_data->playerChoiceSprite[i].rotate(10);
+
 		}
 	}
 

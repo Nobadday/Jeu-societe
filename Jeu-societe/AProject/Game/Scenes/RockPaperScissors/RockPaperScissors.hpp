@@ -7,6 +7,7 @@
 #include "../../Scenes/Scene.hpp"
 #include "../../Animation/Animation/Timer.hpp" 
 #include "../../Animation/Graphics.hpp"
+#include "../../Animation/Animation.hpp"
 
 
 class RockPaperScissors : public SceneBase
@@ -47,6 +48,8 @@ class RockPaperScissors : public SceneBase
 
 		RPS_Choice playersChoice[4];
 		int roundNB = 0;
+
+		anim::Animator animator;
 	};
 	SceneData* m_data;
 

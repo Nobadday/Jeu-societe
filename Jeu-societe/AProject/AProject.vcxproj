@@ -166,6 +166,7 @@
     <ClCompile Include="Game\Scenes\RandCard\RandCard.cpp" />
     <ClCompile Include="Game\Scenes\RockPaperScissors\RockPaperScissors.cpp" />
     <ClCompile Include="Game\Scenes\RussianRoulette\RussianRoulette.cpp" />
+    <ClCompile Include="Graphics\HealthBar.cpp" />
     <ClCompile Include="Map\JsonReader.cpp" />
     <ClCompile Include="Map\MapLayer.cpp" />
     <ClCompile Include="Map\MapObject.cpp" />
@@ -176,7 +177,7 @@
     <ClCompile Include="Ui\Button.cpp" />
     <ClCompile Include="Ui\MenuSystem.cpp" />
     <ClCompile Include="Utilities\AssetManager.cpp" />
-    <ClCompile Include="Utilities\BetterWindow\BW.cpp" />
+    <ClCompile Include="Utilities\BetterWindow\BetterWindow.cpp" />
     <ClCompile Include="Utilities\Binds.cpp" />
     <ClCompile Include="Utilities\Camera\Camera.cpp" />
     <ClCompile Include="main.cpp" />
@@ -217,6 +218,7 @@
     <ClInclude Include="Game\Scenes\RandCard\RandCard.hpp" />
     <ClInclude Include="Game\Scenes\RockPaperScissors\RockPaperScissors.hpp" />
     <ClInclude Include="Game\Scenes\RussianRoulette\RussianRoulette.hpp" />
+    <ClInclude Include="Graphics\HealthBar.hpp" />
     <ClInclude Include="Map\JsonReader.h" />
     <ClInclude Include="Map\MapLayer.h" />
     <ClInclude Include="Map\MapObject.h" />
@@ -228,7 +230,7 @@
     <ClInclude Include="Ui\Button.hpp" />
     <ClInclude Include="Ui\MenuSystem.hpp" />
     <ClInclude Include="Utilities\AssetManager.hpp" />
-    <ClInclude Include="Utilities\BetterWindow\BW.hpp" />
+    <ClInclude Include="Utilities\BetterWindow\BetterWindow.hpp" />
     <ClInclude Include="Utilities\Binds.hpp" />
     <ClInclude Include="Utilities\Camera\Camera.hpp" />
     <ClInclude Include="Common.hpp" />
