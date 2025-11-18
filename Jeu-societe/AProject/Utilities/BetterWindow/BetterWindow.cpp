@@ -7,6 +7,10 @@ RenderWindow::RenderWindow(void) : sf::RenderWindow(),
 m_baseVideoMode		(0, 0),
 m_windowMode		(WINDOWED),
 
+m_keyRepeat			(true),
+m_framerate			(0u),
+m_vsync				(false),
+
 m_icon				(),
 m_title				(""),
 
@@ -79,6 +83,9 @@ void RenderWindow::ReOpen(void)
 			this->sf::RenderWindow::setPosition(this->m_windowModePosition);
 			break;
 	}
+	this->sf::RenderWindow::setKeyRepeatEnabled(this->m_keyRepeat);
+	this->sf::RenderWindow::setFramerateLimit(this->m_framerate);
+	this->sf::RenderWindow::setVerticalSyncEnabled(this->m_vsync);
 	this->ApplyIcon();
 	this->UpdateViewport();
 }
@@ -142,6 +149,21 @@ void RenderWindow::setTitle(const sf::String& _title)
 {
 	this->m_title = _title;
 	this->sf::RenderWindow::setTitle(this->m_title);
+}
+void RenderWindow::setKeyRepeatEnabled(bool _enabled)
+{
+	this->m_keyRepeat = _enabled;
+	this->sf::RenderWindow::setKeyRepeatEnabled(_enabled);
+}
+void RenderWindow::setFramerateLimit(unsigned int _limit)
+{
+	this->m_framerate = _limit;
+	this->sf::RenderWindow::setFramerateLimit(_limit);
+}
+void RenderWindow::setVerticalSyncEnabled(bool _enabled)
+{
+	this->m_vsync = _enabled;
+	this->sf::RenderWindow::setVerticalSyncEnabled(_enabled);
 }
 
 void RenderWindow::setView(const sf::View& _view)
@@ -214,16 +236,40 @@ sf::Vector2u RenderWindow::GetRenderedSize(void)
 
 	return size;
 }
-sf::Vector2u RenderWindow::GetRenderedPosition(void)
+sf::Vector2i RenderWindow::GetRenderedPosition(void)
 {
 	sf::Vector2u size = this->getSize();
-	return sf::Vector2u((unsigned)((float)size.x * this->m_displayViewport.left)/2,
-						(unsigned)((float)size.y * this->m_displayViewport.top)/2);
+	return sf::Vector2i((int)((float)size.x * this->m_displayViewport.left)/2,
+						(int)((float)size.y * this->m_displayViewport.top )/2);
+}
+sf::IntRect RenderWindow::GetRenderedRect(void)
+{
+	sf::Vector2u size = this->getSize();
+
+	return sf::IntRect(	(int)((float)size.x * this->m_displayViewport.left) / 2,
+						(int)((float)size.y * this->m_displayViewport.top ) / 2,
+						(int)((float)size.x * this->m_displayViewport.width),
+						(int)((float)size.y * this->m_displayViewport.height));
 }
 
 const sf::View& RenderWindow::getDefaultView(void) const
 {
 	return this->m_defaultView;
+}
+
+void RenderWindow::CorrectMousePos(sf::Vector2i& _position)
+{
+	sf::Vector2i offset = this->GetRenderedPosition();
+	float ratio = this->m_displayViewport.width * this->m_displayViewport.height;
+	//_position.x *= ratio;
+	//_position.y *= ratio;
+	//_position.x *= this->m_displayViewport.width;
+	//_position.y *= this->m_displayViewport.height;
+	sf::Vector2u size = this->getSize();
+	//_position.x -= size.x /this->m_displayViewport.width;
+	//_position.y -= size.y /this->m_displayViewport.height;
+	printf("%f, %f, %f, %f\n", this->m_displayViewport.left, this->m_displayViewport.top, this->m_displayViewport.width, this->m_displayViewport.height);
+
 }
 
 const sf::VideoMode& RenderWindow::GetBestFullscreenMode(const sf::VideoMode& _screenMode)

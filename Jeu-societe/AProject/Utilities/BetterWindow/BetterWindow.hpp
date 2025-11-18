@@ -36,9 +36,16 @@ class RenderWindow : public sf::RenderWindow
 	private:
 
 		// "Resolution" & BPP + WinMode
+
 		sf::VideoMode m_baseVideoMode;
 		WindowMode m_windowMode;
 		
+		// Remebered data
+		
+		bool m_keyRepeat;
+		unsigned int m_framerate;
+		bool m_vsync;
+
 		// Window Visual Properties
 
 		sf::Image m_icon;
@@ -86,6 +93,10 @@ class RenderWindow : public sf::RenderWindow
 
 		void setTitle(const sf::String& _title);
 
+		void setKeyRepeatEnabled(bool _enabled);
+		void setFramerateLimit(unsigned int _limit);
+		void setVerticalSyncEnabled(bool _enabled);
+
 		// Set the current view, will be applied
 		void setView(const sf::View& _view);
 
@@ -111,11 +122,13 @@ class RenderWindow : public sf::RenderWindow
 		// Get the size of the rendered area
 		sf::Vector2u GetRenderedSize(void);
 		// Get the upper left corner of the rendered area
-		sf::Vector2u GetRenderedPosition(void);
-
+		sf::Vector2i GetRenderedPosition(void);
+		sf::IntRect GetRenderedRect(void);
 
 		const sf::View& getDefaultView(void) const;
 
+		// TEMP
+		void CorrectMousePos(sf::Vector2i& _position);
 
 		// Will attempt to get a valid videoMode matching the desktop mode to avoid weird beheaviors
 		// Else, returns the first available fullscreenMode
