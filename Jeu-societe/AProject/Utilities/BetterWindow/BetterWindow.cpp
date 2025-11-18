@@ -239,15 +239,15 @@ sf::Vector2u RenderWindow::GetRenderedSize(void)
 sf::Vector2i RenderWindow::GetRenderedPosition(void)
 {
 	sf::Vector2u size = this->getSize();
-	return sf::Vector2i((int)((float)size.x * this->m_displayViewport.left)/2,
-						(int)((float)size.y * this->m_displayViewport.top )/2);
+	return sf::Vector2i((int)((float)size.x * this->m_displayViewport.left),
+						(int)((float)size.y * this->m_displayViewport.top ));
 }
 sf::IntRect RenderWindow::GetRenderedRect(void)
 {
 	sf::Vector2u size = this->getSize();
 
-	return sf::IntRect(	(int)((float)size.x * this->m_displayViewport.left) / 2,
-						(int)((float)size.y * this->m_displayViewport.top ) / 2,
+	return sf::IntRect(	(int)((float)size.x * this->m_displayViewport.left),
+						(int)((float)size.y * this->m_displayViewport.top ),
 						(int)((float)size.x * this->m_displayViewport.width),
 						(int)((float)size.y * this->m_displayViewport.height));
 }
@@ -259,16 +259,20 @@ const sf::View& RenderWindow::getDefaultView(void) const
 
 void RenderWindow::CorrectMousePos(sf::Vector2i& _position)
 {
-	sf::Vector2i offset = this->GetRenderedPosition();
-	float ratio = this->m_displayViewport.width * this->m_displayViewport.height;
-	//_position.x *= ratio;
-	//_position.y *= ratio;
-	//_position.x *= this->m_displayViewport.width;
-	//_position.y *= this->m_displayViewport.height;
 	sf::Vector2u size = this->getSize();
-	//_position.x -= size.x /this->m_displayViewport.width;
-	//_position.y -= size.y /this->m_displayViewport.height;
-	printf("%f, %f, %f, %f\n", this->m_displayViewport.left, this->m_displayViewport.top, this->m_displayViewport.width, this->m_displayViewport.height);
+	
+	float widthRatio = (float)size.x / (float)this->m_baseVideoMode.width;
+	float heightRatio = (float)size.y / (float)this->m_baseVideoMode.height;
+
+	sf::Vector2i offset = this->GetRenderedPosition();
+	_position.x -= offset.x;
+	_position.y -= offset.y;
+
+	sf::Vector2f what(this->m_displayViewport.width * size.x, this->m_displayViewport.height * size.y);
+	_position.x = _position.x * this->m_baseVideoMode.width / what.x;
+	_position.y = _position.y * this->m_baseVideoMode.height / what.y;
+	
+	printf("%f, %f, %f, %f || [%f, %f] || (%d, %d)\n", this->m_displayViewport.left, this->m_displayViewport.top, this->m_displayViewport.width, this->m_displayViewport.height, widthRatio, heightRatio, _position.x, _position.y);
 
 }
 
