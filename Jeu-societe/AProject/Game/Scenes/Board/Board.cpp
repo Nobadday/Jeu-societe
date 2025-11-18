@@ -12,6 +12,8 @@ void BaseGame::Load(void)
 	m_data = new SceneData;
 	m_gameData = (GameData*)this->m_keptData;
 
+	m_gameData->m_assetManager->LoadManifest("Manifests/Board.json", "Board");
+
 	m_data->tile.InitTiled("Assets/Map/map.json");
 	m_data->camera.Reset(m_gameData->m_renderWindow->getDefaultView());
 
@@ -29,31 +31,31 @@ void BaseGame::Load(void)
 		switch (m_gameData->m_playerDataList[i].GetPlayerSkin())
 		{
 		case PlayerData::CHARACTER_1_1:
-			m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso1-1.anim", TextureAnimated::ANIMATION_ANIM);
+			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-1", AssetManager::AssetType::TEXTURE_ANIMATED);
 			break;
 		case PlayerData::CHARACTER_2_1:
-			m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso2-1.anim", TextureAnimated::ANIMATION_ANIM);
+			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso2-1", AssetManager::AssetType::TEXTURE_ANIMATED);
 			break;
 		case PlayerData::CHARACTER_3_1:
-			m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso3-1.anim", TextureAnimated::ANIMATION_ANIM);
+			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso3-1", AssetManager::AssetType::TEXTURE_ANIMATED);
 			break;
 		case PlayerData::CHARACTER_4_1:
-			m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso4-1.anim", TextureAnimated::ANIMATION_ANIM);
+			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso4-1", AssetManager::AssetType::TEXTURE_ANIMATED);
 			break;
 		case PlayerData::CHARACTER_1_2:
-			m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso1-2.anim", TextureAnimated::ANIMATION_ANIM);
+			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-2", AssetManager::AssetType::TEXTURE_ANIMATED);
 			break;
 		case PlayerData::CHARACTER_2_2:
-			m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso2-2.anim", TextureAnimated::ANIMATION_ANIM);
+			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso2-2", AssetManager::AssetType::TEXTURE_ANIMATED);
 			break;
 		case PlayerData::CHARACTER_3_2:
-			m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso3-2.anim", TextureAnimated::ANIMATION_ANIM);
+			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso3-2", AssetManager::AssetType::TEXTURE_ANIMATED);
 			break;
 		case PlayerData::CHARACTER_4_2:
-			m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso4-2.anim", TextureAnimated::ANIMATION_ANIM);
+			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso4-2", AssetManager::AssetType::TEXTURE_ANIMATED);
 			break;
 		default:
-			m_data->players[i].texture.LoadFromFile("Assets/Sprites/Perso1-1.anim", TextureAnimated::ANIMATION_ANIM);
+			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-1", AssetManager::AssetType::TEXTURE_ANIMATED);
 			break;
 		}
 
@@ -85,6 +87,8 @@ void BaseGame::Load(void)
 
 void BaseGame::Unload(void)
 {
+	m_gameData->m_assetManager->DeleteContainer("Board");
+	this->m_gameData = NULL;
 	delete this->m_data;
 	this->m_data = NULL;
 }
