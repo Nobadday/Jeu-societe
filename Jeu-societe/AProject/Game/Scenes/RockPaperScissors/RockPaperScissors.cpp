@@ -42,23 +42,21 @@ void RockPaperScissors::Load()
 
 	m_data->timerText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("RPSFont", AssetManager::AssetType::FONT));
 
-	m_data->playerChoiceSprite[0].setPosition({SCREEN_WIDTH * 0.66f, SCREEN_HEIGHT * 0.66f});
-	m_data->playerChoiceSprite[1].setPosition({SCREEN_WIDTH * 0.33f, SCREEN_HEIGHT * 0.66f});
 
-
-	//m_data->playerChoiceSprite[]
-	m_data->playerChoiceSprite[0].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("RightHands", AssetManager::AssetType::TEXTURE_ANIMATED));
-	m_data->playerChoiceSprite[1].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("LeftHands", AssetManager::AssetType::TEXTURE_ANIMATED));
+	m_data->playerChoiceSprite[0].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("LeftHands", AssetManager::AssetType::TEXTURE_ANIMATED));
+	m_data->playerChoiceSprite[1].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("RightHands", AssetManager::AssetType::TEXTURE_ANIMATED));
 
 	m_data->playerChoiceSprite[0].setOrigin(sf::Vector2f(0, 0.5f));
 	m_data->playerChoiceSprite[1].setOrigin(sf::Vector2f(1, 0.5f));
+
+	m_data->playerChoiceSprite[0].setPosition({SCREEN_WIDTH * 0.1f, SCREEN_HEIGHT * 0.66f});
+	m_data->playerChoiceSprite[1].setPosition({SCREEN_WIDTH * 0.9f, SCREEN_HEIGHT * 0.66f});
 
 	m_data->playerChoiceSprite[0].SetAnimation("Rock");
 	m_data->playerChoiceSprite[1].SetAnimation("Rock");
 
 	m_data->victoryText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("RPSFont", AssetManager::AssetType::FONT));
 	m_data->victoryText.setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 });
-
 	
 	//Temporaire
 	if (((GameData*)this->m_keptData)->m_gonnaPlayIndex.size() == 0)
@@ -74,7 +72,6 @@ void RockPaperScissors::Load()
 
 	m_data->state = STATE_PLAY;
 	m_data->roundNB = 0;
-
 }                               
 
 void RockPaperScissors::Unload()
@@ -142,15 +139,6 @@ void RockPaperScissors::Update(float _deltaTime)
 
 		switch (this->m_data->state)
 		{
-			case STATE_WARMUP:
-				if (true)
-				{
-					std::cout << "Warmup not implemanted" << std::endl;
-					this->m_data->state = STATE_PAUSE;
-					return;
-				}
-				break;
-
 			case STATE_PLAY:
 
 				std::cout << this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] << std::endl;
@@ -160,11 +148,11 @@ void RockPaperScissors::Update(float _deltaTime)
 				this->m_data->timer.SetTimeTarget(PAUSE_TIME, true);
 				if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] == RPS_NONE)
 				{
-					this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] = RPS_Choice(rand() % 3);
+					this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] = RPS_Choice(random::RandomInt(0, 2));
 				}
 				if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] == RPS_NONE)
 				{
-					this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] = RPS_Choice(rand() % 3);
+					this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] = RPS_Choice(random::RandomInt(0, 2));
 				}
 
 
@@ -180,8 +168,19 @@ void RockPaperScissors::Update(float _deltaTime)
 						this->m_data->state = STATE_EQUALITY;
 					}
 				}
+				else if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] > this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]]
+					|| m_data->playersChoice[m_data->gameData->m_gonnaPlayIndex[0]] == RPS_ROCK && this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] == RPS_SCISSORS)
+				{
+					std::cout << "player " << this->m_data->gameData->m_gonnaPlayIndex[0] + 1 << " win";
+					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[0]);
+					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[1]);
+					this->m_data->state = STATE_VICTORY;
+				}
 				else
 				{
+					std::cout << "player " << this->m_data->gameData->m_gonnaPlayIndex[1] + 1 << " win";
+					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[1]);
+					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[0]);
 					this->m_data->state = STATE_VICTORY;
 				}
 				break;
@@ -192,19 +191,6 @@ void RockPaperScissors::Update(float _deltaTime)
 				break;
 
 			case STATE_VICTORY:
-				if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] > this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]]
-					|| m_data->playersChoice[m_data->gameData->m_gonnaPlayIndex[0]] == RPS_ROCK && this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] == RPS_SCISSORS)
-				{
-					std::cout << "player " << this->m_data->gameData->m_gonnaPlayIndex[0] + 1 << " win";
-					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[0]);
-					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[1]);
-				}
-				else
-				{
-					std::cout << "player " << this->m_data->gameData->m_gonnaPlayIndex[1] + 1 << " win";
-					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[1]);
-					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[0]);
-				}
 
 				ChangeScene("Board", false);
 				break;
@@ -215,7 +201,14 @@ void RockPaperScissors::Update(float _deltaTime)
 		}
 
 		this->UpdatePlayerChoiceTexture();
+	}
 
+	if (m_data->state == STATE_PLAY)
+	{
+		for (short i = 0; i < 2; i++)
+		{
+			//this->m_data->playerChoiceSprite[i].rotate(10);
+		}
 	}
 
 }
@@ -265,15 +258,12 @@ void RockPaperScissors::UpdatePlayerChoiceTexture()
 		{
 			case RPS_ROCK:
 				this->m_data->playerChoiceSprite[i].SetAnimation("Rock");
-				//this->m_data->playerChoiceSprite[i].setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("Pierre", AssetManager::AssetType::TEXTURE));
 				break;
 			case RPS_PAPER:
 				this->m_data->playerChoiceSprite[i].SetAnimation("Paper");
-				//this->m_data->playerChoiceSprite[i].setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("Feuille", AssetManager::AssetType::TEXTURE));
 				break;
 			case RPS_SCISSORS:
 				this->m_data->playerChoiceSprite[i].SetAnimation("Scissors");
-				//this->m_data->playerChoiceSprite[i].setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("Ciseaux", AssetManager::AssetType::TEXTURE));
 				break;
 			default:
 				std::cout << "watafak" << std::endl;

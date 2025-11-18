@@ -3,7 +3,7 @@
         {
             "name": "FlagFont",
             "type": "Font",
-            "path": "Assets/Fonts/Platinum Sign.ttf"
+            "path": "Assets/Fonts/Font.ttf"
         }
     ]
 }
