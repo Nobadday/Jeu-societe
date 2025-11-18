@@ -6,6 +6,7 @@
 #include "../../Common.hpp"
 #include "../../Scenes/Scene.hpp"
 #include "../../Animation/Animation/Timer.hpp" 
+#include "../../Animation/Graphics.hpp"
 
 
 class RockPaperScissors : public SceneBase
@@ -36,7 +37,7 @@ class RockPaperScissors : public SceneBase
 		sf::Sprite spriteTab[6];                                                                                                                             
 		sf::Text timerText;
 
-		sf::Sprite playerChoiceSprite[2];
+		SpriteAnimated playerChoiceSprite[2];
 		Timer timer;
 
 
