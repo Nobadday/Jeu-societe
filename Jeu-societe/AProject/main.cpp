@@ -105,7 +105,7 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<RandCard>("RandCard");
 	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
 
-	_mainData.scenes.SelectScene("rockPaperSizor", true);
+	_mainData.scenes.SelectScene("Board", true);
 
 	_mainData.clock.restart();
 }

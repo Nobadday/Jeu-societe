@@ -19,9 +19,14 @@ void RandCard::Load(void)
 	m_data->gameData->m_assetManager->LoadManifest("Manifests/RandCard.json", "RandCard");
 
 	//Debug names
-	std::string playersNames[4] = { "Yann", "Lorenzo", "Kyllian", "Damien" };
-	m_data->gameData->m_gonnaPlayIndex.push_back(0);
-	m_data->gameData->m_gonnaPlayIndex.push_back(1);
+
+	std::string playersNames[4] = { "Yann", "Lorenzo", "Kyllian", "Benoit" };
+
+	if(m_data->gameData->m_gonnaPlayIndex.empty())
+	{
+		m_data->gameData->m_gonnaPlayIndex.push_back(0);
+		m_data->gameData->m_gonnaPlayIndex.push_back(1);
+	}
 
 	int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size();
 	std::cout << "nb of player " << nbOfPlayers << std::endl;

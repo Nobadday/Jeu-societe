@@ -20,6 +20,50 @@
 #define TIME_WIN_DISPLAY 1.0f
 #define MAX_TOUR_EFFECT 2
 
+class Effect
+{
+private:
+	sf::Sprite m_sprite;
+	sf::Vector2f m_position;
+	float m_angle;
+	float m_duration;
+	float m_elapsedTime;
+
+	bool m_active;
+public:
+	Effect(const sf::Texture& _texture, const sf::Vector2f& _position, float _duration ,float _angle)
+		: m_angle(_angle), m_position(_position), m_duration(_duration), m_elapsedTime(_duration), m_active(true)
+	{
+		m_sprite.setTexture(_texture);
+		m_sprite.setPosition(m_position);
+		m_sprite.setOrigin(m_sprite.getLocalBounds().width / 2, m_sprite.getLocalBounds().height / 2);
+	}
+	void Update(float _deltaTime)
+	{
+		if (!m_active)
+			return;
+		m_elapsedTime -= _deltaTime;
+		if (m_elapsedTime <= 0 )
+		{
+			m_active = false;
+		}
+	}
+	void Draw(sf::RenderWindow& _renderWindow)
+	{
+		if (m_active)
+		{
+			float factor = pow(m_elapsedTime / m_duration, 2);
+			m_sprite.setRotation(m_angle);
+			m_sprite.setColor(sf::Color(255, 255, 255, 255 * factor));
+			_renderWindow.draw(m_sprite);
+		}
+	}
+	bool IsActive() const { return m_active; }
+
+	void SetIsActive(bool _m_active) { m_active = _m_active; };
+
+};
+
 class BaseGame : public SceneBase
 {
 	private:
@@ -83,6 +127,7 @@ class BaseGame : public SceneBase
 			std::vector<Player> players;
 
 			anim::Animator animator;
+
 			anim::Animator animator2;
 
 			State state;
@@ -92,6 +137,10 @@ class BaseGame : public SceneBase
 			int currentPlayerIndex;
 
 			std::vector<int> pathChoices;
+
+			sf::Texture smokeTp;
+
+			std::vector<Effect> effects;
 		};
 
 		GameData* m_gameData;
@@ -138,6 +187,9 @@ class BaseGame : public SceneBase
 
 		void ProcessBridgeRoll();
 
+		void SwapPlayers();
+
+		void CreateSmokeEffect(Player& _player);
 	public:
 		virtual void Load(void);
 		
@@ -149,6 +201,7 @@ class BaseGame : public SceneBase
 
 		virtual void Draw(sf::RenderWindow& _renderWindow);
 };
+
 
 #endif // _INC_BOARD_HPP
 

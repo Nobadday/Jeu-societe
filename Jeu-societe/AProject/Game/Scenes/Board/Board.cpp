@@ -73,6 +73,8 @@ void BaseGame::Load(void)
 
 	m_data->currentPlayerIndex = 0;
 
+	m_data->smokeTp.loadFromFile("Assets/Sprites/Board/smoke.png");
+
 	// Position initiale de la caméra : afficher tous les joueurs
 	UpdateCameraToShowAllPlayers();
 
@@ -161,6 +163,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 			{
 				if (_event.joystickButton.button == 0)
 				{
+					m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
 					SetBoardState(DEPLACEMENT_SPLIT);
 				}
 			}
@@ -182,6 +185,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 
 			if (_event.key.code == sf::Keyboard::Space)
 			{
+				m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("");
 				SetBoardState(DEPLACEMENT_SPLIT);
 			}
 
@@ -277,6 +281,19 @@ void BaseGame::Update(float _deltaTime)
 		BoardStateUpdate(_deltaTime);
 		m_data->players[m_data->currentPlayerIndex].sprite.Update(_deltaTime);
 
+		for (int i = m_data->effects.size() - 1; i >= 0 ; i-- )
+		{
+			auto& effect = m_data->effects[i];
+
+			effect.Update(_deltaTime);
+
+			if (!effect.IsActive())
+			{
+				effect = m_data->effects.back();
+				m_data->effects.pop_back();
+			}
+		}
+
 		// Mise à jour de la caméra pour suivre le joueur actif
 		UpdateCameraFollowPlayer(_deltaTime);
 
@@ -317,6 +334,11 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 	}
 
 	m_data->tile.DrawMapLayers(_renderWindow, referenceView.getCenter(), "point");
+
+	for (auto& effect : m_data->effects)
+	{
+		effect.Draw(_renderWindow);
+	}
 }
 
 void BaseGame::CaseAction()
@@ -403,6 +425,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 			m_data->pathChoices = GetAvailablePaths(player.currentCaseIndex);
 			m_data->state = WAITING_PATH_CHOICE;
 			std::cout << "Choix de chemin requis : " << m_data->pathChoices.size() << " options" << std::endl;
+			player.sprite.SetAnimation("Idle");
 			return;
 		}
 
@@ -415,6 +438,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 		}
 		if (caseType == "bridge" && player.pendingMovement > 0)
 		{
+			player.sprite.SetAnimation("Idle");
 			std::cout << "Pont détecté ! Lancez le dé pour traverser..." << std::endl;
 			player.waitingBridgeRoll = true;
 			SetBoardState(WAITING_BRIDGE_ROLL);
@@ -975,18 +999,7 @@ void BaseGame::Bonus(int _chance)
 	}
 	else if (_chance <= 100)
 	{
-		int swapIndex = randmt::RandomInt(0, (int)m_data->players.size() - 1);
-		while (swapIndex == m_data->currentPlayerIndex)
-		{
-			swapIndex = randmt::RandomInt(0, (int)m_data->players.size() - 1);
-		}
-
-		std::cout << "Swap de place avec : Player " << swapIndex << std::endl;
-
-		std::swap(m_data->players[m_data->currentPlayerIndex].currentCaseIndex, m_data->players[swapIndex].currentCaseIndex);
-		std::swap(m_data->players[m_data->currentPlayerIndex].boardPosition, m_data->players[swapIndex].boardPosition);
-
-		SetBoardState(CASE_ACTION_END);
+		SwapPlayers();
 	}
 }
 
@@ -1021,25 +1034,14 @@ void BaseGame::Malus(int _chance)
 		}
 		else
 		{
-			std::cout << "Infecter les prochaine bonus (2tours) " << std::endl;
+			std::cout << "Infecter pas de bonus " << std::endl;
 			m_data->players[m_data->currentPlayerIndex].state = StatePlayer::INFEC;
 			SetBoardState(CASE_ACTION_END);
 		}
 	}
 	else if (_chance <= 70)
 	{
-		int swapIndex = randmt::RandomInt(0, (int)m_data->players.size() - 1);
-		while (swapIndex == m_data->currentPlayerIndex)
-		{
-			swapIndex = randmt::RandomInt(0, (int)m_data->players.size() - 1);
-		}
-
-		std::cout << "Swap de place avec : Player " << swapIndex << std::endl;
-
-		std::swap(m_data->players[m_data->currentPlayerIndex].currentCaseIndex, m_data->players[swapIndex].currentCaseIndex);
-		std::swap(m_data->players[m_data->currentPlayerIndex].boardPosition, m_data->players[swapIndex].boardPosition);
-
-		SetBoardState(CASE_ACTION_END);
+		SwapPlayers();
 	}
 	else if (_chance <= 100)
 	{
@@ -1251,5 +1253,63 @@ void BaseGame::ProcessBridgeRoll()
 		player.pendingMovement = 0;  // Annuler le mouvement restant
 
 		SetBoardState(CASE_ACTION);
+	}
+}
+
+void BaseGame::SwapPlayers()
+{
+	int swapIndex = randmt::RandomInt(0, (int)m_data->players.size() - 1);
+	while (swapIndex == m_data->currentPlayerIndex)
+	{
+		swapIndex = randmt::RandomInt(0, (int)m_data->players.size() - 1);
+	}
+
+	std::cout << "Swap de place avec : Player " << swapIndex << std::endl;
+
+	auto& player1 = m_data->players[m_data->currentPlayerIndex];
+	auto& player2 = m_data->players[swapIndex];
+
+	CreateSmokeEffect(player1);
+	CreateSmokeEffect(player2);
+
+	std::swap(m_data->players[m_data->currentPlayerIndex].currentCaseIndex, m_data->players[swapIndex].currentCaseIndex);
+	std::swap(m_data->players[m_data->currentPlayerIndex].boardPosition, m_data->players[swapIndex].boardPosition);
+
+	SetBoardState(CASE_ACTION_END);
+
+}
+
+void BaseGame::CreateSmokeEffect(Player& _player)
+{
+	for (int i = 0; i < 6; i++)
+	{
+		//Creer un effet visuel ici 
+		if (i % 3 == 0)
+		{
+			sf::Vector2f posEffect = _player.boardPosition;
+
+			sf::Vector2u bit = _player.texture.GetTexture().getSize();
+
+			posEffect.y -= bit.y * 3 / 3;
+
+			Effect effect(m_data->smokeTp, posEffect + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
+			m_data->effects.push_back(effect);
+		}
+		else if (i % 2 == 0)
+		{
+			sf::Vector2f posEffect = _player.boardPosition;
+
+			sf::Vector2u bit = _player.texture.GetTexture().getSize();
+
+			posEffect.y -= bit.y * 2 / 3;
+
+			Effect effect(m_data->smokeTp, posEffect + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
+			m_data->effects.push_back(effect);
+		}
+		else
+		{
+			Effect effect(m_data->smokeTp, _player.boardPosition + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
+			m_data->effects.push_back(effect);
+		}
 	}
 }
