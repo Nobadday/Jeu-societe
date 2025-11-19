@@ -26,8 +26,6 @@ private:
 	{
 		int playerCount;
 
-
-
 	};
 	struct Settings
 	{
@@ -35,42 +33,26 @@ private:
 		float soundVolume;
 		float frameRateLimit;
 		bool vsync;
-
-
 	};
 	struct UI
 	{
-		//Button playBtn;
-		TextureAnimated* playBtnTexAnim;
-
-		//Button settingsBtn;
-		TextureAnimated* settingsBtnTexAnim;
-
-		//Button leaveBtn;
-		TextureAnimated* leaveBtnTexAnim;
-
-
-		TextureAnimated gameNameTexAnim;
-		SpriteAnimated gameNameSprAnim;
-
-
+		std::map<std::string, Button> buttonMap;
+		sf::Sprite background;
 
 	};
 	struct SceneData
 	{
 		UI ui;
-
-
-
-
-
-		MenuSystem* menuSystem;
+		MenuState state;
+		//MenuSystem* menuSystem;
 
 		GameData* gameData;
 	};
 	SceneData* m_data;
 	void LoadUI(void);
-	void CheckButtons(void);
+	void ButtonsUpdate(float _dt);
+	void ButtonsPollEvent(sf::Event& _event);
+	void ButtonsDraw(sf::RenderWindow& _renderWindow);
 
 public:
 	virtual void Load(void);

@@ -1,0 +1,28 @@
+{
+    "assets": [
+        {
+            "name" : "playBtn",
+            "type" : "Texture Animated",
+            "path" : "Assets/Sprites/Menu/PlayButton.texanim",
+            "subType" : 0
+        },
+                {
+            "name" : "settingsBtn",
+            "type" : "Texture Animated",
+            "path" : "Assets/Sprites/Menu/SettingsButton.texanim",
+            "subType" : 0
+        },
+        {
+            "name" : "leaveBtn",
+            "type" : "Texture Animated",
+            "path" : "Assets/Sprites/Menu/leave.texanim",
+            "subType" : 0
+        },
+        {
+            "name" : "background",
+            "type" : "Texture",
+            "path" : "Assets/Sprites/Menu/background.png",
+            "subType" : 0
+        }
+    ]
+}

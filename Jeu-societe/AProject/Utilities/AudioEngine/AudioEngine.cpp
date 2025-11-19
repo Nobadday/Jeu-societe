@@ -14,7 +14,7 @@ void AudioEngine::SetAssetManager(AssetManager& _assetManager)
 AudioEngine::~AudioEngine(void)
 {
 	m_soundVec.clear();
-	if (m_currentMusic == "")
+	if (m_currentMusic != "")
 	{
 		m_music->stop();
 	}

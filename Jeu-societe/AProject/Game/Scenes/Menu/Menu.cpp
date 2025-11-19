@@ -1,70 +1,29 @@
 #include "Menu.hpp"
 
-
-
-Button* CreateButton(std::string _texturePath, TextureAnimated::AnimationType _textureType)
-{
-	return new Button();
-}
-
-void Menu::LoadUI(void)
-{
-	//m_data->menuSystem = new MenuSystem();
-	//m_data->menuSystem->MenuAdd("Menu", true);
-
-	//m_data->ui.playBtnTexAnim = new TextureAnimated();
-	//m_data->ui.playBtnTexAnim->LoadFromFile("Assets/Sprites/Menu/PlayButton.anim", TextureAnimated::AnimationType::ANIMATION_ANIM);
-	//m_data->ui.settingsBtnTexAnim = new TextureAnimated();
-	//m_data->ui.settingsBtnTexAnim->LoadFromFile("Assets/Sprites/Menu/PlayButton.anim", TextureAnimated::AnimationType::ANIMATION_ANIM);
-	//m_data->ui.leaveBtnTexAnim = new TextureAnimated();
-	//m_data->ui.leaveBtnTexAnim->LoadFromFile("Assets/Sprites/Menu/leave.anim", TextureAnimated::AnimationType::ANIMATION_ANIM);
-	//	
-	//Button& play = m_data->menuSystem->MenuCreateButton("Menu", "Play");
-	//play.setTexture(*m_data->ui.playBtnTexAnim);
-	//Button& settings = m_data->menuSystem->MenuCreateButton("Menu", "Settings");
-	//settings.setTexture(*m_data->ui.settingsBtnTexAnim);
-	//Button& leave = m_data->menuSystem->MenuCreateButton("Menu", "Leave");
-	//leave.setTexture(*m_data->ui.leaveBtnTexAnim);
-
-
-	//m_data->menuSystem->SetMenuHolder("Menu");
-
-
-}
-
-void Menu::CheckButtons(void)
-{
-	//if (m_data->menuSystem->GetButton("Play").HasBeenClicked())
-	//{
-	//	std::cout << "Eheh you click on play" << std::endl;
-
-	//}
-
-}
-
 void Menu::Load(void)
 {
 	m_data = new SceneData;
 	m_data->gameData = (GameData*)this->m_keptData;
+	m_data->state = MAIN_MENU;
+	m_data->gameData->m_assetManager->LoadManifest("Manifests/Menu.json", "Menu");
+	
+	LoadUI();
+}
+void Menu::LoadUI(void)
+{
+	m_data->ui.buttonMap["playBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("playBtn"));
+	m_data->ui.buttonMap["settingsBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("settingsBtn"));
+	m_data->ui.buttonMap["leaveBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("leaveBtn"));
+	m_data->ui.background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("background"));
 
 
-
-
-
-
-	//TextureAnimated* playBtnAnim = new TextureAnimated();
-	//playBtnAnim->LoadFromFile("Assets/Sprites/PlayButton.anim", TextureAnimated::AnimationType::ANIMATION_ANIM);
-	//playBtnAnim->LoadFr("Assets/Sprites/PlayButton.anim", TextureAnimated::AnimationType::ANIMATION_ANIM);
-
-
-	//m_data->buttonTest = new Button();
-	//
-	//m_data->textanim = new TextureAnimated();
-	//m_data->textanim->LoadFromFile("Assets/Sprites/ButtonPlaceHolder.anim", TextureAnimated::AnimationType::ANIMATION_ANIM);
-	//m_data->buttonTest->setTexture(*m_data->textanim);
-
-
-
+	sf::FloatRect buttonRect = m_data->ui.buttonMap["playBtn"].getLocalBounds();
+	m_data->ui.buttonMap["playBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 });
+	m_data->ui.buttonMap["settingsBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + buttonRect.height});
+	m_data->ui.buttonMap["leaveBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 2 * buttonRect.height });
+	m_data->ui.buttonMap["playBtn"].setOrigin({ 0.5f,0.5f });
+	m_data->ui.buttonMap["settingsBtn"].setOrigin({ 0.5f,0.5f });
+	m_data->ui.buttonMap["leaveBtn"].setOrigin({ 0.5f,0.5f });
 }
 void Menu::Unload(void)
 {
@@ -73,16 +32,59 @@ void Menu::Unload(void)
 
 void Menu::PollEvent(sf::Event& _event)
 {
-	//m_data->menuSystem->PollEvent(_event);
-
+	ButtonsPollEvent(_event);
 }
+void Menu::ButtonsPollEvent(sf::Event& _event)
+{
+	m_data->ui.buttonMap["playBtn"].PollEvent(_event);
+	m_data->ui.buttonMap["settingsBtn"].PollEvent(_event);
+	m_data->ui.buttonMap["leaveBtn"].PollEvent(_event);
+}
+
 void Menu::Update(float _deltaTime)
 {
-	CheckButtons();
-	//m_data->menuSystem->Update(_deltaTime);
+	ButtonsUpdate(_deltaTime);
 }
+void Menu::ButtonsUpdate(float _dt)
+{
+	m_data->ui.buttonMap["playBtn"].Update(_dt);
+	m_data->ui.buttonMap["settingsBtn"].Update(_dt);
+	m_data->ui.buttonMap["leaveBtn"].Update(_dt);
+
+	switch (m_data->state)
+	{
+	case MAIN_MENU:
+		break;
+	case PLAYER_SELECTION:
+		break;
+	}
+
+
+
+	if (m_data->ui.buttonMap["playBtn"].HasBeenClicked())
+	{
+		m_data->state = PLAYER_SELECTION;
+	}
+	else if (m_data->ui.buttonMap["settingsBtn"].HasBeenClicked())
+	{
+
+	}
+}
+
 void Menu::Draw(sf::RenderWindow& _renderWindow)
 {
-	//m_data->menuSystem->Draw(_renderWindow, sf::RenderStates::Default);
+	_renderWindow.draw(m_data->ui.background);
+	ButtonsDraw(_renderWindow);
+}
+void Menu::ButtonsDraw(sf::RenderWindow& _renderWindow)
+{
+	_renderWindow.draw(m_data->ui.buttonMap["playBtn"]);
+	_renderWindow.draw(m_data->ui.buttonMap["settingsBtn"]);
+	_renderWindow.draw(m_data->ui.buttonMap["leaveBtn"]);
 
+	sf::Vector2i mousePos = sf::Mouse::getPosition();
+	if (m_data->ui.buttonMap["leaveBtn"].IsClicked(mousePos.x, mousePos.y))
+	{
+		_renderWindow.close();
+	}
 }

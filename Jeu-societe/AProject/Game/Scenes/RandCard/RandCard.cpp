@@ -10,10 +10,6 @@ void RandCard::Load(void)
 {
 	m_data = new SceneData;
 
-	//m_data->menuSystem = new MenuSystem();
-	//m_data->menuSystem->MenuAdd("TestMenu", true);
-
-
 	// Liaison au GameData passé dans m_keptData (comme dans RockPaperScissors)
 	m_data->gameData = (GameData*)this->m_keptData;
 	m_data->gameData->m_assetManager->LoadManifest("Manifests/RandCard.json", "RandCard");
@@ -32,15 +28,6 @@ void RandCard::Load(void)
 		int playerId = (int)m_data->gameData->m_gonnaPlayIndex.at(i);
 		m_data->players.push_back({ playersNames[i],  (short)playerId });
 	}
-
-	//m_data->buttonTest = new Button();
-	//
-	//m_data->textanim = new TextureAnimated();
-	//m_data->textanim->LoadFromFile("Assets/Sprites/ButtonPlaceHolder.anim", TextureAnimated::AnimationType::ANIMATION_ANIM);
-	//m_data->buttonTest->setTexture(*m_data->textanim);
-
-	//m_data->menuSystem->MenuAddButton("TestMenu", "ButtonTest", m_data->buttonTest);
-	//m_data->menuSystem->SetMenuHolder("TestMenu");
 
 	//Font
 	m_data->text.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("RandCardFont"));
