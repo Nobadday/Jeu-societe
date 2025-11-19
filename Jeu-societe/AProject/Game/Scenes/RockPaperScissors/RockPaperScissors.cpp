@@ -73,12 +73,14 @@ void RockPaperScissors::Load()
 	m_data->state = STATE_PLAY;
 	m_data->roundNB = 0;
 
-
+	m_data->animator.Modify(1.f, 60.f);
+	m_data->animator.SetRotation(0.f, 90.f);
 }                               
 
 void RockPaperScissors::Unload()
 {
 	m_data->gameData->m_assetManager->DeleteContainer("rockpaperScissor");
+	m_data->gameData = NULL;
 	delete m_data;
 }
 
@@ -209,7 +211,12 @@ void RockPaperScissors::Update(float _deltaTime)
 	{
 		for (short i = 0; i < 2; i++)
 		{
+			this->m_data->animator.Update(_deltaTime);
+			if (m_data->animator.IsFinished())
+			{
 
+			}
+			this->m_data->animator.AnimateObject(this->m_data->playerChoiceSprite[i]);
 		}
 	}
 
