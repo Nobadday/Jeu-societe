@@ -97,6 +97,15 @@ void BaseGame::Unload(void)
 
 void BaseGame::PollEvent(sf::Event& _event)
 {
+
+	if (_event.type == sf::Event::KeyPressed)
+	{
+		if (_event.key.code == sf::Keyboard::R)
+		{
+			SwapPlayers();
+		}
+	}
+
 	// Gestion du lancer de dé pour le pont
 	if (m_data->state == WAITING_BRIDGE_ROLL)
 	{
@@ -1269,11 +1278,11 @@ void BaseGame::SwapPlayers()
 	auto& player1 = m_data->players[m_data->currentPlayerIndex];
 	auto& player2 = m_data->players[swapIndex];
 
-	CreateSmokeEffect(player1);
-	CreateSmokeEffect(player2);
-
 	std::swap(m_data->players[m_data->currentPlayerIndex].currentCaseIndex, m_data->players[swapIndex].currentCaseIndex);
 	std::swap(m_data->players[m_data->currentPlayerIndex].boardPosition, m_data->players[swapIndex].boardPosition);
+
+	CreateSmokeEffect(player1);
+	CreateSmokeEffect(player2);
 
 	SetBoardState(CASE_ACTION_END);
 
@@ -1281,7 +1290,7 @@ void BaseGame::SwapPlayers()
 
 void BaseGame::CreateSmokeEffect(Player& _player)
 {
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < 1002; i++)
 	{
 		//Creer un effet visuel ici 
 		if (i % 3 == 0)
@@ -1290,9 +1299,9 @@ void BaseGame::CreateSmokeEffect(Player& _player)
 
 			sf::Vector2u bit = _player.texture.GetTexture().getSize();
 
-			posEffect.y -= bit.y * 3 / 3;
+			posEffect.y -= bit.y * 3 / 12;
 
-			Effect effect(m_data->smokeTp, posEffect + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
+			Effect effect(m_data->smokeTp, posEffect + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(1.f, 2.f), 360 * randmt::RandomFloat(0, 360));
 			m_data->effects.push_back(effect);
 		}
 		else if (i % 2 == 0)
@@ -1301,14 +1310,14 @@ void BaseGame::CreateSmokeEffect(Player& _player)
 
 			sf::Vector2u bit = _player.texture.GetTexture().getSize();
 
-			posEffect.y -= bit.y * 2 / 3;
+			posEffect.y -= bit.y * 2 / 12;
 
-			Effect effect(m_data->smokeTp, posEffect + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
+			Effect effect(m_data->smokeTp, posEffect + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(1.f, 2.f), 360 * randmt::RandomFloat(0, 360));
 			m_data->effects.push_back(effect);
 		}
 		else
 		{
-			Effect effect(m_data->smokeTp, _player.boardPosition + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
+			Effect effect(m_data->smokeTp, _player.boardPosition + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(1.f, 2.f), 360 * randmt::RandomFloat(0, 360));
 			m_data->effects.push_back(effect);
 		}
 	}
