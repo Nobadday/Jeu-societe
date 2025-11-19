@@ -73,7 +73,7 @@ void BaseGame::Load(void)
 
 	m_data->currentPlayerIndex = 0;
 
-	m_data->smokeTp.loadFromFile("Assets/Sprites/Board/smoke.png");
+	m_data->smokeTp.loadFromFile("Assets/Sprites/Board/smoke-export.png");
 
 	// Position initiale de la caméra : afficher tous les joueurs
 	UpdateCameraToShowAllPlayers();
@@ -1290,7 +1290,7 @@ void BaseGame::SwapPlayers()
 
 void BaseGame::CreateSmokeEffect(Player& _player)
 {
-	for (int i = 0; i < 1002; i++)
+	for (int i = 0; i < 63; i++)
 	{
 		//Creer un effet visuel ici 
 		if (i % 3 == 0)
@@ -1299,9 +1299,9 @@ void BaseGame::CreateSmokeEffect(Player& _player)
 
 			sf::Vector2u bit = _player.texture.GetTexture().getSize();
 
-			posEffect.y -= bit.y * 3 / 12;
+			posEffect.y -= bit.y * 2 / 6;
 
-			Effect effect(m_data->smokeTp, posEffect + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(1.f, 2.f), 360 * randmt::RandomFloat(0, 360));
+			Effect effect(m_data->smokeTp, posEffect + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
 			m_data->effects.push_back(effect);
 		}
 		else if (i % 2 == 0)
@@ -1310,14 +1310,21 @@ void BaseGame::CreateSmokeEffect(Player& _player)
 
 			sf::Vector2u bit = _player.texture.GetTexture().getSize();
 
-			posEffect.y -= bit.y * 2 / 12;
+			posEffect.y -= bit.y * 1.5 / 6;
 
-			Effect effect(m_data->smokeTp, posEffect + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(1.f, 2.f), 360 * randmt::RandomFloat(0, 360));
+			Effect effect(m_data->smokeTp, posEffect + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
 			m_data->effects.push_back(effect);
 		}
 		else
 		{
-			Effect effect(m_data->smokeTp, _player.boardPosition + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(1.f, 2.f), 360 * randmt::RandomFloat(0, 360));
+
+			sf::Vector2f posEffect = _player.boardPosition;
+
+			sf::Vector2u bit = _player.texture.GetTexture().getSize();
+
+			posEffect.y -= bit.y * 1 / 6;
+
+			Effect effect(m_data->smokeTp, posEffect + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
 			m_data->effects.push_back(effect);
 		}
 	}
