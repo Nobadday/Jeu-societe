@@ -75,11 +75,12 @@ void RockPaperScissors::Load()
 
 	for (short i = 0; i < 2; i++)
 	{
-		m_data->animator[i].Modify(0.5f, 60.f);
+		m_data->animator[i].Modify(0.4f, 60.f);
 		m_data->animator[i].SetRotation(0.f, powf(-1, i+1) * 45.f);
+		m_data->animator[i].SetAnimationEasing(anim::Animator::ROTATION, anim::Easing::LINEAR);
 	}
 
-	m_data->animator[1].SyncTime(m_data->animator[0]);
+
 }                               
 
 void RockPaperScissors::Unload()
@@ -141,26 +142,33 @@ void RockPaperScissors::Update(float _deltaTime)
 	char buffer[20];
 	std::snprintf(buffer, 20, "%02.2f", m_data->timer.GetRemainingTime());
 	m_data->timerText.setString(buffer);
+	
 
 	if (m_data->timer.IsFinished())
 	{
-		std::cout << "fin timer" << std::endl;
+		//std::cout << "fin timer" << std::endl;
 
 		switch (this->m_data->state)
 		{
-			case STATE_PLAY:
+		case STATE_PLAY:
 
-				std::cout << this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] << std::endl;
-				std::cout << this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] << std::endl;
-
-				this->m_data->animator[0].Update(_deltaTime);
-				this->m_data->animator[1].Update(_deltaTime);
-
-				if (m_data->animator[0].IsFinished() && m_data->animator[0].IsReversed())
+			for (short i = 0; i < 2; i++)
+			{
+				if (m_data->animator[i].IsFinished() && m_data->animator[i].IsReversed())
 				{
-					m_data->animator[0].ToggleReverse();
-					m_data->animator[1].ToggleReverse();
+					std::cout << "joueur " << i + 1 << " pause" << std::endl;
+					m_data->animator[i].SetPause(true);
+				}
+			}
 
+			if (m_data->animator[0].IsPaused() && m_data->animator[1].IsPaused())
+			{
+				m_data->isGamePhasefinished = true;
+				std::cout << "game phase finished" << std::endl;
+			}
+
+				if (m_data->isGamePhasefinished)
+				{
 					this->m_data->timer.SetTimeTarget(PAUSE_TIME, true);
 					if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] == RPS_NONE)
 					{
@@ -199,6 +207,11 @@ void RockPaperScissors::Update(float _deltaTime)
 						this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[0]);
 						this->m_data->state = STATE_VICTORY;
 					}
+
+					for (short i = 0; i < 2; i++)
+					{
+						m_data->animator[i].SetPause(false);
+					}
 				}
 
 				
@@ -208,12 +221,11 @@ void RockPaperScissors::Update(float _deltaTime)
 				this->m_data->timer.SetTimeTarget(PLAY_TIME, true);
 				this->m_data->playerChoiceSprite[0].SetAnimation("Rock");
 				this->m_data->playerChoiceSprite[1].SetAnimation("Rock");
-
+				this->m_data->isGamePhasefinished = false;
 				this->m_data->state = STATE_PLAY;
 				break;
 
 			case STATE_VICTORY:
-
 				ChangeScene("Board", false);
 				break;
 
@@ -225,12 +237,13 @@ void RockPaperScissors::Update(float _deltaTime)
 		this->UpdatePlayerChoiceTexture();
 	}
 
-	if (m_data->state == STATE_PLAY)
+
+	if (this->m_data->state == STATE_PLAY)
 	{
 		for (short i = 0; i < 2; i++)
 		{
 			this->m_data->animator[i].Update(_deltaTime);
-			if (m_data->animator[i].IsFinished())
+			if (this->m_data->animator[i].IsFinished())
 			{
 				m_data->animator[i].ToggleReverse();
 			}

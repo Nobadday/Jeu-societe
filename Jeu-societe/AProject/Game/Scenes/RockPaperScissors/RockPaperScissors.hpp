@@ -50,6 +50,7 @@ class RockPaperScissors : public SceneBase
 		int roundNB = 0;
 
 		anim::Animator animator[2];
+		bool isGamePhasefinished = false;
 	};
 	SceneData* m_data;
 
