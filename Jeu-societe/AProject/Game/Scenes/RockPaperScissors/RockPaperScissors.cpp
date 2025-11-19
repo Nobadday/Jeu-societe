@@ -73,8 +73,13 @@ void RockPaperScissors::Load()
 	m_data->state = STATE_PLAY;
 	m_data->roundNB = 0;
 
-	m_data->animator.Modify(1.f, 60.f);
-	m_data->animator.SetRotation(0.f, 90.f);
+	for (short i = 0; i < 2; i++)
+	{
+		m_data->animator[i].Modify(0.5f, 60.f);
+		m_data->animator[i].SetRotation(0.f, powf(-1, i+1) * 45.f);
+	}
+
+	m_data->animator[1].SyncTime(m_data->animator[0]);
 }                               
 
 void RockPaperScissors::Unload()
@@ -148,49 +153,62 @@ void RockPaperScissors::Update(float _deltaTime)
 				std::cout << this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] << std::endl;
 				std::cout << this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] << std::endl;
 
+				this->m_data->animator[0].Update(_deltaTime);
+				this->m_data->animator[1].Update(_deltaTime);
 
-				this->m_data->timer.SetTimeTarget(PAUSE_TIME, true);
-				if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] == RPS_NONE)
+				if (m_data->animator[0].IsFinished() && m_data->animator[0].IsReversed())
 				{
-					this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] = RPS_Choice(random::RandomInt(0, 2));
-				}
-				if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] == RPS_NONE)
-				{
-					this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] = RPS_Choice(random::RandomInt(0, 2));
-				}
+					m_data->animator[0].ToggleReverse();
+					m_data->animator[1].ToggleReverse();
 
-
-				if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] == this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]])
-				{
-					if (this->m_data->roundNB < 2)
+					this->m_data->timer.SetTimeTarget(PAUSE_TIME, true);
+					if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] == RPS_NONE)
 					{
-						this->m_data->state = STATE_PAUSE;
-						this->m_data->roundNB++;
+						this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] = RPS_Choice(random::RandomInt(0, 2));
+					}
+					if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] == RPS_NONE)
+					{
+						this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] = RPS_Choice(random::RandomInt(0, 2));
+					}
+
+
+					if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] == this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]])
+					{
+						if (this->m_data->roundNB < 2)
+						{
+							this->m_data->state = STATE_PAUSE;
+							this->m_data->roundNB++;
+						}
+						else
+						{
+							this->m_data->state = STATE_EQUALITY;
+						}
+					}
+					else if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] > this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]]
+						|| m_data->playersChoice[m_data->gameData->m_gonnaPlayIndex[0]] == RPS_ROCK && this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] == RPS_SCISSORS)
+					{
+						std::cout << "player " << this->m_data->gameData->m_gonnaPlayIndex[0] + 1 << " win";
+						this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[0]);
+						this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[1]);
+						this->m_data->state = STATE_VICTORY;
 					}
 					else
 					{
-						this->m_data->state = STATE_EQUALITY;
+						std::cout << "player " << this->m_data->gameData->m_gonnaPlayIndex[1] + 1 << " win";
+						this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[1]);
+						this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[0]);
+						this->m_data->state = STATE_VICTORY;
 					}
 				}
-				else if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] > this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]]
-					|| m_data->playersChoice[m_data->gameData->m_gonnaPlayIndex[0]] == RPS_ROCK && this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] == RPS_SCISSORS)
-				{
-					std::cout << "player " << this->m_data->gameData->m_gonnaPlayIndex[0] + 1 << " win";
-					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[0]);
-					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[1]);
-					this->m_data->state = STATE_VICTORY;
-				}
-				else
-				{
-					std::cout << "player " << this->m_data->gameData->m_gonnaPlayIndex[1] + 1 << " win";
-					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[1]);
-					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[0]);
-					this->m_data->state = STATE_VICTORY;
-				}
+
+				
 				break;
 
 			case STATE_PAUSE:
 				this->m_data->timer.SetTimeTarget(PLAY_TIME, true);
+				this->m_data->playerChoiceSprite[0].SetAnimation("Rock");
+				this->m_data->playerChoiceSprite[1].SetAnimation("Rock");
+
 				this->m_data->state = STATE_PLAY;
 				break;
 
@@ -211,15 +229,14 @@ void RockPaperScissors::Update(float _deltaTime)
 	{
 		for (short i = 0; i < 2; i++)
 		{
-			this->m_data->animator.Update(_deltaTime);
-			if (m_data->animator.IsFinished())
+			this->m_data->animator[i].Update(_deltaTime);
+			if (m_data->animator[i].IsFinished())
 			{
-
+				m_data->animator[i].ToggleReverse();
 			}
-			this->m_data->animator.AnimateObject(this->m_data->playerChoiceSprite[i]);
+			this->m_data->animator[i].AnimateObject(this->m_data->playerChoiceSprite[i]);
 		}
 	}
-
 }
 
 void RockPaperScissors::Draw(sf::RenderWindow& _renderWindow)
@@ -233,29 +250,6 @@ void RockPaperScissors::Draw(sf::RenderWindow& _renderWindow)
 	{
 		_renderWindow.draw(this->m_data->playerChoiceSprite[i]);
 	}
-
-	switch (this->m_data->state)
-	{
-	case STATE_WARMUP:
-		break;
-
-	case STATE_PLAY:
-		break;
-
-	case STATE_PAUSE:
-
-		break;
-
-	case STATE_VICTORY:
-		break;
-
-	case STATE_EQUALITY:
-		break;
-
-	default:
-		break;
-	}
-
 	_renderWindow.draw(m_data->timerText);
 }
 
@@ -275,7 +269,6 @@ void RockPaperScissors::UpdatePlayerChoiceTexture()
 				this->m_data->playerChoiceSprite[i].SetAnimation("Scissors");
 				break;
 			default:
-				std::cout << "watafak" << std::endl;
 				break;
 		}
 	}

@@ -49,7 +49,7 @@ class RockPaperScissors : public SceneBase
 		RPS_Choice playersChoice[4];
 		int roundNB = 0;
 
-		anim::Animator animator;
+		anim::Animator animator[2];
 	};
 	SceneData* m_data;
 
