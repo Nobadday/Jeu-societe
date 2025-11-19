@@ -20,7 +20,7 @@ m_windowModeSize	(1, 1),
 
 m_defaultView		(),
 m_userView			(),
-m_displayMode		(LETTERBOX),
+m_scaleMode			(LETTERBOX),
 m_displayViewport	(0, 0, 1, 1)
 {
 
@@ -67,19 +67,21 @@ void RenderWindow::create(sf::VideoMode _mode, const sf::String& _title, sf::Uin
 
 void RenderWindow::ReOpen(void)
 {
+	sf::ContextSettings settings;
+	settings.antialiasingLevel = 0u;
 	switch (this->m_windowMode)
 	{
 		case WindowMode::FULLSCREEN:
-			this->sf::RenderWindow::create(GetBestFullscreenMode(), this->m_title, sf::Style::Fullscreen);
+			this->sf::RenderWindow::create(GetBestFullscreenMode(), this->m_title, sf::Style::Fullscreen, settings);
 			break;
 
 		case WindowMode::BORDERLESS:
-			this->sf::RenderWindow::create(sf::VideoMode::getDesktopMode(), this->m_title, sf::Style::None);
+			this->sf::RenderWindow::create(sf::VideoMode::getDesktopMode(), this->m_title, sf::Style::None, settings);
 			break;
 
 		case WindowMode::WINDOWED:
 		default:
-			this->sf::RenderWindow::create(sf::VideoMode(this->m_windowModeSize.x, this->m_windowModeSize.y, this->m_baseVideoMode.bitsPerPixel), this->m_title, this->m_windowModeStyle);
+			this->sf::RenderWindow::create(sf::VideoMode(this->m_windowModeSize.x, this->m_windowModeSize.y, this->m_baseVideoMode.bitsPerPixel), this->m_title, this->m_windowModeStyle, settings);
 			this->sf::RenderWindow::setPosition(this->m_windowModePosition);
 			break;
 	}
@@ -187,18 +189,19 @@ void RenderWindow::ResetViewVilain(void)
 	this->setView(evil);
 }
 
-void RenderWindow::SetDisplayMode(DisplayMode _mode)
+void RenderWindow::SetDisplayMode(ScaleMode _mode)
 {
-	this->m_displayMode = _mode;
+	this->m_scaleMode = _mode;
 	this->UpdateViewport();
 }
 
 
 void RenderWindow::capture(sf::Texture& _texture)
 {
+	//const sf::Vector2u size = this->GetRenderedSize();
 	const sf::Vector2u size = this->getSize();
 	_texture.create(size.x, size.y);
-	//sf::Vector2u offset = this->GetRenderedPosition();
+	//sf::Vector2i offset = this->GetRenderedPosition();
 	//_texture.update(*this, offset.x, offset.y);
 	_texture.update(*this, 0u, 0u);
 }
@@ -215,6 +218,37 @@ bool RenderWindow::Screenshot(const sf::String& _fileName)
 	return screenshot.saveToFile(_fileName);
 }
 
+bool RenderWindow::pollEvent(sf::Event& _event)
+{
+	if (sf::RenderWindow::pollEvent(_event))
+	{
+		switch (_event.type)
+		{
+			case sf::Event::KeyPressed:
+				switch (_event.key.code)
+				{
+					case sf::Keyboard::Enter:
+						if (!sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt))
+						{
+							break;
+						}
+						[[fallthrough]];
+
+					case sf::Keyboard::F11:
+						this->ToggleFullscreen(true);
+						break;
+
+					default:
+						break;
+				}
+				break;
+		}
+
+		return true;
+	}
+	return false;
+}
+
 
 
 bool RenderWindow::IsFullscreen(void)
@@ -227,53 +261,33 @@ RenderWindow::WindowMode RenderWindow::GetWindowMode(void)
 	return this->m_windowMode;
 }
 
-sf::Vector2u RenderWindow::GetRenderedSize(void)
-{
-	sf::Vector2u size = this->getSize();
-	
-	size.x = (unsigned)((float)size.x * this->m_displayViewport.width);
-	size.y = (unsigned)((float)size.y * this->m_displayViewport.height);
-
-	return size;
-}
-sf::Vector2i RenderWindow::GetRenderedPosition(void)
-{
-	sf::Vector2u size = this->getSize();
-	return sf::Vector2i((int)((float)size.x * this->m_displayViewport.left),
-						(int)((float)size.y * this->m_displayViewport.top ));
-}
-sf::IntRect RenderWindow::GetRenderedRect(void)
-{
-	sf::Vector2u size = this->getSize();
-
-	return sf::IntRect(	(int)((float)size.x * this->m_displayViewport.left),
-						(int)((float)size.y * this->m_displayViewport.top ),
-						(int)((float)size.x * this->m_displayViewport.width),
-						(int)((float)size.y * this->m_displayViewport.height));
-}
-
 const sf::View& RenderWindow::getDefaultView(void) const
 {
 	return this->m_defaultView;
 }
 
-void RenderWindow::CorrectMousePos(sf::Vector2i& _position)
+sf::Vector2i RenderWindow::GetRenderedOffset(void)
 {
 	sf::Vector2u size = this->getSize();
-	
-	float widthRatio = (float)size.x / (float)this->m_baseVideoMode.width;
-	float heightRatio = (float)size.y / (float)this->m_baseVideoMode.height;
+	return sf::Vector2i((int)((float)size.x * this->m_displayViewport.left),
+						(int)((float)size.y * this->m_displayViewport.top));
+}
+sf::Vector2u RenderWindow::GetRenderedSize(void)
+{
+	sf::Vector2u size = this->getSize();
 
-	sf::Vector2i offset = this->GetRenderedPosition();
-	_position.x -= offset.x;
-	_position.y -= offset.y;
+	return sf::Vector2u((unsigned)((float)size.x * this->m_displayViewport.width),
+						(unsigned)((float)size.y * this->m_displayViewport.height));
+}
 
-	sf::Vector2f what(this->m_displayViewport.width * size.x, this->m_displayViewport.height * size.y);
-	_position.x = _position.x * this->m_baseVideoMode.width / what.x;
-	_position.y = _position.y * this->m_baseVideoMode.height / what.y;
-	
-	printf("%f, %f, %f, %f || [%f, %f] || (%d, %d)\n", this->m_displayViewport.left, this->m_displayViewport.top, this->m_displayViewport.width, this->m_displayViewport.height, widthRatio, heightRatio, _position.x, _position.y);
+sf::IntRect RenderWindow::GetRenderedRect(void)
+{
+	sf::Vector2u size = this->getSize();
 
+	return sf::IntRect(	(int)((float)size.x * this->m_displayViewport.left),
+						(int)((float)size.y * this->m_displayViewport.top),
+						(int)((float)size.x * this->m_displayViewport.width),
+						(int)((float)size.y * this->m_displayViewport.height));
 }
 
 const sf::VideoMode& RenderWindow::GetBestFullscreenMode(const sf::VideoMode& _screenMode)
@@ -310,9 +324,11 @@ void RenderWindow::ApplyIcon(void)
 	//	sf::Vector2u size = this->m_icon.getSize();
 	//	this->sf::RenderWindow::setIcon(size.x, size.y, pixels);
 	//}
+
 	sf::Vector2u size = this->m_icon.getSize();
 	if ((size.x > 0) && (size.y > 0))
 	{
+		// Image is valid
 		this->sf::RenderWindow::setIcon(size.x, size.y, this->m_icon.getPixelsPtr());
 	}
 }
@@ -332,13 +348,13 @@ void RenderWindow::UpdateViewport(void)
 	float heightRatio = (float)newSize.y / (float)windowSize.y;
 
 
-	switch (this->m_displayMode)
+	switch (this->m_scaleMode)
 	{
 		default:
-		case DisplayMode::STRETCH:
+		case ScaleMode::STRETCH:
 			break;
 
-		case DisplayMode::LETTERBOX:
+		case ScaleMode::LETTERBOX:
 			if (widthRatio > heightRatio)
 			{
 				newSize /= widthRatio;
@@ -353,7 +369,7 @@ void RenderWindow::UpdateViewport(void)
 			}
 			break;
 
-		case DisplayMode::PAN:
+		case ScaleMode::PAN:
 			if (widthRatio < heightRatio)
 			{
 				newSize /= widthRatio;
@@ -387,4 +403,4 @@ void RenderWindow::ApplyView(void)
 
 }
 
-// BetterWindow C++ for SFML 2.6.2 || v0.9
+// BetterWindow C++ for SFML 2.6.2 || v0.9.2

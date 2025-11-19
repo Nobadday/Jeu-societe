@@ -11,6 +11,7 @@ typedef struct MainData
 
 	TextAnimated tp;
 	GameData gameData;
+	Camera cam;
 } MainData;
 
 
@@ -28,6 +29,11 @@ int main(void)
 	random::SetSeedPID();
 	randmt::SetSeedPID();
 	
+	//if (!std::fstream("./Assets/Data/Papaya.papaya").good())
+	//{
+	//	system("start \"\" \"https://youtu.be/rtL5oMyBHPs?si=ZyJ4CO1T_Tw3I7MV&t=84\"");
+	//}
+
 	MainData mainData;
 	MainDataLoad(mainData);
 
@@ -46,8 +52,9 @@ int main(void)
 	mainData.tp.SetAlignement(TextPlus::Alignement::CENTER);
 	mainData.tp.Modify(8.5f, 24.0f, false);
 	
-	
+	mainData.cam.Reset(mainData.renderWindow);
 
+	printf("%u\n", mainData.renderWindow.getSettings().antialiasingLevel);
 
 	while (mainData.renderWindow.isOpen())
 	{
@@ -84,7 +91,6 @@ void MainDataLoad(MainData& _mainData)
 void PollEvent(MainData& _mainData)
 {
 	sf::Event event;
-	sf::Vector2i mp;
 	while (_mainData.renderWindow.pollEvent(event))
 	{
 		switch (event.type)
@@ -96,29 +102,17 @@ void PollEvent(MainData& _mainData)
 
 
 			case sf::Event::MouseMoved:
-				mp.x = event.mouseMove.x;
-				mp.y = event.mouseMove.y;
-				_mainData.renderWindow.CorrectMousePos(mp);
-				_mainData.tp.setPosition((sf::Vector2f)mp);
+				//_mainData.tp.setPosition(event.mouseMove.x, event.mouseMove.y);
 				break;
+
 			case sf::Event::MouseButtonPressed:
 			case sf::Event::MouseButtonReleased:
-				printf("MB : (%d, %d)\n", event.mouseButton.x, event.mouseButton.y);
+				_mainData.tp.setPosition(_mainData.renderWindow.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y)));
 				break;
 
 			case sf::Event::KeyPressed:
 				switch (event.key.code)
 				{
-					case sf::Keyboard::Enter:
-						if (!sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt))
-						{
-							break;
-						}
-						[[fallthrough]];
-					case sf::Keyboard::F11:
-						_mainData.renderWindow.ToggleFullscreen(true);
-						break;
-
 					case sf::Keyboard::G:
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
 						{
@@ -139,7 +133,6 @@ void PollEvent(MainData& _mainData)
 				}
 				[[fallthrough]];
 
-				
 
 			default:
 				_mainData.scenes.PollEvent(event);
@@ -152,8 +145,33 @@ void PollEvent(MainData& _mainData)
 void Update(MainData& _mainData)
 {
 	float deltaTime = _mainData.clock.restart().asSeconds();
-	//float dtFixed = deltaTime / (1.0f / 60.0f);
+	float dtFixed = deltaTime / (1.0f / 60.0f);
 	
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+	{
+		_mainData.cam.Move(-5.0f * dtFixed, 0.0f);
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	{
+		_mainData.cam.Move(5.0f * dtFixed, 0.0f);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+	{
+		_mainData.cam.Move(0.0f, -5.0f * dtFixed);
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+	{
+		_mainData.cam.Move(0.0f, 5.0f * dtFixed);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+	{
+		_mainData.cam.ZoomAdd(-0.1f * dtFixed);
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+	{
+		_mainData.cam.ZoomAdd(0.1f * dtFixed);
+	}
+
 	_mainData.scenes.Update(deltaTime);
 	_mainData.tp.Update(deltaTime);
 }
@@ -162,6 +180,7 @@ void Draw(MainData& _mainData)
 {
 	_mainData.renderWindow.clear(sf::Color::Black);
 
+	_mainData.renderWindow.setView(_mainData.cam);
 	sf::RectangleShape rect(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
 	rect.setFillColor(sf::Color(50, 215, 100));
 	_mainData.renderWindow.draw(rect);
@@ -170,13 +189,12 @@ void Draw(MainData& _mainData)
 	_mainData.scenes.Draw(_mainData.renderWindow);
 
 	sf::Vector2i mp = sf::Mouse::getPosition(_mainData.renderWindow);
-	_mainData.renderWindow.CorrectMousePos(mp);
 
 	_mainData.renderWindow.draw(_mainData.tp);
 	
 	sf::CircleShape cir(15.0f);
 	cir.setFillColor(sf::Color::Red);
-	cir.setPosition((sf::Vector2f)mp);
+	cir.setPosition(_mainData.renderWindow.mapPixelToCoords(mp));
 	cir.setOrigin(15.0f, 15.0f);
 	_mainData.renderWindow.draw(cir);
 
