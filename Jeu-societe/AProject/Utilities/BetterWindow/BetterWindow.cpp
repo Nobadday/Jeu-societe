@@ -6,10 +6,12 @@ namespace sfMod
 RenderWindow::RenderWindow(void) : sf::RenderWindow(),
 m_baseVideoMode		(0, 0),
 m_windowMode		(WINDOWED),
+m_settings			(),
 
 m_keyRepeat			(true),
 m_framerate			(0u),
 m_vsync				(false),
+m_preferedBFMode	(false),
 
 m_icon				(),
 m_title				(""),
@@ -28,6 +30,11 @@ m_displayViewport	(0, 0, 1, 1)
 
 void RenderWindow::create(sf::VideoMode _mode, const sf::String& _title, sf::Uint32 _style)
 {
+	this->create(_mode, _title, _style, sf::ContextSettings());
+}
+void RenderWindow::create(sf::VideoMode _mode, const sf::String& _title, sf::Uint32 _style, const sf::ContextSettings& _settings)
+{
+	this->m_settings = _settings;
 	this->m_title = _title;
 	this->m_baseVideoMode = _mode;
 	this->m_windowModeSize.x = _mode.width;
@@ -53,6 +60,7 @@ void RenderWindow::create(sf::VideoMode _mode, const sf::String& _title, sf::Uin
 		// User wants it to be directly borderless fullscreen
 		this->m_windowModeStyle = sf::Style::Default;
 		this->m_windowMode = WindowMode::BORDERLESS;
+		this->m_preferedBFMode = true;
 	}
 	else
 	{
@@ -63,25 +71,52 @@ void RenderWindow::create(sf::VideoMode _mode, const sf::String& _title, sf::Uin
 	this->ReOpen();
 }
 
+bool RenderWindow::pollEvent(sf::Event& _event)
+{
+	if (sf::RenderWindow::pollEvent(_event))
+	{
+		switch (_event.type)
+		{
+			case sf::Event::KeyPressed:
+				switch (_event.key.code)
+				{
+					case sf::Keyboard::Enter:
+						if (!sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt))
+						{
+							break;
+						}
+						[[fallthrough]];
+					case sf::Keyboard::F11:
+						this->ToggleFullscreen();
+						break;
+
+					default:
+						break;
+				}
+				break;
+		}
+
+		return true;
+	}
+	return false;
+}
 
 
 void RenderWindow::ReOpen(void)
 {
-	sf::ContextSettings settings;
-	settings.antialiasingLevel = 0u;
 	switch (this->m_windowMode)
 	{
 		case WindowMode::FULLSCREEN:
-			this->sf::RenderWindow::create(GetBestFullscreenMode(), this->m_title, sf::Style::Fullscreen, settings);
+			this->sf::RenderWindow::create(GetBestFullscreenMode(), this->m_title, sf::Style::Fullscreen, this->m_settings);
 			break;
 
 		case WindowMode::BORDERLESS:
-			this->sf::RenderWindow::create(sf::VideoMode::getDesktopMode(), this->m_title, sf::Style::None, settings);
+			this->sf::RenderWindow::create(sf::VideoMode::getDesktopMode(), this->m_title, sf::Style::None, this->m_settings);
 			break;
 
 		case WindowMode::WINDOWED:
 		default:
-			this->sf::RenderWindow::create(sf::VideoMode(this->m_windowModeSize.x, this->m_windowModeSize.y, this->m_baseVideoMode.bitsPerPixel), this->m_title, this->m_windowModeStyle, settings);
+			this->sf::RenderWindow::create(sf::VideoMode(this->m_windowModeSize.x, this->m_windowModeSize.y, this->m_baseVideoMode.bitsPerPixel), this->m_title, this->m_windowModeStyle, this->m_settings);
 			this->sf::RenderWindow::setPosition(this->m_windowModePosition);
 			break;
 	}
@@ -95,6 +130,13 @@ void RenderWindow::ReOpen(void)
 void RenderWindow::Open(void)
 {
 	if (!this->isOpen())
+	{
+		this->ReOpen();
+	}
+}
+void RenderWindow::ReOpenIfOpen(void)
+{
+	if (this->isOpen())
 	{
 		this->ReOpen();
 	}
@@ -117,6 +159,11 @@ void RenderWindow::SetWindowMode(WindowMode _mode)
 }
 
 
+void RenderWindow::SetFullscreenPrefered(bool _borderless)
+{
+	this->m_preferedBFMode = _borderless;
+}
+
 void RenderWindow::SetFullscreen(bool _condition, bool _borderless)
 {
 	if (this->IsFullscreen() != _condition)
@@ -131,9 +178,23 @@ void RenderWindow::SetFullscreen(bool _condition, bool _borderless)
 		}
 	}
 }
+void RenderWindow::SetFullscreen(bool _condition)
+{
+	this->SetFullscreen(_condition, this->m_preferedBFMode);
+}
 void RenderWindow::ToggleFullscreen(bool _borderless)
 {
 	this->SetFullscreen(!this->IsFullscreen(), _borderless);
+}
+void RenderWindow::ToggleFullscreen(void)
+{
+	this->ToggleFullscreen(this->m_preferedBFMode);
+}
+
+void RenderWindow::SetAntiAliasing(AntiAliasing _aliasing)
+{
+	this->m_settings.antialiasingLevel = _aliasing;
+	this->ReOpenIfOpen();
 }
 
 void RenderWindow::setIcon(const sf::Image& _image)
@@ -189,7 +250,7 @@ void RenderWindow::ResetViewVilain(void)
 	this->setView(evil);
 }
 
-void RenderWindow::SetDisplayMode(ScaleMode _mode)
+void RenderWindow::SetScaleMode(ScaleMode _mode)
 {
 	this->m_scaleMode = _mode;
 	this->UpdateViewport();
@@ -217,38 +278,6 @@ bool RenderWindow::Screenshot(const sf::String& _fileName)
 	this->capture(screenshot);
 	return screenshot.saveToFile(_fileName);
 }
-
-bool RenderWindow::pollEvent(sf::Event& _event)
-{
-	if (sf::RenderWindow::pollEvent(_event))
-	{
-		switch (_event.type)
-		{
-			case sf::Event::KeyPressed:
-				switch (_event.key.code)
-				{
-					case sf::Keyboard::Enter:
-						if (!sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt))
-						{
-							break;
-						}
-						[[fallthrough]];
-
-					case sf::Keyboard::F11:
-						this->ToggleFullscreen(true);
-						break;
-
-					default:
-						break;
-				}
-				break;
-		}
-
-		return true;
-	}
-	return false;
-}
-
 
 
 bool RenderWindow::IsFullscreen(void)
@@ -403,4 +432,4 @@ void RenderWindow::ApplyView(void)
 
 }
 
-// BetterWindow C++ for SFML 2.6.2 || v0.9.2
+// BetterWindow C++ for SFML 2.6.2 || v0.9.3

@@ -38,12 +38,12 @@ int main(void)
 	MainDataLoad(mainData);
 
 	sf::Font font;
-	font.loadFromFile("./Assets/Fonts/OMORI_GAME2.ttf");
-
+	font.loadFromFile("./Assets/Fonts/tf2cprofessor.ttf");
+	
 	mainData.renderWindow.setIcon("./Assets/Images/Placeholder.png");
 	
 	mainData.tp.setFont(font);
-	mainData.tp.setString("CLAP BONJOUR ! C'est Amixem, le sexy, je sais pas. Très long string now. évitezdefairedesphrasessansespaceslesenfants!");
+	mainData.tp.setString("CLAP BONJOUR ! C'est Louis, le sexy, je sais pas. Très long string now. évitezdefairedesphrasessansespaceslesenfants!");
 	mainData.tp.setCharacterSize(60u);
 	mainData.tp.setFillColor(sf::Color::White);
 	mainData.tp.setPosition(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f);
@@ -54,7 +54,9 @@ int main(void)
 	
 	mainData.cam.Reset(mainData.renderWindow);
 
-	printf("%u\n", mainData.renderWindow.getSettings().antialiasingLevel);
+	mainData.renderWindow.SetFullscreenPrefered(true);
+	const sf::ContextSettings& aaa = mainData.renderWindow.getSettings();
+	printf("AA : %u || BBP : %u || Flags : %u || Stencil : %u\n", aaa.antialiasingLevel, aaa.depthBits, aaa.attributeFlags, aaa.stencilBits);
 
 	while (mainData.renderWindow.isOpen())
 	{
@@ -100,7 +102,6 @@ void PollEvent(MainData& _mainData)
 				return;
 				break;
 
-
 			case sf::Event::MouseMoved:
 				//_mainData.tp.setPosition(event.mouseMove.x, event.mouseMove.y);
 				break;
@@ -116,15 +117,15 @@ void PollEvent(MainData& _mainData)
 					case sf::Keyboard::G:
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
 						{
-							_mainData.renderWindow.SetDisplayMode(sfMod::RenderWindow::STRETCH);
+							_mainData.renderWindow.SetScaleMode(sfMod::RenderWindow::STRETCH);
 						}
 						else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
 						{
-							_mainData.renderWindow.SetDisplayMode(sfMod::RenderWindow::PAN);
+							_mainData.renderWindow.SetScaleMode(sfMod::RenderWindow::PAN);
 						}
 						else
 						{
-							_mainData.renderWindow.SetDisplayMode(sfMod::RenderWindow::LETTERBOX);
+							_mainData.renderWindow.SetScaleMode(sfMod::RenderWindow::LETTERBOX);
 						}
 						break;
 
