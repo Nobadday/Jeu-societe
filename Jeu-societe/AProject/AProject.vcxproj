@@ -175,7 +175,7 @@
     <ClCompile Include="Ui\Button.cpp" />
     <ClCompile Include="Ui\MenuSystem.cpp" />
     <ClCompile Include="Utilities\AssetManager.cpp" />
-    <ClCompile Include="Utilities\BetterWindow\BW.cpp" />
+    <ClCompile Include="Utilities\BetterWindow\BetterWindow.cpp" />
     <ClCompile Include="Utilities\Binds.cpp" />
     <ClCompile Include="Utilities\Camera\Camera.cpp" />
     <ClCompile Include="main.cpp" />
@@ -227,7 +227,7 @@
     <ClInclude Include="Ui\Button.hpp" />
     <ClInclude Include="Ui\MenuSystem.hpp" />
     <ClInclude Include="Utilities\AssetManager.hpp" />
-    <ClInclude Include="Utilities\BetterWindow\BW.hpp" />
+    <ClInclude Include="Utilities\BetterWindow\BetterWindow.hpp" />
     <ClInclude Include="Utilities\Binds.hpp" />
     <ClInclude Include="Utilities\Camera\Camera.hpp" />
     <ClInclude Include="Common.hpp" />

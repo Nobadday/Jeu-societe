@@ -2,9 +2,9 @@
 #ifndef _INC_ROCKPAPERSCISSORS_HPP
 #define _INC_ROCKPAPERSCISSORS_HPP
 
-#include "../../Common.hpp"
-#include "../../Scenes/Scene.hpp"
-#include "../../Animation/Animation/Timer.hpp" 
+#include "../../../Common.hpp"
+#include "../../../Scenes/Scene.hpp"
+#include "../../../Animation/Animation/Timer.hpp" 
 
 
 class RockPaperScissors : public SceneBase

@@ -147,10 +147,10 @@
     <ClCompile Include="Game\Scenes\RandCard\RandCard.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Utilities\BetterWindow\BW.cpp">
+    <ClCompile Include="Animation\Graphics\AtlasContainer.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Animation\Graphics\AtlasContainer.cpp">
+    <ClCompile Include="Utilities\BetterWindow\BetterWindow.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -299,10 +299,10 @@
     <ClInclude Include="Game\Scenes\RandCard\RandCard.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Utilities\BetterWindow\BW.hpp">
+    <ClInclude Include="Animation\Graphics\AtlasContainer.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Animation\Graphics\AtlasContainer.hpp">
+    <ClInclude Include="Utilities\BetterWindow\BetterWindow.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

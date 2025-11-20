@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../Common.hpp"
-#include "../../Scenes/Scene.hpp"
-#include "../../Utilities/StringFormat.hpp"
+#include "../../../Common.hpp"
+#include "../../../Scenes/Scene.hpp"
+#include "../../../Utilities/StringFormat.hpp"
 
 class ArmWrestlingPlayer
 {
