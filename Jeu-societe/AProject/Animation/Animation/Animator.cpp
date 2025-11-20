@@ -5,17 +5,19 @@ namespace ANIMATION_NAMESPACE
 {
 
 Animator::Animator(void) : Animation(),
-m_usedAnims(),
-m_animEasings()
+m_data			(),
+m_usedAnims		(),
+m_animEasings	()
 {
 	this->ResetAnimation();
 }
 
 Animator::Animator(float _durationSeconds, float _framerate, bool _loop, float _speed) : Animation(_durationSeconds, _framerate, _loop, _speed),
-m_usedAnims(),
-m_animEasings()
+m_data			(),
+m_usedAnims		(),
+m_animEasings	()
 {
-
+	this->ResetAnimation();
 }
 
 
@@ -43,7 +45,11 @@ bool Animator::AnimateObject(sf::Sprite& _object)
 		}
 		if (this->m_usedAnims[COLOR_TRANSITION])
 		{
-			_object.setColor(this->GetColorTransition());
+			_object.setColor(this->GetColor());
+		}
+		if (this->m_usedAnims[ROTATION])
+		{
+			_object.setRotation(this->GetRotation());
 		}
 
 		return true;
@@ -102,11 +108,24 @@ void Animator::SetColorTransition(const sf::Color& _newColor)
 }
 
 
+void Animator::SetRotation(float _start, float _end)
+{
+	this->m_data.rotation[0] = _start;
+	this->m_data.rotation[1] = _end;
+	this->m_usedAnims[ROTATION] = true;
+	this->SetShouldUpdate();
+}
+
+
+sf::Vector2f Animator::GetGoTo(const sf::Vector2f& _startPos, const sf::Vector2f& _endPos, float _coefficient, Easing::Type _easing)
+{
+	float frameCoef = Easing::GetCoefficient(_coefficient, _easing);
+	return sf::Vector2f(AniMath::Interpolate(_startPos.x, _endPos.x, _coefficient),
+						AniMath::Interpolate(_startPos.y, _endPos.y, _coefficient));
+}
 sf::Vector2f Animator::GetGoTo(Easing::Type _easing)
 {
-	float frameCoef = Easing::GetCoefficient(this->GetFrameCoefficient(), _easing);
-	return sf::Vector2f(this->m_data.goTo[0].x + ((this->m_data.goTo[1].x - this->m_data.goTo[0].x) * frameCoef),
-						this->m_data.goTo[0].y + ((this->m_data.goTo[1].y - this->m_data.goTo[0].y) * frameCoef));
+	return GetGoTo(this->m_data.goTo[0], this->m_data.goTo[1], this->GetFrameCoefficient(), _easing);
 }
 sf::Vector2f Animator::GetGoTo(void)
 {
@@ -114,23 +133,42 @@ sf::Vector2f Animator::GetGoTo(void)
 }
 
 
-sf::Color Animator::GetColorTransition(Easing::Type _easing)
+sf::Color Animator::GetColor(const sf::Color& _startColor, const sf::Color& _endColor, float _coefficient, Easing::Type _easing)
 {
-	float frameCoef = Easing::GetCoefficient(this->GetFrameCoefficient(), _easing);
-	sf::Color& startColor = this->m_data.colorTransition[0];
-	sf::Color& endColor = this->m_data.colorTransition[1];
-	int colorInt[4] = { 0 };
-	colorInt[0] = (int)(startColor.r + ((endColor.r - startColor.r) * frameCoef));
-	colorInt[1] = (int)(startColor.g + ((endColor.g - startColor.g) * frameCoef));
-	colorInt[2] = (int)(startColor.b + ((endColor.b - startColor.b) * frameCoef));
-	colorInt[3] = (int)(startColor.a + ((endColor.a - startColor.a) * frameCoef));
-	return sf::Color(colorInt[0], colorInt[1], colorInt[2], colorInt[3]);
+	float frameCoef = Easing::GetCoefficient(_coefficient, _easing);
+	
+	return sf::Color(	AniMath::InterpolateI(_startColor.r, _endColor.r, frameCoef),
+						AniMath::InterpolateI(_startColor.g, _endColor.g, frameCoef),
+						AniMath::InterpolateI(_startColor.b, _endColor.b, frameCoef),
+						AniMath::InterpolateI(_startColor.a, _endColor.a, frameCoef));
 }
-sf::Color Animator::GetColorTransition(void)
+sf::Color Animator::GetColor(Easing::Type _easing)
 {
-	return this->GetColorTransition(this->m_animEasings[COLOR_TRANSITION]);
+	return GetColor(this->m_data.colorTransition[0]	, this->m_data.colorTransition[1],
+					this->GetFrameCoefficient()		, _easing);
+}
+sf::Color Animator::GetColor(void)
+{
+	return this->GetColor(this->m_animEasings[COLOR_TRANSITION]);
+}
+
+
+float Animator::GetRotation(float _start, float _end, float _coefficient, Easing::Type _easing)
+{
+	return AniMath::Interpolate(_start, _end, Easing::GetCoefficient(_coefficient, _easing));
+}
+
+float Animator::GetRotation(Easing::Type _easing)
+{
+	return GetRotation(	this->m_data.rotation[0]	, this->m_data.rotation[1],
+						this->GetFrameCoefficient()	, _easing);
+}
+
+float Animator::GetRotation(void)
+{
+	return GetRotation(this->m_animEasings[ROTATION]);
 }
 
 }
 
-// Animator v1.0.2
+// Animator v1.2.2
