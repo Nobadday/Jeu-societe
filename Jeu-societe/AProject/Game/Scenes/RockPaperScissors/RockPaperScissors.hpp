@@ -29,8 +29,7 @@ class RockPaperScissors : public SceneBase
 		STATE_WARMUP,
 		STATE_PLAY,
 		STATE_PAUSE,
-		STATE_VICTORY,
-		STATE_EQUALITY
+		STATE_ENDGAME,
 	};
 
 	struct SceneData
@@ -50,7 +49,6 @@ class RockPaperScissors : public SceneBase
 		int roundNB = 0;
 
 		anim::Animator animator[2];
-		bool isGamePhasefinished = false;
 	};
 	SceneData* m_data;
 

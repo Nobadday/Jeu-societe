@@ -96,38 +96,42 @@ void RockPaperScissors::PollEvent(sf::Event& _event)
 	{
 		if (m_data->state == STATE_PLAY)
 		{
-			case sf::Event::JoystickButtonPressed:
+			if (!m_data->timer.IsFinished())
 			{
-				//Check id joueur = joueur QUI joue
-				//Check ses boutons
-				int playerID = this->m_data->gameData->GetPlayerIDFromJoystick(_event.joystickButton.joystickId);
-				if (this->m_data->gameData->IsPlayerParticipating(playerID))
+				case sf::Event::JoystickButtonPressed:
 				{
-					std::cout << playerID << std::endl;
-				}
-
-				if (this->m_data->gameData->IsPlayerParticipating(playerID))
-				{
- 					switch (_event.joystickButton.button)
+					//Check id joueur = joueur QUI joue
+					//Check ses boutons
+					int playerID = this->m_data->gameData->GetPlayerIDFromJoystick(_event.joystickButton.joystickId);
+					if (this->m_data->gameData->IsPlayerParticipating(playerID))
 					{
-					case 0:
-						this->m_data->playersChoice[playerID] = RPS_SCISSORS;
-						break;
+						std::cout << playerID << std::endl;
+					}
 
-					case 1:
-						this->m_data->playersChoice[playerID] = RPS_ROCK;
-						break;
+					if (this->m_data->gameData->IsPlayerParticipating(playerID))
+					{
+						switch (_event.joystickButton.button)
+						{
+						case 0:
+							this->m_data->playersChoice[playerID] = RPS_SCISSORS;
+							break;
 
-					case 2:
-						this->m_data->playersChoice[playerID] = RPS_PAPER;
-						break;
+						case 1:
+							this->m_data->playersChoice[playerID] = RPS_ROCK;
+							break;
 
-					default:
-						break;
+						case 2:
+							this->m_data->playersChoice[playerID] = RPS_PAPER;
+							break;
+
+						default:
+							break;
+						}
 					}
 				}
+				break;
 			}
-			break;
+			
 		}
 		break;
 
@@ -143,112 +147,95 @@ void RockPaperScissors::Update(float _deltaTime)
 	std::snprintf(buffer, 20, "%02.2f", m_data->timer.GetRemainingTime());
 	m_data->timerText.setString(buffer);
 	
-
-	if (m_data->timer.IsFinished())
+	switch (m_data->state)
 	{
-		//std::cout << "fin timer" << std::endl;
-
-		switch (this->m_data->state)
-		{
 		case STATE_PLAY:
 
+			//Animation gestion for hands
 			for (short i = 0; i < 2; i++)
 			{
-				if (m_data->animator[i].IsFinished() && m_data->animator[i].IsReversed())
+				this->m_data->animator[i].Update(_deltaTime);
+				if (this->m_data->animator[i].IsFinished())
 				{
-					std::cout << "joueur " << i + 1 << " pause" << std::endl;
-					m_data->animator[i].SetPause(true);
-				}
-			}
-
-			if (m_data->animator[0].IsPaused() && m_data->animator[1].IsPaused())
-			{
-				m_data->isGamePhasefinished = true;
-				std::cout << "game phase finished" << std::endl;
-			}
-
-				if (m_data->isGamePhasefinished)
-				{
-					this->m_data->timer.SetTimeTarget(PAUSE_TIME, true);
-					if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] == RPS_NONE)
+					if (m_data->timer.IsFinished() && m_data->animator[i].IsReversed())
 					{
-						this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] = RPS_Choice(random::RandomInt(0, 2));
-					}
-					if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] == RPS_NONE)
-					{
-						this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] = RPS_Choice(random::RandomInt(0, 2));
-					}
-
-
-					if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] == this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]])
-					{
-						if (this->m_data->roundNB < 2)
-						{
-							this->m_data->state = STATE_PAUSE;
-							this->m_data->roundNB++;
-						}
-						else
-						{
-							this->m_data->state = STATE_EQUALITY;
-						}
-					}
-					else if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] > this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]]
-						|| m_data->playersChoice[m_data->gameData->m_gonnaPlayIndex[0]] == RPS_ROCK && this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] == RPS_SCISSORS)
-					{
-						std::cout << "player " << this->m_data->gameData->m_gonnaPlayIndex[0] + 1 << " win";
-						this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[0]);
-						this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[1]);
-						this->m_data->state = STATE_VICTORY;
+						m_data->animator[i].SetPause(true);
 					}
 					else
 					{
-						std::cout << "player " << this->m_data->gameData->m_gonnaPlayIndex[1] + 1 << " win";
-						this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[1]);
-						this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[0]);
-						this->m_data->state = STATE_VICTORY;
-					}
-
-					for (short i = 0; i < 2; i++)
-					{
-						m_data->animator[i].SetPause(false);
+						m_data->animator[i].ToggleReverse();
 					}
 				}
+				this->m_data->animator[i].AnimateObject(this->m_data->playerChoiceSprite[i]);
+			}
 
-				
-				break;
 
-			case STATE_PAUSE:
+			if (m_data->animator[0].IsPaused() && m_data->animator[1].IsPaused())
+			{
+				this->m_data->timer.SetTimeTarget(PAUSE_TIME, true);
+				//Check if player have no active choice
+				if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] == RPS_NONE)
+				{
+					this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] = RPS_Choice(random::RandomInt(0, 2));
+				}
+				if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] == RPS_NONE)
+				{
+					this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] = RPS_Choice(random::RandomInt(0, 2));
+				}
+
+				//Check if the game ends
+				if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] == this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]])
+				{
+					if (this->m_data->roundNB < 2)
+					{
+						this->m_data->state = STATE_PAUSE;
+						this->m_data->roundNB++;
+					}
+					else
+					{
+						this->m_data->state = STATE_ENDGAME;
+					}
+				}
+				else if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] > this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]]
+					|| m_data->playersChoice[m_data->gameData->m_gonnaPlayIndex[0]] == RPS_ROCK && this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] == RPS_SCISSORS)
+				{
+					std::cout << "player " << this->m_data->gameData->m_gonnaPlayIndex[0] + 1 << " win";
+					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[0]);
+					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[1]);
+					this->m_data->state = STATE_ENDGAME;
+				}
+				else
+				{
+					std::cout << "player " << this->m_data->gameData->m_gonnaPlayIndex[1] + 1 << " win";
+					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[1]);
+					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[0]);
+					this->m_data->state = STATE_ENDGAME;
+				}
+			}
+			this->UpdatePlayerChoiceTexture();
+
+			break;
+		case STATE_PAUSE:
+
+			if (m_data->timer.IsFinished())
+			{
 				this->m_data->timer.SetTimeTarget(PLAY_TIME, true);
 				this->m_data->playerChoiceSprite[0].SetAnimation("Rock");
 				this->m_data->playerChoiceSprite[1].SetAnimation("Rock");
-				this->m_data->isGamePhasefinished = false;
 				this->m_data->state = STATE_PLAY;
 				break;
-
-			case STATE_VICTORY:
-				ChangeScene("Board", false);
-				break;
-
-			case STATE_EQUALITY:
-				ChangeScene("Board", false);
-				break;
-		}
-
-		this->UpdatePlayerChoiceTexture();
-	}
-
-
-	if (this->m_data->state == STATE_PLAY)
-	{
-		for (short i = 0; i < 2; i++)
-		{
-			this->m_data->animator[i].Update(_deltaTime);
-			if (this->m_data->animator[i].IsFinished())
-			{
-				m_data->animator[i].ToggleReverse();
 			}
-			this->m_data->animator[i].AnimateObject(this->m_data->playerChoiceSprite[i]);
-		}
+
+			break;
+		case STATE_ENDGAME:
+			if (m_data->timer.IsFinished())
+			{
+				ChangeScene("Board");	
+			}
+			break;
+
+	default:
+		break;
 	}
 }
 
