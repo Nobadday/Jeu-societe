@@ -77,10 +77,8 @@ void RockPaperScissors::Load()
 	{
 		m_data->animator[i].Modify(0.4f, 60.f);
 		m_data->animator[i].SetRotation(0.f, powf(-1, i+1) * 45.f);
-		m_data->animator[i].SetAnimationEasing(anim::Animator::ROTATION, anim::Easing::LINEAR);
+		m_data->animator[i].SetAnimationEasing(anim::Animator::ROTATION, anim::Easing::INSINE);
 	}
-
-
 }                               
 
 void RockPaperScissors::Unload()
@@ -220,9 +218,15 @@ void RockPaperScissors::Update(float _deltaTime)
 			if (m_data->timer.IsFinished())
 			{
 				this->m_data->timer.SetTimeTarget(PLAY_TIME, true);
-				this->m_data->playerChoiceSprite[0].SetAnimation("Rock");
-				this->m_data->playerChoiceSprite[1].SetAnimation("Rock");
+				for (short i = 0; i < 2; i++)
+				{
+					this->m_data->playerChoiceSprite[i].SetAnimation("Rock");
+					this->m_data->animator[i].SetPause(false);
+					this->m_data->playersChoice[i] = RPS_NONE;
+				}
+
 				this->m_data->state = STATE_PLAY;
+				this->UpdatePlayerChoiceTexture();
 				break;
 			}
 
