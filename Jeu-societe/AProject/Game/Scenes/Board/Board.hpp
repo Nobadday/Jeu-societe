@@ -31,6 +31,7 @@ private:
 
 	bool m_active;
 public:
+	
 	Effect(const sf::Texture& _texture, const sf::Vector2f& _position, float _duration ,float _angle)
 		: m_angle(_angle), m_position(_position), m_duration(_duration), m_elapsedTime(_duration), m_active(true)
 	{
@@ -38,6 +39,7 @@ public:
 		m_sprite.setPosition(m_position);
 		m_sprite.setOrigin(m_sprite.getLocalBounds().width / 2, m_sprite.getLocalBounds().height / 2);
 	}
+
 	void Update(float _deltaTime)
 	{
 		if (!m_active)
@@ -48,6 +50,18 @@ public:
 			m_active = false;
 		}
 	}
+
+	void UpdateSpecial(float _deltaTime )
+	{
+		if (!m_active)
+			return;
+		m_elapsedTime -= _deltaTime;
+		if (m_elapsedTime <= 0)
+		{
+			m_elapsedTime = m_duration;
+		}
+	}
+
 	void Draw(sf::RenderWindow& _renderWindow)
 	{
 		if (m_active)
@@ -58,6 +72,7 @@ public:
 			_renderWindow.draw(m_sprite);
 		}
 	}
+	
 	bool IsActive() const { return m_active; }
 
 	void SetIsActive(bool _m_active) { m_active = _m_active; };
@@ -138,9 +153,12 @@ class BaseGame : public SceneBase
 
 			std::vector<int> pathChoices;
 
-			sf::Texture smokeTp;
+			bool smokeOff;
 
-			std::vector<Effect> effects;
+			sf::Texture smoke;
+
+			std::vector<Effect> effectSwap;
+			std::vector<Effect> effectsMap;
 		};
 
 		GameData* m_gameData;
@@ -148,6 +166,7 @@ class BaseGame : public SceneBase
 		SceneData* m_data;
 
 	private:
+		
 		void CaseAction();
 
 		void SetBoardState(State _state, int _newIndex = 0);
@@ -189,7 +208,10 @@ class BaseGame : public SceneBase
 
 		void SwapPlayers();
 
-		void CreateSmokeEffect(Player& _player);
+		void CreateSmokeEffectForSwap(Player& _player);
+
+		void CreateSmokeEffectAnotherPart(sf::Vector2f _posMin, sf::Vector2f _posMax);
+
 	public:
 		virtual void Load(void);
 		

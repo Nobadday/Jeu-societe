@@ -73,10 +73,32 @@ void BaseGame::Load(void)
 
 	m_data->currentPlayerIndex = 0;
 
-	m_data->smokeTp.loadFromFile("Assets/Sprites/Board/smoke-export.png");
+	m_data->smokeOff = false;
+
+	m_data->smoke.loadFromFile("Assets/Sprites/Board/smoke-export.png");
 
 	// Position initiale de la caméra : afficher tous les joueurs
 	UpdateCameraToShowAllPlayers();
+
+	sf::Vector2f posMin;
+	sf::Vector2f posMax;
+
+	for (int i = 0; i < m_data->posCase.size(); i++)
+	{
+		auto& mapObject = m_data->posCase[i];
+
+		if (mapObject.GetName() == "10")
+		{
+			posMin = mapObject.GetPosition();
+		}
+
+		if (i == m_data->posCase.size() - 1)
+		{
+			posMax = mapObject.GetPosition();
+		}
+	}
+
+	CreateSmokeEffectAnotherPart(posMin, posMax);
 
 	// Configuration des animateurs
 	m_data->animator.Modify(1.0f, 60.0f, false, 1.0f);
@@ -288,20 +310,42 @@ void BaseGame::Update(float _deltaTime)
 
 		// Mise à jour de la logique du plateau
 		BoardStateUpdate(_deltaTime);
-		m_data->players[m_data->currentPlayerIndex].sprite.Update(_deltaTime);
 
-		for (int i = m_data->effects.size() - 1; i >= 0 ; i-- )
+
+		for (int i = m_data->effectSwap.size() - 1; i >= 0; i--)
 		{
-			auto& effect = m_data->effects[i];
+			auto& effect = m_data->effectSwap[i];
 
 			effect.Update(_deltaTime);
 
 			if (!effect.IsActive())
 			{
-				effect = m_data->effects.back();
-				m_data->effects.pop_back();
+				effect = m_data->effectSwap.back();
+				m_data->effectSwap.pop_back();
 			}
 		}
+
+		for (int i = m_data->effectsMap.size() - 1; i >= 0; i--)
+		{
+			auto& effect = m_data->effectsMap[i];
+
+			if (!m_data->smokeOff)
+			{
+				effect.UpdateSpecial(_deltaTime);
+			}
+			else
+			{
+				effect.Update(_deltaTime);
+
+				if (!effect.IsActive())
+				{
+					effect = m_data->effectsMap.back();
+					m_data->effectsMap.pop_back();
+				}
+			}
+
+		}
+
 
 		// Mise à jour de la caméra pour suivre le joueur actif
 		UpdateCameraFollowPlayer(_deltaTime);
@@ -344,7 +388,12 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 
 	m_data->tile.DrawMapLayers(_renderWindow, referenceView.getCenter(), "point");
 
-	for (auto& effect : m_data->effects)
+	for (auto& effect : m_data->effectSwap)
+	{
+		effect.Draw(_renderWindow);
+	}
+
+	for (auto& effect : m_data->effectsMap)
 	{
 		effect.Draw(_renderWindow);
 	}
@@ -364,37 +413,37 @@ void BaseGame::CaseAction()
 
 	switch (hash(caseType.c_str()))
 	{
-		case hash("Bonus"):
+	case hash("Bonus"):
 
-			if (m_data->players[m_data->currentPlayerIndex].state != StatePlayer::INFEC)
-			{
-				std::cout << "Landed on a Bonus case!" << std::endl;
+		if (m_data->players[m_data->currentPlayerIndex].state != StatePlayer::INFEC)
+		{
+			std::cout << "Landed on a Bonus case!" << std::endl;
 
-				BonusMalusLuck(false);
+			BonusMalusLuck(false);
 
-			}
+		}
 
-			break;
+		break;
 
-		case hash("Malus"):
+	case hash("Malus"):
 
-			if (m_data->players[m_data->currentPlayerIndex].state != StatePlayer::IMMUN)
-			{
-				std::cout << "Landed on a Malus case!" << std::endl;
+		if (m_data->players[m_data->currentPlayerIndex].state != StatePlayer::IMMUN)
+		{
+			std::cout << "Landed on a Malus case!" << std::endl;
 
-				BonusMalusLuck(true);
-			}
-			break;
+			BonusMalusLuck(true);
+		}
+		break;
 
-		case hash("Luck"):
-			std::cout << "Landed on a Luck case!" << std::endl;
-			BonusMalusLuck(randmt::Chance(0.5f));
-			break;
+	case hash("Luck"):
+		std::cout << "Landed on a Luck case!" << std::endl;
+		BonusMalusLuck(randmt::Chance(0.5f));
+		break;
 
-		case hash("Battle"):
-			std::cout << "Landed on a Battle case!" << std::endl;
-			SetBoardState(BATTLE_ACTION);
-			break;
+	case hash("Battle"):
+		std::cout << "Landed on a Battle case!" << std::endl;
+		SetBoardState(BATTLE_ACTION);
+		break;
 
 	default:
 	{
@@ -501,7 +550,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 
 		int nextIndex = availablePaths[0];
 
-		if (m_data->players[m_data->currentPlayerIndex].currentPathId != -1)
+		if (m_data->players[m_data->currentPlayerIndex].currentPathId != -1 && availablePaths.size() > 1)
 		{
 			nextIndex = availablePaths[m_data->players[m_data->currentPlayerIndex].currentPathId - 1];
 		}
@@ -581,58 +630,66 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 
 void BaseGame::SetWinDeplacement(int _newIndex)
 {
-	int winnerIndex = m_gameData->m_winIndex[0];
-	int loserIndex = m_gameData->m_winIndex[m_gameData->m_winIndex.size() - 1];
-
-	auto& playerWin = m_data->players[winnerIndex];
-	auto& playerLose = m_data->players[loserIndex];
-
-
-	std::vector<int> availablePaths = GetAvailablePaths(playerWin.currentCaseIndex);
-	if (availablePaths.empty())
+	if (!m_gameData->m_winIndex.empty())
 	{
-		std::cout << "Erreur : aucun chemin disponible!" << std::endl;
-		SetBoardState(CASE_ACTION_END);
-		return;
+		int winnerIndex = m_gameData->m_winIndex[0];
+		int loserIndex = m_gameData->m_winIndex[m_gameData->m_winIndex.size() - 1];
+
+		auto& playerWin = m_data->players[winnerIndex];
+		auto& playerLose = m_data->players[loserIndex];
+
+
+		std::vector<int> availablePaths = GetAvailablePaths(playerWin.currentCaseIndex);
+		if (availablePaths.empty())
+		{
+			std::cout << "Erreur : aucun chemin disponible!" << std::endl;
+			SetBoardState(CASE_ACTION_END);
+			return;
+		}
+
+		std::vector<int> availablePathsLose = GetAvailablePathsBack(playerLose.currentCaseIndex);
+		if (availablePaths.empty())
+		{
+			std::cout << "Erreur : aucun chemin disponible!" << std::endl;
+			SetBoardState(CASE_ACTION_END);
+			return;
+		}
+
+		int nextIndex = availablePaths[0];
+		int nextIndexLose = availablePathsLose[0];
+
+		sf::Vector2f startPosWin = playerWin.boardPosition;
+		sf::Vector2f endPosWin = m_data->posCase[nextIndex].GetPosition() +
+			sf::Vector2f{ randmt::RandomFloat(-10, 10), randmt::RandomFloat(-10, 10) };
+
+		sf::Vector2f startPosLose = playerLose.boardPosition;
+		sf::Vector2f endPosLose = m_data->posCase[nextIndexLose].GetPosition() +
+			sf::Vector2f{ randmt::RandomFloat(-10, 10), randmt::RandomFloat(-10, 10) };
+
+		m_data->animator.SetGoTo(startPosWin, endPosWin);
+		m_data->animator.Restart();
+		m_data->animator2.SetGoTo(startPosLose, endPosLose);
+		m_data->animator2.Restart();
+
+		playerWin.currentCaseIndex = nextIndex;
+		playerWin.sprite.SetAnimation("Right_Walk");
+		//player.sprite.setScale(-1, 1);
+
+		playerLose.currentCaseIndex = nextIndexLose;
+		playerLose.sprite.SetAnimation("Right_Walk");
+		playerLose.sprite.setScale(-1, 1);
+
+		// Vérifier si on arrive sur une convergence
+		const MapObject& nextCase = m_data->posCase[nextIndex];
+		if (nextCase.GetType() == "merge")
+		{
+			playerWin.currentPathId = -1; // Retour au chemin principal
+		}
+
 	}
-
-	std::vector<int> availablePathsLose = GetAvailablePathsBack(playerLose.currentCaseIndex);
-	if (availablePaths.empty())
+	else
 	{
-		std::cout << "Erreur : aucun chemin disponible!" << std::endl;
 		SetBoardState(CASE_ACTION_END);
-		return;
-	}
-
-	int nextIndex = availablePaths[0];
-	int nextIndexLose = availablePathsLose[0];
-
-	sf::Vector2f startPosWin = playerWin.boardPosition;
-	sf::Vector2f endPosWin = m_data->posCase[nextIndex].GetPosition() +
-		sf::Vector2f{ randmt::RandomFloat(-10, 10), randmt::RandomFloat(-10, 10) };
-
-	sf::Vector2f startPosLose = playerLose.boardPosition;
-	sf::Vector2f endPosLose = m_data->posCase[nextIndexLose].GetPosition() +
-		sf::Vector2f{ randmt::RandomFloat(-10, 10), randmt::RandomFloat(-10, 10) };
-
-	m_data->animator.SetGoTo(startPosWin, endPosWin);
-	m_data->animator.Restart();
-	m_data->animator2.SetGoTo(startPosLose, endPosLose);
-	m_data->animator2.Restart();
-
-	playerWin.currentCaseIndex = nextIndex;
-	playerWin.sprite.SetAnimation("Right_Walk");
-	//player.sprite.setScale(-1, 1);
-
-	playerLose.currentCaseIndex = nextIndexLose;
-	playerLose.sprite.SetAnimation("Right_Walk");
-	playerLose.sprite.setScale(-1, 1);
-
-	// Vérifier si on arrive sur une convergence
-	const MapObject& nextCase = m_data->posCase[nextIndex];
-	if (nextCase.GetType() == "merge")
-	{
-		playerWin.currentPathId = -1; // Retour au chemin principal
 	}
 }
 
@@ -648,6 +705,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 	case DEPLACEMENT_BRIGE:
 		[[fallthrough]];
 	case DEPLACEMENT:
+		m_data->players[m_data->currentPlayerIndex].sprite.Update(_dt);
 		m_data->players[m_data->currentPlayerIndex].boardPosition = m_data->animator.GetGoTo();
 		if (m_data->animator.IsFinished())
 		{
@@ -671,6 +729,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 		break;
 
 	case DEPLACEMENT_ACTION:
+		m_data->players[m_data->currentPlayerIndex].sprite.Update(_dt);
 		m_data->players[m_data->currentPlayerIndex].boardPosition = m_data->animator.GetGoTo();
 		if (m_data->animator.IsFinished())
 		{
@@ -693,6 +752,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 		}
 		break;
 	case DEPLACEMENT_ACTION_BACK:
+		m_data->players[m_data->currentPlayerIndex].sprite.Update(_dt);
 		m_data->players[m_data->currentPlayerIndex].boardPosition = m_data->animator.GetGoTo();
 		if (m_data->animator.IsFinished())
 		{
@@ -770,6 +830,9 @@ void BaseGame::BoardStateUpdate(float _dt)
 			int loserIndex = m_gameData->m_winIndex[m_gameData->m_winIndex.size() - 1];
 
 			m_data->players[loserIndex].sprite.setScale({ -1.f,1.f });
+
+			m_data->players[winnerIndex].sprite.Update(_dt);
+			m_data->players[loserIndex].sprite.Update(_dt);
 
 			m_data->players[winnerIndex].boardPosition = m_data->animator.GetGoTo();
 			m_data->players[loserIndex].boardPosition = m_data->animator2.GetGoTo();
@@ -1238,6 +1301,8 @@ void BaseGame::ProcessBridgeRoll()
 		std::cout << "Traversée réussie !" << std::endl;
 		player.waitingBridgeRoll = false;
 
+		m_data->smokeOff = true;
+
 		// CORRECTION : Décrémenter le mouvement AVANT de calculer la prochaine case
 		//player.pendingMovement--;
 
@@ -1281,14 +1346,14 @@ void BaseGame::SwapPlayers()
 	std::swap(m_data->players[m_data->currentPlayerIndex].currentCaseIndex, m_data->players[swapIndex].currentCaseIndex);
 	std::swap(m_data->players[m_data->currentPlayerIndex].boardPosition, m_data->players[swapIndex].boardPosition);
 
-	CreateSmokeEffect(player1);
-	CreateSmokeEffect(player2);
+	CreateSmokeEffectForSwap(player1);
+	CreateSmokeEffectForSwap(player2);
 
 	SetBoardState(CASE_ACTION_END);
 
 }
 
-void BaseGame::CreateSmokeEffect(Player& _player)
+void BaseGame::CreateSmokeEffectForSwap(Player& _player)
 {
 	for (int i = 0; i < 63; i++)
 	{
@@ -1301,8 +1366,8 @@ void BaseGame::CreateSmokeEffect(Player& _player)
 
 			posEffect.y -= bit.y * 2 / 6;
 
-			Effect effect(m_data->smokeTp, posEffect + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
-			m_data->effects.push_back(effect);
+			Effect effect(m_data->smoke, posEffect + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
+			m_data->effectSwap.push_back(effect);
 		}
 		else if (i % 2 == 0)
 		{
@@ -1312,8 +1377,8 @@ void BaseGame::CreateSmokeEffect(Player& _player)
 
 			posEffect.y -= bit.y * 1.5 / 6;
 
-			Effect effect(m_data->smokeTp, posEffect + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
-			m_data->effects.push_back(effect);
+			Effect effect(m_data->smoke, posEffect + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
+			m_data->effectSwap.push_back(effect);
 		}
 		else
 		{
@@ -1324,8 +1389,23 @@ void BaseGame::CreateSmokeEffect(Player& _player)
 
 			posEffect.y -= bit.y * 1 / 6;
 
-			Effect effect(m_data->smokeTp, posEffect + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
-			m_data->effects.push_back(effect);
+			Effect effect(m_data->smoke, posEffect + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
+			m_data->effectSwap.push_back(effect);
 		}
+	}
+}
+
+void BaseGame::CreateSmokeEffectAnotherPart(sf::Vector2f _posMin, sf::Vector2f _posMax)
+{
+	for (int i = 0; i < 1002; i++)
+	{
+		sf::Vector2f posEffect;
+
+		posEffect.x = randmt::RandomFloat(_posMin.x + 512 / 2, _posMax.x);
+
+		posEffect.y = randmt::RandomFloat(0, SCREEN_HEIGHT);
+
+		Effect effect(m_data->smoke, posEffect + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
+		m_data->effectsMap.push_back(effect);
 	}
 }
