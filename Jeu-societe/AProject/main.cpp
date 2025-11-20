@@ -53,7 +53,7 @@ int main(void)
 	mainData.tp.Modify(8.5f, 24.0f, false);
 	
 	mainData.cam.Reset(mainData.renderWindow);
-
+	
 	mainData.renderWindow.SetFullscreenPrefered(true);
 	const sf::ContextSettings& aaa = mainData.renderWindow.getSettings();
 	printf("AA : %u || BBP : %u || Flags : %u || Stencil : %u\n", aaa.antialiasingLevel, aaa.depthBits, aaa.attributeFlags, aaa.stencilBits);
@@ -93,6 +93,7 @@ void MainDataLoad(MainData& _mainData)
 void PollEvent(MainData& _mainData)
 {
 	sf::Event event;
+
 	while (_mainData.renderWindow.pollEvent(event))
 	{
 		switch (event.type)
@@ -101,6 +102,7 @@ void PollEvent(MainData& _mainData)
 				_mainData.renderWindow.close();
 				return;
 				break;
+
 
 			case sf::Event::MouseMoved:
 				//_mainData.tp.setPosition(event.mouseMove.x, event.mouseMove.y);

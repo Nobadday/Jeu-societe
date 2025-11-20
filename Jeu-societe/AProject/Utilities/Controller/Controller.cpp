@@ -2,10 +2,9 @@
 
 
 
-
-
 namespace sfMod
 {
+
 
 bool Controller::LoadMap(const std::string& _filePath)
 {

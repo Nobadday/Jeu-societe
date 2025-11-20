@@ -430,6 +430,7 @@ void RenderWindow::ApplyView(void)
 	this->sf::RenderWindow::setView(newView);
 }
 
+
 }
 
-// BetterWindow C++ for SFML 2.6.2 || v0.9.3
+// BetterWindow C++ for SFML 2.6.2 || v0.9.4

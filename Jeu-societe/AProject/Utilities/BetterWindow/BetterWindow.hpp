@@ -35,13 +35,13 @@ class RenderWindow : public sf::RenderWindow
 
 		enum AntiAliasing
 		{
-			NOMSAA = 0u,
-			TST1 = 1u,
-			TST2 = 2u,
-			TST4 = 4u,
-			TST8 = 8u,
-			TST12 = 12u,
-			TST16 = 16u
+			X0 = 0u,
+			X1 = 1u,
+			X2 = 2u,
+			X4 = 4u,
+			X8 = 8u,
+			X12 = 12u,
+			X16 = 16u
 		};
 
 	private:
@@ -170,7 +170,7 @@ class RenderWindow : public sf::RenderWindow
 
 
 #endif
-// BetterWindow C++ for SFML 2.6.2 || v0.9.3 (alpha)
+// BetterWindow C++ for SFML 2.6.2 || v0.9.4 (beta)
 // Made by Yannou :)
 
 
