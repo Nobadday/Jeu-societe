@@ -54,13 +54,6 @@ class RandCard : public SceneBase
 			sf::Text text;
 
 			int playerCountLeft = 0;
-
-			//Just to test MenuSystem
-			//We dont need for real game
-			// 
-			//MenuSystem* menuSystem;
-			//Button* buttonTest;
-			//TextureAnimated* textanim;
 		};
 		SceneData* m_data;
 		void PrintCards(sf::RenderWindow& _renderWindow);

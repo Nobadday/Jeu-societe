@@ -16,8 +16,8 @@ void RandCard::Load(void)
 
 	//Debug names
 	std::string playersNames[4] = { "Yann", "Lorenzo", "Kyllian", "Damien" };
-	m_data->gameData->m_gonnaPlayIndex.push_back(0);
-	m_data->gameData->m_gonnaPlayIndex.push_back(1);
+	//m_data->gameData->m_gonnaPlayIndex.push_back(0);
+	//m_data->gameData->m_gonnaPlayIndex.push_back(1);
 
 	int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size();
 	std::cout << "nb of player " << nbOfPlayers << std::endl;

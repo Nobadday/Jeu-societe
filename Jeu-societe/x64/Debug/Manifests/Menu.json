@@ -19,10 +19,37 @@
             "subType" : 0
         },
         {
+            "name" : "moinsBtn",
+            "type" : "Texture Animated",
+            "path" : "Assets/Sprites/Menu/moinsButton.texanim",
+            "subType" : 0
+        },
+        {
+            "name" : "plusBtn",
+            "type" : "Texture Animated",
+            "path" : "Assets/Sprites/Menu/plusButton.texanim",
+            "subType" : 0
+        },
+        {
             "name" : "background",
             "type" : "Texture",
             "path" : "Assets/Sprites/Menu/background.png",
             "subType" : 0
+        },
+        {
+            "name" : "MenuFont",
+            "type" : "Font",
+            "path" : "Assets/Fonts/BootlegTimBurton-Regular.ttf"
+        },
+        {
+            "name" : "uiSoundON",
+            "type" : "Sound Buffer",
+            "path" : "Assets/Audio/Sound/PlaceHolder.mp3"
+        },
+        {
+            "name" : "uiSoundClick",
+            "type" : "Sound Buffer",
+            "path" : "Assets/Audio/Sound/PlaceHolder.mp3"
         }
     ]
 }
