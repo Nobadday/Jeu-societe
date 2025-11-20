@@ -12,7 +12,7 @@ namespace sfMod
 class RenderWindow : public sf::RenderWindow
 {
 	public:
-		enum DisplayMode
+		enum ScaleMode
 		{
 			// Default operation done by the SFML
 			// Stretch all screen contents to the size of the window
@@ -36,9 +36,18 @@ class RenderWindow : public sf::RenderWindow
 	private:
 
 		// "Resolution" & BPP + WinMode
+
 		sf::VideoMode m_baseVideoMode;
 		WindowMode m_windowMode;
 		
+		// Remebered data
+		
+		bool m_keyRepeat;
+		unsigned int m_framerate;
+		bool m_vsync;
+		// Last fullscreen was borderless, for toggle
+		bool m_preferedBorderlessFullscreen;
+
 		// Window Visual Properties
 
 		sf::Image m_icon;
@@ -55,13 +64,11 @@ class RenderWindow : public sf::RenderWindow
 		sf::View m_defaultView;
 		sf::View m_userView;
 
-		DisplayMode m_displayMode;
+		ScaleMode m_scaleMode;
 		sf::FloatRect m_displayViewport;
-
 
 	public:
 		RenderWindow(void);
-
 
 		// Mode = resolution/BPP, style
 		// style is the default style only in windowed mode
@@ -86,6 +93,10 @@ class RenderWindow : public sf::RenderWindow
 
 		void setTitle(const sf::String& _title);
 
+		void setKeyRepeatEnabled(bool _enabled);
+		void setFramerateLimit(unsigned int _limit);
+		void setVerticalSyncEnabled(bool _enabled);
+
 		// Set the current view, will be applied
 		void setView(const sf::View& _view);
 
@@ -94,7 +105,7 @@ class RenderWindow : public sf::RenderWindow
 
 		// Sets the display mode of the window
 		// Determines how elements are rendered on screen
-		void SetDisplayMode(DisplayMode _mode);
+		void SetDisplayMode(ScaleMode _mode);
 
 
 		// Modifies the texture and copies the contents of the window onto it
@@ -103,19 +114,20 @@ class RenderWindow : public sf::RenderWindow
 		void capture(sf::Image& _image);
 		bool Screenshot(const sf::String& _fileName);
 
+		bool pollEvent(sf::Event& _event);
 		
 		bool IsFullscreen(void);
 
 		WindowMode GetWindowMode(void);
 
-		// Get the size of the rendered area
-		sf::Vector2u GetRenderedSize(void);
-		// Get the upper left corner of the rendered area
-		sf::Vector2u GetRenderedPosition(void);
-
-
 		const sf::View& getDefaultView(void) const;
 
+		// Get the upper left corner of the rendered area
+		sf::Vector2i GetRenderedOffset(void);
+		// Get the size of the rendered area
+		sf::Vector2u GetRenderedSize(void);
+		
+		sf::IntRect GetRenderedRect(void);
 
 		// Will attempt to get a valid videoMode matching the desktop mode to avoid weird beheaviors
 		// Else, returns the first available fullscreenMode
@@ -136,7 +148,7 @@ class RenderWindow : public sf::RenderWindow
 
 
 #endif
-// BetterWindow C++ for SFML 2.6.2 || v0.9
+// BetterWindow C++ for SFML 2.6.2 || v0.9.2 (alpha)
 // Made by Yannou :)
 
 
