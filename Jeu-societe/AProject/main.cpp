@@ -55,8 +55,6 @@ int main(void)
 	mainData.cam.Reset(mainData.renderWindow);
 	
 	mainData.renderWindow.SetFullscreenPrefered(true);
-	const sf::ContextSettings& aaa = mainData.renderWindow.getSettings();
-	printf("AA : %u || BBP : %u || Flags : %u || Stencil : %u\n", aaa.antialiasingLevel, aaa.depthBits, aaa.attributeFlags, aaa.stencilBits);
 
 	while (mainData.renderWindow.isOpen())
 	{
