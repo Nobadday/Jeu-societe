@@ -41,7 +41,6 @@ void RockPaperScissors::Load()
 	}
 
 	m_data->background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground", AssetManager::AssetType::TEXTURE));
-
 	m_data->timerText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("RPSFont", AssetManager::AssetType::FONT));
 
 	m_data->playerChoiceSprite[0].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("LeftHands", AssetManager::AssetType::TEXTURE_ANIMATED));
@@ -63,13 +62,15 @@ void RockPaperScissors::Load()
 	if (((GameData*)this->m_keptData)->m_gonnaPlayIndex.size() == 0)
 	{
 		((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(0);
-		((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(1);
+		((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(2);
 	}
 
 	m_data->timer.SetTimeTarget(PLAY_TIME);
 
-	m_data->playersChoice[0] = RPS_NONE;
-	m_data->playersChoice[1] = RPS_NONE;
+	for (short i = 0; i < 2; i++)
+	{
+		m_data->playersChoice[i] = RPS_NONE;
+	}
 
 	m_data->state = STATE_PLAY;
 	m_data->roundNB = 0;
@@ -104,23 +105,26 @@ void RockPaperScissors::PollEvent(sf::Event& _event)
 					int playerID = this->m_data->gameData->GetPlayerIDFromJoystick(_event.joystickButton.joystickId);
 					if (this->m_data->gameData->IsPlayerParticipating(playerID))
 					{
-						std::cout << playerID << std::endl;
-					}
-
-					if (this->m_data->gameData->IsPlayerParticipating(playerID))
-					{
+						int realID = 0;
+						for (int temp = 0; temp < this->m_data->gameData->m_gonnaPlayIndex.size(); temp++)
+						{
+							if (this->m_data->gameData->m_gonnaPlayIndex[temp] == playerID)
+							{
+								realID = temp;
+							}
+						}
 						switch (_event.joystickButton.button)
 						{
 						case 0:
-							this->m_data->playersChoice[playerID] = RPS_SCISSORS;
+							this->m_data->playersChoice[realID] = RPS_SCISSORS;
 							break;
 
 						case 1:
-							this->m_data->playersChoice[playerID] = RPS_ROCK;
+							this->m_data->playersChoice[realID] = RPS_ROCK;
 							break;
 
 						case 2:
-							this->m_data->playersChoice[playerID] = RPS_PAPER;
+							this->m_data->playersChoice[realID] = RPS_PAPER;
 							break;
 
 						default:
@@ -172,18 +176,19 @@ void RockPaperScissors::Update(float _deltaTime)
 			if (m_data->animator[0].IsPaused() && m_data->animator[1].IsPaused())
 			{
 				this->m_data->timer.SetTimeTarget(PAUSE_TIME, true);
-				//Check if player have no active choice
-				if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] == RPS_NONE)
+
+				for (short i = 0; i < 4; i++)
 				{
-					this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] = RPS_Choice(random::RandomInt(0, 2));
-				}
-				if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] == RPS_NONE)
-				{
-					this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] = RPS_Choice(random::RandomInt(0, 2));
+					if (m_data->gameData->IsPlayerParticipating(i))
+					{
+						if (this->m_data->playersChoice[i] == RPS_NONE)
+						{
+							this->m_data->playersChoice[i] = RPS_Choice(random::RandomInt(0, 2));
+						}
+					}
 				}
 
-				//Check if the game ends
-				if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] == this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]])
+				if (this->m_data->playersChoice[0] == this->m_data->playersChoice[1])
 				{
 					if (this->m_data->roundNB < 2)
 					{
@@ -195,8 +200,8 @@ void RockPaperScissors::Update(float _deltaTime)
 						this->m_data->state = STATE_ENDGAME;
 					}
 				}
-				else if (this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[0]] > this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]]
-					|| m_data->playersChoice[m_data->gameData->m_gonnaPlayIndex[0]] == RPS_ROCK && this->m_data->playersChoice[this->m_data->gameData->m_gonnaPlayIndex[1]] == RPS_SCISSORS)
+				else if (this->m_data->playersChoice[0] > this->m_data->playersChoice[1]
+					|| m_data->playersChoice[0] == RPS_ROCK && this->m_data->playersChoice[1] == RPS_SCISSORS)
 				{
 					std::cout << "player " << this->m_data->gameData->m_gonnaPlayIndex[0] + 1 << " win";
 					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[0]);
@@ -210,8 +215,9 @@ void RockPaperScissors::Update(float _deltaTime)
 					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[0]);
 					this->m_data->state = STATE_ENDGAME;
 				}
+
+				this->UpdatePlayerChoiceTexture();
 			}
-			this->UpdatePlayerChoiceTexture();
 
 			break;
 		case STATE_PAUSE:

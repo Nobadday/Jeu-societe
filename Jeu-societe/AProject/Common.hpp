@@ -16,7 +16,6 @@
 #include "Utilities/MathPlus.hpp"
 #include "Utilities/StringFormat.hpp"
 #include "Utilities/Binds.hpp"
-#include "Utilities/BetterWindow/BetterWindow.hpp"
 
 #include <vector>
 #include <string>

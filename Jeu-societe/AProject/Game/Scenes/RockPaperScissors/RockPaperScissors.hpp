@@ -39,6 +39,8 @@ class RockPaperScissors : public SceneBase
 
 		sf::Sprite background;
 
+
+		RPS_Choice playersChoice[2];
 		SpriteAnimated playerChoiceSprite[2];
 		Timer timer;
 
@@ -47,7 +49,6 @@ class RockPaperScissors : public SceneBase
 		State state = STATE_NONE;
 		GameData* gameData = NULL;
 
-		RPS_Choice playersChoice[4];
 		int roundNB = 0;
 
 		anim::Animator animator[2];

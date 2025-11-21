@@ -16,6 +16,8 @@
 			sf::Sprite Podium;
 			std::vector<SpriteAnimated> playerSpriteArray;
 			std::vector<TextPlus> playerTextArray;
+
+			sf::Sprite background;
 		};
 		SceneData* m_data;
 

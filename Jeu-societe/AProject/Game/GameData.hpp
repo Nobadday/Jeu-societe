@@ -5,6 +5,7 @@
 #include <SFML/System.hpp>
 
 #include "PlayerData.hpp"
+#include "../Utilities/BetterWindow/BetterWindow.hpp"
 #include "../Utilities/AssetManager.hpp"
 
 class GameData
@@ -12,7 +13,7 @@ class GameData
 	private:
 		
 	public:
-		sf::RenderWindow* m_renderWindow;
+		sfMod::RenderWindow* m_renderWindow;
 		AssetManager* m_assetManager;
 
 		std::vector<PlayerData> m_playerDataList;

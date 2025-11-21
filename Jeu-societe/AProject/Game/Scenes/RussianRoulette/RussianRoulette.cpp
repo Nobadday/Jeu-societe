@@ -165,22 +165,14 @@ void RussianRoulette::Update(float _deltaTime)
 
 					m_data->deadPlayers.push_back(m_data->players[m_data->currentPlayer]);
 
-
-
-
-
 					//Save data
 					int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size() - 1;
 					std::cout << "nb player : " << nbOfPlayers << std::endl;
 
-					for (int i = 0; i < nbOfPlayers; i++)
+					for (int i = m_data->deadPlayers.size(); i >= 0 ; i--)
 					{
-
-						m_data->gameData->AddPlayerWin(m_data->deadPlayers.at(nbOfPlayers - i).id);
+						m_data->gameData->AddPlayerWin(m_data->deadPlayers.at(i).id);
 					}
-
-
-
 
 					//Load bullet for next game, its not useful
 					m_data->bullet = random::RandomInt(1, 6);
@@ -213,8 +205,6 @@ void RussianRoulette::Update(float _deltaTime)
 }
 void RussianRoulette::Draw(sf::RenderWindow& _renderWindow)
 {
-
-
 	_renderWindow.draw(m_data->gunSprAnim);
 	_renderWindow.draw(m_data->text);
 }

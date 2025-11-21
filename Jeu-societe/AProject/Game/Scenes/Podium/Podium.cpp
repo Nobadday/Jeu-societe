@@ -32,7 +32,9 @@ void Podium::Load()
 		m_data->playerTextArray[i].setString("Player " + std::to_string(m_data->gameData->m_gonnaPlayIndex[i] + 1));
 		m_data->playerTextArray[i].setPosition({ (float)150 * (i + 1), 100.f });
 
-		m_data->playerSpriteArray[i].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("playersIcons", AssetManager::AssetType::TEXTURE_ANIMATED));
+		m_data->background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground", AssetManager::AssetType::TEXTURE));
+		
+		
 	}
 }
 
@@ -62,6 +64,7 @@ void Podium::Update(float _dt)
 
 void Podium::Draw(sf::RenderWindow& _renderWindow)
 {
+	_renderWindow.draw(m_data->background);
 	_renderWindow.draw(m_data->Podium);
 
 	for (auto& it : m_data->playerTextArray)

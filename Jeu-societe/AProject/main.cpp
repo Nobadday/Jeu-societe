@@ -20,13 +20,6 @@ typedef struct MainData
 	sf::Clock clock;
 	SceneHandler scenes;
 
-	RussianRoulette sceneRussianRoulette;
-	RandCard randCard;
-
-	SceneBase* armWrestlingScene;
-	SceneBase* basketScene;
-	SceneBase* flagGameScene;
-
 	GameData gameData;
 } MainData;
 
@@ -51,7 +44,7 @@ int main(void)
 
 	MainData mainData;
 
-	mainData.gameData.m_playerDataList.resize(2);
+	mainData.gameData.m_playerDataList.resize(3);
 	for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
 	{
 		mainData.gameData.m_playerDataList[i].SetJoystickID(i);
@@ -84,7 +77,7 @@ int main(void)
 
 void MainDataLoad(MainData& _mainData)
 {
-	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "SFML", sf::Style::Close);
+	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "SFML", sf::Style::Default);
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
 
 	// GAME DATA
