@@ -161,6 +161,7 @@
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Scenes\SceneHandler.cpp" />
     <ClCompile Include="Ui\Button.cpp" />
+    <ClCompile Include="Ui\MenuSystem.cpp" />
     <ClCompile Include="Utilities\AssetManager.cpp" />
     <ClCompile Include="Utilities\BetterWindow\BetterWindow.cpp" />
     <ClCompile Include="Utilities\Camera\Camera.cpp" />
