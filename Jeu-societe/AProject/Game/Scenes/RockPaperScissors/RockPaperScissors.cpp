@@ -37,11 +37,12 @@ void RockPaperScissors::Load()
 		default:
 			break;
 		}
-		m_data->spriteTab[i].setPosition({ (float)100 * i, 100.f });
+		m_data->spriteTab[i].setPosition({ (float)150 * i, 100.f });
 	}
 
-	m_data->timerText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("RPSFont", AssetManager::AssetType::FONT));
+	m_data->background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground", AssetManager::AssetType::TEXTURE));
 
+	m_data->timerText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("RPSFont", AssetManager::AssetType::FONT));
 
 	m_data->playerChoiceSprite[0].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("LeftHands", AssetManager::AssetType::TEXTURE_ANIMATED));
 	m_data->playerChoiceSprite[1].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("RightHands", AssetManager::AssetType::TEXTURE_ANIMATED));
@@ -245,6 +246,8 @@ void RockPaperScissors::Update(float _deltaTime)
 
 void RockPaperScissors::Draw(sf::RenderWindow& _renderWindow)
 {
+	_renderWindow.draw(m_data->background);
+
 	for (short i = 0; i < 6; i++)
 	{
 		_renderWindow.draw(m_data->spriteTab[i]);

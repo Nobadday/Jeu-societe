@@ -37,6 +37,8 @@ class RockPaperScissors : public SceneBase
 		sf::Sprite spriteTab[6];                                                                                                                             
 		sf::Text timerText;
 
+		sf::Sprite background;
+
 		SpriteAnimated playerChoiceSprite[2];
 		Timer timer;
 

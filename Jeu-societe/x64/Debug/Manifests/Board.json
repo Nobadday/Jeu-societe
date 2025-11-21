@@ -47,6 +47,11 @@
             "type" : "Texture Animated",
             "path" : "Assets/Sprites/Board/Perso4-2.anim", 
             "subType" : 1
+        },
+        {
+            "name" : "BoardFont",
+            "type" : "Font",
+            "path" : "Assets/Fonts/Font.ttf"
         }
     ]
 }   

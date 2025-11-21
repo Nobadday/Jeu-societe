@@ -14,7 +14,7 @@ class PlayerData
 			CHARACTER_1_2,
 			CHARACTER_2_2,
 			CHARACTER_3_2,
-			CHARACTER_4_2,
+			CHARACTER_4_2
 		};
 
 		int m_joystickId;

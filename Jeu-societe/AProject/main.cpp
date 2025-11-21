@@ -2,21 +2,19 @@
 
 #include "Game/Scenes/Board/Board.hpp"
 
-// passage de données entre les scènes fait ici 
 #include "./Game/scenes/RockPaperScissors/RockPaperScissors.hpp"
 #include "Game/Scenes/ArmWrestling/ArmWrestling.hpp"
 #include "Game/Scenes/Basket/Basket.hpp"
 
-// données du jeu a faire passer entre les scènes ici
 #include "./Game/Scenes/RussianRoulette/RussianRoulette.hpp"
 #include "./Game/Scenes/RandCard/RandCard.hpp"
-
 #include "Game/Scenes/FlagGame/FlagGame.hpp"
 
+#include "./Game/Scenes/Podium/Podium.hpp"
 
 typedef struct MainData
 {
-	sf::RenderWindow renderWindow;
+	sfMod::RenderWindow renderWindow;
 	AssetManager assetManager;
 
 	sf::Clock clock;
@@ -104,8 +102,9 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<FlagGame>("FlagGame");
 	_mainData.scenes.AddScene<RandCard>("RandCard");
 	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
+	_mainData.scenes.AddScene<Podium>("Podium");
 
-	_mainData.scenes.SelectScene("Board", true);
+	_mainData.scenes.SelectScene("rockPaperSizor", true);
 
 	_mainData.clock.restart();
 }
