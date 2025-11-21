@@ -110,6 +110,14 @@ class BaseGame : public SceneBase
 			CONFUSED
 		};
 
+		enum LBM
+		{
+			NONE = -1,
+			LUCKY,
+			BONUS,
+			MALUS
+		};
+
 		struct Player
 		{
 			SpriteAnimated sprite;
@@ -129,6 +137,17 @@ class BaseGame : public SceneBase
 			int pendingMovement;  // Nouveau : mouvement restant
 			int currentPathId;    // Nouveau : ID du chemin actuel (-1 = chemin principal)
 			bool waitingBridgeRoll;  // Nouveau : en attente du lancer pour le pont
+		};
+
+		struct LuckBonusMalus
+		{
+			sf::Sprite sprite;
+
+			sf::Text text;
+
+			std::string name;
+
+			LBM state;
 		};
 
 		struct SceneData
@@ -159,6 +178,8 @@ class BaseGame : public SceneBase
 
 			std::vector<Effect> effectSwap;
 			std::vector<Effect> effectsMap;
+
+			LuckBonusMalus HudLBM;
 		};
 
 		GameData* m_gameData;

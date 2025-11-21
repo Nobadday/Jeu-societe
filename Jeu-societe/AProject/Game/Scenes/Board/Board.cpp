@@ -14,6 +14,8 @@ void BaseGame::Load(void)
 
 	m_gameData->m_assetManager->LoadManifest("Manifests/Board.json", "Board");
 
+	m_data->HudLBM.text.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
+
 	m_data->tile.InitTiled("Assets/Map/map.json");
 	m_data->camera.Reset(m_gameData->m_renderWindow->getDefaultView());
 
