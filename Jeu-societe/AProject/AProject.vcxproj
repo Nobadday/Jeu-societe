@@ -150,6 +150,7 @@
     <ClCompile Include="Animation\Graphics\AtlasContainer.cpp" />
     <ClCompile Include="Animation\Graphics\GraphicAddons.cpp" />
     <ClCompile Include="Animation\Graphics\SpriteAnimated.cpp" />
+    <ClCompile Include="Animation\Graphics\SpriteAtlas.cpp" />
     <ClCompile Include="Animation\Graphics\TextureAnimated.cpp" />
     <ClCompile Include="Animation\Graphics\TextureAtlas.cpp" />
     <ClCompile Include="Animation\Utilities\Bezier.cpp" />
@@ -159,6 +160,7 @@
     <ClCompile Include="Graphics\HealthBar.cpp" />
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Scenes\SceneHandler.cpp" />
+    <ClCompile Include="Ui\Button.cpp" />
     <ClCompile Include="Utilities\AssetManager.cpp" />
     <ClCompile Include="Utilities\BetterWindow\BetterWindow.cpp" />
     <ClCompile Include="Utilities\Camera\Camera.cpp" />
@@ -183,6 +185,7 @@
     <ClInclude Include="Animation\Graphics\AtlasContainer.hpp" />
     <ClInclude Include="Animation\Graphics\GraphicAddons.hpp" />
     <ClInclude Include="Animation\Graphics\SpriteAnimated.hpp" />
+    <ClInclude Include="Animation\Graphics\SpriteAtlas.hpp" />
     <ClInclude Include="Animation\Graphics\TextureAnimated.hpp" />
     <ClInclude Include="Animation\Graphics\TextureAtlas.hpp" />
     <ClInclude Include="Animation\Utilities\Bezier.hpp" />
@@ -194,6 +197,7 @@
     <ClInclude Include="Scenes\Scene.hpp" />
     <ClInclude Include="Scenes\SceneHandler.hpp" />
     <ClInclude Include="Screen.hpp" />
+    <ClInclude Include="Ui\Button.hpp" />
     <ClInclude Include="Utilities\AssetManager.hpp" />
     <ClInclude Include="Utilities\BetterWindow\BetterWindow.hpp" />
     <ClInclude Include="Utilities\Camera\Camera.hpp" />
