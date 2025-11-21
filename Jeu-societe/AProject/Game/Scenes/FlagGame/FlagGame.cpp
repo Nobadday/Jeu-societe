@@ -1,5 +1,4 @@
 #include "FlagGame.hpp"
-#include "../../../Utilities/Random.hpp"
 
 #define ROUND_TIME 5.0f
 #define ROUND_END_TIME 3.0f
@@ -59,6 +58,16 @@ void FlagGame::Load(void)
 	m_data->resultText.setFillColor(sf::Color::Green);
 	m_data->resultText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
+	m_data->buttonTexture[0].loadFromFile("Assets/Sprites/FlagGame/A.png");
+	m_data->buttonTexture[1].loadFromFile("Assets/Sprites/FlagGame/B.png");
+	m_data->buttonTexture[2].loadFromFile("Assets/Sprites/FlagGame/X.png");
+	m_data->buttonTexture[3].loadFromFile("Assets/Sprites/FlagGame/Y.png");
+	m_data->buttonTexture[4].loadFromFile("Assets/Sprites/FlagGame/LB.png");
+	m_data->buttonTexture[5].loadFromFile("Assets/Sprites/FlagGame/RB.png");
+
+	m_data->buttonSprite.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.5f);
+
+
 	// Initialize player data for all players in m_gonnaPlayIndex
 	for (int i = 0; i < 4; ++i)
 	{
@@ -86,8 +95,10 @@ void FlagGame::Load(void)
 				// Position text based on number of participating players
 				m_data->playerData[playerID].inputText.setPosition(
 					SCREEN_WIDTH / ((float)m_data->gameData->m_gonnaPlayIndex.size() + 1) * (i + 1),
-					100.f
+					175.f
 				);
+				m_data->playerData[playerID].buttonSprite.setPosition(SCREEN_WIDTH / ((float)m_data->gameData->m_gonnaPlayIndex.size() + 1) * (i + 1),
+					100.f);
 			}
 		}
 	}
@@ -277,7 +288,8 @@ void FlagGame::Draw(sf::RenderWindow& _renderWindow)
 	{
 		_renderWindow.draw(m_data->roundText);
 		_renderWindow.draw(m_data->timerText);
-		_renderWindow.draw(m_data->requiredInputText);
+		_renderWindow.draw(m_data->buttonSprite);
+		//_renderWindow.draw(m_data->requiredInputText);
 
 		// Draw only participating players' texts
 		if (m_data->gameData)
@@ -287,6 +299,7 @@ void FlagGame::Draw(sf::RenderWindow& _renderWindow)
 				if (playerID >= 0 && playerID < 4)
 				{
 					_renderWindow.draw(m_data->playerData[playerID].inputText);
+					_renderWindow.draw(m_data->playerData[playerID].buttonSprite);
 				}
 			}
 		}
@@ -319,6 +332,7 @@ void FlagGame::StartNewRound(void)
 			}
 		}
 	}
+	m_data->backgroundMusic.PlayMusic("Assets/Music/FlagGame_BGM.wav", true);
 	UpdatePlayerInputTexts();
 
 	// Set timers
@@ -329,6 +343,9 @@ void FlagGame::StartNewRound(void)
 void FlagGame::EvaluateRound(void)
 {
 	// Check each participating player's input
+
+	m_data->backgroundMusic.StopMusic();
+	m_data->endRound.PlaySound("Assets/Sounds/EndRound.wav", false);
 	if (m_data->gameData)
 	{
 		for (int playerID : m_data->gameData->m_gonnaPlayIndex)
@@ -369,6 +386,11 @@ void FlagGame::EvaluateRound(void)
 					std::snprintf(resultBuffer, 50, "Player %d Wins!", playerID + 1);
 					m_data->resultText.setString(resultBuffer);
 					m_data->resultText.setOrigin(m_data->resultText.getLocalBounds().width / 2, m_data->resultText.getLocalBounds().height / 2);
+					if(!m_data->audioPlayed)
+					{
+						m_data->winnerSound.PlaySound("Assets/Sounds/Winner.wav", false);
+						m_data->audioPlayed = true;
+					}
 					break;
 				}
 			}
@@ -378,6 +400,7 @@ void FlagGame::EvaluateRound(void)
 	{
 		m_data->resultText.setString("No Winner!");
 		m_data->resultText.setOrigin(m_data->resultText.getLocalBounds().width / 2, m_data->resultText.getLocalBounds().height / 2);
+		m_data->gameOverSound.PlaySound("Assets/Sounds/GameOver.wav", false);
 	}
 
 	m_data->state = STATE_ROUND_END;
@@ -387,6 +410,10 @@ void FlagGame::EvaluateRound(void)
 void FlagGame::ChangeRequiredInput(void)
 {
 	m_data->requiredInput = GetRandomValidInput();
+	m_data->buttonSprite.setTexture(m_data->buttonTexture[(int)m_data->requiredInput]);
+	m_data->buttonSprite.setOrigin(m_data->buttonSprite.getLocalBounds().width / 2, m_data->buttonSprite.getLocalBounds().height / 2);
+
+	m_data->newFlagSound.PlaySound("Assets/Sounds/NewFlag.wav", false);
 
 	char inputBuffer[100];
 	std::snprintf(inputBuffer, 100, "Press: %s", GetGamePadButtonName(m_data->requiredInput));
@@ -427,6 +454,7 @@ void FlagGame::UpdatePlayerInputTexts(void)
 		if (m_data->playerData[playerID].isEliminated)
 		{
 			m_data->playerData[playerID].inputText.setFillColor(sf::Color::Red);
+			m_data->playerData[playerID].buttonSprite.setColor(sf::Color::Red);
 			char buffer[50];
 			std::snprintf(buffer, 50, "Player %d\nELIMINATED", playerID + 1);
 			m_data->playerData[playerID].inputText.setString(buffer);
@@ -434,6 +462,7 @@ void FlagGame::UpdatePlayerInputTexts(void)
 		else
 		{
 			m_data->playerData[playerID].inputText.setFillColor(sf::Color::Green);
+			m_data->playerData[playerID].buttonSprite.setColor(sf::Color::Green);
 
 			if (m_data->playerData[playerID].currentInput != (GamePadBindList)(-1))
 			{
@@ -441,6 +470,12 @@ void FlagGame::UpdatePlayerInputTexts(void)
 				std::snprintf(buffer, 100, "Player %d\n%s", playerID + 1,
 					GetGamePadButtonName(m_data->playerData[playerID].currentInput));
 				m_data->playerData[playerID].inputText.setString(buffer);
+
+				m_data->playerData[playerID].buttonSprite.setColor(sf::Color::White);
+				m_data->playerData[playerID].buttonSprite.setTexture(
+					m_data->buttonTexture[(int)m_data->playerData[playerID].currentInput]
+				);
+				m_data->playerData->inputPressed.PlaySound("Assets/Sounds/InputPressed.wav", false);
 			}
 			else
 			{
@@ -453,6 +488,10 @@ void FlagGame::UpdatePlayerInputTexts(void)
 		m_data->playerData[playerID].inputText.setOrigin(
 			m_data->playerData[playerID].inputText.getLocalBounds().width / 2,
 			m_data->playerData[playerID].inputText.getLocalBounds().height / 2
+		);
+		m_data->playerData[playerID].buttonSprite.setOrigin(
+			m_data->playerData[playerID].buttonSprite.getLocalBounds().width / 2,
+			m_data->playerData[playerID].buttonSprite.getLocalBounds().height / 2
 		);
 	}
 }

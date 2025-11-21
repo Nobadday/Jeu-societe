@@ -5,8 +5,16 @@ void ArmWrestling::Load(void)
 	m_data = new SceneData();
 	m_data->timer = 0.0f;
 
+	((GameData*)this->m_keptData)->m_assetManager->LoadManifest("Manifests/ArmWrestling.json", "ArmWrestling");
+
+	if (((GameData*)this->m_keptData)->m_gonnaPlayIndex.size() == 0)
+	{
+		((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(0);
+		((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(1);
+	}
+
 	// Title text (membre par valeur)
-	m_data->titleText.setFont(StringFormat::GetDefaultFont());
+	m_data->titleText.setFont(*((GameData*)this->m_keptData)->m_assetManager->GetAsset<sf::Font>("ArmWrestlingFont", AssetManager::AssetType::FONT));
 	m_data->titleText.setCharacterSize(24);
 	m_data->titleText.setFillColor(sf::Color::White);
 	m_data->titleText.setString("Arm Wrestling Mini-Game");
@@ -14,7 +22,7 @@ void ArmWrestling::Load(void)
 	m_data->titleText.setOrigin(m_data->titleText.getLocalBounds().width / 2, m_data->titleText.getLocalBounds().height / 2);
 
 	// Time text (membre par valeur)
-	m_data->timeText.setFont(StringFormat::GetDefaultFont());
+	m_data->timeText.setFont(*((GameData*)this->m_keptData)->m_assetManager->GetAsset<sf::Font>("ArmWrestlingFont", AssetManager::AssetType::FONT));
 	m_data->timeText.setCharacterSize(15);
 	m_data->timeText.setFillColor(sf::Color::White);
 	m_data->timeText.setString("Timer: 0/15");
@@ -35,13 +43,16 @@ void ArmWrestling::Load(void)
 
 	// Créer les joueurs dans la vector (par valeur), pas de new / pas de placement new
 	m_data->allPlayers.emplace_back(sf::Vector2f(m_data->fillBar.getPosition().x - 50.f, m_data->fillBar.getPosition().y), sf::Color::Red, 1.0f, m_data->nextID++);
+	m_data->allPlayers[0].SetFont(*((GameData*)this->m_keptData)->m_assetManager->GetAsset<sf::Font>("ArmWrestlingFont", AssetManager::AssetType::FONT));
 	m_data->allPlayers.emplace_back(sf::Vector2f(m_data->fillBar.getPosition().x + 50.f, m_data->fillBar.getPosition().y), sf::Color::Green, -1.0f, m_data->nextID++);
+	m_data->allPlayers[1].SetFont(*((GameData*)this->m_keptData)->m_assetManager->GetAsset<sf::Font>("ArmWrestlingFont", AssetManager::AssetType::FONT));
+
 
 	// Liaison au GameData passé dans m_keptData (comme dans RockPaperScissors)
 	m_data->gameData = (GameData*)this->m_keptData;
 
 	// Préparer le texte de résultat (vide pour l'instant)
-	m_data->resultText.setFont(StringFormat::GetDefaultFont());
+	m_data->resultText.setFont(*((GameData*)this->m_keptData)->m_assetManager->GetAsset<sf::Font>("ArmWrestlingFont", AssetManager::AssetType::FONT));
 	m_data->resultText.setCharacterSize(20);
 	m_data->resultText.setFillColor(sf::Color::White);
 	m_data->resultText.setString("");
@@ -59,6 +70,7 @@ void ArmWrestling::Unload(void)
 	// Nettoyer la liste des joueurs
 	m_data->allPlayers.clear();
 
+	m_data->gameData->m_assetManager->DeleteContainer("ArmWrestling");
 	delete m_data;
 	m_data = nullptr;
 }
@@ -84,7 +96,9 @@ void ArmWrestling::Update(float _deltaTime)
 	}
 
 	m_data->timer += _deltaTime;
-	m_data->timeText.setString(StringFormat::Format("Timer: %d/15", (short)m_data->timer));
+	char buffer[50];
+	std::snprintf(buffer, 50, "Timer: %d/15", (short)m_data->timer);
+	m_data->timeText.setString(buffer);
 	m_data->timeText.setOrigin(m_data->timeText.getLocalBounds().width / 2, m_data->timeText.getLocalBounds().height / 2);
 
 	// Appeler Update sur chaque joueur (comme RockPaperScissors fait pour ses données)
@@ -163,6 +177,12 @@ void ArmWrestling::Draw(sf::RenderWindow& _renderWindow)
 	}
 }
 
+
+
+
+
+
+
 ArmWrestlingPlayer::ArmWrestlingPlayer(sf::Vector2f _pos, sf::Color _color, float _scale, short _id)
 {
 	id = _id;
@@ -177,10 +197,11 @@ ArmWrestlingPlayer::ArmWrestlingPlayer(sf::Vector2f _pos, sf::Color _color, floa
 
 	// nameText est un membre par valeur
 	nameText = sf::Text();
-	nameText.setFont(StringFormat::GetDefaultFont());
 	nameText.setCharacterSize(30);
 	nameText.setFillColor(sf::Color::White);
-	nameText.setString(StringFormat::Format("Player %d", id + 1));
+	char buffer[50];
+	std::snprintf(buffer, 50, "Player %d", id + 1);
+	nameText.setString(buffer);
 	sf::Vector2f nameTextSize = sf::Vector2f(nameText.getLocalBounds().width, nameText.getLocalBounds().height);
 	nameText.setPosition(_pos.x - (_scale * shape.getSize().x) - (_scale * nameTextSize.x), _pos.y);
 	nameText.setOrigin(nameTextSize.x / 2, nameTextSize.y / 2);
@@ -223,7 +244,7 @@ void ArmWrestlingPlayer::Update(float _dt, std::vector<ArmWrestlingPlayer>& allP
 void ArmWrestlingPlayer::Draw(sf::RenderWindow& _renderWindow)
 {
 	_renderWindow.draw(shape);
-	_renderWindow.draw(nameText);
+	//_renderWindow.draw(nameText);
 }
 
 short ArmWrestlingPlayer::GetOtherPlayerID(short _callerID, const std::vector<ArmWrestlingPlayer>& allPlayers) const
@@ -248,4 +269,9 @@ short ArmWrestlingPlayer::GetOtherPlayerID(short _callerID, const std::vector<Ar
 float ArmWrestlingPlayer::GetArmWidth() const
 {
 	return shape.getSize().x;
+}
+
+void ArmWrestlingPlayer::SetFont(sf::Font _font)
+{
+	this->nameText.setFont(_font);
 }

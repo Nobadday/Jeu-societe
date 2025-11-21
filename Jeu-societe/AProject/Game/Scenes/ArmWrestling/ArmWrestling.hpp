@@ -1,8 +1,7 @@
 #pragma once
 
-#include "../../../Common.hpp"
-#include "../../../Scenes/Scene.hpp"
-#include "../../../Utilities/StringFormat.hpp"
+#include "../../Common.hpp"
+#include "../../Scenes/Scene.hpp"
 
 class ArmWrestlingPlayer
 {
@@ -17,12 +16,13 @@ public:
 
 	// Ajouté : accès en lecture à la taille actuelle du bras
 	float GetArmWidth() const;
-
+	void SetFont(sf::Font _font);
 private:
 	short id;
 	short force;
 	sf::RectangleShape shape;
 	sf::Text nameText;
+
 
 	short GetOtherPlayerID(short _callerID, const std::vector<ArmWrestlingPlayer>& allPlayers) const;
 };

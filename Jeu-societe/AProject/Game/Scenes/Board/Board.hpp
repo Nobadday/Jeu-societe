@@ -1,17 +1,17 @@
 #ifndef _INC_BOARD_HPP
 #define _INC_BOARD_HPP
 
-#include "../../../Common.hpp"
+#include "../../Common.hpp"
 //#include "../../Scenes/Scene.hpp"
-#include "../../../Map/Tiled.h"
-#include "../../../Utilities/Camera/Camera.hpp"
+#include "../../Map/Tiled.h"
+#include "../../Utilities/Camera/Camera.hpp"
 //#include "../../Utilities/MathPlus.hpp"
 //#include "../../Utilities/Random.hpp"
-#include "../../../Animation/Animation/Animator.hpp"
-#include "../../../Animation/Graphics/SpriteAnimated.hpp"
-#include "../../../Animation/Graphics/AnimatedObject.hpp"
-#include "../../../Animation/Graphics/TextureAnimated.hpp"
-#include "../../../Animation/Graphics/TextureAtlas.hpp"
+#include "../../Animation/Animation/Animator.hpp"
+#include "../../Animation/Graphics/SpriteAnimated.hpp"
+#include "../../Animation/Graphics/AnimatedObject.hpp"
+#include "../../Animation/Graphics/TextureAnimated.hpp"
+#include "../../Animation/Graphics/TextureAtlas.hpp"
 
 #define TIME_WIN_DISPLAY 1.0f
 
@@ -91,12 +91,6 @@ class BaseGame : public SceneBase
 		void UpdateCameraToShowAllPlayers();
 		
 		void UpdateCameraFollowPlayer(float _deltaTime);
-
-		void BonusMalusLuck(bool _malus);
-
-		void Bonus(int _chance);
-		
-		void Malus(int _chance);
 
 	public:
 		virtual void Load(void);

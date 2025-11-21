@@ -5,7 +5,6 @@
 #include "../Common.hpp"
 #include "AnimationHandler.hpp"
 #include "AnimationEasing.hpp"
-#include "../Utilities/Math.hpp"
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 
@@ -21,8 +20,6 @@ class Animator : public Animation
 			sf::Vector2f goTo[2];
 			sf::Color colorTransition[2];
 			//sf::Vector2f scale[2];
-			// Rotation in degrees
-			float rotation[2] = { 0 };
 		};
 
 	public:
@@ -32,8 +29,6 @@ class Animator : public Animation
 			COLOR_TRANSITION,
 			//SCALE,
 
-			ROTATION,
-
 			ANIMATION_COUNT
 		};
 
@@ -41,6 +36,7 @@ class Animator : public Animation
 		AnimatorData m_data;
 		bool m_usedAnims[ANIMATION_COUNT];
 		Easing::Type m_animEasings[ANIMATION_COUNT];
+
 
 	public:
 		Animator(void);
@@ -54,7 +50,7 @@ class Animator : public Animation
 
 
 		void ResetAnimation(void);
-
+		//void ResetAnimation(Animations _animation);
 
 		void SetAnimationEasing(Animations _animation, Easing::Type _easing);
 
@@ -64,30 +60,20 @@ class Animator : public Animation
 		void SetGoTo(const sf::Vector2f& _newPosition);
 		void SetGoTo(const sf::Transformable& _object, const sf::Vector2f& _newPosition);
 
-
 		void SetColorTransition(const sf::Color& _startColor, const sf::Color& _endColor);
 		void SetColorTransition(const sf::Color& _newColor);
 
-
-		void SetRotation(float _start, float _end);
-
-
-		static sf::Vector2f GetGoTo(const sf::Vector2f& _startPos, const sf::Vector2f& _endPos, float _coefficient, Easing::Type _easing = Easing::Type::LINEAR);
 		sf::Vector2f GetGoTo(Easing::Type _easing);
 		sf::Vector2f GetGoTo(void);
 		
 
-		static sf::Color GetColor(const sf::Color& _startColor, const sf::Color& _endColor, float _coefficient, Easing::Type _easing = Easing::Type::LINEAR);
-		sf::Color GetColor(Easing::Type _easing);
-		sf::Color GetColor(void);
+		sf::Color GetColorTransition(Easing::Type _easing);
+		sf::Color GetColorTransition(void);
 		
-		
-		static float GetRotation(float _start, float _end, float _coefficient, Easing::Type _easing = Easing::Type::LINEAR);
-		float GetRotation(Easing::Type _easing);
-		float GetRotation(void);
+		//static sf::Color GetColorTransition(const sf::Color& _startColor, const sf::Color& _endColor, float _coefficient, Easing::Type _easing);
 };
 
 }
 
 #endif
-// Animator v1.2.2
+// Animator v1.0.2

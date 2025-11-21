@@ -31,7 +31,7 @@ void MenuHolder::PollEvent(sf::Event& _event)
 	//Banger
 	for (auto& [name, button] : m_buttons)
 	{
-		button->PollEvent(_event);
+		button.PollEvent(_event);
 	}
 }
 void MenuHolder::Update(float _dt)
@@ -39,7 +39,7 @@ void MenuHolder::Update(float _dt)
 	int i = 0;
 	for (auto& [name, button] : m_buttons)
 	{
-		Button& btnREF = *button;
+		Button& btnREF = button;
 		if (i == m_selection)
 		{
 			btnREF.UpdateFrame();
@@ -53,19 +53,19 @@ void MenuHolder::Draw(sf::RenderWindow& _renderWindow, sf::RenderStates _states)
 	//m_buttons.size();
 	for (auto& [name, button] : m_buttons)
 	{
-		_renderWindow.draw(*button);
+		_renderWindow.draw(button);
 	}
 }
 
-void MenuHolder::AddButton(std::string _name, Button* _button)
+void MenuHolder::AddButton(std::string _name, Button _button)
 {
-	m_buttons.insert({ _name, _button });
+	//Create new button space and add thits button
+	m_buttons[_name] = _button;
+	//m_buttons.insert({ _name, _button });
 }
 Button& MenuHolder::CreateButton(std::string _name)
 {
-	Button* btnNew = new Button;
-	m_buttons.insert({ _name, btnNew });
-	return *btnNew;
+	return m_buttons[_name];
 }
 Button& MenuHolder::GetButton(std::string _name)
 {
@@ -77,7 +77,7 @@ Button& MenuHolder::GetButton(std::string _name)
 
 	if (key != m_buttons.end())
 	{
-		return *m_buttons.at(key->first);
+		return m_buttons.at(key->first);
 	}
 	else
 	{
@@ -96,7 +96,7 @@ Button& MenuHolder::GetButton(int _value)
 	{
 		if (i == _value)
 		{
-			return *button;
+			return button;
 		}
 		i++;
 	}
@@ -110,8 +110,7 @@ void MenuHolder::DestroyButton(std::string _name)
 
 	if (key != m_buttons.end())
 	{
-		Button* buttonRef = m_buttons.at(key->first);
-		delete buttonRef;
+		//Button& buttonRef = m_buttons.at(key->first);
 
 		m_buttons.erase(key->first);
 	}
@@ -128,8 +127,7 @@ void MenuHolder::DestroyButton(int _value)
 		if (i == _value)
 		{
 			//Same question here, ref or copy to return
-			Button* buttonRef = m_buttons.at(name);
-			delete buttonRef;
+			//Button& buttonRef = m_buttons.at(name);
 			m_buttons.erase(name);
 			return;
 		}
@@ -291,11 +289,11 @@ void MenuSystem::MenuRemove(int _menuIndex)
 
 }
 
-void MenuSystem::MenuAddButton(std::string _menuName, std::string _buttonName, Button* _buttonPtr)
+void MenuSystem::MenuAddButton(std::string _menuName, std::string _buttonName, Button& _buttonRef)
 {
 	if (this->MenuHolderExists(_menuName))
 	{
-		this->GetMenuHolder(_menuName).AddButton(_buttonName, _buttonPtr);
+		this->GetMenuHolder(_menuName).AddButton(_buttonName, _buttonRef);
 	}
 	else
 	{
@@ -303,6 +301,24 @@ void MenuSystem::MenuAddButton(std::string _menuName, std::string _buttonName, B
 		std::cout << "Anything added" << std::endl;
 	}
 }
+Button& MenuSystem::MenuCreateButton(std::string _menuName, std::string _buttonName)
+{
+	if (this->MenuHolderExists(_menuName))
+	{
+		Button& buttonRef = this->GetMenuHolder(_menuName).CreateButton(_buttonName);
+		return buttonRef;
+	}
+	else
+	{
+		std::cout << "[WARNING] Menu System : Tried to add a button to a menu name '" << _menuName << "' that doesn't exist." << std::endl;
+		std::cout << "Anything added" << std::endl;
+	}
+
+	//If we didnt find menu holder, return fake button
+	Button temp;
+	return temp;
+}
+
 
 void MenuSystem::MenuDeleteButton(std::string _menuName, std::string _buttonName)
 {

@@ -35,14 +35,7 @@ class RandCard : public SceneBase
 		};
 		struct SceneData
 		{
-			sf::Texture backgroundTex;
-			sf::Sprite backgroundSpr;
-
-			sf::Texture staticCardTex;
 			sf::Sprite staticCardSpr;
-
-
-			TextureAnimated cardTexAnim;
 			SpriteAnimated cardSprAnim;
 
 			std::vector<CardType> cards;
@@ -58,17 +51,9 @@ class RandCard : public SceneBase
 
 			//DEBUG
 			int currentPlayer = 0;
-			sf::Font font;
 			sf::Text text;
 
 			int playerCountLeft = 0;
-
-			//Just to test MenuSystem
-			//We dont need for real game
-			// 
-			//MenuSystem* menuSystem;
-			//Button* buttonTest;
-			//TextureAnimated* textanim;
 		};
 		SceneData* m_data;
 		void PrintCards(sf::RenderWindow& _renderWindow);

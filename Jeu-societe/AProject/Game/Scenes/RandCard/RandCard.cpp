@@ -6,63 +6,13 @@
 #define BORDER_X 40.f
 
 
-void RandCard::PrintCards(sf::RenderWindow& _renderWindow)
-{
-	float cardSpacing = (SCREEN_WIDTH - 2 * BORDER_X) / m_data->cards.size();
-
-
-	for (int i = 0; i < m_data->cards.size(); ++i)
-	{
-		if (i == m_data->cardChosen)
-		{
-			m_data->cardSprAnim.setPosition(BORDER_X + cardSpacing * i, SCREEN_HEIGHT / 4.f);
-			//m_data->cardSprAnim.draw(_renderWindow, sf::RenderStates::Default);
-			_renderWindow.draw(m_data->cardSprAnim);
-		}
-		else
-		{
-			m_data->staticCardSpr.setPosition(BORDER_X + cardSpacing * i, SCREEN_HEIGHT / 4.f);
-			_renderWindow.draw(m_data->staticCardSpr, sf::RenderStates::Default);
-		}
-	}
-
-}
-
-void RandCard::SetCardChosen(int _card)
-{
-	m_data->cardChosen = mathp::ModuloPositiveI(_card, (int)m_data->cards.size());
-}
-void RandCard::AddCardChosen(int _value)
-{
-	this->SetCardChosen(m_data->cardChosen + _value);
-}
-
-void RandCard::NextPlayer(void)
-{
-	if (m_data->currentPlayer >= m_data->players.size())
-	{
-		//Check if the current player was the last in the vector 
-		m_data->currentPlayer = 0;
-	}
-	else
-	{
-		//Next player
-		m_data->currentPlayer++;
-	}
-	m_data->cardChosen = 0;
-	m_data->gameState = CHOOSE_CARD;
-}
-
 void RandCard::Load(void)
 {
 	m_data = new SceneData;
 
-	//m_data->menuSystem = new MenuSystem();
-	//m_data->menuSystem->MenuAdd("TestMenu", true);
-
-
 	// Liaison au GameData passé dans m_keptData (comme dans RockPaperScissors)
 	m_data->gameData = (GameData*)this->m_keptData;
+	m_data->gameData->m_assetManager->LoadManifest("Manifests/RandCard.json", "RandCard");
 
 	//Debug names
 	std::string playersNames[4] = { "Yann", "Lorenzo", "Kyllian", "Damien" };
@@ -79,28 +29,16 @@ void RandCard::Load(void)
 		m_data->players.push_back({ playersNames[i],  (short)playerId });
 	}
 
-	//m_data->buttonTest = new Button();
-	//
-	//m_data->textanim = new TextureAnimated();
-	//m_data->textanim->LoadFromFile("Assets/Sprites/ButtonPlaceHolder.anim", TextureAnimated::AnimationType::ANIMATION_ANIM);
-	//m_data->buttonTest->setTexture(*m_data->textanim);
-
-	//m_data->menuSystem->MenuAddButton("TestMenu", "ButtonTest", m_data->buttonTest);
-	//m_data->menuSystem->SetMenuHolder("TestMenu");
-
 	//Font
-	m_data->font.loadFromFile("Assets/Fonts/Platinum Sign.ttf");
-	m_data->text.setFont(m_data->font);
+	m_data->text.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("RandCardFont"));
 	m_data->text.setCharacterSize(15u);
 	m_data->text.setOrigin(0, 0);
 
 	//Static Card
-	m_data->staticCardTex.loadFromFile("Assets/Sprites/RandomCard/StaticCard.png");
-	m_data->staticCardSpr.setTexture(m_data->staticCardTex);
+	m_data->staticCardSpr.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("StaticCard"));
 	 	 
 	//Anim Card
-	m_data->cardTexAnim.LoadFromFile("Assets/Sprites/RandomCard/CardData.texanim", TextureAnimated::ANIMATION_TEXANIM);
-	m_data->cardSprAnim.setTexture(m_data->cardTexAnim);
+	m_data->cardSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("AnimCard"));
 	m_data->cardSprAnim.setScale(1.2f, 1.2f);
 
 
@@ -307,10 +245,59 @@ void RandCard::Update(float _deltaTime)
 			break;
 	}
 }
+
 void RandCard::Draw(sf::RenderWindow& _renderWindow)
 {
 	//
 	// m_data->menuSystem->Draw(_renderWindow, sf::RenderStates::Default);
 	_renderWindow.draw(m_data->text);
 	PrintCards(_renderWindow);
+}
+
+
+void RandCard::PrintCards(sf::RenderWindow& _renderWindow)
+{
+	float cardSpacing = (SCREEN_WIDTH - 2 * BORDER_X) / m_data->cards.size();
+
+
+	for (int i = 0; i < m_data->cards.size(); ++i)
+	{
+		if (i == m_data->cardChosen)
+		{
+			m_data->cardSprAnim.setPosition(BORDER_X + cardSpacing * i, SCREEN_HEIGHT / 4.f);
+			//m_data->cardSprAnim.draw(_renderWindow, sf::RenderStates::Default);
+			_renderWindow.draw(m_data->cardSprAnim);
+		}
+		else
+		{
+			m_data->staticCardSpr.setPosition(BORDER_X + cardSpacing * i, SCREEN_HEIGHT / 4.f);
+			_renderWindow.draw(m_data->staticCardSpr, sf::RenderStates::Default);
+		}
+	}
+
+}
+
+void RandCard::SetCardChosen(int _card)
+{
+	m_data->cardChosen = mathp::ModuloPositiveI(_card, (int)m_data->cards.size());
+}
+void RandCard::AddCardChosen(int _value)
+{
+	this->SetCardChosen(m_data->cardChosen + _value);
+}
+
+void RandCard::NextPlayer(void)
+{
+	if (m_data->currentPlayer >= m_data->players.size())
+	{
+		//Check if the current player was the last in the vector 
+		m_data->currentPlayer = 0;
+	}
+	else
+	{
+		//Next player
+		m_data->currentPlayer++;
+	}
+	m_data->cardChosen = 0;
+	m_data->gameState = CHOOSE_CARD;
 }
