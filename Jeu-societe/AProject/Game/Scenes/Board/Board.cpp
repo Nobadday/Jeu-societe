@@ -16,6 +16,7 @@ void BaseGame::Load(void)
 
 	m_data->HudLBM.text.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
 	m_data->HudLBM.state = NONELBM;
+	m_data->HudLBM.active = false;
 
 	m_data->tile.InitTiled("Assets/Map/map.json");
 	m_data->camera.Reset(m_gameData->m_renderWindow->getDefaultView());
@@ -127,7 +128,13 @@ void BaseGame::PollEvent(sf::Event& _event)
 	{
 		if (_event.key.code == sf::Keyboard::R)
 		{
-			SwapPlayers();
+			int swapIndex = randmt::RandomInt(0, (int)m_data->players.size() - 1);
+			while (swapIndex == m_data->currentPlayerIndex)
+			{
+				swapIndex = randmt::RandomInt(0, (int)m_data->players.size() - 1);
+			}
+
+			SwapPlayers(swapIndex);
 		}
 	}
 
@@ -306,59 +313,67 @@ void BaseGame::PollEvent(sf::Event& _event)
 void BaseGame::Update(float _deltaTime)
 {
 	// Mise à jour des animations
-	if (m_data->players[m_data->currentPlayerIndex].state != CANT_PLAY)
+	UpdateLBM(_deltaTime);
+	if (m_data->HudLBM.state == NONELBM)
 	{
-		m_data->animator.Update(_deltaTime);
-		m_data->animator2.Update(_deltaTime);
-
-		// Mise à jour de la logique du plateau
-		BoardStateUpdate(_deltaTime);
-
-
-		for (int i = m_data->effectSwap.size() - 1; i >= 0; i--)
+		if (m_data->players[m_data->currentPlayerIndex].state != CANT_PLAY)
 		{
-			auto& effect = m_data->effectSwap[i];
+			m_data->animator.Update(_deltaTime);
+			m_data->animator2.Update(_deltaTime);
 
-			effect.Update(_deltaTime);
+			// Mise à jour de la logique du plateau
+			BoardStateUpdate(_deltaTime);
 
-			if (!effect.IsActive())
+
+			for (int i = m_data->effectSwap.size() - 1; i >= 0; i--)
 			{
-				effect = m_data->effectSwap.back();
-				m_data->effectSwap.pop_back();
-			}
-		}
+				auto& effect = m_data->effectSwap[i];
 
-		for (int i = m_data->effectsMap.size() - 1; i >= 0; i--)
-		{
-			auto& effect = m_data->effectsMap[i];
-
-			if (!m_data->smokeOff)
-			{
-				effect.UpdateSpecial(_deltaTime);
-			}
-			else
-			{
 				effect.Update(_deltaTime);
 
 				if (!effect.IsActive())
 				{
-					effect = m_data->effectsMap.back();
-					m_data->effectsMap.pop_back();
+					effect = m_data->effectSwap.back();
+					m_data->effectSwap.pop_back();
 				}
 			}
 
+			for (int i = m_data->effectsMap.size() - 1; i >= 0; i--)
+			{
+				auto& effect = m_data->effectsMap[i];
+
+				if (!m_data->smokeOff)
+				{
+					effect.UpdateSpecial(_deltaTime);
+				}
+				else
+				{
+					effect.Update(_deltaTime);
+
+					if (!effect.IsActive())
+					{
+						effect = m_data->effectsMap.back();
+						m_data->effectsMap.pop_back();
+					}
+				}
+
+			}
+
+
+			// Mise à jour de la caméra pour suivre le joueur actif
+			UpdateCameraFollowPlayer(_deltaTime);
+
+		}
+		else
+		{
+			if (m_data->HudLBM.state == NONELBM)
+			{
+				m_data->players[m_data->currentPlayerIndex].tourstate = 0;
+				m_data->players[m_data->currentPlayerIndex].state = StatePlayer::NONE;
+				SetBoardState(PLAY, 0);
+			}
 		}
 
-
-		// Mise à jour de la caméra pour suivre le joueur actif
-		UpdateCameraFollowPlayer(_deltaTime);
-
-	}
-	else
-	{
-		m_data->players[m_data->currentPlayerIndex].tourstate = 0;
-		m_data->players[m_data->currentPlayerIndex].state = StatePlayer::NONE;
-		SetBoardState(PLAY, 0);
 	}
 
 }
@@ -401,15 +416,8 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 		effect.Draw(_renderWindow);
 	}
 
-	if(m_data->HudLBM.state != NONE)
-	{
-		if (m_data->timeLBM <= TIME_LBM_DISPLAY/2)
-		{
-			m_data->HudLBM.sprite.setTexture(*m_gameData->m_assetManager->GetAsset<sf::Texture>( m_data->HudLBM.name + "Face", AssetManager::AssetType::TEXTURE));
-		}
-		_renderWindow.draw(m_data->HudLBM.sprite);
-		_renderWindow.draw(m_data->HudLBM.text);
-	}
+	DrawLBM(_renderWindow);
+
 }
 
 void BaseGame::CaseAction()
@@ -423,6 +431,7 @@ void BaseGame::CaseAction()
 		return;
 	}
 
+	sf::Vector2f size2 = m_gameData->m_renderWindow->getView().getCenter();
 
 	switch (hash(caseType.c_str()))
 	{
@@ -433,6 +442,12 @@ void BaseGame::CaseAction()
 			std::cout << "Landed on a Bonus case!" << std::endl;
 			m_data->HudLBM.name = "Bonus";
 			m_data->HudLBM.state = BONUS;
+			m_data->HudLBM.sprite.setTexture(*m_gameData->m_assetManager->GetAsset<sf::Texture>(m_data->HudLBM.name, AssetManager::AssetType::TEXTURE));
+			sf::Vector2u size = m_data->HudLBM.sprite.getTexture()->getSize();
+
+			m_data->HudLBM.sprite.setScale({ 0.5f , 0.5f });
+			m_data->HudLBM.sprite.setOrigin({ (float)size.x / 2.f, (float)size.y / 2.f });
+			m_data->HudLBM.sprite.setPosition({ SCREEN_WIDTH / 2.f - size2.x / 2  , SCREEN_HEIGHT / 2.f - size2.y / 2 });
 			m_data->timeLBM = TIME_LBM_DISPLAY;
 			BonusMalusLuck(false);
 
@@ -446,15 +461,41 @@ void BaseGame::CaseAction()
 		{
 			std::cout << "Landed on a Malus case!" << std::endl;
 
+
+			m_data->HudLBM.name = "Malus";
+			m_data->HudLBM.state = MALUS;
+			m_data->HudLBM.sprite.setTexture(*m_gameData->m_assetManager->GetAsset<sf::Texture>(m_data->HudLBM.name, AssetManager::AssetType::TEXTURE));
+
+			sf::Vector2u size = m_data->HudLBM.sprite.getTexture()->getSize();
+
+			m_data->HudLBM.sprite.setScale({ 0.5f , 0.5f });
+			m_data->HudLBM.sprite.setOrigin({ SCREEN_WIDTH / 2.f - size2.x , SCREEN_HEIGHT / 2.f - size2.y });
+			m_data->HudLBM.sprite.setPosition({ SCREEN_WIDTH / 2.f - size2.x / 2  , SCREEN_HEIGHT / 2.f - size2.y / 2 });
+			m_data->timeLBM = TIME_LBM_DISPLAY;
+
 			BonusMalusLuck(true);
 		}
 		break;
 
-	case hash("Luck"):
-		std::cout << "Landed on a Luck case!" << std::endl;
-		BonusMalusLuck(randmt::Chance(0.5f));
-		break;
 
+	case hash("Luck"):
+	{
+		std::cout << "Landed on a Luck case!" << std::endl;
+
+		m_data->HudLBM.name = "Luck";
+		m_data->HudLBM.state = LUCKY;
+		m_data->HudLBM.sprite.setTexture(*m_gameData->m_assetManager->GetAsset<sf::Texture>(m_data->HudLBM.name, AssetManager::AssetType::TEXTURE));
+		sf::Vector2u size = m_data->HudLBM.sprite.getTexture()->getSize();
+
+		m_data->HudLBM.sprite.setScale({ 0.5f , 0.5f });
+		m_data->HudLBM.sprite.setOrigin({ (float)size.x / 2.f, (float)size.y / 2.f });
+		m_data->HudLBM.sprite.setPosition({ SCREEN_WIDTH / 2.f - size2.x /2  , SCREEN_HEIGHT / 2.f - size2.y / 2 });
+		m_data->timeLBM = TIME_LBM_DISPLAY;
+
+		BonusMalusLuck(randmt::Chance(0.5f));
+		
+	}
+	break;
 	case hash("Battle"):
 		std::cout << "Landed on a Battle case!" << std::endl;
 		SetBoardState(BATTLE_ACTION);
@@ -462,7 +503,10 @@ void BaseGame::CaseAction()
 
 	default:
 	{
-		SetBoardState(PLAY, 0);
+		if (m_data->HudLBM.state == NONELBM)
+		{
+			SetBoardState(PLAY, 0);
+		}
 	}
 	break;
 	}
@@ -883,7 +927,10 @@ void BaseGame::BoardStateUpdate(float _dt)
 	break;
 
 	case CASE_ACTION_END:
-		SetBoardState(PLAY, 0);
+		if (m_data->HudLBM.state == NONELBM)
+		{
+			SetBoardState(PLAY, 0);
+		}
 		break;
 
 	default:
@@ -1080,36 +1127,17 @@ void BaseGame::Malus(int _chance)
 {
 	if (_chance <= 35)
 	{
-		int rando = randmt::RandomInt(1, 3);
-		auto& player = m_data->players[m_data->currentPlayerIndex];
-
-		std::cout << "Recule de : " << rando << "!" << std::endl;
-
-		// Initialiser le mouvement restant pour le déplacement case par case
-		player.pendingMovement = rando;
-
-		// Calculer la première case du déplacement (en arrière)
-		const int posCaseCount = static_cast<int>(m_data->posCase.size());
-		int nextIndex = mathp::ModuloPositiveI(player.currentCaseIndex - 1, posCaseCount);
-
-		// Retourner le sprite pour indiquer le recul
-		player.sprite.setScale({ -1.f, 1.f });
-
-		SetBoardState(DEPLACEMENT_ACTION_BACK, nextIndex);
+		m_data->HudLBM.chosse = "CaseMoin";
 	}
 	else if (_chance <= 60)
 	{
 		if (randmt::Chance(0.5f))
 		{
-			std::cout << "Passe son tour" << std::endl;
-			m_data->players[m_data->currentPlayerIndex].state = StatePlayer::CANT_PLAY;
-			SetBoardState(CASE_ACTION_END);
+			m_data->HudLBM.chosse = "PaseTour";
 		}
 		else
 		{
-			std::cout << "Infectes pas de bonus " << std::endl;
-			m_data->players[m_data->currentPlayerIndex].state = StatePlayer::INFEC;
-			SetBoardState(CASE_ACTION_END);
+			m_data->HudLBM.chosse = "Infecte";
 		}
 	}
 	else if (_chance <= 70)
@@ -1123,12 +1151,13 @@ void BaseGame::Malus(int _chance)
 		{
 			std::cout << "Confus" << std::endl;
 			m_data->players[m_data->currentPlayerIndex].state = StatePlayer::CONFUSED;
+			m_data->HudLBM.chosse = "Confus";
 		}
 		else
 		{
+			m_data->HudLBM.chosse = "ConfusSkip";
 			std::cout << "Confus evites" << std::endl;
 		}
-		SetBoardState(CASE_ACTION_END);
 	}
 }
 
@@ -1332,21 +1361,15 @@ void BaseGame::ProcessBridgeRoll()
 	}
 }
 
-void BaseGame::SwapPlayers()
+void BaseGame::SwapPlayers(int _swapIndex)
 {
-	int swapIndex = randmt::RandomInt(0, (int)m_data->players.size() - 1);
-	while (swapIndex == m_data->currentPlayerIndex)
-	{
-		swapIndex = randmt::RandomInt(0, (int)m_data->players.size() - 1);
-	}
-
-	std::cout << "Swap de place avec : Player " << swapIndex << std::endl;
+	std::cout << "Swap de place avec : Player " << _swapIndex << std::endl;
 
 	auto& player1 = m_data->players[m_data->currentPlayerIndex];
-	auto& player2 = m_data->players[swapIndex];
+	auto& player2 = m_data->players[_swapIndex];
 
-	std::swap(m_data->players[m_data->currentPlayerIndex].currentCaseIndex, m_data->players[swapIndex].currentCaseIndex);
-	std::swap(m_data->players[m_data->currentPlayerIndex].boardPosition, m_data->players[swapIndex].boardPosition);
+	std::swap(m_data->players[m_data->currentPlayerIndex].currentCaseIndex, m_data->players[_swapIndex].currentCaseIndex);
+	std::swap(m_data->players[m_data->currentPlayerIndex].boardPosition, m_data->players[_swapIndex].boardPosition);
 
 	CreateSmokeEffectForSwap(player1);
 	CreateSmokeEffectForSwap(player2);
@@ -1355,15 +1378,14 @@ void BaseGame::SwapPlayers()
 
 }
 
-void BaseGame::CaseAvancePlus()
+void BaseGame::CaseAvancePlus(int _rando)
 {
-	int rando = randmt::RandomInt(1, 3);
 	auto& player = m_data->players[m_data->currentPlayerIndex];
 
-	std::cout << "Avance de : " << rando << "!" << std::endl;
+	std::cout << "Avance de : " << _rando << "!" << std::endl;
 
 	// Initialiser le mouvement restant pour le déplacement case par case
-	player.pendingMovement = rando;
+	player.pendingMovement = _rando;
 
 	// Calculer la première case du déplacement
 	const int posCaseCount = static_cast<int>(m_data->posCase.size());
@@ -1377,6 +1399,39 @@ void BaseGame::ImuniteMalus()
 	std::cout << "Imunite au Malus" << std::endl;
 
 	m_data->players[m_data->currentPlayerIndex].state = StatePlayer::IMMUN;
+	SetBoardState(CASE_ACTION_END);
+}
+
+void BaseGame::CaseMoins(int _rando)
+{
+	auto& player = m_data->players[m_data->currentPlayerIndex];
+
+	std::cout << "Recule de : " << _rando << "!" << std::endl;
+
+	// Initialiser le mouvement restant pour le déplacement case par case
+	player.pendingMovement = _rando;
+
+	// Calculer la première case du déplacement (en arrière)
+	const int posCaseCount = static_cast<int>(m_data->posCase.size());
+	int nextIndex = mathp::ModuloPositiveI(player.currentCaseIndex - 1, posCaseCount);
+
+	// Retourner le sprite pour indiquer le recul
+	player.sprite.setScale({ -1.f, 1.f });
+
+	SetBoardState(DEPLACEMENT_ACTION_BACK, nextIndex);
+}
+
+void BaseGame::Infecte()
+{
+	std::cout << "Infectes pas de bonus " << std::endl;
+	m_data->players[m_data->currentPlayerIndex].state = StatePlayer::INFEC;
+	SetBoardState(CASE_ACTION_END);
+}
+
+void BaseGame::PaseTour()
+{
+	std::cout << "Passe son tour" << std::endl;
+	m_data->players[m_data->currentPlayerIndex].state = StatePlayer::CANT_PLAY;
 	SetBoardState(CASE_ACTION_END);
 }
 
@@ -1434,5 +1489,184 @@ void BaseGame::CreateSmokeEffectAnotherPart(sf::Vector2f _posMin, sf::Vector2f _
 
 		Effect effect(m_data->smoke, posEffect + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
 		m_data->effectsMap.push_back(effect);
+	}
+}
+
+void BaseGame::UpdateLBM(float _dt)
+{
+	if (m_data->HudLBM.state != NONELBM)
+	{
+		m_data->timeLBM -= _dt;
+		if (m_data->timeLBM <= 0)
+		{
+			if (m_data->HudLBM.name == "Bonus" || m_data->HudLBM.name == "Luck")
+			{
+				if (m_data->HudLBM.chosse == "CasePlus")
+				{
+					int rando = randmt::RandomInt(1, 3);
+
+					m_data->HudLBM.text.setString("Avance de " + std::to_string(rando) + " Case ");
+
+					CaseAvancePlus(m_data->HudLBM.rando);
+				}
+				else if (m_data->HudLBM.chosse == "Immunite")
+				{
+					m_data->HudLBM.text.setString("Imuniser au Malus Pendant 2 Tour");
+
+					ImuniteMalus();
+				}
+				else if (m_data->HudLBM.chosse == "Swap")
+				{
+
+					m_data->HudLBM.text.setString("Imuniser au Malus Pendant 2 Tour");
+					int swapIndex = randmt::RandomInt(0, (int)m_data->players.size() - 1);
+					while (swapIndex == m_data->currentPlayerIndex)
+					{
+						swapIndex = randmt::RandomInt(0, (int)m_data->players.size() - 1);
+					}
+					SwapPlayers(swapIndex);
+				}
+			}
+			else if (m_data->HudLBM.name == "Malus" || m_data->HudLBM.name == "Luck")
+			{
+				if (m_data->HudLBM.chosse == "CaseMoin")
+				{
+					int rando = randmt::RandomInt(1, 3);
+
+					CaseMoins(rando);
+				}
+				else if (m_data->HudLBM.chosse == "Infection")
+				{
+					Infecte();
+				}
+				else if (m_data->HudLBM.chosse == "PaseTour")
+				{
+					PaseTour();
+				}
+				else if (m_data->HudLBM.chosse == "Swap")
+				{
+					m_data->HudLBM.text.setString("Imuniser au Malus Pendant 2 Tour");
+					int swapIndex = randmt::RandomInt(0, (int)m_data->players.size() - 1);
+					while (swapIndex == m_data->currentPlayerIndex)
+					{
+						swapIndex = randmt::RandomInt(0, (int)m_data->players.size() - 1);
+					}
+					SwapPlayers(swapIndex);
+				}
+				else if (m_data->HudLBM.chosse == "Confus")
+				{
+					SetBoardState(CASE_ACTION_END);
+				}
+				else if (m_data->HudLBM.chosse == "ConfusSkip")
+				{
+					SetBoardState(CASE_ACTION_END);
+				}
+			}
+			m_data->HudLBM.state = NONELBM;
+			m_data->timeLBM = TIME_LBM_DISPLAY;
+			m_data->HudLBM.active = false;
+			m_data->HudLBM.text.setString("");
+			m_data->HudLBM.rando = 0;
+			m_data->HudLBM.swap = 0;
+		}
+	}
+}
+
+void BaseGame::DrawLBM(sf::RenderWindow& _renderWindow)
+{
+	if (m_data->HudLBM.state != NONELBM)
+	{
+		if (m_data->timeLBM <= TIME_LBM_DISPLAY * 0.75f && !m_data->HudLBM.active)
+		{
+			m_data->HudLBM.sprite.setTexture(*m_gameData->m_assetManager->GetAsset<sf::Texture>(m_data->HudLBM.name + "Face", AssetManager::AssetType::TEXTURE));
+			sf::Vector2u size = m_data->HudLBM.sprite.getTexture()->getSize();
+			
+			sf::Vector2f size2 = m_gameData->m_renderWindow->getView().getCenter();
+
+			m_data->HudLBM.sprite.setScale({ 0.5f , 0.5f });
+			m_data->HudLBM.sprite.setOrigin({ (float)size.x / 2.f, (float)size.y / 2.f });
+			m_data->HudLBM.sprite.setPosition({ SCREEN_WIDTH / 2.f - size.x, SCREEN_HEIGHT / 2.f - size.y});
+
+			if (m_data->HudLBM.name == "Bonus" || m_data->HudLBM.name == "Luck")
+			{
+				if (m_data->HudLBM.chosse == "CasePlus")
+				{
+					m_data->HudLBM.rando = randmt::RandomInt(1, 3);
+
+					m_data->HudLBM.text.setString("Avance de " + std::to_string(m_data->HudLBM.rando) + " Case ");
+					m_data->HudLBM.active = true;
+				}
+				else if (m_data->HudLBM.chosse == "Immunite")
+				{
+					m_data->HudLBM.text.setString("Imuniser au Malus Pendant 2 Tour");
+
+					m_data->HudLBM.active = true;
+				}
+				else if (m_data->HudLBM.chosse == "Swap")
+				{
+					m_data->HudLBM.swap = randmt::RandomInt(0, (int)m_data->players.size() - 1);
+					while (m_data->HudLBM.swap == m_data->currentPlayerIndex)
+					{
+						m_data->HudLBM.swap = randmt::RandomInt(0, (int)m_data->players.size() - 1);
+					}
+
+					m_data->HudLBM.text.setString("Swap de Place avec le Joueur " + std::to_string(m_data->HudLBM.swap));
+
+					m_data->HudLBM.active = true;
+				}
+			}
+			else if (m_data->HudLBM.name == "Malus" || m_data->HudLBM.name == "Luck")
+			{
+				if (m_data->HudLBM.chosse == "CaseMoin")
+				{
+					m_data->HudLBM.rando = randmt::RandomInt(1, 3);
+
+					m_data->HudLBM.text.setString("Recule de " + std::to_string(m_data->HudLBM.rando) + " Case ");
+
+					m_data->HudLBM.active = true;
+				}
+				else if (m_data->HudLBM.chosse == "Infection")
+				{
+					m_data->HudLBM.text.setString("Infecte pas de Bonus pendans 2 Tours ");
+
+					m_data->HudLBM.active = true;
+				}
+				else if (m_data->HudLBM.chosse == "PaseTour")
+				{
+
+					m_data->HudLBM.text.setString("Passe son Tour au prochains Tour");
+
+					m_data->HudLBM.active = true;
+				}
+				else if (m_data->HudLBM.chosse == "Swap")
+				{
+					m_data->HudLBM.swap = randmt::RandomInt(0, (int)m_data->players.size() - 1);
+					while (m_data->HudLBM.swap == m_data->currentPlayerIndex)
+					{
+						m_data->HudLBM.swap = randmt::RandomInt(0, (int)m_data->players.size() - 1);
+					}
+
+					m_data->HudLBM.text.setString("Swap de Place avec le Joueur " + std::to_string(m_data->HudLBM.swap));
+
+					m_data->HudLBM.active = true;
+				}
+				else if (m_data->HudLBM.chosse == "Confus")
+				{
+
+					m_data->HudLBM.text.setString("Confus le Prochain Tour votre lance de Dee vous fait recule");
+
+					m_data->HudLBM.active = true;
+				}
+				else if (m_data->HudLBM.chosse == "ConfusSkip")
+				{
+					m_data->HudLBM.text.setString("Confus Evite vous avez de la chance");
+
+					m_data->HudLBM.active = true;
+				}
+			}
+
+		}
+		_renderWindow.draw(m_data->HudLBM.sprite);
+		_renderWindow.draw(m_data->HudLBM.text);
 	}
 }

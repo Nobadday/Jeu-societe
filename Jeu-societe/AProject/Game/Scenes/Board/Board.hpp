@@ -151,6 +151,12 @@ class BaseGame : public SceneBase
 			std::string chosse;
 
 			LBM state;
+
+			int rando;
+
+			int swap;
+
+			bool active;
 		};
 
 		struct SceneData
@@ -232,15 +238,25 @@ class BaseGame : public SceneBase
 
 		void ProcessBridgeRoll();
 
-		void SwapPlayers();
+		void SwapPlayers(int _swap);
 
-		void CaseAvancePlus();
+		void CaseAvancePlus(int _rando);
 
 		void ImuniteMalus();
+
+		void CaseMoins(int _rando);
+
+		void Infecte();
+
+		void PaseTour();
 
 		void CreateSmokeEffectForSwap(Player& _player);
 
 		void CreateSmokeEffectAnotherPart(sf::Vector2f _posMin, sf::Vector2f _posMax);
+
+		void UpdateLBM(float _dt);
+
+		void DrawLBM(sf::RenderWindow& _renderWindow);
 
 	public:
 		virtual void Load(void);

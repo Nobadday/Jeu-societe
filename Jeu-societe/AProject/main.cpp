@@ -53,7 +53,7 @@ int main(void)
 
 	MainData mainData;
 
-	mainData.gameData.m_playerDataList.resize(2);
+	mainData.gameData.m_playerDataList.resize(3);
 	for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
 	{
 		mainData.gameData.m_playerDataList[i].SetJoystickID(i);
