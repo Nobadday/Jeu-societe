@@ -11,7 +11,7 @@ class AudioEngine
 public:
 
 	AudioEngine(void);
-	void SetAssetManager(AssetManager* _assetManager);
+	void SetAssetManager(AssetManager& _assetManager);
 	~AudioEngine(void);
 
 	//Play sound by his name given

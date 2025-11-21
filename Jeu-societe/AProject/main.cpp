@@ -97,7 +97,7 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
 	_mainData.gameData.m_assetManager = &_mainData.assetManager;
 	_mainData.gameData.m_audioEngine = &_mainData.audioEngine;
-	_mainData.audioEngine.SetAssetManager(&_mainData.assetManager);
+	_mainData.audioEngine.SetAssetManager(_mainData.assetManager);
 
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 

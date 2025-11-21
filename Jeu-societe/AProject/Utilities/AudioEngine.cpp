@@ -1,15 +1,17 @@
 #include "AudioEngine.hpp"
 
+
 AudioEngine::AudioEngine(void)
 	: m_currentMusic(""), m_assetManager(NULL), m_music(NULL),
 	m_musicVol(100), m_soundVol(100)
 {
-
+	//initial size to prevent bug
+	this->m_soundVec.resize((size_t)20);
 
 }
-void AudioEngine::SetAssetManager(AssetManager* _assetManager)
+void AudioEngine::SetAssetManager(AssetManager& _assetManager)
 {
-	m_assetManager = _assetManager;
+	m_assetManager = &_assetManager;
 }
 AudioEngine::~AudioEngine(void)
 {
@@ -32,9 +34,9 @@ void AudioEngine::PlaySound(const std::string& _soundName, bool _loop)
 		//Launch sound
 		this->m_soundVec.resize(this->m_soundVec.size() + 1);
 		this->m_soundVec.back().setBuffer(*sound);
-		this->m_soundVec.back().play();
 		this->m_soundVec.back().setVolume(this->m_soundVol);
 		this->m_soundVec.back().setLoop(_loop);
+		this->m_soundVec.back().play();
 	}
 	else
 	{
@@ -52,15 +54,32 @@ void AudioEngine::CleanOldSound(void)
 
 	//Remove by swap end pos could have problem if back sound is also stopped
 	//Not big problem, but sound not removed, it will be at the next clean
-	for (auto sound = this->m_soundVec.begin(); sound < this->m_soundVec.end(); ++sound)
-	{
-		if ((*sound).getStatus() == sf::Sound::Status::Stopped)
-		{
-			*sound = this->m_soundVec.back();
-			this->m_soundVec.pop_back();
-		}
-	}
+	//for (auto sound = this->m_soundVec.end(); sound > this->m_soundVec.begin(); sound--)
+	//{
+	//	if ((*sound).getStatus() == sf::Sound::Status::Stopped)
+	//	{
+	//		*sound = this->m_soundVec.back();
+	//		this->m_soundVec.pop_back();
+	//	}
+	//}
 
+
+
+	std::cout << "Sounds debug :" << std::endl;
+	for (int sound = this->m_soundVec.size() - 1; sound >= 0; sound--)
+	{
+
+		auto& truesound = this->m_soundVec[sound];
+		std::cout << "Sounds n " << sound << " status : " << truesound.getStatus() << std::endl;
+
+
+
+		//if (truesound.getStatus() == sf::Sound::Status::Stopped)
+		//{
+		//	truesound = this->m_soundVec.back();
+		//	this->m_soundVec.pop_back();
+		//}
+	}
 
 	//for (auto& sound : this->m_soundVec)
 	//{
@@ -119,7 +138,7 @@ void AudioEngine::PlayMusic(const std::string& _musicName, bool _loop)
 		sf::Music* music = ((sf::Music*)(m_assetManager->GetAsset(_musicName, AssetManager::MUSIC)));
 		if (music->getStatus() == sf::Music::Status::Playing)
 		{
-			std::cout << "WARNING : you want to play music that already playing," << std::endl 
+			std::cout << "WARNING : you want to play music that already playing," << std::endl
 				<< "You want to restart ? If yes, pause / stop and play it" << std::endl;
 		}
 		else
@@ -188,5 +207,3 @@ void AudioEngine::StopMusic(void)
 {
 	this->m_music->stop();
 }
-
-
