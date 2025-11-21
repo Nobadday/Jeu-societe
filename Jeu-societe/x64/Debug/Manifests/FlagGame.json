@@ -1,0 +1,34 @@
+{
+    "assets": [
+      {
+        "name": "FlagGame_BGM",
+        "type": "Music",
+        "path": "./Assets/Music/FlagGame_BGM.wav"
+      },
+      {
+        "name": "EndRound",
+        "type": "Sound Buffer",
+        "path": "Assets/Sounds/EndRound.wav"
+      },
+      {
+        "name": "GameOver",
+        "type": "Sound Buffer",
+        "path": "Assets/Sounds/GameOver.wav"
+      },
+      {
+        "name": "Winner",
+        "type": "Sound Buffer",
+        "path": "Assets/Sounds/Winner.wav"
+      },
+      {
+        "name": "NewFlag",
+        "type": "Sound Buffer",
+        "path": "Assets/Sounds/NewFlag.wav"
+      },
+      {
+        "name": "InputPressed",
+        "type": "Sound Buffer",
+        "path": "Assets/Sounds/InputPressed.wav"
+      }  
+    ]
+}
