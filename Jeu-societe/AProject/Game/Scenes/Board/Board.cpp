@@ -377,11 +377,16 @@ std::string BaseGame::RandomDuel()
 {
 	// Liste des mini-jeux disponibles
 	const std::string miniGames[] = {
-		"FlagGame",
+		"rockPaperSizor",
+		"ArmWrestling",
+		"Basket",
+		"RandCard",
+		"RuRoul",
+		"FlagGame"
 	};
 
 	// Nombre de mini-jeux disponibles
-	const int miniGameCount = 1;
+	const int miniGameCount = 6;
 
 	// Sélection aléatoire d'un mini-jeu
 	//int randomIndex = 2;
@@ -445,11 +450,14 @@ std::string BaseGame::RandomBattle()
 {
 	// Liste des mini-jeux disponibles
 	const std::string miniGames[] = {
-		"FlagGame",
+		"Basket",
+		"RandCard",
+		"RuRoul",
+		"FlagGame"
 	};
 
 	// Nombre de mini-jeux disponibles
-	const int miniGameCount = 1;
+	const int miniGameCount = 4;
 
 	// Sélection aléatoire d'un mini-jeu
 	//int randomIndex = 2;
