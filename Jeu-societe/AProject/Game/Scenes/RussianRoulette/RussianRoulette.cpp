@@ -33,8 +33,8 @@ void RussianRoulette::Load(void)
 	m_data->text.setCharacterSize(15u);
 	m_data->text.setOrigin(0,0);
 
-	//m_data->gunTexAnim.LoadFromFile("Assets/Sprites/RussianRoulette/PiouMort.json", TextureAnimated::ANIMATION_ASEPRITE);
-	m_data->gunSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Damien"));
+	//m_data->gunSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Damien"));
+	m_data->gunSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Gun_Rien"));
 	//m_data->gunSprAnim.SetFramerate(1.f);
 
 	m_data->gameState = WAITING;
@@ -90,7 +90,8 @@ void RussianRoulette::PollEvent(sf::Event& _event)
 
 									//Launch sound
 									//Set and Launch death animation
-									m_data->gunSprAnim.SetAnimation("KMS");
+									m_data->gunSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Gun_Mort"));
+									m_data->gunSprAnim.SetAnimation("ON");
 								}
 								else
 								{
@@ -99,7 +100,8 @@ void RussianRoulette::PollEvent(sf::Event& _event)
 
 									//Launch sound
 									//Set and Launch normal animation
-									m_data->gunSprAnim.SetAnimation("Left_Walk");
+									m_data->gunSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Gun_Rien"));
+									m_data->gunSprAnim.SetAnimation("ON");
 								}
 								m_data->gameState = SPINNING;
 							//}

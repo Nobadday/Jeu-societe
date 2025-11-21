@@ -5,7 +5,7 @@
 //1 = 2 players
 #define MIN_PLAYERS 1
 //Delay to scroll in buttons with controler
-#define INPUT_DELAY 0.2f
+#define INPUT_DELAY 0.5f
 
 void Menu::Load(void)
 {
@@ -23,7 +23,19 @@ void Menu::LoadUI(void)
 	m_data->ui.buttonMap["leaveBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("leaveBtn"));
 	m_data->ui.buttonMap["moinsBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("moinsBtn"));
 	m_data->ui.buttonMap["plusBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("plusBtn"));
+	//Background
 	m_data->ui.background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("background"));
+	//Game logo
+	m_data->ui.logoGame.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoGame"));
+	sf::Vector2u logoGameSize = m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoGame")->getSize();
+	m_data->ui.logoGame.setOrigin(sf::Vector2f( logoGameSize.x / 2, 1));
+	m_data->ui.logoGame.setPosition({ SCREEN_WIDTH / 2, 0 });
+	//Crea logo
+	//m_data->ui.logoCrea.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoCrea"));
+	//logoGameSize = m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoCrea")->getSize();
+	//m_data->ui.logoCrea.setOrigin(sf::Vector2f(  logoGameSize.x / 2, logoGameSize.y / 2 ));
+	//m_data->ui.logoCrea.setPosition({ SCREEN_WIDTH / 4, SCREEN_HEIGHT / 1.5 });
+
 
 
 	sf::FloatRect buttonRect = m_data->ui.buttonMap["playBtn"].getLocalBounds();
@@ -41,16 +53,17 @@ void Menu::LoadUI(void)
 	m_data->ui.buttonMap["plusBtn"].setOrigin({ 0.5f,0.5f });
 
 
-
 	m_data->ui.playerCount.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("MenuFont"));
 	m_data->ui.playerCount.setCharacterSize(200u);
 	m_data->ui.playerCount.setPosition({ SCREEN_WIDTH / 2 , SCREEN_HEIGHT / 2 });
 	sf::FloatRect rect = m_data->ui.playerCount.getGlobalBounds();
-	//Font sucks
+	//This font sucks bro
 	m_data->ui.playerCount.setOrigin({0.6f,0.8f});
 	m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
 
-
+	//m_data->ui.iconsChara.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("iconsChara"));
+	//m_data->ui.iconsChara.setPosition({ SCREEN_WIDTH / 2 , SCREEN_HEIGHT / 2 });
+	//m_data->ui.iconsChara.setOrigin({ 0.5f,0.5f });
 }
 void Menu::Unload(void)
 {
@@ -74,28 +87,41 @@ void Menu::PollEvent(sf::Event& _event)
 			}
 		case sf::Event::JoystickButtonPressed:
 
+			m_data->audio->PlaySound("uiSoundClick");
 			PressSelection();
 			break;
 		case sf::Event::JoystickMoved:
 
+			m_data->audio->PlaySound("uiSoundON");
 			//X Y joystick gauche
 			//U V joystick droite
 			//Z R pression des gachettes
-			//La croix povX povY				
-
+			//La croix povX povY		
 			if (m_data->inputDelay > INPUT_DELAY)
 			{
 				switch (_event.joystickMove.axis)
 				{
-				case sf::Joystick::Axis::X:
-				case sf::Joystick::Axis::U:
+					case sf::Joystick::Axis::X:
+					case sf::Joystick::Axis::U:
 
-					ChangeSelection(_event.joystickMove.position / 100.f);
-					m_data->inputDelay = 0.f;
-					break;
+						std::cout << "jostick : " << _event.joystickMove.position << "btn : " << m_data->controlerBtn << std::endl;
 
-				default:
-					break;
+						if (_event.joystickMove.position > 0)
+						{
+							ChangeSelection(1);
+							m_data->inputDelay = 0.f;
+						}
+						else if (_event.joystickMove.position < 0)
+						{
+							ChangeSelection(-1);
+							m_data->inputDelay = 0.f;
+						}
+
+
+						break;
+
+					default:
+						break;
 				}
 			}
 			break;
@@ -128,7 +154,7 @@ void Menu::ButtonsPollEvent(sf::Event& _event)
 void Menu::Update(float _deltaTime)
 {
 	ButtonsUpdate(_deltaTime);
-
+	 
 	//Update timer for 
 	m_data->inputDelay += _deltaTime;
 }
@@ -165,19 +191,13 @@ void Menu::ButtonsUpdate(float _dt)
 
 			if (m_data->ui.buttonMap["plusBtn"].HasBeenClicked())
 			{
-				if (m_data->gameSettings.playerCount < MAX_PLAYERS)
-				{
-					m_data->controlerBtn = MORE;
-					PressSelection();
-				}
+				m_data->controlerBtn = MORE;
+				PressSelection();
 			}
 			else if (m_data->ui.buttonMap["moinsBtn"].HasBeenClicked())
 			{
-				if (m_data->gameSettings.playerCount > MIN_PLAYERS)
-				{
-					m_data->controlerBtn = LESS;
-					PressSelection();
-				}
+				m_data->controlerBtn = LESS;
+				PressSelection();
 			}
 			else if (m_data->ui.buttonMap["playBtn"].HasBeenClicked())
 			{
@@ -202,6 +222,8 @@ void Menu::DrawUI(sf::RenderWindow& _renderWindow)
 			_renderWindow.draw(m_data->ui.buttonMap["playBtn"]);
 			_renderWindow.draw(m_data->ui.buttonMap["settingsBtn"]);
 			_renderWindow.draw(m_data->ui.buttonMap["leaveBtn"]);
+			_renderWindow.draw(m_data->ui.logoGame);
+			//_renderWindow.draw(m_data->ui.logoCrea);
 
 			if (m_data->ui.buttonMap["leaveBtn"].IsClicked(mousePos.x, mousePos.y))
 			{
@@ -220,22 +242,21 @@ void Menu::DrawUI(sf::RenderWindow& _renderWindow)
 			_renderWindow.draw(m_data->ui.buttonMap["plusBtn"]);
 
 			break;
+		case PLAYER_SELECTION:
+
+			_renderWindow.draw(m_data->ui.iconsChara);
+
+
+
+
+
+			break;
 	}
 }
 
 void Menu::ChangeSelection(int _value)
 {
-	m_data->audio->PlaySound("uiSoundON");
-	//Reset old button
-	int i = 0;
-	for (auto& button : m_data->ui.buttonMap)
-	{
-		if (i == _value)
-		{
-			button.second.SetState(Button::STATE_IDLE);
-		}
-		i++;
-	}
+	sf::Vector2f mouseNewPos;
 
 	switch (m_data->state)
 	{
@@ -244,14 +265,32 @@ void Menu::ChangeSelection(int _value)
 			if ((m_data->controlerBtn + _value) < PLAY)
 			{
 				m_data->controlerBtn = LEAVE;
+				mouseNewPos = m_data->ui.buttonMap["leaveBtn"].getPosition();
 			}
 			else if ((m_data->controlerBtn + _value) > LEAVE)
 			{
 				m_data->controlerBtn = PLAY;
+				mouseNewPos = m_data->ui.buttonMap["playBtn"].getPosition();
 			}
 			else
 			{
 				m_data->controlerBtn = (ControlerCurrentButton)(m_data->controlerBtn + _value);
+				
+				//Ok, racism
+				switch (m_data->controlerBtn)
+				{
+					case PLAY:
+						mouseNewPos = m_data->ui.buttonMap["playBtn"].getPosition();
+						break;
+
+					case LEAVE:
+						mouseNewPos = m_data->ui.buttonMap["leaveBtn"].getPosition();
+						break;
+				
+					case SETTINGS:
+						mouseNewPos = m_data->ui.buttonMap["settingsBtn"].getPosition();
+						break;
+				}				
 			}
 			break;
 
@@ -260,43 +299,50 @@ void Menu::ChangeSelection(int _value)
 
 		case PLAYER_NB_SELECTION:
 
-			if ((m_data->controlerBtn + _value) < MORE)
+			if ((m_data->controlerBtn + _value) > MORE)
 			{
 				m_data->controlerBtn = LESS;
+				mouseNewPos = m_data->ui.buttonMap["moinsBtn"].getPosition();
 			}
-			else if ((m_data->controlerBtn + _value) > LESS)
+			else if ((m_data->controlerBtn + _value) < LESS)
 			{
 				m_data->controlerBtn = MORE;
+				mouseNewPos = m_data->ui.buttonMap["plusBtn"].getPosition();
 			}
 			else
 			{
 				m_data->controlerBtn = (ControlerCurrentButton)(m_data->controlerBtn + _value);
+
+				//Ok, racism
+				switch (m_data->controlerBtn)
+				{
+					case MORE:
+						mouseNewPos = m_data->ui.buttonMap["plusBtn"].getPosition();
+						break;
+
+					case LESS:
+						mouseNewPos = m_data->ui.buttonMap["moinsBtn"].getPosition();
+						break;
+
+					case PLAY_SELECTION:
+						mouseNewPos = m_data->ui.buttonMap["playBtn"].getPosition();
+						break;
+				}
 			}
 			break;
 	}
 	//Set ON new button
-	i = 0;
-	for (auto& button : m_data->ui.buttonMap)
-	{
-		if (i == _value)
-		{
-			button.second.SetState(Button::STATE_ON);
-		}
-		i++;
-	}
+	std::cout << "mouse x = " << mouseNewPos.x << " y = " << mouseNewPos.y << std::endl;
+	sf::Mouse::setPosition(sf::Vector2i(mouseNewPos));
 }
 
 void Menu::PressSelection(void)
 {
+	m_data->audio->PlaySound("uiSoundON");
 	switch (m_data->controlerBtn)
 	{
 		case PLAY:
-
-
 			m_data->state = (MenuState)(m_data->state + 1);
-			//if (m_data->state == )
-
-
 
 			switch (m_data->state)
 			{
@@ -311,16 +357,16 @@ void Menu::PressSelection(void)
 				break;
 			case PLAYER_SELECTION:
 
-
+				for (int i = 0; i < m_data->playerDataVec.size(); i++)
+				{
+					m_data->gameData->m_playerDataList.push_back(m_data->playerDataVec[i]);
+				}
 				SceneBase::ChangeScene("Board");
 				break;
 
 
 
 			}
-
-
-
 
 			m_data->state = PLAYER_NB_SELECTION;
 			m_data->ui.buttonMap["playBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.5 });
@@ -335,22 +381,44 @@ void Menu::PressSelection(void)
 			break;
 
 		case LESS:
-			m_data->gameSettings.playerCount -= 1;
-			m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
+			if (m_data->gameSettings.playerCount > MIN_PLAYERS)
+			{
+				m_data->gameSettings.playerCount -= 1;
+				m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
+			}
 			break;
 
 		case PLAY_SELECTION:
 		{
-			PlayerData newPlayer;
-			newPlayer.m_playerSkin = PlayerData::PlayerSkin::CHARACTER_1_1;
-			newPlayer.m_joystickId = 0;
-			m_data->gameData->m_playerDataList.push_back(newPlayer);
+			m_data->state = PLAYER_SELECTION;
 
 			break;
 		}		
 		case MORE:
-			m_data->gameSettings.playerCount += 1;
-			m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
+			if (m_data->gameSettings.playerCount < MAX_PLAYERS)
+			{
+				m_data->gameSettings.playerCount += 1;
+				m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
+			}
 			break;
 	}
 }
+
+
+
+//
+//
+//{
+//	"name" : "iconsChara",
+//		"type" : "Texture Animated",
+//		"path" : "Assets/Sprites/Menu/IconsPersos.anim",
+//		"subType" : 1
+//},
+
+//
+//{
+//	"name" : "iconsChara",
+//		"type" : "Texture Animated",
+//		"path" : "Assets/Sprites/Menu/IconsPersos.texanim",
+//		"subType" : 0
+//},

@@ -1,0 +1,18 @@
+{
+    "filePath":"gun_annim _rien.texsheet",
+    "fileType":0,
+	"animations": [
+        {
+            "animationName":"IDLE",
+            "texName":"IDLE",
+            "loop": true,
+            "fps": 10
+        },
+        {
+            "animationName":"ON",
+            "texName":"ON",
+            "loop": false,
+            "fps": 10
+        }
+    ]
+}

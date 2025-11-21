@@ -10,6 +10,18 @@
             "type" : "Texture Animated",
             "path" : "Assets/Sprites/RussianRoulette/Damien.texanim", 
             "subType" : 0
+        },
+        {
+            "name" : "Gun_Mort",
+            "type" : "Texture Animated",
+            "path" : "Assets/Sprites/RussianRoulette/gun_annim _mort.anim", 
+            "subType" : 0
+        },
+        {
+            "name" : "Gun_Rien",
+            "type" : "Texture Animated",
+            "path" : "Assets/Sprites/RussianRoulette/gun_anim_rien.anim", 
+            "subType" : 0
         }
     ]
 }

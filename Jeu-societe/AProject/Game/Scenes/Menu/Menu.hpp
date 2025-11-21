@@ -5,7 +5,7 @@
 #include "../../../Scenes/Scene.hpp"
 #include "../../../Common.hpp"
 #include "../../../Animation/Graphics/SpriteAnimated.hpp"
-#include "../../../Animation/Graphics/TextPlus.hpp"
+//#include "../../../Animation/Graphics/TextPlus.hpp"
 #include "../../../Animation/Graphics/TextureAnimated.hpp"
 #include "../../../Ui/MenuSystem.hpp"
 
@@ -46,16 +46,23 @@ private:
 	{
 		std::map<std::string, Button> buttonMap;
 		sf::Sprite background;
+		sf::Sprite logoGame;
+		sf::Sprite logoCrea;
+		SpriteAnimated iconsChara;
 		TextPlus playerCount;
 	};
 	struct SceneData
 	{
 		UI ui;
+		MenuState state = MAIN_MENU;
 		ControlerCurrentButton controlerBtn = PLAY;
 		float inputDelay = 0.f;
+		int currentPlayer = 0;
+		int currentCharaSelected = 0;
 
 
-		MenuState state;
+		std::vector<PlayerData> playerDataVec;
+
 		//MenuSystem* menuSystem;
 		GameSettings gameSettings;
 		GameData* gameData;

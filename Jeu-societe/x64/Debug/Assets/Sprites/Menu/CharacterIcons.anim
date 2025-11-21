@@ -1,0 +1,30 @@
+{
+    "assetPath":"IconsPersos.atlas",
+    "framerate": 10,
+	"animations": [
+        {
+            "name":"CHARACTER_1_1"
+        },
+        {
+            "name":"CHARACTER_2_1"
+        },
+        {
+            "name":"CHARACTER_3_1"
+        },
+        {
+            "name":"CHARACTER_4_1"
+        },
+        {
+            "name":"CHARACTER_1_2"
+        },
+        {
+            "name":"CHARACTER_2_2"
+        },
+        {
+            "name":"CHARACTER_3_2"
+        },
+        {
+            "name":"CHARACTER_4_2"
+        }
+    ]
+}
