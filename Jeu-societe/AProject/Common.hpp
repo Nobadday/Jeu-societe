@@ -2,6 +2,7 @@
 
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
+#include "./Utilities/BetterWindow/BetterWindow.hpp"
 
 #include "Screen.hpp"
 
