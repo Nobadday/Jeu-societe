@@ -332,6 +332,7 @@ void FlagGame::StartNewRound(void)
 			}
 		}
 	}
+	m_data->backgroundMusic.PlayMusic("Assets/Music/FlagGame_BGM.wav", true);
 	UpdatePlayerInputTexts();
 
 	// Set timers
@@ -342,6 +343,9 @@ void FlagGame::StartNewRound(void)
 void FlagGame::EvaluateRound(void)
 {
 	// Check each participating player's input
+
+	m_data->backgroundMusic.StopMusic();
+	m_data->endRound.PlaySound("Assets/Sounds/EndRound.wav", false);
 	if (m_data->gameData)
 	{
 		for (int playerID : m_data->gameData->m_gonnaPlayIndex)
@@ -382,6 +386,11 @@ void FlagGame::EvaluateRound(void)
 					std::snprintf(resultBuffer, 50, "Player %d Wins!", playerID + 1);
 					m_data->resultText.setString(resultBuffer);
 					m_data->resultText.setOrigin(m_data->resultText.getLocalBounds().width / 2, m_data->resultText.getLocalBounds().height / 2);
+					if(!m_data->audioPlayed)
+					{
+						m_data->winnerSound.PlaySound("Assets/Sounds/Winner.wav", false);
+						m_data->audioPlayed = true;
+					}
 					break;
 				}
 			}
@@ -391,6 +400,7 @@ void FlagGame::EvaluateRound(void)
 	{
 		m_data->resultText.setString("No Winner!");
 		m_data->resultText.setOrigin(m_data->resultText.getLocalBounds().width / 2, m_data->resultText.getLocalBounds().height / 2);
+		m_data->gameOverSound.PlaySound("Assets/Sounds/GameOver.wav", false);
 	}
 
 	m_data->state = STATE_ROUND_END;
@@ -402,6 +412,8 @@ void FlagGame::ChangeRequiredInput(void)
 	m_data->requiredInput = GetRandomValidInput();
 	m_data->buttonSprite.setTexture(m_data->buttonTexture[(int)m_data->requiredInput]);
 	m_data->buttonSprite.setOrigin(m_data->buttonSprite.getLocalBounds().width / 2, m_data->buttonSprite.getLocalBounds().height / 2);
+
+	m_data->newFlagSound.PlaySound("Assets/Sounds/NewFlag.wav", false);
 
 	char inputBuffer[100];
 	std::snprintf(inputBuffer, 100, "Press: %s", GetGamePadButtonName(m_data->requiredInput));
@@ -463,6 +475,7 @@ void FlagGame::UpdatePlayerInputTexts(void)
 				m_data->playerData[playerID].buttonSprite.setTexture(
 					m_data->buttonTexture[(int)m_data->playerData[playerID].currentInput]
 				);
+				m_data->playerData->inputPressed.PlaySound("Assets/Sounds/InputPressed.wav", false);
 			}
 			else
 			{

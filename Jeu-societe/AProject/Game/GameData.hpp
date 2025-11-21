@@ -5,6 +5,8 @@
 #include <SFML/System.hpp>
 
 #include "PlayerData.hpp"
+#include "../Utilities/AssetManager.hpp"
+#include "../Utilities/AudioEngine.hpp"
 
 class GameData
 {
@@ -12,6 +14,9 @@ class GameData
 		
 	public:
 		sf::RenderWindow* m_renderWindow;
+
+		AssetManager* m_assetManager;
+		void* m_audioEngine;
 
 		std::vector<PlayerData> m_playerDataList;
 		std::vector<int> m_gonnaPlayIndex;

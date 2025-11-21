@@ -20,6 +20,9 @@ typedef struct MainData
 	sf::Clock clock;
 	SceneHandler scenes;
 
+	AssetManager assetManager;
+	AudioEngine audioEngine;
+
 	RussianRoulette sceneRussianRoulette;
 	RandCard randCard;
 
@@ -92,6 +95,9 @@ void MainDataLoad(MainData& _mainData)
 
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
+	_mainData.gameData.m_assetManager = &_mainData.assetManager;
+	_mainData.gameData.m_audioEngine = &_mainData.audioEngine;
+	_mainData.audioEngine.SetAssetManager(_mainData.assetManager);
 
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 
