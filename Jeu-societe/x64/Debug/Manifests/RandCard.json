@@ -1,0 +1,20 @@
+{
+    "assets": [
+        {
+            "name": "RandCardFont",
+            "type": "Font",
+            "path": "Assets/Fonts/Platinum Sign.ttf"
+        },
+        {
+            "name" : "StaticCard",
+            "type" : "Texture",
+            "path" : "Assets/Sprites/RandomCard/StaticCard.png"
+        },
+        {
+            "name" : "AnimCard",
+            "type" : "Texture Animated",
+            "path" : "Assets/Sprites/RandomCard/CardData.texanim",
+            "subType" : 0
+        }
+    ]
+}
