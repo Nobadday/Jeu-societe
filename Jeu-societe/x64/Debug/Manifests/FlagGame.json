@@ -3,32 +3,32 @@
       {
         "name": "FlagGame_BGM",
         "type": "Music",
-        "path": "./Assets/Music/FlagGame_BGM.wav"
+        "path": "./Assets/Audio/Musics/FlagGame_BGM.wav"
       },
       {
         "name": "EndRound",
         "type": "Sound Buffer",
-        "path": "Assets/Sounds/EndRound.wav"
+        "path": "Assets/Audio/Sounds/EndRound.wav"
       },
       {
         "name": "GameOver",
         "type": "Sound Buffer",
-        "path": "Assets/Sounds/GameOver.wav"
+        "path": "Assets/Audio/Sounds/GameOver.wav"
       },
       {
         "name": "Winner",
         "type": "Sound Buffer",
-        "path": "Assets/Sounds/Winner.wav"
+        "path": "Assets/Audio/Sounds/Winner.wav"
       },
       {
         "name": "NewFlag",
         "type": "Sound Buffer",
-        "path": "Assets/Sounds/NewFlag.wav"
+        "path": "Assets/Audio/Sounds/NewFlag.wav"
       },
       {
         "name": "InputPressed",
         "type": "Sound Buffer",
-        "path": "Assets/Sounds/InputPressed.wav"
+        "path": "Assets/Audio/Sounds/InputPressed.wav"
       }  
     ]
 }

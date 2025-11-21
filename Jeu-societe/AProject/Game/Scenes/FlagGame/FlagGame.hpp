@@ -27,7 +27,6 @@ private:
 		sf::Text inputText;
 		int eliminationOrder; // Order of elimination (0 = not eliminated, 1 = first eliminated, etc.)
 		float eliminationTime; // Time when player was eliminated
-		AudioEngine inputPressed;
 
 		sf::Sprite buttonSprite;
 	};
@@ -41,11 +40,11 @@ private:
 		sf::Text requiredInputText;
 		sf::Text resultText;
 
-		AudioEngine newFlagSound;
-		AudioEngine endRound;
-		AudioEngine gameOverSound;
-		AudioEngine backgroundMusic;
-		AudioEngine winnerSound;
+		AudioEngine* audio;
+		//AudioEngine endRound;
+		//AudioEngine gameOverSound;
+		//AudioEngine backgroundMusic;
+		//AudioEngine winnerSound;
 		bool audioPlayed;
 		sf::Texture buttonTexture[6];
 		sf::Sprite buttonSprite;

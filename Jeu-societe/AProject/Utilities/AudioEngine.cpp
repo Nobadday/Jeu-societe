@@ -7,9 +7,9 @@ AudioEngine::AudioEngine(void)
 
 
 }
-void AudioEngine::SetAssetManager(AssetManager& _assetManager)
+void AudioEngine::SetAssetManager(AssetManager* _assetManager)
 {
-	m_assetManager = &_assetManager;
+	m_assetManager = _assetManager;
 }
 AudioEngine::~AudioEngine(void)
 {

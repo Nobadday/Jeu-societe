@@ -14,6 +14,9 @@ void FlagGame::Load(void)
 	m_data->playersRemaining = 0;
 	m_data->eliminationCounter = 0;
 	m_data->totalGameTime = 0.0f;
+	m_data->audio = (AudioEngine*)m_data->gameData->m_audioEngine;
+	m_data->gameData->m_assetManager->LoadManifest("Manifests/FlagGame.json", "FlagGame");
+
 
 	// Load font
 	m_data->font.loadFromFile("Assets/Font.ttf");
@@ -115,6 +118,7 @@ void FlagGame::Load(void)
 
 void FlagGame::Unload(void)
 {
+	m_data->audioPlayed;
 	delete m_data;
 	m_data = nullptr;
 }
@@ -332,7 +336,7 @@ void FlagGame::StartNewRound(void)
 			}
 		}
 	}
-	m_data->backgroundMusic.PlayMusic("Assets/Music/FlagGame_BGM.wav", true);
+	m_data->audio->PlayMusic("FlagGame_BGM", true);
 	UpdatePlayerInputTexts();
 
 	// Set timers
@@ -344,8 +348,8 @@ void FlagGame::EvaluateRound(void)
 {
 	// Check each participating player's input
 
-	m_data->backgroundMusic.StopMusic();
-	m_data->endRound.PlaySound("Assets/Sounds/EndRound.wav", false);
+	m_data->audio->StopMusic();
+	m_data->audio->PlaySound("EndRound", false);
 	if (m_data->gameData)
 	{
 		for (int playerID : m_data->gameData->m_gonnaPlayIndex)
@@ -388,7 +392,7 @@ void FlagGame::EvaluateRound(void)
 					m_data->resultText.setOrigin(m_data->resultText.getLocalBounds().width / 2, m_data->resultText.getLocalBounds().height / 2);
 					if(!m_data->audioPlayed)
 					{
-						m_data->winnerSound.PlaySound("Assets/Sounds/Winner.wav", false);
+						m_data->audio->PlaySound("Winner", false);
 						m_data->audioPlayed = true;
 					}
 					break;
@@ -400,7 +404,7 @@ void FlagGame::EvaluateRound(void)
 	{
 		m_data->resultText.setString("No Winner!");
 		m_data->resultText.setOrigin(m_data->resultText.getLocalBounds().width / 2, m_data->resultText.getLocalBounds().height / 2);
-		m_data->gameOverSound.PlaySound("Assets/Sounds/GameOver.wav", false);
+		m_data->audio->PlaySound("GameOver", false);
 	}
 
 	m_data->state = STATE_ROUND_END;
@@ -413,7 +417,7 @@ void FlagGame::ChangeRequiredInput(void)
 	m_data->buttonSprite.setTexture(m_data->buttonTexture[(int)m_data->requiredInput]);
 	m_data->buttonSprite.setOrigin(m_data->buttonSprite.getLocalBounds().width / 2, m_data->buttonSprite.getLocalBounds().height / 2);
 
-	m_data->newFlagSound.PlaySound("Assets/Sounds/NewFlag.wav", false);
+	m_data->audio->PlaySound("NewFlag", false);
 
 	char inputBuffer[100];
 	std::snprintf(inputBuffer, 100, "Press: %s", GetGamePadButtonName(m_data->requiredInput));
@@ -475,7 +479,7 @@ void FlagGame::UpdatePlayerInputTexts(void)
 				m_data->playerData[playerID].buttonSprite.setTexture(
 					m_data->buttonTexture[(int)m_data->playerData[playerID].currentInput]
 				);
-				m_data->playerData->inputPressed.PlaySound("Assets/Sounds/InputPressed.wav", false);
+				m_data->audio->PlaySound("InputPressed", false);
 			}
 			else
 			{
