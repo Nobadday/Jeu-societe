@@ -18,7 +18,7 @@
 #include "../../Animation/Graphics/TextureAtlas.hpp"
 
 #define TIME_WIN_DISPLAY 1.0f
-#define TIME_LBM_DISPLAY 4.0f
+#define TIME_LBM_DISPLAY 6.0f
 #define MAX_TOUR_EFFECT 2
 
 class Effect
@@ -85,12 +85,14 @@ class BaseGame : public SceneBase
 	private:
 		enum State
 		{
+			STATE = -1,
 			START,
 			PLAY,
 			DEPLACEMENT,
 			DEPLACEMENT_SPLIT,
 			DEPLACEMENT_BRIGE,
 			DEPLACEMENT_ACTION,
+			DEPLACEMENT_ACTION_2,
 			DEPLACEMENT_ACTION_BACK,
 			CASE_ACTION,
 			BATTLE_ACTION,
@@ -132,6 +134,9 @@ class BaseGame : public SceneBase
 			int startRandom;
 
 			StatePlayer state;
+
+			sf::Text playeur;
+			sf::Text v;
 
 			int tourstate;
 

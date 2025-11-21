@@ -28,7 +28,7 @@ void BaseGame::Load(void)
 	m_data->state = START;
 
 	m_data->timeWin = TIME_WIN_DISPLAY;
-
+	m_data->timeLBM = TIME_LBM_DISPLAY;
 	// Initialisation des joueurs
 	for (int i = 0; i < m_data->players.size(); i++)
 	{
@@ -67,7 +67,27 @@ void BaseGame::Load(void)
 
 		m_data->players[i].sprite.setOrigin({ 0.5f,1.f });
 
-		m_data->players[i].boardPosition = m_data->posCase[0].GetPosition();
+		m_data->players[i].v.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
+		m_data->players[i].v.setString("V");
+
+
+		sf::FloatRect textRect = m_data->players[i].v.getLocalBounds();
+
+		m_data->players[i].v.setOrigin({ textRect.width / 2, textRect.height / 2 });
+
+		m_data->players[i].v.setPosition(m_data->players[i].boardPosition + sf::Vector2f{ 0.f,-100.f });
+
+		m_data->players[i].playeur.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
+		m_data->players[i].playeur.setString("P" + std::to_string(i + 1));
+
+		textRect = m_data->players[i].playeur.getLocalBounds();
+
+		m_data->players[i].playeur.setOrigin({ textRect.width / 2, textRect.height/2 });
+
+		m_data->players[i].playeur.setPosition(m_data->players[i].boardPosition + sf::Vector2f{ 0.f,-120.f });
+
+
+		m_data->players[i].boardPosition = m_data->posCase[0].GetPosition() + sf::Vector2f{-40.f * i ,0.f };
 		m_data->players[i].currentCaseIndex = 0;
 		m_data->players[i].startRandom = 0;
 		m_data->players[i].state = StatePlayer::NONE;
@@ -288,7 +308,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 	// Gestion des entrées joystick
 	if (_event.type == sf::Event::JoystickButtonPressed)
 	{
-		if (m_gameData->m_playerDataList[m_data->currentPlayerIndex].m_joystickId == _event.joystickButton.joystickId && m_data->state != WIN_DEPLACEMENT)
+		if (m_gameData->m_playerDataList[m_data->currentPlayerIndex].m_joystickId == _event.joystickButton.joystickId && m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE)
 		{
 			if (_event.joystickButton.button == 0 && m_data->animator.IsFinished())
 			{
@@ -301,7 +321,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 	// Gestion des entrées clavier (DEBUG)
 	if (_event.type == sf::Event::KeyPressed)
 	{
-		if (_event.key.code == sf::Keyboard::Space && m_data->animator.IsFinished() && m_data->state != WIN_DEPLACEMENT)
+		if (_event.key.code == sf::Keyboard::Space && m_data->animator.IsFinished() && m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE)
 		{
 			int rando = randmt::RandomInt(1, 6);
 			processDiceRoll(rando);
@@ -314,8 +334,6 @@ void BaseGame::Update(float _deltaTime)
 {
 	// Mise à jour des animations
 	UpdateLBM(_deltaTime);
-	if (m_data->HudLBM.state == NONELBM)
-	{
 		if (m_data->players[m_data->currentPlayerIndex].state != CANT_PLAY)
 		{
 			m_data->animator.Update(_deltaTime);
@@ -361,6 +379,13 @@ void BaseGame::Update(float _deltaTime)
 
 
 			// Mise à jour de la caméra pour suivre le joueur actif
+			for (auto& player : m_data->players)
+			{
+				player.v.setPosition(player.boardPosition + sf::Vector2f{ 0.f,-250.f });
+				player.playeur.setPosition(player.boardPosition + sf::Vector2f{ 0.f,-275.f });
+			}
+			
+
 			UpdateCameraFollowPlayer(_deltaTime);
 
 		}
@@ -373,8 +398,6 @@ void BaseGame::Update(float _deltaTime)
 				SetBoardState(PLAY, 0);
 			}
 		}
-
-	}
 
 }
 
@@ -402,6 +425,8 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 	{
 		m_data->players[idx].sprite.setPosition(m_data->players[idx].boardPosition);
 		_renderWindow.draw(m_data->players[idx].sprite);
+		_renderWindow.draw(m_data->players[idx].v);
+		_renderWindow.draw(m_data->players[idx].playeur);
 	}
 
 	m_data->tile.DrawMapLayers(_renderWindow, referenceView.getCenter(), "point");
@@ -447,7 +472,7 @@ void BaseGame::CaseAction()
 
 			m_data->HudLBM.sprite.setScale({ 0.5f , 0.5f });
 			m_data->HudLBM.sprite.setOrigin({ (float)size.x / 2.f, (float)size.y / 2.f });
-			m_data->HudLBM.sprite.setPosition({ SCREEN_WIDTH / 2.f - size2.x / 2  , SCREEN_HEIGHT / 2.f - size2.y / 2 });
+			m_data->HudLBM.sprite.setPosition({size2.x   ,  size2.y });
 			m_data->timeLBM = TIME_LBM_DISPLAY;
 			BonusMalusLuck(false);
 
@@ -469,8 +494,8 @@ void BaseGame::CaseAction()
 			sf::Vector2u size = m_data->HudLBM.sprite.getTexture()->getSize();
 
 			m_data->HudLBM.sprite.setScale({ 0.5f , 0.5f });
-			m_data->HudLBM.sprite.setOrigin({ SCREEN_WIDTH / 2.f - size2.x , SCREEN_HEIGHT / 2.f - size2.y });
-			m_data->HudLBM.sprite.setPosition({ SCREEN_WIDTH / 2.f - size2.x / 2  , SCREEN_HEIGHT / 2.f - size2.y / 2 });
+			m_data->HudLBM.sprite.setOrigin({ (float)size.x / 2.f, (float)size.y / 2.f });
+			m_data->HudLBM.sprite.setPosition({ size2.x   ,  size2.y });
 			m_data->timeLBM = TIME_LBM_DISPLAY;
 
 			BonusMalusLuck(true);
@@ -489,7 +514,7 @@ void BaseGame::CaseAction()
 
 		m_data->HudLBM.sprite.setScale({ 0.5f , 0.5f });
 		m_data->HudLBM.sprite.setOrigin({ (float)size.x / 2.f, (float)size.y / 2.f });
-		m_data->HudLBM.sprite.setPosition({ SCREEN_WIDTH / 2.f - size2.x /2  , SCREEN_HEIGHT / 2.f - size2.y / 2 });
+		m_data->HudLBM.sprite.setPosition({ size2.x , size2.y  });
 		m_data->timeLBM = TIME_LBM_DISPLAY;
 
 		BonusMalusLuck(randmt::Chance(0.5f));
@@ -668,6 +693,40 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 		}
 	}
 	break;
+	case DEPLACEMENT_ACTION_2:
+	{
+		auto& player = m_data->players[m_data->currentPlayerIndex];
+
+
+		std::vector<int> availablePaths = GetAvailablePaths(player.currentCaseIndex);
+		if (availablePaths.empty())
+		{
+			std::cout << "Erreur : aucun chemin disponible!" << std::endl;
+			SetBoardState(CASE_ACTION_END);
+			return;
+		}
+
+		int nextIndex = availablePaths[0];
+
+		sf::Vector2f startPos = player.boardPosition;
+		sf::Vector2f endPos = m_data->posCase[nextIndex].GetPosition() +
+			sf::Vector2f{ randmt::RandomFloat(-10, 10), randmt::RandomFloat(-10, 10) };
+
+		m_data->animator.SetGoTo(startPos, endPos);
+		m_data->animator.Restart();
+
+		player.currentCaseIndex = nextIndex;
+		player.sprite.SetAnimation("Right_Walk");
+		//player.sprite.setScale(-1, 1);
+
+		// Vérifier si on arrive sur une convergence
+		const MapObject& nextCase = m_data->posCase[nextIndex];
+		if (nextCase.GetType() == "merge")
+		{
+			player.currentPathId = -1; // Retour au chemin principal
+		}
+	}
+	break;
 
 	case WAITING_PATH_CHOICE:
 		// Attente de l'entrée du joueur
@@ -832,6 +891,28 @@ void BaseGame::BoardStateUpdate(float _dt)
 			}
 		}
 		break;
+	case DEPLACEMENT_ACTION_2:
+		m_data->players[m_data->currentPlayerIndex].sprite.Update(_dt);
+		m_data->players[m_data->currentPlayerIndex].boardPosition = m_data->animator.GetGoTo();
+		if (m_data->animator.IsFinished())
+		{
+			// CORRECTION : Décrémenter le mouvement après avoir atteint la case
+			auto& player = m_data->players[m_data->currentPlayerIndex];
+			player.pendingMovement--;
+
+			std::cout << "Mouvement restant : " << player.pendingMovement << std::endl;
+
+			if (player.pendingMovement > 0)
+			{
+				SetBoardState(DEPLACEMENT_ACTION_2);
+			}
+			else
+			{
+				// Déplacement terminé, exécuter l'action de case
+				SetBoardState(CASE_ACTION_END);
+			}
+		}
+		break;
 
 	case CASE_ACTION:
 		CaseAction();
@@ -988,6 +1069,8 @@ void BaseGame::SortStart()
 	int somme = 1;
 	m_data->currentPlayerIndex = 0;
 
+	
+
 	for (const auto& player : m_data->players)
 	{
 		if (player.startRandom != 0)
@@ -998,6 +1081,13 @@ void BaseGame::SortStart()
 
 	if (somme != 0)
 	{
+
+		for (size_t i = 0; i < m_data->players.size(); i++)
+		{
+			std::cout << "Player : " << m_data->players[i].startRandom << " ";
+			std::cout << " id manette : " << m_gameData->m_playerDataList[i].m_joystickId << " " << std::endl;
+		}
+
 		// Tri des joueurs par ordre décroissant de jet de dé
 		// Créer un vecteur d'indices
 		std::vector<size_t> indices(m_data->players.size());
@@ -1026,7 +1116,15 @@ void BaseGame::SortStart()
 		}
 		m_gameData->m_playerDataList = std::move(sortedPlayerData);
 
-		SetBoardState(PLAY, 0);
+		
+		for (size_t i = 0; i < m_data->players.size(); i++)
+		{
+			std::cout << "Player : " << m_data->players[i].startRandom << " ";
+			std::cout << " id manette : " << m_gameData->m_playerDataList[i].m_joystickId << " " << std::endl;
+		}
+
+
+		m_data->state = PLAY;
 	}
 }
 
@@ -1094,7 +1192,7 @@ void BaseGame::UpdateCameraFollowPlayer(float _deltaTime)
 
 void BaseGame::BonusMalusLuck(bool _malus)
 {
-	int chance = randmt::RandomInt(1, 100);
+	int chance = randmt::RandomInt(0, 100);
 
 	if (_malus)
 	{
@@ -1111,15 +1209,17 @@ void BaseGame::Bonus(int _chance)
 	if (_chance <= 50)
 	{
 		m_data->HudLBM.chosse = "CasePlus";
+		SetBoardState(STATE);
 	}
 	else if (_chance <= 80)
 	{
 		m_data->HudLBM.chosse = "Immunite";
+		SetBoardState(STATE);
 	}
 	else if (_chance <= 100)
 	{
 		m_data->HudLBM.chosse = "Swap";
-		//SwapPlayers();
+		SetBoardState(STATE);
 	}
 }
 
@@ -1128,6 +1228,7 @@ void BaseGame::Malus(int _chance)
 	if (_chance <= 35)
 	{
 		m_data->HudLBM.chosse = "CaseMoin";
+		SetBoardState(STATE);
 	}
 	else if (_chance <= 60)
 	{
@@ -1139,11 +1240,12 @@ void BaseGame::Malus(int _chance)
 		{
 			m_data->HudLBM.chosse = "Infecte";
 		}
+		SetBoardState(STATE);
 	}
 	else if (_chance <= 70)
 	{
 		m_data->HudLBM.chosse = "Swap";
-		//SwapPlayers();
+		SetBoardState(STATE);
 	}
 	else if (_chance <= 100)
 	{
@@ -1158,6 +1260,7 @@ void BaseGame::Malus(int _chance)
 			m_data->HudLBM.chosse = "ConfusSkip";
 			std::cout << "Confus evites" << std::endl;
 		}
+		SetBoardState(STATE);
 	}
 }
 
@@ -1387,11 +1490,7 @@ void BaseGame::CaseAvancePlus(int _rando)
 	// Initialiser le mouvement restant pour le déplacement case par case
 	player.pendingMovement = _rando;
 
-	// Calculer la première case du déplacement
-	const int posCaseCount = static_cast<int>(m_data->posCase.size());
-	int nextIndex = mathp::ModuloPositiveI(player.currentCaseIndex + 1, posCaseCount);
-
-	SetBoardState(DEPLACEMENT_ACTION, nextIndex);
+	SetBoardState(DEPLACEMENT_ACTION_2);
 }
 
 void BaseGame::ImuniteMalus()
@@ -1503,37 +1602,22 @@ void BaseGame::UpdateLBM(float _dt)
 			{
 				if (m_data->HudLBM.chosse == "CasePlus")
 				{
-					int rando = randmt::RandomInt(1, 3);
-
-					m_data->HudLBM.text.setString("Avance de " + std::to_string(rando) + " Case ");
-
 					CaseAvancePlus(m_data->HudLBM.rando);
 				}
 				else if (m_data->HudLBM.chosse == "Immunite")
 				{
-					m_data->HudLBM.text.setString("Imuniser au Malus Pendant 2 Tour");
-
 					ImuniteMalus();
 				}
 				else if (m_data->HudLBM.chosse == "Swap")
 				{
-
-					m_data->HudLBM.text.setString("Imuniser au Malus Pendant 2 Tour");
-					int swapIndex = randmt::RandomInt(0, (int)m_data->players.size() - 1);
-					while (swapIndex == m_data->currentPlayerIndex)
-					{
-						swapIndex = randmt::RandomInt(0, (int)m_data->players.size() - 1);
-					}
-					SwapPlayers(swapIndex);
+					SwapPlayers(m_data->HudLBM.swap);
 				}
 			}
 			else if (m_data->HudLBM.name == "Malus" || m_data->HudLBM.name == "Luck")
 			{
 				if (m_data->HudLBM.chosse == "CaseMoin")
 				{
-					int rando = randmt::RandomInt(1, 3);
-
-					CaseMoins(rando);
+					CaseMoins(m_data->HudLBM.rando);
 				}
 				else if (m_data->HudLBM.chosse == "Infection")
 				{
@@ -1545,13 +1629,7 @@ void BaseGame::UpdateLBM(float _dt)
 				}
 				else if (m_data->HudLBM.chosse == "Swap")
 				{
-					m_data->HudLBM.text.setString("Imuniser au Malus Pendant 2 Tour");
-					int swapIndex = randmt::RandomInt(0, (int)m_data->players.size() - 1);
-					while (swapIndex == m_data->currentPlayerIndex)
-					{
-						swapIndex = randmt::RandomInt(0, (int)m_data->players.size() - 1);
-					}
-					SwapPlayers(swapIndex);
+					SwapPlayers(m_data->HudLBM.swap);
 				}
 				else if (m_data->HudLBM.chosse == "Confus")
 				{
@@ -1585,7 +1663,7 @@ void BaseGame::DrawLBM(sf::RenderWindow& _renderWindow)
 
 			m_data->HudLBM.sprite.setScale({ 0.5f , 0.5f });
 			m_data->HudLBM.sprite.setOrigin({ (float)size.x / 2.f, (float)size.y / 2.f });
-			m_data->HudLBM.sprite.setPosition({ SCREEN_WIDTH / 2.f - size.x, SCREEN_HEIGHT / 2.f - size.y});
+			m_data->HudLBM.sprite.setPosition({ size2.x, size2.y});
 
 			if (m_data->HudLBM.name == "Bonus" || m_data->HudLBM.name == "Luck")
 			{
@@ -1594,11 +1672,24 @@ void BaseGame::DrawLBM(sf::RenderWindow& _renderWindow)
 					m_data->HudLBM.rando = randmt::RandomInt(1, 3);
 
 					m_data->HudLBM.text.setString("Avance de " + std::to_string(m_data->HudLBM.rando) + " Case ");
+
+					sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
+
+					m_data->HudLBM.text.setOrigin({s.width/2,s.height/2});
+
+					m_data->HudLBM.text.setPosition({ size2.x, size2.y });
+
 					m_data->HudLBM.active = true;
 				}
 				else if (m_data->HudLBM.chosse == "Immunite")
 				{
 					m_data->HudLBM.text.setString("Imuniser au Malus Pendant 2 Tour");
+
+					sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
+
+					m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
+
+					m_data->HudLBM.text.setPosition({ size2.x, size2.y });
 
 					m_data->HudLBM.active = true;
 				}
@@ -1611,6 +1702,12 @@ void BaseGame::DrawLBM(sf::RenderWindow& _renderWindow)
 					}
 
 					m_data->HudLBM.text.setString("Swap de Place avec le Joueur " + std::to_string(m_data->HudLBM.swap));
+
+					sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
+
+					m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
+
+					m_data->HudLBM.text.setPosition({ size2.x, size2.y });
 
 					m_data->HudLBM.active = true;
 				}
@@ -1623,11 +1720,23 @@ void BaseGame::DrawLBM(sf::RenderWindow& _renderWindow)
 
 					m_data->HudLBM.text.setString("Recule de " + std::to_string(m_data->HudLBM.rando) + " Case ");
 
+					sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
+
+					m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
+
+					m_data->HudLBM.text.setPosition({ size2.x, size2.y });
+
 					m_data->HudLBM.active = true;
 				}
 				else if (m_data->HudLBM.chosse == "Infection")
 				{
 					m_data->HudLBM.text.setString("Infecte pas de Bonus pendans 2 Tours ");
+
+					sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
+
+					m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
+
+					m_data->HudLBM.text.setPosition({ size2.x, size2.y });
 
 					m_data->HudLBM.active = true;
 				}
@@ -1635,6 +1744,12 @@ void BaseGame::DrawLBM(sf::RenderWindow& _renderWindow)
 				{
 
 					m_data->HudLBM.text.setString("Passe son Tour au prochains Tour");
+
+					sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
+
+					m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
+
+					m_data->HudLBM.text.setPosition({ size2.x, size2.y });
 
 					m_data->HudLBM.active = true;
 				}
@@ -1648,12 +1763,24 @@ void BaseGame::DrawLBM(sf::RenderWindow& _renderWindow)
 
 					m_data->HudLBM.text.setString("Swap de Place avec le Joueur " + std::to_string(m_data->HudLBM.swap));
 
+					sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
+
+					m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
+
+					m_data->HudLBM.text.setPosition({ size2.x, size2.y });
+
 					m_data->HudLBM.active = true;
 				}
 				else if (m_data->HudLBM.chosse == "Confus")
 				{
 
-					m_data->HudLBM.text.setString("Confus le Prochain Tour votre lance de Dee vous fait recule");
+					m_data->HudLBM.text.setString("Confus le Prochain Tour votre lance de Dée vous fait reculer");
+
+					sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
+
+					m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
+
+					m_data->HudLBM.text.setPosition({ size2.x, size2.y });
 
 					m_data->HudLBM.active = true;
 				}
@@ -1661,9 +1788,17 @@ void BaseGame::DrawLBM(sf::RenderWindow& _renderWindow)
 				{
 					m_data->HudLBM.text.setString("Confus Evite vous avez de la chance");
 
+					sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
+
+					m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
+
+					m_data->HudLBM.text.setPosition({ size2.x, size2.y });
+
 					m_data->HudLBM.active = true;
 				}
 			}
+
+			//std::cout << "postion text x : " << m_data->HudLBM.text.getPosition().x << " y : " << m_data->HudLBM.text.getPosition().y << std::endl;
 
 		}
 		_renderWindow.draw(m_data->HudLBM.sprite);
