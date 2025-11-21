@@ -56,32 +56,32 @@
 		{
             "name" : "Bonus",
             "type" : "Texture",
-            "path" : "Assets/Sprites/Board/Card/carte chance.png", 
+            "path" : "Assets/Sprites/Board/Card/carte chance.png"
         },
 		{
             "name" : "BonusFace",
             "type" : "Texture",
-            "path" : "Assets/Sprites/Board/Card/carte face chance.png", 
+            "path" : "Assets/Sprites/Board/Card/carte face chance.png"
         },
 		{
             "name" : "Malus",
             "type" : "Texture",
-            "path" : "Assets/Sprites/Board/Card/carte malchance.png", 
+            "path" : "Assets/Sprites/Board/Card/carte malchance.png"
         },
 		{
             "name" : "MalusFace",
             "type" : "Texture",
-            "path" : "Assets/Sprites/Board/Card/carte face malchance.png", 
+            "path" : "Assets/Sprites/Board/Card/carte face malchance.png"
         },
 		{
             "name" : "Luck",
             "type" : "Texture",
-            "path" : "Assets/Sprites/Board/Card/carte hasard.png", 
+            "path" : "Assets/Sprites/Board/Card/carte hasard.png"
         },
 		{
             "name" : "LuckFace",
             "type" : "Texture",
-            "path" : "Assets/Sprites/Board/Card/carte face hasard.png", 
-        },
+            "path" : "Assets/Sprites/Board/Card/carte face hasard.png"
+        }
     ]
 }   

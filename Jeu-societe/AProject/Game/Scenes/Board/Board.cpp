@@ -15,6 +15,7 @@ void BaseGame::Load(void)
 	m_gameData->m_assetManager->LoadManifest("Manifests/Board.json", "Board");
 
 	m_data->HudLBM.text.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
+	m_data->HudLBM.state = NONELBM;
 
 	m_data->tile.InitTiled("Assets/Map/map.json");
 	m_data->camera.Reset(m_gameData->m_renderWindow->getDefaultView());
@@ -399,6 +400,16 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 	{
 		effect.Draw(_renderWindow);
 	}
+
+	if(m_data->HudLBM.state != NONE)
+	{
+		if (m_data->timeLBM <= TIME_LBM_DISPLAY/2)
+		{
+			m_data->HudLBM.sprite.setTexture(*m_gameData->m_assetManager->GetAsset<sf::Texture>( m_data->HudLBM.name + "Face", AssetManager::AssetType::TEXTURE));
+		}
+		_renderWindow.draw(m_data->HudLBM.sprite);
+		_renderWindow.draw(m_data->HudLBM.text);
+	}
 }
 
 void BaseGame::CaseAction()
@@ -420,7 +431,9 @@ void BaseGame::CaseAction()
 		if (m_data->players[m_data->currentPlayerIndex].state != StatePlayer::INFEC)
 		{
 			std::cout << "Landed on a Bonus case!" << std::endl;
-
+			m_data->HudLBM.name = "Bonus";
+			m_data->HudLBM.state = BONUS;
+			m_data->timeLBM = TIME_LBM_DISPLAY;
 			BonusMalusLuck(false);
 
 		}
@@ -1050,30 +1063,16 @@ void BaseGame::Bonus(int _chance)
 {
 	if (_chance <= 50)
 	{
-		int rando = randmt::RandomInt(1, 3);
-		auto& player = m_data->players[m_data->currentPlayerIndex];
-
-		std::cout << "Avance de : " << rando << "!" << std::endl;
-
-		// Initialiser le mouvement restant pour le déplacement case par case
-		player.pendingMovement = rando;
-
-		// Calculer la première case du déplacement
-		const int posCaseCount = static_cast<int>(m_data->posCase.size());
-		int nextIndex = mathp::ModuloPositiveI(player.currentCaseIndex + 1, posCaseCount);
-
-		SetBoardState(DEPLACEMENT_ACTION, nextIndex);
+		m_data->HudLBM.chosse = "CasePlus";
 	}
 	else if (_chance <= 80)
 	{
-		std::cout << "Imunite au Malus" << std::endl;
-
-		m_data->players[m_data->currentPlayerIndex].state = StatePlayer::IMMUN;
-		SetBoardState(CASE_ACTION_END);
+		m_data->HudLBM.chosse = "Immunite";
 	}
 	else if (_chance <= 100)
 	{
-		SwapPlayers();
+		m_data->HudLBM.chosse = "Swap";
+		//SwapPlayers();
 	}
 }
 
@@ -1102,20 +1101,21 @@ void BaseGame::Malus(int _chance)
 	{
 		if (randmt::Chance(0.5f))
 		{
-			std::cout << "Passe sont tour" << std::endl;
+			std::cout << "Passe son tour" << std::endl;
 			m_data->players[m_data->currentPlayerIndex].state = StatePlayer::CANT_PLAY;
 			SetBoardState(CASE_ACTION_END);
 		}
 		else
 		{
-			std::cout << "Infecter pas de bonus " << std::endl;
+			std::cout << "Infectes pas de bonus " << std::endl;
 			m_data->players[m_data->currentPlayerIndex].state = StatePlayer::INFEC;
 			SetBoardState(CASE_ACTION_END);
 		}
 	}
 	else if (_chance <= 70)
 	{
-		SwapPlayers();
+		m_data->HudLBM.chosse = "Swap";
+		//SwapPlayers();
 	}
 	else if (_chance <= 100)
 	{
@@ -1353,6 +1353,31 @@ void BaseGame::SwapPlayers()
 
 	SetBoardState(CASE_ACTION_END);
 
+}
+
+void BaseGame::CaseAvancePlus()
+{
+	int rando = randmt::RandomInt(1, 3);
+	auto& player = m_data->players[m_data->currentPlayerIndex];
+
+	std::cout << "Avance de : " << rando << "!" << std::endl;
+
+	// Initialiser le mouvement restant pour le déplacement case par case
+	player.pendingMovement = rando;
+
+	// Calculer la première case du déplacement
+	const int posCaseCount = static_cast<int>(m_data->posCase.size());
+	int nextIndex = mathp::ModuloPositiveI(player.currentCaseIndex + 1, posCaseCount);
+
+	SetBoardState(DEPLACEMENT_ACTION, nextIndex);
+}
+
+void BaseGame::ImuniteMalus()
+{
+	std::cout << "Imunite au Malus" << std::endl;
+
+	m_data->players[m_data->currentPlayerIndex].state = StatePlayer::IMMUN;
+	SetBoardState(CASE_ACTION_END);
 }
 
 void BaseGame::CreateSmokeEffectForSwap(Player& _player)

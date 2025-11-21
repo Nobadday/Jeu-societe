@@ -18,6 +18,7 @@
 #include "../../Animation/Graphics/TextureAtlas.hpp"
 
 #define TIME_WIN_DISPLAY 1.0f
+#define TIME_LBM_DISPLAY 4.0f
 #define MAX_TOUR_EFFECT 2
 
 class Effect
@@ -112,7 +113,7 @@ class BaseGame : public SceneBase
 
 		enum LBM
 		{
-			NONE = -1,
+			NONELBM = -1,
 			LUCKY,
 			BONUS,
 			MALUS
@@ -146,6 +147,8 @@ class BaseGame : public SceneBase
 			sf::Text text;
 
 			std::string name;
+			
+			std::string chosse;
 
 			LBM state;
 		};
@@ -178,6 +181,8 @@ class BaseGame : public SceneBase
 
 			std::vector<Effect> effectSwap;
 			std::vector<Effect> effectsMap;
+
+			float timeLBM;
 
 			LuckBonusMalus HudLBM;
 		};
@@ -228,6 +233,10 @@ class BaseGame : public SceneBase
 		void ProcessBridgeRoll();
 
 		void SwapPlayers();
+
+		void CaseAvancePlus();
+
+		void ImuniteMalus();
 
 		void CreateSmokeEffectForSwap(Player& _player);
 
