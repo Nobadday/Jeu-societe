@@ -147,7 +147,7 @@ class BaseGame : public SceneBase
 
 		struct LuckBonusMalus
 		{
-			sf::Sprite sprite;
+			SpriteAnimated sprite;
 
 			sf::Text text;
 
@@ -260,6 +260,8 @@ class BaseGame : public SceneBase
 		void CreateSmokeEffectAnotherPart(sf::Vector2f _posMin, sf::Vector2f _posMax);
 
 		void UpdateLBM(float _dt);
+
+		void LBMDisplayUpdate(float _dt);
 
 		void DrawLBM(sf::RenderWindow& _renderWindow);
 
