@@ -44,8 +44,8 @@
         },
         {
 	        "name" : "iconsChara",
-		    "type" : "Texture Animated",
-		    "path" : "Assets/Sprites/Menu/IconsPersos.anim",
+		    "type" : "Texture Atlas",
+		    "path" : "Assets/Sprites/Menu/CharacterIcons.atlas",
 		    "subType" : 1
         },
         {
@@ -57,7 +57,7 @@
         {
             "name" : "LogoCrea",
             "type" : "Texture",
-            "path" : "Assets/Sprites/Menu/CUTE & CURSED.png",
+            "path" : "Assets/Images/PublisherLogo/LOGO_CREAJEUX_negatif_RVB.png",
             "subType" : 0
         },
         {
@@ -68,12 +68,12 @@
         {
             "name" : "uiSoundON",
             "type" : "Sound Buffer",
-            "path" : "Assets/Audio/Sounds/PlaceHolder.mp3"
+            "path" : "Assets/Audio/Sounds/UI_Clicks1_ON.wav"
         },
         {
             "name" : "uiSoundClick",
             "type" : "Sound Buffer",
-            "path" : "Assets/Audio/Sounds/PlaceHolder.mp3"
+            "path" : "Assets/Audio/Sounds/UI_Clicks1_HELD.wav"
         },
         {
             "name" : "soundTest",

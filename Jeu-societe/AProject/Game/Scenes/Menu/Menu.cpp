@@ -30,17 +30,30 @@ void Menu::LoadUI(void)
 	sf::Vector2u logoGameSize = m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoGame")->getSize();
 	m_data->ui.logoGame.setOrigin(sf::Vector2f( logoGameSize.x / 2, 1));
 	m_data->ui.logoGame.setPosition({ SCREEN_WIDTH / 2, 0 });
+	m_data->ui.logoGame.setScale({ 0.8f,0.8f });
 	//Crea logo
-	//m_data->ui.logoCrea.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoCrea"));
-	//logoGameSize = m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoCrea")->getSize();
-	//m_data->ui.logoCrea.setOrigin(sf::Vector2f(  logoGameSize.x / 2, logoGameSize.y / 2 ));
-	//m_data->ui.logoCrea.setPosition({ SCREEN_WIDTH / 4, SCREEN_HEIGHT / 1.5 });
+	m_data->ui.logoCrea.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoCrea"));
+	logoGameSize = m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoCrea")->getSize();
+	m_data->ui.logoCrea.setOrigin(sf::Vector2f( 1, logoGameSize.y / 2 ));
+	m_data->ui.logoCrea.setPosition({ 10, SCREEN_HEIGHT / 1.5 });
+	m_data->ui.logoCrea.setScale({ 0.3f,0.3f });
+
+	//Icons chara
+	//m_data->ui.iconsChara.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("iconsChara"));
+	//m_data->ui.iconsChara.setOrigin({ 0.5f,0.5f });
+	//m_data->ui.iconsChara.setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 });
+	//m_data->ui.iconsChara.SetAnimation("CHARACTER_1_1");
+
+	m_data->ui.iconsCharaAtlas.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAtlas>("iconsChara"));
+	m_data->ui.iconsCharaAtlas.setOrigin({ 0.5f,0.5f });
+	m_data->ui.iconsCharaAtlas.setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 });
+	m_data->ui.iconsCharaAtlas.SetTextureFrame("CHARACTER_1_10");
 
 
 
 	sf::FloatRect buttonRect = m_data->ui.buttonMap["playBtn"].getLocalBounds();
 	m_data->ui.buttonMap["playBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 });
-	m_data->ui.buttonMap["settingsBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + buttonRect.height});
+	m_data->ui.buttonMap["settingsBtn"]. setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + buttonRect.height});
 	m_data->ui.buttonMap["leaveBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 2 * buttonRect.height });
 	m_data->ui.buttonMap["moinsBtn"].setPosition({ SCREEN_WIDTH / 2 - 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2 });
 	m_data->ui.buttonMap["plusBtn"].setPosition({ SCREEN_WIDTH / 2 + 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2 });
@@ -60,10 +73,6 @@ void Menu::LoadUI(void)
 	//This font sucks bro
 	m_data->ui.playerCount.setOrigin({0.6f,0.8f});
 	m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
-
-	//m_data->ui.iconsChara.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("iconsChara"));
-	//m_data->ui.iconsChara.setPosition({ SCREEN_WIDTH / 2 , SCREEN_HEIGHT / 2 });
-	//m_data->ui.iconsChara.setOrigin({ 0.5f,0.5f });
 }
 void Menu::Unload(void)
 {
@@ -223,7 +232,7 @@ void Menu::DrawUI(sf::RenderWindow& _renderWindow)
 			_renderWindow.draw(m_data->ui.buttonMap["settingsBtn"]);
 			_renderWindow.draw(m_data->ui.buttonMap["leaveBtn"]);
 			_renderWindow.draw(m_data->ui.logoGame);
-			//_renderWindow.draw(m_data->ui.logoCrea);
+			_renderWindow.draw(m_data->ui.logoCrea);
 
 			if (m_data->ui.buttonMap["leaveBtn"].IsClicked(mousePos.x, mousePos.y))
 			{
@@ -244,12 +253,7 @@ void Menu::DrawUI(sf::RenderWindow& _renderWindow)
 			break;
 		case PLAYER_SELECTION:
 
-			_renderWindow.draw(m_data->ui.iconsChara);
-
-
-
-
-
+			_renderWindow.draw(m_data->ui.iconsCharaAtlas);
 			break;
 	}
 }
@@ -257,6 +261,9 @@ void Menu::DrawUI(sf::RenderWindow& _renderWindow)
 void Menu::ChangeSelection(int _value)
 {
 	sf::Vector2f mouseNewPos;
+
+	m_data->audio->PlaySound("uiSoundOn");
+
 
 	switch (m_data->state)
 	{
@@ -338,7 +345,7 @@ void Menu::ChangeSelection(int _value)
 
 void Menu::PressSelection(void)
 {
-	m_data->audio->PlaySound("uiSoundON");
+	m_data->audio->PlaySound("uiSoundClick");
 	switch (m_data->controlerBtn)
 	{
 		case PLAY:
@@ -403,22 +410,3 @@ void Menu::PressSelection(void)
 			break;
 	}
 }
-
-
-
-//
-//
-//{
-//	"name" : "iconsChara",
-//		"type" : "Texture Animated",
-//		"path" : "Assets/Sprites/Menu/IconsPersos.anim",
-//		"subType" : 1
-//},
-
-//
-//{
-//	"name" : "iconsChara",
-//		"type" : "Texture Animated",
-//		"path" : "Assets/Sprites/Menu/IconsPersos.texanim",
-//		"subType" : 0
-//},

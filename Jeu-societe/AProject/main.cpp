@@ -127,8 +127,8 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<Menu>("Menu");
 
 	//_mainData.scenes.SelectScene("Board", true);
-	_mainData.scenes.SelectScene("Menu", true);
-	//_mainData.scenes.SelectScene("RuRoul", true);
+	//_mainData.scenes.SelectScene("Menu", true);
+	 _mainData.scenes.SelectScene("RuRoul", true);
 	//_mainData.scenes.SelectScene("RandCard", true);
 
 	_mainData.clock.restart();

@@ -65,20 +65,20 @@ void AudioEngine::CleanOldSound(void)
 
 
 
-	std::cout << "Sounds debug :" << std::endl;
+	//std::cout << "Sounds debug :" << std::endl;
 	for (int sound = this->m_soundVec.size() - 1; sound >= 0 ; sound--)
 	{
 
 		auto& truesound = this->m_soundVec[sound];
-		std::cout << "Sounds n " << sound << " status : " << truesound.getStatus() <<std::endl;
+		//std::cout << "Sounds n " << sound << " status : " << truesound.getStatus() <<std::endl;
 
 
 
-			//if (truesound.getStatus() == sf::Sound::Status::Stopped)
-			//{
-			//	truesound = this->m_soundVec.back();
-			//	this->m_soundVec.pop_back();
-			//}
+			if (truesound.getStatus() == sf::Sound::Status::Stopped)
+			{
+				truesound = this->m_soundVec.back();
+				this->m_soundVec.pop_back();
+			}
 	}
 
 	//for (auto& sound : this->m_soundVec)

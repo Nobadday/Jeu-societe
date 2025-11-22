@@ -7,6 +7,7 @@
 #include "../../../Animation/Graphics/SpriteAnimated.hpp"
 //#include "../../../Animation/Graphics/TextPlus.hpp"
 #include "../../../Animation/Graphics/TextureAnimated.hpp"
+#include "../../../Animation/Graphics/SpriteAtlas.hpp"
 #include "../../../Ui/MenuSystem.hpp"
 
 class Menu : public SceneBase
@@ -49,6 +50,7 @@ private:
 		sf::Sprite logoGame;
 		sf::Sprite logoCrea;
 		SpriteAnimated iconsChara;
+		SpriteAtlas iconsCharaAtlas;
 		TextPlus playerCount;
 	};
 	struct SceneData
