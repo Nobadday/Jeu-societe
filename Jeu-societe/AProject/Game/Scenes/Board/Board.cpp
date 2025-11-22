@@ -28,6 +28,9 @@ void BaseGame::Load(void)
 	m_data->players.resize(m_gameData->m_playerDataList.size());
 	m_data->state = START;
 
+	m_data->icone.setTexture(*m_gameData->m_assetManager->GetAsset<TextureAnimated>("Icone", AssetManager::AssetType::TEXTURE_ANIMATED));
+	m_data->icone.setOrigin({ 0.5f,1 });
+
 	m_data->timeWin = TIME_WIN_DISPLAY;
 	m_data->timeLBM = TIME_LBM_DISPLAY;
 	// Initialisation des joueurs
@@ -71,6 +74,8 @@ void BaseGame::Load(void)
 		m_data->players[i].v.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
 		m_data->players[i].v.setString("V");
 
+
+		m_data->players[i].posIcone = PosIcone(i);
 
 		sf::FloatRect textRect = m_data->players[i].v.getLocalBounds();
 
@@ -281,7 +286,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 				if (player.state != NONE)
 				{
 					player.tourstate += 1;
-					if (player.tourstate >= MAX_TOUR_EFFECT)
+					if (player.tourstate > MAX_TOUR_EFFECT)
 					{
 						player.tourstate = 0;
 						player.state = StatePlayer::NONE;
@@ -296,7 +301,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 				{
 					player.tourstate = 0;
 					player.state = StatePlayer::NONE;
-					SetBoardState(DEPLACEMENT_ACTION_BACK, nextIndex);
+					SetBoardState(DEPLACEMENT_BACK, nextIndex);
 				}
 			}
 			else
@@ -411,17 +416,17 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 	m_data->tile.DrawMapLayers(_renderWindow, referenceView.getCenter(), layer);
 
 	// Créer un vecteur d'indices pour trier les joueurs par position Y
-	std::vector<size_t> indices(m_data->players.size());
+	std::vector<int> indices(m_data->players.size());
 	std::iota(indices.begin(), indices.end(), 0);
 
 	// Trier les indices par position Y croissante
 	std::sort(indices.begin(), indices.end(),
-		[this](size_t a, size_t b) {
+		[this](int a, int b) {
 			return m_data->players[a].boardPosition.y < m_data->players[b].boardPosition.y;
 		});
 
 	// Affichage des joueurs dans l'ordre trié
-	for (size_t idx : indices)
+	for (int idx : indices)
 	{
 		m_data->players[idx].sprite.setPosition(m_data->players[idx].boardPosition);
 		_renderWindow.draw(m_data->players[idx].sprite);
@@ -443,6 +448,10 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 
 	DrawLBM(_renderWindow);
 
+	for (int idx : indices)
+	{
+		DrawIconePlayer(_renderWindow, idx);
+	}
 }
 
 void BaseGame::CaseAction()
@@ -456,52 +465,71 @@ void BaseGame::CaseAction()
 		return;
 	}
 
+	if (caseType == "Bonus" and m_data->players[m_data->currentPlayerIndex].state == StatePlayer::INFEC)
+	{
+		if (m_data->HudLBM.state == NONELBM)
+		{
+			SetBoardState(PLAY);
+			return;
+		}
+	}
+	if (caseType == "Malus" and m_data->players[m_data->currentPlayerIndex].state == StatePlayer::IMMUN)
+	{
+		if (m_data->HudLBM.state == NONELBM)
+		{
+			SetBoardState(PLAY);
+			return;
+		}
+	}
+
 	sf::Vector2f size2 = m_gameData->m_renderWindow->getView().getCenter();
+
 
 	switch (hash(caseType.c_str()))
 	{
 	case hash("Bonus"):
+	{
 
-		if (m_data->players[m_data->currentPlayerIndex].state != StatePlayer::INFEC)
-		{
-			std::cout << "Landed on a Bonus case!" << std::endl;
-			m_data->HudLBM.name = "Bonus";
-			m_data->HudLBM.state = BONUS;
-			m_data->HudLBM.sprite.SetAnimation(m_data->HudLBM.name);
-			sf::Vector2u size = m_data->HudLBM.sprite.getTexture()->getSize();
 
-			m_data->HudLBM.sprite.setScale({ 0.5f , 0.5f });
-			m_data->HudLBM.sprite.setOrigin({ 0.5,0.5 });
-			m_data->HudLBM.sprite.setPosition({ size2.x   ,  size2.y });
-			m_data->timeLBM = TIME_LBM_DISPLAY;
-			BonusMalusLuck(false);
+		std::cout << "Landed on a Bonus case!" << std::endl;
+		m_data->HudLBM.name = "Bonus";
+		m_data->HudLBM.state = BONUS;
+		m_data->HudLBM.sprite.SetAnimation(m_data->HudLBM.name);
+		sf::Vector2u size = m_data->HudLBM.sprite.getTexture()->getSize();
 
-		}
+		m_data->HudLBM.sprite.setScale({ 0.5f , 0.5f });
+		m_data->HudLBM.sprite.setOrigin({ 0.5,0.5 });
+		m_data->HudLBM.sprite.setPosition({ size2.x   ,  size2.y });
+		m_data->timeLBM = TIME_LBM_DISPLAY;
+		BonusMalusLuck(false);
+	}
 
-		break;
+
+	break;
 
 	case hash("Malus"):
-
-		if (m_data->players[m_data->currentPlayerIndex].state != StatePlayer::IMMUN)
-		{
-			std::cout << "Landed on a Malus case!" << std::endl;
+	{
 
 
-			m_data->HudLBM.name = "Malus";
-			m_data->HudLBM.state = MALUS;
-			m_data->HudLBM.sprite.SetAnimation(m_data->HudLBM.name);
+		std::cout << "Landed on a Malus case!" << std::endl;
 
-			sf::Vector2u size = m_data->HudLBM.sprite.getTexture()->getSize();
 
-			m_data->HudLBM.sprite.setScale({ 0.5f , 0.5f });
-			m_data->HudLBM.sprite.setOrigin({ 0.5,0.5 });
-			m_data->HudLBM.sprite.setPosition({ size2.x   ,  size2.y });
-			m_data->timeLBM = TIME_LBM_DISPLAY;
+		m_data->HudLBM.name = "Malus";
+		m_data->HudLBM.state = MALUS;
+		m_data->HudLBM.sprite.SetAnimation(m_data->HudLBM.name);
 
-			BonusMalusLuck(true);
-		}
-		break;
+		sf::Vector2u size = m_data->HudLBM.sprite.getTexture()->getSize();
 
+		m_data->HudLBM.sprite.setScale({ 0.5f , 0.5f });
+		m_data->HudLBM.sprite.setOrigin({ 0.5,0.5 });
+		m_data->HudLBM.sprite.setPosition({ size2.x   ,  size2.y });
+		m_data->timeLBM = TIME_LBM_DISPLAY;
+
+		BonusMalusLuck(true);
+
+		
+	}
+	break;
 
 	case hash("Luck"):
 	{
@@ -530,7 +558,7 @@ void BaseGame::CaseAction()
 	{
 		if (m_data->HudLBM.state == NONELBM)
 		{
-			SetBoardState(PLAY, 0);
+			SetBoardState(PLAY);
 		}
 	}
 	break;
@@ -658,7 +686,8 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 		}
 	}
 	break;
-
+	case DEPLACEMENT_BACK:
+		[[fallthrough]];
 	case DEPLACEMENT_ACTION_BACK:
 	{
 		auto& player = m_data->players[m_data->currentPlayerIndex];
@@ -815,6 +844,18 @@ void BaseGame::BoardStateUpdate(float _dt)
 {
 	switch (m_data->state)
 	{
+	case STATE:
+
+		std::cout << m_data->HudLBM.name << std::endl;
+		std::cout << m_data->HudLBM.chosse << std::endl;
+		std::cout << m_data->HudLBM.state << std::endl;
+		std::cout << m_data->HudLBM.active << std::endl;
+		std::cout << m_data->HudLBM.swap << std::endl;
+		std::cout << m_data->HudLBM.rando << std::endl;
+		std::cout << m_data->timeLBM << std::endl;
+
+		std::cout << std::endl;
+		break;
 	case START:
 		SortStart();
 		break;
@@ -837,6 +878,29 @@ void BaseGame::BoardStateUpdate(float _dt)
 			{
 				// Continuer le déplacement vers la prochaine case
 				SetBoardState(DEPLACEMENT);
+			}
+			else
+			{
+				// Déplacement terminé, exécuter l'action de case
+				SetBoardState(CASE_ACTION);
+			}
+		}
+		break;
+	case DEPLACEMENT_BACK:
+		m_data->players[m_data->currentPlayerIndex].sprite.Update(_dt);
+		m_data->players[m_data->currentPlayerIndex].boardPosition = m_data->animator.GetGoTo();
+		if (m_data->animator.IsFinished())
+		{
+			// CORRECTION : Décrémenter le mouvement après avoir atteint la case
+			auto& player = m_data->players[m_data->currentPlayerIndex];
+			player.pendingMovement--;
+
+			std::cout << "Mouvement restant : " << player.pendingMovement << std::endl;
+
+			if (player.pendingMovement > 0)
+			{
+				// Continuer le déplacement vers la prochaine case
+				SetBoardState(DEPLACEMENT_BACK);
 			}
 			else
 			{
@@ -1209,16 +1273,34 @@ void BaseGame::Bonus(int _chance)
 	if (_chance <= 50)
 	{
 		m_data->HudLBM.chosse = "CasePlus";
+		std::cout << m_data->HudLBM.chosse << std::endl;
+		std::cout << m_data->HudLBM.name << std::endl;
+		std::cout << m_data->HudLBM.state << std::endl;
+		std::cout << m_data->HudLBM.active << std::endl;
+		std::cout << m_data->HudLBM.swap << std::endl;
+		std::cout << m_data->HudLBM.rando << std::endl;
 		SetBoardState(STATE);
 	}
 	else if (_chance <= 80)
 	{
 		m_data->HudLBM.chosse = "Immunite";
+		std::cout << m_data->HudLBM.chosse << std::endl;
+		std::cout << m_data->HudLBM.name << std::endl;
+		std::cout << m_data->HudLBM.state << std::endl;
+		std::cout << m_data->HudLBM.active << std::endl;
+		std::cout << m_data->HudLBM.swap << std::endl;
+		std::cout << m_data->HudLBM.rando << std::endl;
 		SetBoardState(STATE);
 	}
 	else if (_chance <= 1000)
 	{
 		m_data->HudLBM.chosse = "Swap";
+		std::cout << m_data->HudLBM.chosse << std::endl;
+		std::cout << m_data->HudLBM.name << std::endl;
+		std::cout << m_data->HudLBM.state << std::endl;
+		std::cout << m_data->HudLBM.active << std::endl;
+		std::cout << m_data->HudLBM.swap << std::endl;
+		std::cout << m_data->HudLBM.rando << std::endl;
 		SetBoardState(STATE);
 	}
 }
@@ -1228,6 +1310,14 @@ void BaseGame::Malus(int _chance)
 	if (_chance <= 35)
 	{
 		m_data->HudLBM.chosse = "CaseMoin";
+
+		std::cout << m_data->HudLBM.chosse << std::endl;
+		std::cout << m_data->HudLBM.name << std::endl;
+		std::cout << m_data->HudLBM.state << std::endl;
+		std::cout << m_data->HudLBM.active << std::endl;
+		std::cout << m_data->HudLBM.swap << std::endl;
+		std::cout << m_data->HudLBM.rando << std::endl;
+
 		SetBoardState(STATE);
 	}
 	else if (_chance <= 60)
@@ -1235,30 +1325,58 @@ void BaseGame::Malus(int _chance)
 		if (randmt::Chance(0.5f))
 		{
 			m_data->HudLBM.chosse = "PaseTour";
+			std::cout << m_data->HudLBM.chosse << std::endl;
+			std::cout << m_data->HudLBM.name << std::endl;
+			std::cout << m_data->HudLBM.state << std::endl;
+			std::cout << m_data->HudLBM.active << std::endl;
+			std::cout << m_data->HudLBM.swap << std::endl;
+			std::cout << m_data->HudLBM.rando << std::endl;
 		}
 		else
 		{
 			m_data->HudLBM.chosse = "Infection";
+			std::cout << m_data->HudLBM.chosse << std::endl;
+			std::cout << m_data->HudLBM.name << std::endl;
+			std::cout << m_data->HudLBM.state << std::endl;
+			std::cout << m_data->HudLBM.active << std::endl;
+			std::cout << m_data->HudLBM.swap << std::endl;
+			std::cout << m_data->HudLBM.rando << std::endl;
 		}
 		SetBoardState(STATE);
 	}
 	else if (_chance <= 70)
 	{
 		m_data->HudLBM.chosse = "Swap";
+		std::cout << m_data->HudLBM.chosse << std::endl;
+		std::cout << m_data->HudLBM.name << std::endl;
+		std::cout << m_data->HudLBM.state << std::endl;
+		std::cout << m_data->HudLBM.active << std::endl;
+		std::cout << m_data->HudLBM.swap << std::endl;
+		std::cout << m_data->HudLBM.rando << std::endl;
 		SetBoardState(STATE);
 	}
 	else if (_chance <= 1000)
 	{
 		if (randmt::Chance(0.75f))
 		{
-			std::cout << "Confus" << std::endl;
 			m_data->players[m_data->currentPlayerIndex].state = StatePlayer::CONFUSED;
 			m_data->HudLBM.chosse = "Confus";
+			std::cout << m_data->HudLBM.chosse << std::endl;
+			std::cout << m_data->HudLBM.name << std::endl;
+			std::cout << m_data->HudLBM.state << std::endl;
+			std::cout << m_data->HudLBM.active << std::endl;
+			std::cout << m_data->HudLBM.swap << std::endl;
+			std::cout << m_data->HudLBM.rando << std::endl;
 		}
 		else
 		{
 			m_data->HudLBM.chosse = "ConfusSkip";
-			std::cout << "Confus evites" << std::endl;
+			std::cout << m_data->HudLBM.chosse << std::endl;
+			std::cout << m_data->HudLBM.name << std::endl;
+			std::cout << m_data->HudLBM.state << std::endl;
+			std::cout << m_data->HudLBM.active << std::endl;
+			std::cout << m_data->HudLBM.swap << std::endl;
+			std::cout << m_data->HudLBM.rando << std::endl;
 		}
 		SetBoardState(STATE);
 	}
@@ -1437,6 +1555,25 @@ void BaseGame::ProcessBridgeRoll()
 
 		m_data->smokeOff = true;
 
+		switch (m_gameData->m_playerDataList[m_data->currentPlayerIndex].GetPlayerSkin())
+		{
+		case PlayerData::CHARACTER_1_1:
+			m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+			break;
+		case PlayerData::CHARACTER_2_1:
+			m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso2-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+			break;
+		case PlayerData::CHARACTER_3_1:
+			m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso3-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+			break;
+		case PlayerData::CHARACTER_4_1:
+			m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso4-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+			break;
+		default:
+			m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-1", AssetManager::AssetType::TEXTURE_ANIMATED);
+			break;
+		}
+
 		// CORRECTION : Décrémenter le mouvement AVANT de calculer la prochaine case
 		//player.pendingMovement--;
 
@@ -1601,48 +1738,45 @@ void BaseGame::UpdateLBM(float _dt)
 
 		if (m_data->timeLBM <= 0 && m_data->HudLBM.active)
 		{
-			if (m_data->HudLBM.name == "Bonus" || m_data->HudLBM.name == "Luck")
+
+			if (m_data->HudLBM.chosse == "CasePlus")
 			{
-				if (m_data->HudLBM.chosse == "CasePlus")
-				{
-					CaseAvancePlus(m_data->HudLBM.rando);
-				}
-				else if (m_data->HudLBM.chosse == "Immunite")
-				{
-					ImuniteMalus();
-				}
-				else if (m_data->HudLBM.chosse == "Swap")
-				{
-					SwapPlayers(m_data->HudLBM.swap);
-				}
+				CaseAvancePlus(m_data->HudLBM.rando);
 			}
-			else if (m_data->HudLBM.name == "Malus" || m_data->HudLBM.name == "Luck")
+			else if (m_data->HudLBM.chosse == "Immunite")
 			{
-				if (m_data->HudLBM.chosse == "CaseMoin")
-				{
-					CaseMoins(m_data->HudLBM.rando);
-				}
-				else if (m_data->HudLBM.chosse == "Infection")
-				{
-					Infecte();
-				}
-				else if (m_data->HudLBM.chosse == "PaseTour")
-				{
-					PaseTour();
-				}
-				else if (m_data->HudLBM.chosse == "Swap")
-				{
-					SwapPlayers(m_data->HudLBM.swap);
-				}
-				else if (m_data->HudLBM.chosse == "Confus")
-				{
-					SetBoardState(CASE_ACTION_END);
-				}
-				else if (m_data->HudLBM.chosse == "ConfusSkip")
-				{
-					SetBoardState(CASE_ACTION_END);
-				}
+				ImuniteMalus();
 			}
+			else if (m_data->HudLBM.chosse == "Swap")
+			{
+				SwapPlayers(m_data->HudLBM.swap);
+			}
+
+			if (m_data->HudLBM.chosse == "CaseMoin")
+			{
+				CaseMoins(m_data->HudLBM.rando);
+			}
+			else if (m_data->HudLBM.chosse == "Infection")
+			{
+				Infecte();
+			}
+			else if (m_data->HudLBM.chosse == "PaseTour")
+			{
+				PaseTour();
+			}
+			else if (m_data->HudLBM.chosse == "Swap")
+			{
+				SwapPlayers(m_data->HudLBM.swap);
+			}
+			else if (m_data->HudLBM.chosse == "Confus")
+			{
+				SetBoardState(CASE_ACTION_END);
+			}
+			else if (m_data->HudLBM.chosse == "ConfusSkip")
+			{
+				SetBoardState(CASE_ACTION_END);
+			}
+
 			m_data->HudLBM.state = NONELBM;
 			m_data->timeLBM = TIME_LBM_DISPLAY;
 			m_data->HudLBM.active = false;
@@ -1672,144 +1806,138 @@ void BaseGame::LBMDisplayUpdate(float _dt)
 
 		//m_data->HudLBM.sprite.Update(0.016);
 
-		if (m_data->HudLBM.name == "Bonus" || m_data->HudLBM.name == "Luck")
+
+		if (m_data->HudLBM.chosse == "CasePlus")
 		{
-			if (m_data->HudLBM.chosse == "CasePlus")
-			{
-				m_data->HudLBM.rando = randmt::RandomInt(1, 3);
+			m_data->HudLBM.rando = randmt::RandomInt(1, 3);
 
-				m_data->HudLBM.text.setString("Avance de " + std::to_string(m_data->HudLBM.rando) + " Case ");
+			m_data->HudLBM.text.setString("Avance de " + std::to_string(m_data->HudLBM.rando) + " Case ");
 
-				sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
+			sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
 
-				m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
+			m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
 
-				m_data->HudLBM.text.setPosition({ size2.x, size2.y });
+			m_data->HudLBM.text.setPosition({ size2.x, size2.y });
 
-				m_data->HudLBM.active = true;
-			}
-			else if (m_data->HudLBM.chosse == "Immunite")
-			{
-				m_data->HudLBM.text.setString("Imuniser au Malus Pendant 2 Tour");
+			m_data->HudLBM.active = true;
+		}
+		else if (m_data->HudLBM.chosse == "Immunite")
+		{
+			m_data->HudLBM.text.setString("Imuniser au Malus Pendant 2 Tour");
 
-				sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
+			sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
 
-				m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
+			m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
 
-				m_data->HudLBM.text.setPosition({ size2.x, size2.y });
+			m_data->HudLBM.text.setPosition({ size2.x, size2.y });
 
-				m_data->HudLBM.active = true;
-			}
-			else if (m_data->HudLBM.chosse == "Swap")
+			m_data->HudLBM.active = true;
+		}
+		else if (m_data->HudLBM.chosse == "Swap")
+		{
+			m_data->HudLBM.swap = randmt::RandomInt(0, (int)m_data->players.size() - 1);
+			while (m_data->HudLBM.swap == m_data->currentPlayerIndex)
 			{
 				m_data->HudLBM.swap = randmt::RandomInt(0, (int)m_data->players.size() - 1);
-				while (m_data->HudLBM.swap == m_data->currentPlayerIndex)
-				{
-					m_data->HudLBM.swap = randmt::RandomInt(0, (int)m_data->players.size() - 1);
-				}
-
-				m_data->HudLBM.text.setString("Swap de Place avec le Joueur " + std::to_string(m_data->HudLBM.swap));
-
-				sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
-
-				m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
-
-				m_data->HudLBM.text.setPosition({ size2.x, size2.y });
-
-				m_data->HudLBM.active = true;
 			}
+
+			m_data->HudLBM.text.setString("Swap de Place avec le Joueur " + std::to_string(m_data->HudLBM.swap));
+
+			sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
+
+			m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
+
+			m_data->HudLBM.text.setPosition({ size2.x, size2.y });
+
+			m_data->HudLBM.active = true;
 		}
-		else if (m_data->HudLBM.name == "Malus" || m_data->HudLBM.name == "Luck")
+
+		if (m_data->HudLBM.chosse == "CaseMoin")
 		{
-			if (m_data->HudLBM.chosse == "CaseMoin")
-			{
-				m_data->HudLBM.rando = randmt::RandomInt(1, 3);
+			m_data->HudLBM.rando = randmt::RandomInt(1, 3);
 
-				m_data->HudLBM.text.setString("Recule de " + std::to_string(m_data->HudLBM.rando) + " Case ");
+			m_data->HudLBM.text.setString("Recule de " + std::to_string(m_data->HudLBM.rando) + " Case ");
 
-				sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
+			sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
 
-				m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
+			m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
 
-				m_data->HudLBM.text.setPosition({ size2.x, size2.y });
+			m_data->HudLBM.text.setPosition({ size2.x, size2.y });
 
-				m_data->HudLBM.active = true;
-			}
-			else if (m_data->HudLBM.chosse == "Infection")
-			{
-				m_data->HudLBM.text.setString("Infecte pas de Bonus pendans 2 Tours ");
+			m_data->HudLBM.active = true;
+		}
+		else if (m_data->HudLBM.chosse == "Infection")
+		{
+			m_data->HudLBM.text.setString("Infecte pas de Bonus pendans 2 Tours ");
 
-				sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
+			sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
 
-				m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
+			m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
 
-				m_data->HudLBM.text.setPosition({ size2.x, size2.y });
+			m_data->HudLBM.text.setPosition({ size2.x, size2.y });
 
-				m_data->HudLBM.active = true;
-			}
-			else if (m_data->HudLBM.chosse == "PaseTour")
-			{
+			m_data->HudLBM.active = true;
+		}
+		else if (m_data->HudLBM.chosse == "PaseTour")
+		{
 
-				m_data->HudLBM.text.setString("Passe son Tour au prochains Tour");
+			m_data->HudLBM.text.setString("Passe son Tour au prochains Tour");
 
-				sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
+			sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
 
-				m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
+			m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
 
-				m_data->HudLBM.text.setPosition({ size2.x, size2.y });
+			m_data->HudLBM.text.setPosition({ size2.x, size2.y });
 
-				m_data->HudLBM.active = true;
-			}
-			else if (m_data->HudLBM.chosse == "Swap")
+			m_data->HudLBM.active = true;
+		}
+		else if (m_data->HudLBM.chosse == "Swap")
+		{
+			m_data->HudLBM.swap = randmt::RandomInt(0, (int)m_data->players.size() - 1);
+			while (m_data->HudLBM.swap == m_data->currentPlayerIndex)
 			{
 				m_data->HudLBM.swap = randmt::RandomInt(0, (int)m_data->players.size() - 1);
-				while (m_data->HudLBM.swap == m_data->currentPlayerIndex)
-				{
-					m_data->HudLBM.swap = randmt::RandomInt(0, (int)m_data->players.size() - 1);
-				}
-
-				m_data->HudLBM.text.setString("Swap de Place avec le Joueur " + std::to_string(m_data->HudLBM.swap));
-
-				sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
-
-				m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
-
-				m_data->HudLBM.text.setPosition({ size2.x, size2.y });
-
-				m_data->HudLBM.active = true;
 			}
-			else if (m_data->HudLBM.chosse == "Confus")
-			{
 
-				m_data->HudLBM.text.setString("Confus le Prochain Tour votre lance de Dée vous fait reculer");
+			m_data->HudLBM.text.setString("Swap de Place avec le Joueur " + std::to_string(m_data->HudLBM.swap));
 
-				sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
+			sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
 
-				m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
+			m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
 
-				m_data->HudLBM.text.setPosition({ size2.x, size2.y });
+			m_data->HudLBM.text.setPosition({ size2.x, size2.y });
 
-				m_data->HudLBM.active = true;
+			m_data->HudLBM.active = true;
+		}
+		else if (m_data->HudLBM.chosse == "Confus")
+		{
+
+			m_data->HudLBM.text.setString("Confus le Prochain Tour votre lance de Dée vous fait reculer");
+
+			sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
+
+			m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
+
+			m_data->HudLBM.text.setPosition({ size2.x, size2.y });
+
+			m_data->HudLBM.active = true;
 
 
-			}
-			else if (m_data->HudLBM.chosse == "ConfusSkip")
-			{
-				m_data->HudLBM.text.setString("Confus Evite vous avez de la chance");
+		}
+		else if (m_data->HudLBM.chosse == "ConfusSkip")
+		{
+			m_data->HudLBM.text.setString("Confus Evite vous avez de la chance");
 
-				sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
+			sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
 
-				m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
+			m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
 
-				m_data->HudLBM.text.setPosition({ size2.x, size2.y });
+			m_data->HudLBM.text.setPosition({ size2.x, size2.y });
 
-				m_data->HudLBM.active = true;
-			}
+			m_data->HudLBM.active = true;
 		}
 
-		std::cout << "postion sprite x : " << m_data->HudLBM.sprite.getPosition().x << " y : " << m_data->HudLBM.sprite.getPosition().y << std::endl;
-		std::cout << "postion mid x : " << size2.x << " y : " << size2.y << std::endl;
-
+		m_data->HudLBM.active = true;
 	}
 }
 
@@ -1820,4 +1948,68 @@ void BaseGame::DrawLBM(sf::RenderWindow& _renderWindow)
 		_renderWindow.draw(m_data->HudLBM.sprite);
 		_renderWindow.draw(m_data->HudLBM.text);
 	}
+}
+
+void BaseGame::DrawIconePlayer(sf::RenderWindow& _renderWindow, int _i)
+{
+	sf::Vector2f size2 = m_gameData->m_renderWindow->getView().getCenter();
+	switch (m_data->players[_i].posIcone)
+	{
+	case UP_LEFT:
+		m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.70f });
+		break;
+	case UP_RIGHT:
+		m_data->icone.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f , size2.y - SCREEN_HEIGHT / 2 + 305.f * 0.70f });
+		break;
+	case DOWN_LEFT:
+		m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2 + 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 10 });
+		break;
+	case DONW_RIGHT:
+		m_data->icone.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 10 });
+		break;
+	default:
+		break;
+	}
+
+	switch (m_gameData->m_playerDataList[_i].GetPlayerSkin())
+	{
+	case PlayerData::CHARACTER_1_1:
+		m_data->icone.SetAnimation("Perso1-1");
+		break;
+	case PlayerData::CHARACTER_1_2:
+		m_data->icone.SetAnimation("Perso1-2");
+		break;
+	case PlayerData::CHARACTER_2_1:
+		m_data->icone.SetAnimation("Perso2-1");
+		break;
+	case PlayerData::CHARACTER_2_2:
+		m_data->icone.SetAnimation("Perso2-2");
+		break;
+	case PlayerData::CHARACTER_3_1:
+		m_data->icone.SetAnimation("Perso3-1");
+		break;
+	case PlayerData::CHARACTER_3_2:
+		m_data->icone.SetAnimation("Perso3-2");
+		break;
+	case PlayerData::CHARACTER_4_1:
+		m_data->icone.SetAnimation("Perso4-1");
+		break;
+	case PlayerData::CHARACTER_4_2:
+		m_data->icone.SetAnimation("Perso4-2");
+		break;
+	default:
+		break;
+	}
+
+	//m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2 + 50.f + (_i * 60.f) , size2.y - SCREEN_HEIGHT / 2 + 50.f });
+	if (_i != m_data->currentPlayerIndex)
+	{
+		m_data->icone.setColor({ 255,255,255,155 });
+		m_data->icone.setScale({ 0.75f,0.75f });
+	}
+
+	_renderWindow.draw(m_data->icone);
+
+	m_data->icone.setColor({ 255,255,255,255 });
+	m_data->icone.setScale({ 1,1 });
 }

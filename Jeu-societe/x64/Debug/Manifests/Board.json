@@ -58,6 +58,12 @@
             "type" : "Texture Animated",
             "path" : "Assets/Sprites/Board/Card/anim_card.anim",
 			"subType" : 1
+        },
+		{
+            "name" : "Icone",
+            "type" : "Texture Animated",
+            "path" : "Assets/Sprites/Board/Icone/Icone-Perso.anim",
+			"subType" : 1
         }
     ]
 }   

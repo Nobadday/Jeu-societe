@@ -89,6 +89,7 @@ class BaseGame : public SceneBase
 			START,
 			PLAY,
 			DEPLACEMENT,
+			DEPLACEMENT_BACK,
 			DEPLACEMENT_SPLIT,
 			DEPLACEMENT_BRIGE,
 			DEPLACEMENT_ACTION,
@@ -121,6 +122,14 @@ class BaseGame : public SceneBase
 			MALUS
 		};
 
+		enum PosIcone
+		{
+			UP_LEFT,
+			UP_RIGHT,
+			DOWN_LEFT,
+			DONW_RIGHT
+		};
+
 		struct Player
 		{
 			SpriteAnimated sprite;
@@ -139,6 +148,8 @@ class BaseGame : public SceneBase
 			sf::Text v;
 
 			int tourstate;
+
+			PosIcone posIcone;
 
 			int pendingMovement;  // Nouveau : mouvement restant
 			int currentPathId;    // Nouveau : ID du chemin actuel (-1 = chemin principal)
@@ -196,6 +207,8 @@ class BaseGame : public SceneBase
 			float timeLBM;
 
 			LuckBonusMalus HudLBM;
+
+			SpriteAnimated icone;
 		};
 
 		GameData* m_gameData;
@@ -264,6 +277,8 @@ class BaseGame : public SceneBase
 		void LBMDisplayUpdate(float _dt);
 
 		void DrawLBM(sf::RenderWindow& _renderWindow);
+
+		void DrawIconePlayer(sf::RenderWindow& _renderWindow, int _i);
 
 	public:
 		virtual void Load(void);
