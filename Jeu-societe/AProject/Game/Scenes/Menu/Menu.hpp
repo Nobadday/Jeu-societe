@@ -5,9 +5,7 @@
 #include "../../../Scenes/Scene.hpp"
 #include "../../../Common.hpp"
 #include "../../../Animation/Graphics/SpriteAnimated.hpp"
-//#include "../../../Animation/Graphics/TextPlus.hpp"
 #include "../../../Animation/Graphics/TextureAnimated.hpp"
-#include "../../../Animation/Graphics/SpriteAtlas.hpp"
 #include "../../../Ui/MenuSystem.hpp"
 
 class Menu : public SceneBase
@@ -19,7 +17,7 @@ private:
 		OPTIONS,
 		CREDITS,
 		PLAYER_NB_SELECTION,
-		PLAYER_SELECTION
+		PLAYER_SELECTION,
 	};
 	enum ControlerCurrentButton
 	{
@@ -50,27 +48,25 @@ private:
 		sf::Sprite logoGame;
 		sf::Sprite logoCrea;
 		SpriteAnimated iconsChara;
-		SpriteAtlas iconsCharaAtlas;
+		std::vector<std::string> charaAvaible;
 		TextPlus playerCount;
 	};
 	struct SceneData
 	{
 		UI ui;
+
 		MenuState state = MAIN_MENU;
 		ControlerCurrentButton controlerBtn = PLAY;
 		float inputDelay = 0.f;
 		int currentPlayer = 0;
 		int currentCharaSelected = 0;
 
-
 		std::vector<PlayerData> playerDataVec;
 
-		//MenuSystem* menuSystem;
 		GameSettings gameSettings;
 		GameData* gameData;
 		//* of audio because i'm tired of cast void*
 		AudioEngine* audio;
-
 	};
 	SceneData* m_data;
 	void LoadUI(void);
@@ -79,6 +75,8 @@ private:
 	void DrawUI(sf::RenderWindow& _renderWindow);
 	void ChangeSelection(int _value);
 	void PressSelection(void);
+	void PrintIcons(sf::RenderWindow& _renderWindow);
+
 public:
 	virtual void Load(void);
 	virtual void Unload(void);

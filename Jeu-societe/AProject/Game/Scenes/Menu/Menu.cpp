@@ -7,6 +7,8 @@
 //Delay to scroll in buttons with controler
 #define INPUT_DELAY 0.5f
 
+
+
 void Menu::Load(void)
 {
 	m_data = new SceneData;
@@ -39,17 +41,14 @@ void Menu::LoadUI(void)
 	m_data->ui.logoCrea.setScale({ 0.3f,0.3f });
 
 	//Icons chara
-	//m_data->ui.iconsChara.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("iconsChara"));
-	//m_data->ui.iconsChara.setOrigin({ 0.5f,0.5f });
-	//m_data->ui.iconsChara.setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 });
-	//m_data->ui.iconsChara.SetAnimation("CHARACTER_1_1");
+	m_data->ui.charaAvaible.push_back("Perso1-1");
+	m_data->ui.charaAvaible.push_back("Perso2-1");
+	m_data->ui.charaAvaible.push_back("Perso3-1");
+	m_data->ui.charaAvaible.push_back("Perso4-1");
 
-	m_data->ui.iconsCharaAtlas.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAtlas>("iconsChara"));
-	m_data->ui.iconsCharaAtlas.setOrigin({ 0.5f,0.5f });
-	m_data->ui.iconsCharaAtlas.setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 });
-	m_data->ui.iconsCharaAtlas.SetTextureFrame("CHARACTER_1_10");
-
-
+	m_data->ui.iconsChara.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Icone", AssetManager::AssetType::TEXTURE_ANIMATED));
+	m_data->ui.iconsChara.SetAnimation("Perso1-1");
+	m_data->ui.iconsChara.setOrigin({ 0.5f,0.5f });
 
 	sf::FloatRect buttonRect = m_data->ui.buttonMap["playBtn"].getLocalBounds();
 	m_data->ui.buttonMap["playBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 });
@@ -90,7 +89,11 @@ void Menu::PollEvent(sf::Event& _event)
 		//If we press Enter, it's like press button on controler
 		//Unusefull if we play only on controler
 		case sf::Event::KeyPressed:
-			if (_event.key.code != sf::Keyboard::Enter)
+			if (_event.key.code == sf::Keyboard::Escape)
+			{
+				m_data->gameData->m_renderWindow->close();
+			}
+			else if (_event.key.code != sf::Keyboard::Enter)
 			{
 				break;
 			}
@@ -99,9 +102,9 @@ void Menu::PollEvent(sf::Event& _event)
 			m_data->audio->PlaySound("uiSoundClick");
 			PressSelection();
 			break;
+
 		case sf::Event::JoystickMoved:
 
-			m_data->audio->PlaySound("uiSoundON");
 			//X Y joystick gauche
 			//U V joystick droite
 			//Z R pression des gachettes
@@ -125,8 +128,6 @@ void Menu::PollEvent(sf::Event& _event)
 							ChangeSelection(-1);
 							m_data->inputDelay = 0.f;
 						}
-
-
 						break;
 
 					default:
@@ -163,8 +164,10 @@ void Menu::ButtonsPollEvent(sf::Event& _event)
 void Menu::Update(float _deltaTime)
 {
 	ButtonsUpdate(_deltaTime);
-	 
-	//Update timer for 
+	
+	//std::cout << "current chara = " << m_data->currentCharaSelected << std::endl;
+	std::cout << "current state = " << m_data->state << std::endl;
+	//Update timer for delay between input
 	m_data->inputDelay += _deltaTime;
 }
 void Menu::ButtonsUpdate(float _dt)
@@ -253,7 +256,8 @@ void Menu::DrawUI(sf::RenderWindow& _renderWindow)
 			break;
 		case PLAYER_SELECTION:
 
-			_renderWindow.draw(m_data->ui.iconsCharaAtlas);
+			PrintIcons(_renderWindow);
+
 			break;
 	}
 }
@@ -262,7 +266,7 @@ void Menu::ChangeSelection(int _value)
 {
 	sf::Vector2f mouseNewPos;
 
-	m_data->audio->PlaySound("uiSoundOn");
+	m_data->audio->PlaySound("uiSoundON");
 
 
 	switch (m_data->state)
@@ -337,46 +341,65 @@ void Menu::ChangeSelection(int _value)
 				}
 			}
 			break;
+
+		case PLAYER_SELECTION:
+			
+			if ((m_data->currentCharaSelected + _value) > m_data->ui.charaAvaible.size()-1)
+			{
+				m_data->currentCharaSelected = 0;
+				//mouseNewPos = m_data->ui.buttonMap["moinsBtn"].getPosition();
+			}
+			else if ((m_data->controlerBtn + _value) < 0)
+			{
+				m_data->currentCharaSelected = m_data->ui.charaAvaible.size() - 1;
+				//mouseNewPos = m_data->ui.buttonMap["plusBtn"].getPosition();
+			}
+			else
+			{
+				m_data->currentCharaSelected += _value;
+			}
+			break;
 	}
 	//Set ON new button
-	std::cout << "mouse x = " << mouseNewPos.x << " y = " << mouseNewPos.y << std::endl;
-	sf::Mouse::setPosition(sf::Vector2i(mouseNewPos));
+	//std::cout << "mouse x = " << mouseNewPos.x << " y = " << mouseNewPos.y << std::endl;
+	sf::Mouse::setPosition(sf::Vector2i(mouseNewPos), *m_data->gameData->m_renderWindow);
 }
 
-void Menu::PressSelection(void)
+void Menu::PressSelection(void)  
 {
 	m_data->audio->PlaySound("uiSoundClick");
 	switch (m_data->controlerBtn)
 	{
 		case PLAY:
-			m_data->state = (MenuState)(m_data->state + 1);
+			//m_data->state = (MenuState)(m_data->state + 1);
 
 			switch (m_data->state)
 			{
 			case MAIN_MENU:
 
-				m_data->state = PLAYER_NB_SELECTION;
+					m_data->state = PLAYER_NB_SELECTION;
+					m_data->controlerBtn = PLAY_SELECTION;
+					m_data->ui.buttonMap["playBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.5 });
+					break;
 
+				case PLAYER_NB_SELECTION:
 
-				break;
-			case PLAYER_NB_SELECTION:
-
-				break;
-			case PLAYER_SELECTION:
-
-				for (int i = 0; i < m_data->playerDataVec.size(); i++)
-				{
-					m_data->gameData->m_playerDataList.push_back(m_data->playerDataVec[i]);
-				}
-				SceneBase::ChangeScene("Board");
-				break;
+					break;
+				case PLAYER_SELECTION:
 
 
 
+
+
+
+					//for (int i = 0; i < m_data->playerDataVec.size(); i++)
+					//{
+					//	m_data->gameData->m_playerDataList.push_back(m_data->playerDataVec[i]);
+					//}
+					//SceneBase::ChangeScene("Board");
+					break;
 			}
 
-			m_data->state = PLAYER_NB_SELECTION;
-			m_data->ui.buttonMap["playBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.5 });
 			break;
 
 		case SETTINGS:
@@ -384,7 +407,7 @@ void Menu::PressSelection(void)
 			break;
 
 		case LEAVE:
-			//Later
+			m_data->gameData->m_renderWindow->close();
 			break;
 
 		case LESS:
@@ -398,7 +421,7 @@ void Menu::PressSelection(void)
 		case PLAY_SELECTION:
 		{
 			m_data->state = PLAYER_SELECTION;
-
+			m_data->controlerBtn = PLAY;
 			break;
 		}		
 		case MORE:
@@ -409,4 +432,132 @@ void Menu::PressSelection(void)
 			}
 			break;
 	}
+}
+
+void Menu::PrintIcons(sf::RenderWindow& _renderWindow)
+{
+	sf::Color tempColor = m_data->ui.iconsChara.getColor();
+	sf::Vector2f iconPos[] =
+	{
+		{ SCREEN_WIDTH / 2 - SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2 },
+		{SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 },
+		{SCREEN_WIDTH / 2 + SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2 }
+	};
+
+	//Only one character available
+	if (m_data->ui.charaAvaible.size() == 1)
+	{
+		//Center
+		m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[0]);
+		m_data->ui.iconsChara.setPosition(iconPos[1]);
+		_renderWindow.draw(m_data->ui.iconsChara);
+	}
+	//2 characters available : one in center, one on left or right
+	else if(m_data->ui.charaAvaible.size() == 2)
+	{	
+		//First chara
+		if (m_data->currentCharaSelected == 0)
+		{
+			//Center
+			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[0]);
+			m_data->ui.iconsChara.setPosition(iconPos[1]);
+			_renderWindow.draw(m_data->ui.iconsChara);
+
+			//Right
+			tempColor.a = 100;
+			m_data->ui.iconsChara.setColor(tempColor);
+			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[1]);
+			m_data->ui.iconsChara.setPosition(iconPos[2]);
+			_renderWindow.draw(m_data->ui.iconsChara);
+		}
+		//End chara
+		else
+		{
+			//Center
+			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[0]);
+			m_data->ui.iconsChara.setPosition(iconPos[1]);
+			_renderWindow.draw(m_data->ui.iconsChara);
+
+			//Left
+			tempColor.a = 100;
+			m_data->ui.iconsChara.setColor(tempColor);
+			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[1]);
+			m_data->ui.iconsChara.setPosition(iconPos[0]);
+			_renderWindow.draw(m_data->ui.iconsChara);
+		}
+	}
+	//Print 3 characters
+	else
+	{
+		//First chara
+		if (m_data->currentCharaSelected == 0)
+		{
+			//Left
+			tempColor.a = 100;
+			m_data->ui.iconsChara.setColor(tempColor);
+			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->ui.charaAvaible.size() - 1]);
+			m_data->ui.iconsChara.setPosition(iconPos[0]);
+			_renderWindow.draw(m_data->ui.iconsChara);
+			//Center
+			tempColor.a = 255;
+			m_data->ui.iconsChara.setColor(tempColor);
+			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected]);
+			m_data->ui.iconsChara.setPosition(iconPos[1]);
+			_renderWindow.draw(m_data->ui.iconsChara);
+			//Right
+			tempColor.a = 100;
+			m_data->ui.iconsChara.setColor(tempColor);
+			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected + 1]);
+			m_data->ui.iconsChara.setPosition(iconPos[2]);
+			_renderWindow.draw(m_data->ui.iconsChara);
+		}
+		//End chara
+		else if (m_data->currentCharaSelected == m_data->ui.charaAvaible.size() - 1)
+		{
+			//Left
+			tempColor.a = 100;
+			m_data->ui.iconsChara.setColor(tempColor);
+			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected - 1]);
+			m_data->ui.iconsChara.setPosition(iconPos[0]);
+			_renderWindow.draw(m_data->ui.iconsChara);
+			//Center
+			tempColor.a = 255;
+			m_data->ui.iconsChara.setColor(tempColor);
+			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected]);
+			m_data->ui.iconsChara.setPosition(iconPos[1]);
+			_renderWindow.draw(m_data->ui.iconsChara);
+			//Right
+			tempColor.a = 100;
+			m_data->ui.iconsChara.setColor(tempColor);
+			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[0]);
+			m_data->ui.iconsChara.setPosition(iconPos[2]);
+			_renderWindow.draw(m_data->ui.iconsChara);
+		}
+		//Normal (3 chara print)
+		else
+		{
+			//Left
+			tempColor.a = 100;
+			m_data->ui.iconsChara.setColor(tempColor);
+			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected - 1]);
+			m_data->ui.iconsChara.setPosition(iconPos[0]);
+			_renderWindow.draw(m_data->ui.iconsChara);
+			//Center
+			tempColor.a = 255;
+			m_data->ui.iconsChara.setColor(tempColor);
+			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected]);
+			m_data->ui.iconsChara.setPosition(iconPos[1]);
+			_renderWindow.draw(m_data->ui.iconsChara);
+			//Right
+			tempColor.a = 100;
+			m_data->ui.iconsChara.setColor(tempColor);
+			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected + 1]);
+			m_data->ui.iconsChara.setPosition(iconPos[2]);
+			_renderWindow.draw(m_data->ui.iconsChara);
+		}
+	}
+
+	//Reset color 
+	tempColor.a = 255;
+	m_data->ui.iconsChara.setColor(tempColor);
 }

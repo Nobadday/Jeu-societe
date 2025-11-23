@@ -3,31 +3,31 @@
         {
             "name" : "playBtn",
             "type" : "Texture Animated",
-            "path" : "Assets/Sprites/Menu/PlayButton.texanim",
+            "path" : "Assets/Sprites/Menu/Buttons/PlayButton.texanim",
             "subType" : 0
         },
                 {
             "name" : "settingsBtn",
             "type" : "Texture Animated",
-            "path" : "Assets/Sprites/Menu/SettingsButton.texanim",
+            "path" : "Assets/Sprites/Menu/Buttons/SettingsButton.texanim",
             "subType" : 0
         },
         {
             "name" : "leaveBtn",
             "type" : "Texture Animated",
-            "path" : "Assets/Sprites/Menu/leave.texanim",
+            "path" : "Assets/Sprites/Menu/Buttons/leave.texanim",
             "subType" : 0
         },
         {
             "name" : "moinsBtn",
             "type" : "Texture Animated",
-            "path" : "Assets/Sprites/Menu/moinsButton.texanim",
+            "path" : "Assets/Sprites/Menu/Buttons/moinsButton.texanim",
             "subType" : 0
         },
         {
             "name" : "plusBtn",
             "type" : "Texture Animated",
-            "path" : "Assets/Sprites/Menu/plusButton.texanim",
+            "path" : "Assets/Sprites/Menu/Buttons/plusButton.texanim",
             "subType" : 0
         },
         {
@@ -43,10 +43,10 @@
             "subType" : 0
         },
         {
-	        "name" : "iconsChara",
-		    "type" : "Texture Atlas",
-		    "path" : "Assets/Sprites/Menu/CharacterIcons.atlas",
-		    "subType" : 1
+            "name" : "Icone",
+            "type" : "Texture Animated",
+            "path" : "Assets/Sprites/Menu/Icone-Perso.anim",
+			"subType" : 1
         },
         {
             "name" : "LogoGame",

@@ -26,12 +26,12 @@ typedef struct MainData
 	sf::Clock clock;
 	SceneHandler scenes;
 
-	RussianRoulette sceneRussianRoulette;
-	RandCard randCard;
+	//RussianRoulette sceneRussianRoulette;
+	//RandCard randCard;
 
-	SceneBase* armWrestlingScene;
-	SceneBase* basketScene;
-	SceneBase* flagGameScene;
+	//SceneBase* armWrestlingScene;
+	//SceneBase* basketScene;
+	//SceneBase* flagGameScene;
 
 	GameData gameData;
 } MainData;
@@ -127,8 +127,8 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<Menu>("Menu");
 
 	//_mainData.scenes.SelectScene("Board", true);
-	//_mainData.scenes.SelectScene("Menu", true);
-	 _mainData.scenes.SelectScene("RuRoul", true);
+	_mainData.scenes.SelectScene("Menu", true);
+	//_mainData.scenes.SelectScene("RuRoul", true);
 	//_mainData.scenes.SelectScene("RandCard", true);
 
 	_mainData.clock.restart();
