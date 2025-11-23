@@ -15,10 +15,7 @@ bool Button::CheckEvent(const sf::Event& _event)
 		case sf::Event::MouseButtonReleased:
 			if (_event.mouseButton.button == sf::Mouse::Left)
 			{
-				if (this->CheckMouseCollision(_event.mouseButton.x, _event.mouseButton.y))
-				{
-					return this->CheckMouseClick(_event.type == sf::Event::MouseButtonReleased);
-				}
+				return this->CheckMouseClick(_event.mouseButton.x, _event.mouseButton.y, _event.type == sf::Event::MouseButtonReleased);
 			}
 			break;
 
@@ -55,7 +52,7 @@ bool Button::CheckMouseCollision(int _x, int _y)
 	return this->getGlobalBounds().contains(_x, _y);
 }
 
-bool Button::CheckMouseClick(bool _isReleased)
+bool Button::CheckMouseClick(int _x, int _y, bool _isReleased)
 {
 	if (!this->m_isClicked)
 	{

@@ -199,6 +199,7 @@
     <ClInclude Include="Scenes\SceneHandler.hpp" />
     <ClInclude Include="Screen.hpp" />
     <ClInclude Include="Ui\Button.hpp" />
+    <ClInclude Include="Ui\MenuSystem.hpp" />
     <ClInclude Include="Utilities\AssetManager.hpp" />
     <ClInclude Include="Utilities\BetterWindow\BetterWindow.hpp" />
     <ClInclude Include="Utilities\Camera\Camera.hpp" />
