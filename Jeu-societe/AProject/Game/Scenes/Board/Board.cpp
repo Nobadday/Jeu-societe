@@ -430,6 +430,16 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 	{
 		m_data->players[idx].sprite.setPosition(m_data->players[idx].boardPosition);
 		_renderWindow.draw(m_data->players[idx].sprite);
+		if (idx == m_data->currentPlayerIndex)
+		{
+			m_data->players[idx].v.setFillColor(sf::Color::Cyan);
+			m_data->players[idx].playeur.setFillColor(sf::Color::Cyan);
+		}
+		if (idx != m_data->currentPlayerIndex)
+		{
+			m_data->players[idx].v.setFillColor(sf::Color::White);
+			m_data->players[idx].playeur.setFillColor(sf::Color::White);
+		}
 		_renderWindow.draw(m_data->players[idx].v);
 		_renderWindow.draw(m_data->players[idx].playeur);
 	}
@@ -846,7 +856,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 	{
 	case STATE:
 
-		std::cout << m_data->HudLBM.name << std::endl;
+		/*std::cout << m_data->HudLBM.name << std::endl;
 		std::cout << m_data->HudLBM.chosse << std::endl;
 		std::cout << m_data->HudLBM.state << std::endl;
 		std::cout << m_data->HudLBM.active << std::endl;
@@ -854,7 +864,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 		std::cout << m_data->HudLBM.rando << std::endl;
 		std::cout << m_data->timeLBM << std::endl;
 
-		std::cout << std::endl;
+		std::cout << std::endl;*/
 		break;
 	case START:
 		SortStart();
@@ -1273,34 +1283,34 @@ void BaseGame::Bonus(int _chance)
 	if (_chance <= 50)
 	{
 		m_data->HudLBM.chosse = "CasePlus";
-		std::cout << m_data->HudLBM.chosse << std::endl;
+		/*std::cout << m_data->HudLBM.chosse << std::endl;
 		std::cout << m_data->HudLBM.name << std::endl;
 		std::cout << m_data->HudLBM.state << std::endl;
 		std::cout << m_data->HudLBM.active << std::endl;
 		std::cout << m_data->HudLBM.swap << std::endl;
-		std::cout << m_data->HudLBM.rando << std::endl;
+		std::cout << m_data->HudLBM.rando << std::endl;*/
 		SetBoardState(STATE);
 	}
 	else if (_chance <= 80)
 	{
 		m_data->HudLBM.chosse = "Immunite";
-		std::cout << m_data->HudLBM.chosse << std::endl;
+		/*std::cout << m_data->HudLBM.chosse << std::endl;
 		std::cout << m_data->HudLBM.name << std::endl;
 		std::cout << m_data->HudLBM.state << std::endl;
 		std::cout << m_data->HudLBM.active << std::endl;
 		std::cout << m_data->HudLBM.swap << std::endl;
-		std::cout << m_data->HudLBM.rando << std::endl;
+		std::cout << m_data->HudLBM.rando << std::endl;*/
 		SetBoardState(STATE);
 	}
 	else if (_chance <= 1000)
 	{
 		m_data->HudLBM.chosse = "Swap";
-		std::cout << m_data->HudLBM.chosse << std::endl;
+		/*std::cout << m_data->HudLBM.chosse << std::endl;
 		std::cout << m_data->HudLBM.name << std::endl;
 		std::cout << m_data->HudLBM.state << std::endl;
 		std::cout << m_data->HudLBM.active << std::endl;
 		std::cout << m_data->HudLBM.swap << std::endl;
-		std::cout << m_data->HudLBM.rando << std::endl;
+		std::cout << m_data->HudLBM.rando << std::endl;*/
 		SetBoardState(STATE);
 	}
 }
@@ -1311,12 +1321,12 @@ void BaseGame::Malus(int _chance)
 	{
 		m_data->HudLBM.chosse = "CaseMoin";
 
-		std::cout << m_data->HudLBM.chosse << std::endl;
+		/*std::cout << m_data->HudLBM.chosse << std::endl;
 		std::cout << m_data->HudLBM.name << std::endl;
 		std::cout << m_data->HudLBM.state << std::endl;
 		std::cout << m_data->HudLBM.active << std::endl;
 		std::cout << m_data->HudLBM.swap << std::endl;
-		std::cout << m_data->HudLBM.rando << std::endl;
+		std::cout << m_data->HudLBM.rando << std::endl;*/
 
 		SetBoardState(STATE);
 	}
@@ -1325,34 +1335,34 @@ void BaseGame::Malus(int _chance)
 		if (randmt::Chance(0.5f))
 		{
 			m_data->HudLBM.chosse = "PaseTour";
-			std::cout << m_data->HudLBM.chosse << std::endl;
+			/*std::cout << m_data->HudLBM.chosse << std::endl;
 			std::cout << m_data->HudLBM.name << std::endl;
 			std::cout << m_data->HudLBM.state << std::endl;
 			std::cout << m_data->HudLBM.active << std::endl;
 			std::cout << m_data->HudLBM.swap << std::endl;
-			std::cout << m_data->HudLBM.rando << std::endl;
+			std::cout << m_data->HudLBM.rando << std::endl;*/
 		}
 		else
 		{
 			m_data->HudLBM.chosse = "Infection";
-			std::cout << m_data->HudLBM.chosse << std::endl;
+			/*std::cout << m_data->HudLBM.chosse << std::endl;
 			std::cout << m_data->HudLBM.name << std::endl;
 			std::cout << m_data->HudLBM.state << std::endl;
 			std::cout << m_data->HudLBM.active << std::endl;
 			std::cout << m_data->HudLBM.swap << std::endl;
-			std::cout << m_data->HudLBM.rando << std::endl;
+			std::cout << m_data->HudLBM.rando << std::endl;*/
 		}
 		SetBoardState(STATE);
 	}
 	else if (_chance <= 70)
 	{
 		m_data->HudLBM.chosse = "Swap";
-		std::cout << m_data->HudLBM.chosse << std::endl;
+		/*std::cout << m_data->HudLBM.chosse << std::endl;
 		std::cout << m_data->HudLBM.name << std::endl;
 		std::cout << m_data->HudLBM.state << std::endl;
 		std::cout << m_data->HudLBM.active << std::endl;
 		std::cout << m_data->HudLBM.swap << std::endl;
-		std::cout << m_data->HudLBM.rando << std::endl;
+		std::cout << m_data->HudLBM.rando << std::endl;*/
 		SetBoardState(STATE);
 	}
 	else if (_chance <= 1000)
@@ -1361,22 +1371,22 @@ void BaseGame::Malus(int _chance)
 		{
 			m_data->players[m_data->currentPlayerIndex].state = StatePlayer::CONFUSED;
 			m_data->HudLBM.chosse = "Confus";
-			std::cout << m_data->HudLBM.chosse << std::endl;
-			std::cout << m_data->HudLBM.name << std::endl;
-			std::cout << m_data->HudLBM.state << std::endl;
-			std::cout << m_data->HudLBM.active << std::endl;
-			std::cout << m_data->HudLBM.swap << std::endl;
-			std::cout << m_data->HudLBM.rando << std::endl;
+			//std::cout << m_data->HudLBM.chosse << std::endl;
+			//std::cout << m_data->HudLBM.name << std::endl;
+			//std::cout << m_data->HudLBM.state << std::endl;
+			//std::cout << m_data->HudLBM.active << std::endl;
+			//std::cout << m_data->HudLBM.swap << std::endl;
+			//std::cout << m_data->HudLBM.rando << std::endl;
 		}
 		else
 		{
 			m_data->HudLBM.chosse = "ConfusSkip";
-			std::cout << m_data->HudLBM.chosse << std::endl;
+/*			std::cout << m_data->HudLBM.chosse << std::endl;
 			std::cout << m_data->HudLBM.name << std::endl;
 			std::cout << m_data->HudLBM.state << std::endl;
 			std::cout << m_data->HudLBM.active << std::endl;
 			std::cout << m_data->HudLBM.swap << std::endl;
-			std::cout << m_data->HudLBM.rando << std::endl;
+			std::cout << m_data->HudLBM.rando << std::endl*/;
 		}
 		SetBoardState(STATE);
 	}
