@@ -6,6 +6,11 @@
             "path": "Assets/Fonts/Platinum Sign.ttf"
         },
         {
+            "name" : "MenuFont",
+            "type" : "Font",
+            "path" : "Assets/Fonts/BootlegTimBurton-Regular.ttf"
+        },
+        {
             "name" : "Damien",
             "type" : "Texture Animated",
             "path" : "Assets/Sprites/RussianRoulette/Damien.texanim", 
@@ -14,14 +19,14 @@
         {
             "name" : "Gun_Mort",
             "type" : "Texture Animated",
-            "path" : "Assets/Sprites/RussianRoulette/gun_annim _mort.anim", 
-            "subType" : 0
+            "path" : "Assets/Sprites/RussianRoulette/gun_mort.anim", 
+            "subType" : 1
         },
         {
             "name" : "Gun_Rien",
             "type" : "Texture Animated",
-            "path" : "Assets/Sprites/RussianRoulette/gun_anim_rien.anim", 
-            "subType" : 0
+            "path" : "Assets/Sprites/RussianRoulette/gun_rien.anim", 
+            "subType" : 1
         }
     ]
 }

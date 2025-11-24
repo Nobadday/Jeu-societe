@@ -10,11 +10,11 @@ void RussianRoulette::Load(void)
 
 	m_data->gameData->m_assetManager->LoadManifest("Manifests/RussianRoulette.json", "RussianRoulette");
 
-	//DEBUG
-	std::string playersNames[4] = { "Yann", "Lorenzo", "Kyllian", "Benoit" };
-	
-	//m_data->gameData->m_gonnaPlayIndex.push_back(0);
-	//m_data->gameData->m_gonnaPlayIndex.push_back(1);
+
+	//DEBUG, one more time
+	m_data->gameData->m_gonnaPlayIndex.push_back(0);
+	m_data->gameData->m_gonnaPlayIndex.push_back(1);
+
 
 	int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size();
 
@@ -22,20 +22,19 @@ void RussianRoulette::Load(void)
 	for (int i = 0; i < nbOfPlayers; ++i)
 	{
 		int playerId = m_data->gameData->m_gonnaPlayIndex.at(i);
-		m_data->players.push_back({ playersNames[i],  (short)playerId, true });
+		m_data->players.push_back({ (short)playerId, true });
 	}
 
 	m_data->currentPlayer = 0;
 
 	m_data->bullet = random::RandomInt(1, 6);
 	
-	m_data->text.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("RRFont"));
-	m_data->text.setCharacterSize(15u);
+	//m_data->text.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("RRFont"));
+	m_data->text.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("MenuFont"));
+	m_data->text.setCharacterSize(40u);
 	m_data->text.setOrigin(0,0);
 
-	//m_data->gunSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Damien"));
 	m_data->gunSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Gun_Rien"));
-	//m_data->gunSprAnim.SetFramerate(1.f);
 
 	m_data->gameState = WAITING;
 }
@@ -49,6 +48,7 @@ void RussianRoulette::Unload(void)
 
 void RussianRoulette::PollEvent(sf::Event& _event)
 {
+
 	int joyId = m_data->gameData->m_playerDataList[m_data->players[m_data->currentPlayer].id].m_joystickId;
 
 	switch (m_data->gameState)
@@ -59,38 +59,24 @@ void RussianRoulette::PollEvent(sf::Event& _event)
 			{
 				//Debug ;)
 				case sf::Event::KeyPressed:
-
-
-					//break;
 				case sf::Event::JoystickButtonPressed:
-
-					//Check for each player, if it's their turn
-					/*for (int i = 0; i < m_data->players.size(); i++)
-					{*/
-					
 
 						if (joyId == _event.joystickButton.joystickId)
 						{
-							//If it's their turn, check for input
-							//if (_event.joystickButton.joystickId == m_data->players[i].id)
-							//{
 								m_data->text.setString("");
 								int randomNb = random::RandomInt(1,6);
 
 								//DEBUG
 								std::cout << "nbRANDOM = " << randomNb << " bullet = " << m_data->bullet << std::endl;
-								std::cout << "player :  = " << m_data->players[m_data->currentPlayer].name << std::endl;
 
 								if (randomNb == m_data->bullet)
 								{
-									//DEBUG
-									std::cout << "player : " << m_data->players[m_data->currentPlayer].name << " killed" << std::endl;
 									m_data->players[m_data->currentPlayer].isAlive = false;
 
 
 									//Launch sound
 									//Set and Launch death animation
-									m_data->gunSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Gun_Mort"));
+									m_data->gunSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Gun_Mort", AssetManager::AssetType::TEXTURE_ANIMATED));
 									m_data->gunSprAnim.SetAnimation("ON");
 								}
 								else
@@ -100,13 +86,11 @@ void RussianRoulette::PollEvent(sf::Event& _event)
 
 									//Launch sound
 									//Set and Launch normal animation
-									m_data->gunSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Gun_Rien"));
+									m_data->gunSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Gun_Rien", AssetManager::AssetType::TEXTURE_ANIMATED));
 									m_data->gunSprAnim.SetAnimation("ON");
 								}
 								m_data->gameState = SPINNING;
-							//}
 						}
-					/*}*/
 					break;
 				default:
 					break;
@@ -144,11 +128,9 @@ void RussianRoulette::Update(float _deltaTime)
 					m_data->gameState = END;
 
 					char buffer[100];
-					std::snprintf(buffer, 100, "PLAYER %s IS DEAD", m_data->players[m_data->currentPlayer].name.c_str());
 					std::cout << buffer << std::endl;
 					m_data->text.setString(buffer);
 
-					std::cout << "Game Over ! Player " << m_data->players[m_data->currentPlayer].name << " is dead !" << std::endl;
 					m_data->deadPlayers.push_back(m_data->players[m_data->currentPlayer]);
 					
 

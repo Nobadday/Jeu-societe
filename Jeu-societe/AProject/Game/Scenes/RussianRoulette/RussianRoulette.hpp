@@ -14,7 +14,6 @@ class RussianRoulette : public SceneBase
 		//DEBUG, REMOVE WHEN PLAYER STRUCT FROM GAMEDATA COMME
 		struct Player
 		{
-			std::string name;
 			short id;
 			bool isAlive = true;
 		};
