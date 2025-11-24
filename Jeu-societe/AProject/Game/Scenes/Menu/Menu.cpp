@@ -100,7 +100,8 @@ void Menu::PollEvent(sf::Event& _event)
 		case sf::Event::JoystickButtonPressed:
 
 			m_data->audio->PlaySound("uiSoundClick");
-			PressSelection();
+			PressSelection(_event.joystickButton.joystickId);
+			//_event.joystick
 			break;
 
 		case sf::Event::JoystickMoved:
@@ -166,7 +167,7 @@ void Menu::Update(float _deltaTime)
 	ButtonsUpdate(_deltaTime);
 	
 	//std::cout << "current chara = " << m_data->currentCharaSelected << std::endl;
-	std::cout << "current state = " << m_data->state << std::endl;
+	//std::cout << "current state = " << m_data->state << std::endl;
 	//Update timer for delay between input
 	m_data->inputDelay += _deltaTime;
 }
@@ -178,44 +179,15 @@ void Menu::ButtonsUpdate(float _dt)
 			m_data->ui.buttonMap["playBtn"].Update(_dt);
 			m_data->ui.buttonMap["settingsBtn"].Update(_dt);
 			m_data->ui.buttonMap["leaveBtn"].Update(_dt);
-	
-			if (m_data->ui.buttonMap["playBtn"].HasBeenClicked())
-			{
-				m_data->controlerBtn = PLAY;
-				PressSelection();
-			}
-			else if (m_data->ui.buttonMap["settingsBtn"].HasBeenClicked())
-			{
-				m_data->controlerBtn = SETTINGS;
-				PressSelection();
-			}
 			break;
 
 		case OPTIONS:
-			PressSelection();
 			break;
 
 		case PLAYER_NB_SELECTION:
 			m_data->ui.buttonMap["playBtn"].Update(_dt);
 			m_data->ui.buttonMap["plusBtn"].Update(_dt);
 			m_data->ui.buttonMap["moinsBtn"].Update(_dt);
-
-
-			if (m_data->ui.buttonMap["plusBtn"].HasBeenClicked())
-			{
-				m_data->controlerBtn = MORE;
-				PressSelection();
-			}
-			else if (m_data->ui.buttonMap["moinsBtn"].HasBeenClicked())
-			{
-				m_data->controlerBtn = LESS;
-				PressSelection();
-			}
-			else if (m_data->ui.buttonMap["playBtn"].HasBeenClicked())
-			{
-				m_data->controlerBtn = PLAY_SELECTION;
-				PressSelection();
-			}
 			break;
 	}
 }
@@ -365,7 +337,7 @@ void Menu::ChangeSelection(int _value)
 	sf::Mouse::setPosition(sf::Vector2i(mouseNewPos), *m_data->gameData->m_renderWindow);
 }
 
-void Menu::PressSelection(void)  
+void Menu::PressSelection(int _id)
 {
 	m_data->audio->PlaySound("uiSoundClick");
 	switch (m_data->controlerBtn)
@@ -375,7 +347,7 @@ void Menu::PressSelection(void)
 
 			switch (m_data->state)
 			{
-			case MAIN_MENU:
+				case MAIN_MENU:
 
 					m_data->state = PLAYER_NB_SELECTION;
 					m_data->controlerBtn = PLAY_SELECTION;
@@ -387,17 +359,20 @@ void Menu::PressSelection(void)
 					break;
 				case PLAYER_SELECTION:
 
+					std::cout << "id = " << _id << " size of datalist = " << m_data->gameData->m_playerDataList.size();
+					if (_id == m_data->currentPlayer)
+					{
+						m_data->gameData->m_playerDataList[_id].SetPlayerSkin((PlayerData::PlayerSkin)m_data->currentCharaSelected);
+					}
 
+					if (_id == m_data->gameData->m_playerDataList.size())
+					{
+						std::cout << "leave\n";
+						//SceneBase::ChangeScene("Board");
+					}
 
-
-
-
-					//for (int i = 0; i < m_data->playerDataVec.size(); i++)
-					//{
-					//	m_data->gameData->m_playerDataList.push_back(m_data->playerDataVec[i]);
-					//}
-					//SceneBase::ChangeScene("Board");
-					break;
+					m_data->currentPlayer++;
+					break;  
 			}
 
 			break;
@@ -420,6 +395,13 @@ void Menu::PressSelection(void)
 
 		case PLAY_SELECTION:
 		{
+			std::cout << "player count : " << m_data->gameSettings.playerCount;
+			for (int i = 0; i < m_data->gameSettings.playerCount; i++)
+			{
+				PlayerData newPlayer;
+				newPlayer.m_joystickId = i;
+				m_data->gameData->m_playerDataList.push_back(newPlayer);
+			}
 			m_data->state = PLAYER_SELECTION;
 			m_data->controlerBtn = PLAY;
 			break;
@@ -433,6 +415,7 @@ void Menu::PressSelection(void)
 			break;
 	}
 }
+
 
 void Menu::PrintIcons(sf::RenderWindow& _renderWindow)
 {
