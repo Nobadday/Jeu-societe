@@ -74,7 +74,7 @@ private:
 	void ButtonsPollEvent(sf::Event& _event);
 	void DrawUI(sf::RenderWindow& _renderWindow);
 	void ChangeSelection(int _value);
-	void PressSelection(void);
+	void PressSelection(int _id);
 	void PrintIcons(sf::RenderWindow& _renderWindow);
 
 public:
