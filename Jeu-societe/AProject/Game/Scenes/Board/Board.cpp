@@ -50,18 +50,6 @@ void BaseGame::Load(void)
 		case PlayerData::CHARACTER_4_1:
 			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso4-1", AssetManager::AssetType::TEXTURE_ANIMATED);
 			break;
-		case PlayerData::CHARACTER_1_2:
-			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-2", AssetManager::AssetType::TEXTURE_ANIMATED);
-			break;
-		case PlayerData::CHARACTER_2_2:
-			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso2-2", AssetManager::AssetType::TEXTURE_ANIMATED);
-			break;
-		case PlayerData::CHARACTER_3_2:
-			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso3-2", AssetManager::AssetType::TEXTURE_ANIMATED);
-			break;
-		case PlayerData::CHARACTER_4_2:
-			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso4-2", AssetManager::AssetType::TEXTURE_ANIMATED);
-			break;
 		default:
 			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-1", AssetManager::AssetType::TEXTURE_ANIMATED);
 			break;
@@ -1135,7 +1123,8 @@ std::string BaseGame::RandomDuel()
 
 	std::cout << "Random minigame selected: " << miniGames[randomIndex] << std::endl;
 
-	return miniGames[randomIndex];
+	return "FlagGame";
+	//return miniGames[randomIndex];
 }
 
 void BaseGame::SortStart()
@@ -1217,7 +1206,8 @@ std::string BaseGame::RandomBattle()
 
 	std::cout << "Random minigame selected: " << miniGames[randomIndex] << std::endl;
 
-	return miniGames[randomIndex];
+	return "FlagGame" ;
+	//return miniGames[randomIndex];
 }
 
 void BaseGame::UpdateCameraToShowAllPlayers()
@@ -1568,18 +1558,23 @@ void BaseGame::ProcessBridgeRoll()
 		switch (m_gameData->m_playerDataList[m_data->currentPlayerIndex].GetPlayerSkin())
 		{
 		case PlayerData::CHARACTER_1_1:
+			m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_1_2);
 			m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-2", AssetManager::AssetType::TEXTURE_ANIMATED);
 			break;
 		case PlayerData::CHARACTER_2_1:
+			m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_2_2);
 			m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso2-2", AssetManager::AssetType::TEXTURE_ANIMATED);
 			break;
 		case PlayerData::CHARACTER_3_1:
+			m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_3_2);
 			m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso3-2", AssetManager::AssetType::TEXTURE_ANIMATED);
 			break;
 		case PlayerData::CHARACTER_4_1:
+			m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_4_2);
 			m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso4-2", AssetManager::AssetType::TEXTURE_ANIMATED);
 			break;
 		default:
+			m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_1_2);
 			m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-1", AssetManager::AssetType::TEXTURE_ANIMATED);
 			break;
 		}
@@ -1635,6 +1630,7 @@ void BaseGame::CaseAvancePlus(int _rando)
 	std::cout << "Avance de : " << _rando << "!" << std::endl;
 
 	// Initialiser le mouvement restant pour le déplacement case par case
+	player.sprite.setScale({ 1.f, 1.f });
 	player.pendingMovement = _rando;
 
 	SetBoardState(DEPLACEMENT_ACTION_2);
@@ -1909,7 +1905,7 @@ void BaseGame::LBMDisplayUpdate(float _dt)
 				m_data->HudLBM.swap = randmt::RandomInt(0, (int)m_data->players.size() - 1);
 			}
 
-			m_data->HudLBM.text.setString("Swap de Place avec le Joueur " + std::to_string(m_data->HudLBM.swap));
+			m_data->HudLBM.text.setString("Swap de Place avec le Joueur " + m_data->players[m_data->HudLBM.swap].playeur.getString());
 
 			sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
 
@@ -1966,16 +1962,44 @@ void BaseGame::DrawIconePlayer(sf::RenderWindow& _renderWindow, int _i)
 	switch (m_data->players[_i].posIcone)
 	{
 	case UP_LEFT:
-		m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.70f });
+		if (_i != m_data->currentPlayerIndex)
+		{
+			m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.55f });
+		}
+		else
+		{
+			m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.70f });
+		}
 		break;
 	case UP_RIGHT:
-		m_data->icone.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f , size2.y - SCREEN_HEIGHT / 2 + 305.f * 0.70f });
+		if (_i != m_data->currentPlayerIndex)
+		{
+			m_data->icone.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f , size2.y - SCREEN_HEIGHT / 2 + 305.f * 0.50f });
+		}
+		else
+		{
+			m_data->icone.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f , size2.y - SCREEN_HEIGHT / 2 + 305.f * 0.70f });
+		}
 		break;
 	case DOWN_LEFT:
-		m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2 + 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 10 });
+		if (_i != m_data->currentPlayerIndex)
+		{
+			m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2 + 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 10 });
+		}
+		else
+		{
+			m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2 + 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 10 });
+		}
 		break;
 	case DONW_RIGHT:
-		m_data->icone.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 10 });
+		if (_i != m_data->currentPlayerIndex)
+		{
+			m_data->icone.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 10 });
+		}
+		else
+		{
+			m_data->icone.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 10 });
+		}
 		break;
 	default:
 		break;
@@ -2011,7 +2035,7 @@ void BaseGame::DrawIconePlayer(sf::RenderWindow& _renderWindow, int _i)
 		break;
 	}
 
-	//m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2 + 50.f + (_i * 60.f) , size2.y - SCREEN_HEIGHT / 2 + 50.f });
+	
 	if (_i != m_data->currentPlayerIndex)
 	{
 		m_data->icone.setColor({ 255,255,255,155 });
