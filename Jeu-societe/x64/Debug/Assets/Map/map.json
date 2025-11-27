@@ -801,6 +801,11 @@
                          "name":"nextPath",
                          "type":"string",
                          "value":"17"
+                        }, 
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"end"
                         }],
                  "rotation":0,
                  "type":"Case",

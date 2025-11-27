@@ -102,6 +102,7 @@ class BaseGame : public SceneBase
 			WIN_DEPLACEMENT,
 			CASE_ACTION_END,
 			WAITING_BRIDGE_ROLL,
+			WAITING_FIN_ROLL,
 			WAITING_PATH_CHOICE
 		};
 
@@ -255,6 +256,8 @@ class BaseGame : public SceneBase
 		void ProcessPathChoice(int choiceIndex);
 
 		void ProcessBridgeRoll();
+
+		void ProcessFinRoll();
 
 		void SwapPlayers(int _swap);
 

@@ -137,7 +137,6 @@ void BaseGame::Unload(void)
 
 void BaseGame::PollEvent(sf::Event& _event)
 {
-
 	if (_event.type == sf::Event::KeyPressed)
 	{
 		if (_event.key.code == sf::Keyboard::R)
@@ -150,6 +149,39 @@ void BaseGame::PollEvent(sf::Event& _event)
 
 			SwapPlayers(swapIndex);
 		}
+	}
+
+	if (m_data->state == WAITING_FIN_ROLL)
+	{
+		bool shouldRoll = false;
+
+		// Gestion joystick
+		if (_event.type == sf::Event::JoystickButtonPressed)
+		{
+			if (m_gameData->m_playerDataList[m_data->currentPlayerIndex].m_joystickId == _event.joystickButton.joystickId)
+			{
+				if (_event.joystickButton.button == 0)
+				{
+					shouldRoll = true;
+				}
+			}
+		}
+
+		// Gestion clavier (DEBUG)
+		if (_event.type == sf::Event::KeyPressed)
+		{
+			if (_event.key.code == sf::Keyboard::Space)
+			{
+				shouldRoll = true;
+			}
+		}
+
+		if (shouldRoll)
+		{
+			ProcessFinRoll();
+		}
+
+		return;
 	}
 
 	// Gestion du lancer de dé pour le pont
@@ -610,6 +642,15 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 			std::cout << "Pont détecté ! Lancez le dé pour traverser..." << std::endl;
 			player.waitingBridgeRoll = true;
 			SetBoardState(WAITING_BRIDGE_ROLL);
+			return;
+		}
+
+		if (caseType == "end" && player.pendingMovement > 0)
+		{
+			player.sprite.SetAnimation("Idle");
+			std::cout << "Ligne d'arrivée détectée ! Lancez le dé pour franchir..." << std::endl;
+			player.waitingBridgeRoll = true;
+			SetBoardState(WAITING_FIN_ROLL);
 			return;
 		}
 
@@ -1606,12 +1647,81 @@ void BaseGame::ProcessBridgeRoll()
 	}
 }
 
+// Ajoutez cette nouvelle fonction ProcessFinRoll après ProcessBridgeRoll :
+void BaseGame::ProcessFinRoll()
+{
+	int diceRoll = randmt::RandomInt(1, 6);
+	auto& player = m_data->players[m_data->currentPlayerIndex];
+
+	std::cout << "Lancer de dé pour la ligne d'arrivée : " << diceRoll << std::endl;
+
+	if (diceRoll > 4)
+	{
+		// Réussite : le joueur a gagné !
+		std::cout << "VICTOIRE ! Le joueur " << m_data->currentPlayerIndex << " a gagné !" << std::endl;
+		player.waitingBridgeRoll = false;
+
+		// Préparer la liste des joueurs triés par position X décroissante
+		std::vector<std::pair<int, float>> playerPositions;
+		for (int i = 0; i < m_data->players.size(); i++)
+		{
+			playerPositions.push_back({ i, m_data->players[i].boardPosition.x });
+		}
+
+		// Trier par position X décroissante (les plus avancés en premier)
+		std::sort(playerPositions.begin(), playerPositions.end(),
+			[](const std::pair<int, float>& a, const std::pair<int, float>& b) {
+				return a.second > b.second;
+			});
+
+		// Remplir m_winIndex avec le gagnant en premier, puis les autres
+		m_gameData->m_winIndex.clear();
+
+		// Le gagnant actuel en premier
+		m_gameData->m_winIndex.push_back(m_data->currentPlayerIndex);
+
+		// Ajouter les autres joueurs triés par position X
+		for (const auto& playerPos : playerPositions)
+		{
+			if (playerPos.first != m_data->currentPlayerIndex)
+			{
+				m_gameData->m_winIndex.push_back(playerPos.first);
+			}
+		}
+
+		// Afficher l'ordre final (debug)
+		std::cout << "Ordre final pour le podium : ";
+		for (int idx : m_gameData->m_winIndex)
+		{
+			std::cout << "P" << idx << " ";
+		}
+		std::cout << std::endl;
+
+		// Transition vers le podium
+		//ChangeScene("Podium", false);
+	}
+	else
+	{
+		// Échec : le joueur reste bloqué et perd son tour
+		std::cout << "Échec ! Vous ne pouvez pas franchir la ligne d'arrivée." << std::endl;
+		player.waitingBridgeRoll = false;
+		player.pendingMovement = 0;
+
+		SetBoardState(CASE_ACTION);
+	}
+}
+
 void BaseGame::SwapPlayers(int _swapIndex)
 {
 	std::cout << "Swap de place avec : Player " << _swapIndex << std::endl;
 
 	auto& player1 = m_data->players[m_data->currentPlayerIndex];
 	auto& player2 = m_data->players[_swapIndex];
+
+	std::string player1Name = player1.playeur.getString();
+	std::string player2Name = player2.playeur.getString();
+
+	std::cout << " swap :" << player1Name << " et " << player2Name << std::endl;
 
 	std::swap(m_data->players[m_data->currentPlayerIndex].currentCaseIndex, m_data->players[_swapIndex].currentCaseIndex);
 	std::swap(m_data->players[m_data->currentPlayerIndex].boardPosition, m_data->players[_swapIndex].boardPosition);
@@ -1756,6 +1866,7 @@ void BaseGame::UpdateLBM(float _dt)
 			else if (m_data->HudLBM.chosse == "Swap")
 			{
 				SwapPlayers(m_data->HudLBM.swap);
+				return;
 			}
 
 			if (m_data->HudLBM.chosse == "CaseMoin")
