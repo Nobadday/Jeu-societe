@@ -1,13 +1,13 @@
-#include "Common.hpp"
+ï»¿#include "Common.hpp"
 
 #include "Game/Scenes/Board/Board.hpp"
 
-// passage de données entre les scènes fait ici 
+// passage de donnÃ©es entre les scÃ¨nes fait ici 
 #include "./Game/scenes/RockPaperScissors/RockPaperScissors.hpp"
 #include "Game/Scenes/ArmWrestling/ArmWrestling.hpp"
 #include "Game/Scenes/Basket/Basket.hpp"
 
-// données du jeu a faire passer entre les scènes ici
+// donnÃ©es du jeu a faire passer entre les scÃ¨nes ici
 #include "./Game/Scenes/RussianRoulette/RussianRoulette.hpp"
 #include "./Game/Scenes/RandCard/RandCard.hpp"
 
@@ -62,7 +62,6 @@ int main(void)
 
 
 	MainDataLoad(mainData);
-
 
 	while (mainData.renderWindow.isOpen())
 	{
