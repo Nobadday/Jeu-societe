@@ -60,7 +60,7 @@ void BaseGame::Load(void)
 		m_data->players[i].sprite.setOrigin({ 0.5f,1.f });
 
 		m_data->players[i].v.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
-		m_data->players[i].v.setString(L"♫");
+		m_data->players[i].v.setString(L"⌂");
 
 
 		m_data->players[i].posIcone = PosIcone(i);
