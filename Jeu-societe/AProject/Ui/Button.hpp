@@ -31,9 +31,10 @@ class Button : public SpriteAnimated
 		bool CheckEvent(const sf::Event& _event);
 
 		
-		bool CheckMouseCollision(const sf::Vector2i& _mousePos);
-		bool CheckMouseCollision(int _x, int _y);
+		bool CheckMouseMove(const sf::Vector2i& _mousePos);
+		bool CheckMouseMove(int _x, int _y);
 		bool CheckMouseClick(int _x, int _y, bool _isReleased);
+
 
 		void SetState(State _state);
 		State GetState(void);
@@ -43,6 +44,11 @@ class Button : public SpriteAnimated
 
 		// Returns true if the button has been clicked and sets the value back to false
 		bool HasBeenClicked(void);
+		
+
+	private:
+		bool IsColliding(int _x, int _y);
+
 };
 	
 

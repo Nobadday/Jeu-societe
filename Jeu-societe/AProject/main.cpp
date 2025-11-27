@@ -1,11 +1,15 @@
 #include "Common.hpp"
-
+#include "./Animation/Graphics.hpp"
+#include "./Ui/Button.hpp"
 
 typedef struct MainData
 {
 	sfMod::RenderWindow renderWindow;
 	sf::Clock clock;
 	SceneHandler scenes;
+
+	TextureAnimated ta;
+	Button btn;
 
 	GameData gameData;
 } MainData;
@@ -59,6 +63,10 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
 	
 
+	_mainData.ta.LoadFromFile("./Assets/ButtonPlaceholder.anim", TextureAnimated::ANIMATION_ANIM);
+	_mainData.btn.setTexture(_mainData.ta);
+	_mainData.btn.setPosition(200.0f, 200.0f);
+
 	_mainData.clock.restart();
 }
 
@@ -69,11 +77,16 @@ void PollEvent(MainData& _mainData)
 
 	while (_mainData.renderWindow.pollEvent(event))
 	{
+		_mainData.btn.CheckEvent(event);
 		switch (event.type)
 		{
 			case sf::Event::Closed:
 				_mainData.renderWindow.close();
 				return;
+				break;
+
+			case sf::Event::KeyPressed:
+				_mainData.btn.Click();
 				break;
 
 			default:
@@ -91,6 +104,12 @@ void Update(MainData& _mainData)
 
 
 	_mainData.scenes.Update(deltaTime);
+
+	_mainData.btn.Update(deltaTime);
+	if (_mainData.btn.HasBeenClicked())
+	{
+		printf("kys%d\n", random::RandomInt(0,69));
+	}
 }
 
 void Draw(MainData& _mainData)
@@ -98,6 +117,8 @@ void Draw(MainData& _mainData)
 	_mainData.renderWindow.clear(sf::Color::Black);
 	
 	_mainData.scenes.Draw(_mainData.renderWindow);
+	
+	_mainData.renderWindow.draw(_mainData.btn);
 
 	_mainData.renderWindow.display();
 }

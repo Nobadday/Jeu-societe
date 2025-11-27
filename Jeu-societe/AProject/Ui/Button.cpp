@@ -20,7 +20,7 @@ bool Button::CheckEvent(const sf::Event& _event)
 			break;
 
 		case sf::Event::MouseMoved:
-			return this->CheckMouseCollision(_event.mouseMove.x, _event.mouseMove.y);
+			return this->CheckMouseMove(_event.mouseMove.x, _event.mouseMove.y);
 			break;
 
 		default:
@@ -42,58 +42,78 @@ bool Button::HasBeenClicked(void)
 	return false;
 }
 
-
-bool Button::CheckMouseCollision(const sf::Vector2i& _mousePos)
+bool Button::IsColliding(int _x, int _y)
 {
-	return this->CheckMouseCollision(_mousePos.x, _mousePos.y);
-}
-bool Button::CheckMouseCollision(int _x, int _y)
-{
-	return this->getGlobalBounds().contains(_x, _y);
+	return this->getGlobalBounds().contains((int)_x, (int)_y);
 }
 
-bool Button::CheckMouseClick(int _x, int _y, bool _isReleased)
+
+bool Button::CheckMouseMove(const sf::Vector2i& _mousePos)
 {
-	if (!this->m_isClicked)
+	return this->CheckMouseMove(_mousePos.x, _mousePos.y);
+}
+bool Button::CheckMouseMove(int _x, int _y)
+{
+	if (this->m_currentState != STATE_PRESSED)
 	{
-		if (_isReleased)
+		if (this->IsColliding(_x, _y))
 		{
-			// Confirmation click
-			if (this->m_currentState == STATE_PRESSED)
-			{
-				this->m_isClicked = true;
-				this->SetState(STATE_IDLE);
-				return true;
-			}
-			// Else : Missclick
+			this->SetState(STATE_ON);
+			return true;
 		}
 		else
 		{
-			// Initiation click
-			if ((this->m_currentState == STATE_IDLE) || (this->m_currentState == STATE_ON))
-			{
-				this->SetState(STATE_PRESSED);
-				return true;
-			}
+			this->SetState(STATE_IDLE);
 		}
 	}
 	return false;
 }
 
+bool Button::CheckMouseClick(int _x, int _y, bool _isReleased)
+{
+	if (_isReleased)
+	{
+		// Confirmation click
+		if (this->m_currentState == STATE_PRESSED)
+		{
+			this->SetState(STATE_IDLE);
+			if (this->IsColliding(_x, _y))
+			{
+				this->m_isClicked = true;
+				return true;
+			}
+			return false;
+		}
+		// Else : Missclick
+	}
+	else
+	{
+		// Initiation click
+		if ((this->m_currentState != STATE_PRESSED) && this->IsColliding(_x, _y))
+		{
+			this->SetState(STATE_PRESSED);
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+
 void Button::SetState(Button::State _state)
 {
-	switch (this->m_currentState =_state)
+	switch (this->m_currentState = _state)
 	{
 		case Button::STATE_IDLE:
-			this->SetAnimation("IDLE");
+			this->SetAnimation("IDLE", false);
 			break;
 
 		case Button::STATE_ON:
-			this->SetAnimation("ON");
+			this->SetAnimation("ON", false);
 			break;
 
 		case Button::STATE_PRESSED:
-			this->SetAnimation("HELD");
+			this->SetAnimation("HELD", false);
 			break;
 
 		default:
@@ -108,6 +128,7 @@ Button::State Button::GetState(void)
 
 void Button::Click(void)
 {
+	this->SetState(STATE_PRESSED);
 	this->m_isClicked = true;
 }
 
