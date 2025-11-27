@@ -1,4 +1,4 @@
-#ifndef _INC_BOARD_HPP
+﻿#ifndef _INC_BOARD_HPP
 #define _INC_BOARD_HPP
 
 #include "../../Common.hpp"
@@ -233,7 +233,7 @@ class BaseGame : public SceneBase
 
 		std::string RandomBattle();
 
-		// Fonctions de gestion de la cam�ra
+		// Fonctions de gestion de la caméra
 		void UpdateCameraToShowAllPlayers();
 		
 		void UpdateCameraFollowPlayer(float _deltaTime);
