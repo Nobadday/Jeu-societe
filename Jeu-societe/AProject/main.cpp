@@ -100,7 +100,7 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
 	_mainData.scenes.AddScene<Podium>("Podium");
 
-	_mainData.scenes.SelectScene("Podium", true);
+	_mainData.scenes.SelectScene("rockPaperSizor", true);
 
 	_mainData.clock.restart();
 }

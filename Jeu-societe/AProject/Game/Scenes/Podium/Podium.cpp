@@ -11,11 +11,12 @@ void Podium::Load()
 	{
 		m_data->gameData->m_gonnaPlayIndex.push_back(0);
 		m_data->gameData->m_gonnaPlayIndex.push_back(1);
+		m_data->gameData->m_gonnaPlayIndex.push_back(2);
+		m_data->gameData->m_gonnaPlayIndex.push_back(3);
 	}
 
 	m_data->playerSpriteArray.resize(m_data->gameData->m_gonnaPlayIndex.size());
 	m_data->playerTextArray.resize(m_data->gameData->m_gonnaPlayIndex.size());
-
 
 	for (short i = 0; i < m_data->gameData->m_gonnaPlayIndex.size(); i++)
 	{
@@ -23,7 +24,14 @@ void Podium::Load()
 		m_data->playerTextArray[i].setOrigin(sf::Vector2f(0.5f, 0.5f));
 		m_data->playerTextArray[i].setFillColor(sf::Color::White);
 
-		m_data->playerTextArray[i].setString("Player " + std::to_string(m_data->gameData->m_gonnaPlayIndex[i] + 1));
+		m_data->playerSpriteArray[i].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAtlas>("CharactersPoses", AssetManager::AssetType::TEXTURE_ATLAS));
+		
+		std::string textureName = m_data->gameData->m_playerDataList[m_data->gameData->m_gonnaPlayIndex[i]].GetTextureName(m_data->gameData->m_playerDataList[m_data->gameData->m_gonnaPlayIndex[i]].m_playerSkin) + "_" + std::to_string(i + 1);
+		std::cout << textureName << std::endl;
+		m_data->playerSpriteArray[i].SetTextureFrame(textureName);
+
+
+		m_data->playerTextArray[i].setString("Player " + std::to_string(m_data->gameData->m_gonnaPlayIndex[i] ));
 		m_data->playerTextArray[i].setPosition({ (float)150 * (i + 1), 100.f });
 
 		m_data->background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground", AssetManager::AssetType::TEXTURE));

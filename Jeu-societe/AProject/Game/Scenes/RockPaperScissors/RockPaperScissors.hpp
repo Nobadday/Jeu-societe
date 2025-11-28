@@ -12,7 +12,7 @@
 
 class RockPaperScissors : public SceneBase
 {
-	private:
+	public:
 	enum RPS_Choice
 	{
 		RPS_NONE = -1,
@@ -21,6 +21,7 @@ class RockPaperScissors : public SceneBase
 		RPS_SCISSORS,
 		RPS_CHOICE_COUNT
 	};
+	private:
 
 	enum State
 	{
@@ -41,7 +42,7 @@ class RockPaperScissors : public SceneBase
 
 
 		RPS_Choice playersChoice[2];
-		SpriteAnimated playerChoiceSprite[2];
+		SpriteAtlas playerChoiceSprite[2];
 		Timer timer;
 
 
@@ -64,7 +65,7 @@ public:
 	virtual void Draw(sf::RenderWindow& _renderWindow);
 
 private:
-	void UpdatePlayerChoiceTexture(void);
+	void ChangePlayersChoiceTexture(void);
 };
 
 

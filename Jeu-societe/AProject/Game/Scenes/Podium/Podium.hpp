@@ -6,6 +6,8 @@
 #include "../../../Scenes/Scene.hpp"
 #include "../../../Ui/MenuSystem.hpp"
 
+
+
  class Podium : public SceneBase
 {
 	private:
@@ -13,8 +15,11 @@
 		{
 			GameData* gameData;
 
-			//std::vector<SpriteAtlas> playerSpriteArray;
+			std::vector<SpriteAtlas> playerSpriteArray;
 			std::vector<TextPlus> playerTextArray;
+
+			std::vector<SpriteAtlas> podiumsSpriteArray;
+
 
 			sf::Sprite background;
 		};
