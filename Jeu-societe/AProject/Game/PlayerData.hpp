@@ -1,6 +1,10 @@
 #ifndef PLAYERDATA_HPP
 #define PLAYERDATA_HPP
 
+#include <string>
+#include <iostream>
+
+
 class PlayerData
 {
 	public:
@@ -14,11 +18,15 @@ class PlayerData
 			CHARACTER_1_2,
 			CHARACTER_2_2,
 			CHARACTER_3_2,
-			CHARACTER_4_2
+			CHARACTER_4_2,
+
+			PLAYERSKINS_COUNT
 		};
 
 		int m_joystickId;
 		PlayerSkin m_playerSkin;
+
+
 
 	public:
 		PlayerData(void);
@@ -29,6 +37,9 @@ class PlayerData
 
 		void SetPlayerSkin(PlayerSkin _skin);
 		PlayerSkin GetPlayerSkin();
+
+		static const std::string& GetTextureName(PlayerData::PlayerSkin _skin);
 	private:
+
 };
 #endif // !PLAYERDATA_HPP

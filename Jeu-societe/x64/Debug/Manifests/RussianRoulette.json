@@ -27,6 +27,27 @@
             "type" : "Texture Animated",
             "path" : "Assets/Sprites/RussianRoulette/gun_rien.anim", 
             "subType" : 1
+        },
+        {
+            "name" : "Icone",
+            "type" : "Texture Animated",
+            "path" : "Assets/Sprites/Menu/Icone-Perso.anim",
+			"subType" : 1
+        },
+        {
+            "name" : "SoundDie",
+            "type" : "Sound Buffer",
+            "path" : "Assets/Audio/Sounds/UI_Clicks1_ON.wav"
+        },
+        {
+            "name" : "SoundNothing",
+            "type" : "Sound Buffer",
+            "path" : "Assets/Audio/Sounds/UI_Clicks1_HELD.wav"
+        },
+        {
+            "name" : "GameFont",
+            "type" : "Font",
+            "path" : "Assets/Fonts/BootlegTimBurton-Regular.ttf"
         }
     ]
 }

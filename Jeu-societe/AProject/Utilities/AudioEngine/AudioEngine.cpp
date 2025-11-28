@@ -20,6 +20,11 @@ AudioEngine::~AudioEngine(void)
 	{
 		m_music->stop();
 	}
+	if (m_soundProtected != nullptr)
+	{
+		delete m_soundProtected;
+		m_soundProtected = nullptr;
+	}
 }
 
 void AudioEngine::PlaySound(const std::string& _soundName, bool _loop)
@@ -46,49 +51,75 @@ void AudioEngine::PlaySound(const std::string& _soundName, bool _loop)
 	//Debug
 	//std::cout << "PlaySound, nb of sound : " << this->m_soundVec.size() << std::endl;
 }
+void AudioEngine::PlaySound(sf::SoundBuffer* _soundbuff, bool _loop)
+{
+	if (_soundbuff != NULL)
+	{
+		//Launch sound
+		this->m_soundVec.resize(this->m_soundVec.size() + 1);
+		this->m_soundVec.back().setBuffer(*_soundbuff);
+		this->m_soundVec.back().setVolume(this->m_soundVol);
+		this->m_soundVec.back().setLoop(_loop);
+		this->m_soundVec.back().play();
+	}
+	else
+	{
+		std::cout << "WARNING : your soundbuffer given is NULL" << std::endl;
+	}
+}
+void AudioEngine::PlaySoundProtected(sf::SoundBuffer* _soundbuff)
+{
+	if (m_soundProtected == nullptr)
+	{
+		if (_soundbuff != nullptr)
+		{
+			//Init Sound
+			this->m_soundProtected = new sf::Sound;
+			//Launch sound
+			this->m_soundProtected->setBuffer(*_soundbuff);
+			this->m_soundProtected->setVolume(this->m_soundVol);
+			this->m_soundProtected->play();
+		}
+		else
+		{
+			std::cout << "WARNING : your soundbuffer given is NULL" << std::endl;
+		}
+	}
+	else
+	{
+		//Play sound only if old sound isnt playing
+		if (m_soundProtected->getStatus() != sf::Sound::Playing)
+		{
+			if (_soundbuff != nullptr)
+			{
+				//Launch sound
+				this->m_soundProtected->setBuffer(*_soundbuff);
+				this->m_soundProtected->setVolume(this->m_soundVol);
+				this->m_soundProtected->play();
+			}
+			else
+			{
+				std::cout << "WARNING : your soundbuffer given is NULL" << std::endl;
+			}
+		}
+	}
+}
 void AudioEngine::CleanOldSound(void)
 {
 	//Debug 
 	//std::cout << "Clean old sound, nb of sound : " << this->m_soundVec.size() << std::endl;
-
-
-	//Remove by swap end pos could have problem if back sound is also stopped
-	//Not big problem, but sound not removed, it will be at the next clean
-	//for (auto sound = this->m_soundVec.end(); sound > this->m_soundVec.begin(); sound--)
-	//{
-	//	if ((*sound).getStatus() == sf::Sound::Status::Stopped)
-	//	{
-	//		*sound = this->m_soundVec.back();
-	//		this->m_soundVec.pop_back();
-	//	}
-	//}
-
-
-
-	//std::cout << "Sounds debug :" << std::endl;
 	for (int sound = this->m_soundVec.size() - 1; sound >= 0 ; sound--)
 	{
-
 		auto& truesound = this->m_soundVec[sound];
 		//std::cout << "Sounds n " << sound << " status : " << truesound.getStatus() <<std::endl;
 
 
-
-			if (truesound.getStatus() == sf::Sound::Status::Stopped)
-			{
-				truesound = this->m_soundVec.back();
+		if (truesound.getStatus() == sf::Sound::Status::Stopped)
+		{
+			truesound = this->m_soundVec.back();
 				this->m_soundVec.pop_back();
-			}
+		}
 	}
-
-	//for (auto& sound : this->m_soundVec)
-	//{
-	//	if (sound.getStatus() == sf::Sound::Status::Stopped)
-	//	{
-	//		sound = this->m_soundVec.back();
-	//		this->m_soundVec.pop_back();
-	//	}
-	//}
 	//std::cout << "Clean old sound finished, nb of sound : " << this->m_soundVec.size() << std::endl;
 }
 void AudioEngine::TogglePauseSound(const std::string& _soundName)
@@ -180,6 +211,54 @@ void AudioEngine::PlayMusic(const std::string& _musicName, bool _loop)
 		}
 	}
 }
+void AudioEngine::PlayMusic(const std::string& _musicName, sf::Music* _music, bool _loop)
+{
+	//Check if you play the current music
+	if (m_currentMusic == _musicName)
+	{
+		//Check if music is playing
+		if (m_music->getStatus() == sf::Music::Status::Playing)
+		{
+			std::cout << "WARNING : you want to play music that already playing," << std::endl
+				<< "You want to restart ? If yes, pause / stop and play it" << std::endl;
+		}
+		else
+		{
+			//Launch music (the old music stored is the same as the new one)
+			m_music->play();
+			m_music->setLoop(_loop);
+			m_music->setVolume(this->m_musicVol);
+		}
+	}
+	else
+	{
+		if (_music != NULL && m_currentMusic != "")
+		{
+			this->StopMusic();
+
+			//Launch music
+			_music->play();
+			_music->setLoop(_loop);
+			_music->setVolume(this->m_musicVol);
+			this->m_music = _music;
+			m_currentMusic = _musicName;
+		}
+		else if (_music != NULL)
+		{
+			//Launch music
+			_music->play();
+			_music->setLoop(_loop);
+			this->m_music = _music;
+			m_currentMusic = _musicName;
+		}
+		else
+		{
+			std::cout << "WARNING : your music isnt is NULL" << std::endl;
+		}
+	}
+
+}
+
 void AudioEngine::SetMusicVolume(float& _vol)
 {
 	//Store music vol if we need after
@@ -207,5 +286,3 @@ void AudioEngine::StopMusic(void)
 {
 	this->m_music->stop();
 }
-
-

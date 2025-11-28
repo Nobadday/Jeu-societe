@@ -10,16 +10,15 @@ void RandCard::Load(void)
 {
 	m_data = new SceneData;
 
-	// Liaison au GameData pass� dans m_keptData (comme dans RockPaperScissors)
 	m_data->gameData = (GameData*)this->m_keptData;
 	m_data->gameData->m_assetManager->LoadManifest("Manifests/RandCard.json", "RandCard");
 
-
+	m_data->timer.SetTimeTarget(3.f);
 
 	int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size();
 	std::cout << "nb of player " << nbOfPlayers << std::endl;
 
-	//Copy pnlayers playig from GameData
+	//Copy players playig from GameData
 	for (int i = 0; i < nbOfPlayers; ++i)
 	{
 		int playerId = (int)m_data->gameData->m_gonnaPlayIndex.at(i);
@@ -29,14 +28,19 @@ void RandCard::Load(void)
 	//Font
 	m_data->text.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("RandCardFont"));
 	m_data->text.setCharacterSize(15u);
-	m_data->text.setOrigin(0, 0);
+	m_data->text.setOrigin({0.5f, 0.5f});
+	m_data->text.setPosition({ SCREEN_WIDTH / 2.f, 0.8 * SCREEN_HEIGHT });
 
 	//Static Card
 	m_data->staticCardSpr.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("StaticCard"));
 	 	 
 	//Anim Card
-	m_data->cardSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("AnimCard"));
-	m_data->cardSprAnim.setScale(1.2f, 1.2f);
+	m_data->cardSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("AnimCard", AssetManager::AssetType::TEXTURE_ANIMATED));
+
+	//m_data->cardSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("AnimCard"));
+	m_data->cardSprAnim.setScale(0.5f, 0.5f);
+
+	m_data->background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground", AssetManager::AssetType::TEXTURE));
 
 
 	int nbOfNormalCard = 2 * int(m_data->players.size());
@@ -76,7 +80,6 @@ void RandCard::Load(void)
 	{
 		std::cout << "Card n " << i << " : " << m_data->cards[i] << std::endl;
 	}
-
 }
 void RandCard::Unload(void)
 {
@@ -178,6 +181,16 @@ void RandCard::Update(float _deltaTime)
 
 	switch (m_data->gameState) 
 	{
+		case WAITING_BETWEEN_PLAYER:
+
+			m_data->timer.Update(_deltaTime);
+			if (m_data->timer.IsFinished())
+			{
+				m_data->timer.Restart();
+				NextPlayer();
+			}
+			break;
+
 		case CHOOSE_CARD:
 
 			m_data->inputDelay += _deltaTime;
@@ -197,7 +210,6 @@ void RandCard::Update(float _deltaTime)
 					m_data->deadPlayers.push_back(m_data->players.at(m_data->currentPlayer));
 					m_data->players.erase(m_data->players.begin() + m_data->currentPlayer);
 
-					NextPlayer();
 					
 					//Check if only one player left
 					if (m_data->players.size() <= 1)
@@ -219,6 +231,8 @@ void RandCard::Update(float _deltaTime)
 						SceneBase::ChangeScene("Board", false);
 						return;
 					}					
+					//Wait 3 sec and next player
+					m_data->gameState = WAITING_BETWEEN_PLAYER;					
 				}
 				else
 				{
@@ -245,8 +259,7 @@ void RandCard::Update(float _deltaTime)
 
 void RandCard::Draw(sf::RenderWindow& _renderWindow)
 {
-	//
-	// m_data->menuSystem->Draw(_renderWindow, sf::RenderStates::Default);
+	_renderWindow.draw(m_data->background);
 	_renderWindow.draw(m_data->text);
 	PrintCards(_renderWindow);
 }

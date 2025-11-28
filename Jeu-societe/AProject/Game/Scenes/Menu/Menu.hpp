@@ -4,8 +4,7 @@
 
 #include "../../../Scenes/Scene.hpp"
 #include "../../../Common.hpp"
-#include "../../../Animation/Graphics/SpriteAnimated.hpp"
-#include "../../../Animation/Graphics/TextureAnimated.hpp"
+#include "../../../Animation/Graphics.hpp"
 #include "../../../Ui/MenuSystem.hpp"
 
 class Menu : public SceneBase

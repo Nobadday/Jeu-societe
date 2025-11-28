@@ -7,35 +7,42 @@ void RussianRoulette::Load(void)
 	m_data = new SceneData;
 
 	m_data->gameData = (GameData*)this->m_keptData;
-
+	m_data->audio = (AudioEngine*)m_data->gameData->m_audioEngine;
 	m_data->gameData->m_assetManager->LoadManifest("Manifests/RussianRoulette.json", "RussianRoulette");
 
 
-	//DEBUG, one more time
-	m_data->gameData->m_gonnaPlayIndex.push_back(0);
-	m_data->gameData->m_gonnaPlayIndex.push_back(1);
-
-
-	int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size();
-
-	//Copy players playing from GameData
-	for (int i = 0; i < nbOfPlayers; ++i)
+	for (int i = 0; i < (int)m_data->gameData->m_gonnaPlayIndex.size(); ++i)
 	{
 		int playerId = m_data->gameData->m_gonnaPlayIndex.at(i);
-		m_data->players.push_back({ (short)playerId, true });
+
+		m_data->players.push_back(
+		{ 
+			(short)playerId,
+			(short)m_data->gameData->m_playerDataList[playerId].GetPlayerSkin(),
+			true 
+		});
 	}
 
 	m_data->currentPlayer = 0;
-
+	m_data->timerEnd.SetTimeTarget(3.f);
 	m_data->bullet = random::RandomInt(1, 6);
 	
-	//m_data->text.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("RRFont"));
-	m_data->text.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("MenuFont"));
+	m_data->text.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("GameFont"));
 	m_data->text.setCharacterSize(40u);
-	m_data->text.setOrigin(0,0);
+	m_data->text.setOrigin({0.5f,0.5f});
+	m_data->text.setPosition({SCREEN_WIDTH / 2.f, 0.8 * SCREEN_HEIGHT});
+
+	m_data->iconsChara.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Icone", AssetManager::AssetType::TEXTURE_ANIMATED));
+	m_data->iconsChara.setOrigin({ 0.5f,0.5f });
+	m_data->iconsChara.setPosition({ 3.f * (SCREEN_WIDTH / 4.f), SCREEN_HEIGHT / 4.f });
+	
+	//First head
+	m_data->iconsChara.SetAnimation(PlayerData::GetTextureName((PlayerData::PlayerSkin)m_data->players[0].skin));
+		
+
+	m_data->background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground", AssetManager::AssetType::TEXTURE));
 
 	m_data->gunSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Gun_Rien"));
-
 	m_data->gameState = WAITING;
 }
 
@@ -48,10 +55,7 @@ void RussianRoulette::Unload(void)
 
 void RussianRoulette::PollEvent(sf::Event& _event)
 {
-
-	//int joyId = m_data->gameData->m_playerDataList[m_data->players[m_data->currentPlayer].id].m_joystickId;
 	int joyId = m_data->players[m_data->currentPlayer].id;
-
 
 	switch (m_data->gameState)
 	{
@@ -59,45 +63,42 @@ void RussianRoulette::PollEvent(sf::Event& _event)
 
 			switch (_event.type)
 			{
-				//Debug ;)
-				case sf::Event::KeyPressed:
+				//case sf::Event::KeyPressed:
 				case sf::Event::JoystickButtonPressed:
 
-						if (joyId == _event.joystickButton.joystickId)
+					if (joyId == _event.joystickButton.joystickId)
+					{
+						m_data->text.setString("");
+
+						//Every round, we change the bullet in "barilet"
+						m_data->bulletUser++;
+						if (m_data->bulletUser == m_data->bullet)
 						{
-								m_data->text.setString("");
-								int randomNb = random::RandomInt(1,6);
+							m_data->players[m_data->currentPlayer].isAlive = false;
 
-								//DEBUG
-								std::cout << "nbRANDOM = " << randomNb << " bullet = " << m_data->bullet << std::endl;
-
-								if (randomNb == m_data->bullet)
-								{
-									m_data->players[m_data->currentPlayer].isAlive = false;
-
-
-									//Launch sound
-									//Set and Launch death animation
-									m_data->gunSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Gun_Mort", AssetManager::AssetType::TEXTURE_ANIMATED));
-									m_data->gunSprAnim.SetAnimation("ON");
-								}
-								else
-								{
-									//DEBUG
-									std::cout << "vivant" << std::endl;
-
-									//Launch sound
-									//Set and Launch normal animation
-									m_data->gunSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Gun_Rien", AssetManager::AssetType::TEXTURE_ANIMATED));
-									m_data->gunSprAnim.SetAnimation("ON");
-								}
-								m_data->gameState = SPINNING;
+							//Launch sound
+							m_data->audio->PlaySound("SoundDie");
+							//Set and Launch death animation
+							m_data->gunSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Gun_Mort", AssetManager::AssetType::TEXTURE_ANIMATED));
+							m_data->gunSprAnim.SetAnimation("ON");
 						}
+						else
+						{
+							//DEBUG
+							std::cout << "vivant" << std::endl;
+
+							//Launch sound
+							m_data->audio->PlaySound("SoundNothing");
+							//Set and Launch normal animation
+							m_data->gunSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Gun_Rien", AssetManager::AssetType::TEXTURE_ANIMATED));
+							m_data->gunSprAnim.SetAnimation("ON");
+						}
+						m_data->gameState = SPINNING;
+					}
 					break;
 				default:
 					break;
 			}
-
 			break;
 		case SPINNING:
 
@@ -105,10 +106,8 @@ void RussianRoulette::PollEvent(sf::Event& _event)
 
 		case END:
 			break;
-
 	}
 }
-
 void RussianRoulette::Update(float _deltaTime)
 {
 	switch (m_data->gameState)
@@ -129,35 +128,33 @@ void RussianRoulette::Update(float _deltaTime)
 				{
 					m_data->gameState = END;
 
-					char buffer[100];
-					std::cout << buffer << std::endl;
-					m_data->text.setString(buffer);
+					//char buffer[100];
+					//std::cout << buffer << std::endl;
+					std::string text = "Player die";
+					m_data->text.setString(text);
 
 					m_data->deadPlayers.push_back(m_data->players[m_data->currentPlayer]);
-					
 
-					//DEBUG juste pour faire fonctionner
-					//Va falloir que j'améliore car pas beau
-					// 
-					//Add next player to dead player, its winer
-					if (m_data->currentPlayer + 1 < m_data->players.size())
+					//Add all other player than current to deadPlayers
+					for (int i = (int)m_data->gameData->m_gonnaPlayIndex.size() - 1; i >= 0; i--)
 					{
-						m_data->currentPlayer++;
-					}
-					else
-					{
-						m_data->currentPlayer = 0;
+						if (i != m_data->currentPlayer)
+						{
+							std::cout << "id : " << m_data->players[i].id << std::endl;
+							m_data->deadPlayers.push_back(m_data->players[i]);
+						}
 					}
 
-					m_data->deadPlayers.push_back(m_data->players[m_data->currentPlayer]);
 
 					//Save data
-					int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size() - 1;
+					int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size();
 					std::cout << "nb player : " << nbOfPlayers << std::endl;
-
-					for (int i = m_data->deadPlayers.size(); i >= 0 ; i--)
+					std::cout << "nb dead : " << m_data->deadPlayers.size() << std::endl;
+					std::cout << "win nb player : " << m_data->gameData->m_winIndex.size() << std::endl;
+					
+					for (int i = m_data->deadPlayers.size() - 1; i >= 0 ; i--)
 					{
-						m_data->gameData->AddPlayerWin(m_data->deadPlayers.at(i).id);
+						m_data->gameData->AddPlayerWin(m_data->deadPlayers[i].id);
 					}
 
 					//Load bullet for next game, its not useful
@@ -178,19 +175,26 @@ void RussianRoulette::Update(float _deltaTime)
 					{
 						m_data->currentPlayer = 0;
 					}
+					m_data->iconsChara.SetAnimation(PlayerData::GetTextureName((PlayerData::PlayerSkin)m_data->players[m_data->currentPlayer].skin));
 				}
 			}
-
 		break;
+
 	case END:
 
-		std::cout << "FINI, CHANGEMENT De SCENE ICI" << std::endl;
-		SceneBase::ChangeScene("Board", false);
+		m_data->timerEnd.Update(_deltaTime);
+
+		if (m_data->timerEnd.IsFinished())
+		{
+			std::cout << "FINI, CHANGEMENT De SCENE ICI" << std::endl;
+			SceneBase::ChangeScene("Board", false);
+		}
 		break;
 	}
 }
 void RussianRoulette::Draw(sf::RenderWindow& _renderWindow)
 {
+	_renderWindow.draw(m_data->background);
 	_renderWindow.draw(m_data->gunSprAnim);
 	_renderWindow.draw(m_data->text);
 }
