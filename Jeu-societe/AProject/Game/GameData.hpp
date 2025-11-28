@@ -17,7 +17,7 @@ class GameData
 	private:
 		
 	public:
-		sf::RenderWindow* m_renderWindow;
+		sfMod::RenderWindow* m_renderWindow;
 		AssetManager* m_assetManager;
 		void* m_audioEngine;
 

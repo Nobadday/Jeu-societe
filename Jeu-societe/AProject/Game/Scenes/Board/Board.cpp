@@ -33,7 +33,9 @@ void BaseGame::Load(void)
 
 	m_data->timeWin = TIME_WIN_DISPLAY;
 	m_data->timeLBM = TIME_LBM_DISPLAY;
+
 	// Initialisation des joueurs
+
 	for (int i = 0; i < m_data->players.size(); i++)
 	{
 		switch (m_gameData->m_playerDataList[i].GetPlayerSkin())
@@ -64,7 +66,7 @@ void BaseGame::Load(void)
 
 		m_data->players[i].boardPosition = m_data->posCase[0].GetPosition() + sf::Vector2f{ -40.f * i ,0.f };
 
-		std::cout << "Player " << i << " start position: " << m_data->players[i].boardPosition.x << ", " << m_data->players[i].boardPosition.y <<" Name" << m_data->posCase[0].GetName() << std::endl;
+		std::cout << "Player " << i << " start position: " << m_data->players[i].boardPosition.x << ", " << m_data->players[i].boardPosition.y << " Name" << m_data->posCase[0].GetName() << std::endl;
 
 		m_data->players[i].posIcone = PosIcone(i);
 
@@ -84,7 +86,7 @@ void BaseGame::Load(void)
 		m_data->players[i].playeur.setPosition(m_data->players[i].boardPosition + sf::Vector2f{ 0.f,-120.f });
 
 
-		
+
 		m_data->players[i].currentCaseIndex = 0;
 		m_data->players[i].startRandom = 0;
 		m_data->players[i].state = StatePlayer::NONE;
@@ -432,12 +434,12 @@ void BaseGame::Update(float _deltaTime)
 void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 {
 	const sf::View& referenceView = m_data->camera.GetView();
-	/*sf::RenderWindow* mod = m_gameData->m_renderWindow;
-	mod->setView(referenceView);*/
+	sfMod::RenderWindow* mod = m_gameData->m_renderWindow;
+	mod->setView(referenceView);
 
 	std::string layer = "point";
 
-	m_data->tile.DrawMapLayers(_renderWindow, referenceView.getCenter(), layer);
+	m_data->tile.DrawMapLayers(*mod, referenceView.getCenter(), layer);
 
 	// Créer un vecteur d'indices pour trier les joueurs par position Y
 	std::vector<int> indices(m_data->players.size());
@@ -453,7 +455,7 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 	for (int idx : indices)
 	{
 		m_data->players[idx].sprite.setPosition(m_data->players[idx].boardPosition);
-		_renderWindow.draw(m_data->players[idx].sprite);
+		mod->draw(m_data->players[idx].sprite);
 		if (idx == m_data->currentPlayerIndex)
 		{
 			m_data->players[idx].v.setFillColor(sf::Color::Cyan);
@@ -464,27 +466,27 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 			m_data->players[idx].v.setFillColor(sf::Color::White);
 			m_data->players[idx].playeur.setFillColor(sf::Color::White);
 		}
-		_renderWindow.draw(m_data->players[idx].v);
-		_renderWindow.draw(m_data->players[idx].playeur);
+		mod->draw(m_data->players[idx].v);
+		mod->draw(m_data->players[idx].playeur);
 	}
 
-	m_data->tile.DrawMapLayers(_renderWindow, referenceView.getCenter(), "point");
+	m_data->tile.DrawMapLayers(*mod, referenceView.getCenter(), "point");
 
 	for (auto& effect : m_data->effectSwap)
 	{
-		effect.Draw(_renderWindow);
+		effect.Draw(*mod);
 	}
 
 	for (auto& effect : m_data->effectsMap)
 	{
-		effect.Draw(_renderWindow);
+		effect.Draw(*mod);
 	}
 
-	DrawLBM(_renderWindow);
+	DrawLBM(*mod);
 
 	for (int idx : indices)
 	{
-		DrawIconePlayer(_renderWindow, idx);
+		DrawIconePlayer(*mod, idx);
 	}
 }
 
@@ -561,7 +563,7 @@ void BaseGame::CaseAction()
 
 		BonusMalusLuck(true);
 
-		
+
 	}
 	break;
 
@@ -1251,7 +1253,7 @@ std::string BaseGame::RandomBattle()
 
 	std::cout << "Random minigame selected: " << miniGames[randomIndex] << std::endl;
 
-	return "FlagGame" ;
+	return "FlagGame";
 	//return miniGames[randomIndex];
 }
 
@@ -1264,18 +1266,22 @@ void BaseGame::UpdateCameraToShowAllPlayers()
 	sf::Vector2f minPos = m_data->players[0].boardPosition;
 	sf::Vector2f maxPos = m_data->players[0].boardPosition;
 
-	for (const auto& player : m_data->players)
-	{
-		minPos.x = std::min(minPos.x, player.boardPosition.x);
-		minPos.y = std::min(minPos.y, player.boardPosition.y);
-		maxPos.x = std::max(maxPos.x, player.boardPosition.x);
-		maxPos.y = std::max(maxPos.y, player.boardPosition.y);
-	}
+	//for (const auto& player : m_data->players)
+	//{
+	//	minPos.x = std::min(minPos.x, player.boardPosition.x);
+	//	minPos.y = std::min(minPos.y, player.boardPosition.y);
+	//	maxPos.x = std::max(maxPos.x, player.boardPosition.x);
+	//	maxPos.y = std::max(maxPos.y, player.boardPosition.y);
+	//}
 
-	// Calculer le centre
-	sf::Vector2f center = (minPos + maxPos) / 2.0f;
+	//// Calculer le centre
+	//sf::Vector2f center = (minPos + maxPos) / 2.0f;
 
-	m_data->camera.SetCenter(center);
+	sf::FloatRect viewRect = m_data->tile.GetMapLayer("Camera").GetObject(0).GetBounds();
+
+	m_data->camera.SetLimitations(viewRect);
+
+	//m_data->camera.SetCenter(center);
 	m_data->camera.SetZoom(1.0f);
 }
 
@@ -1416,12 +1422,12 @@ void BaseGame::Malus(int _chance)
 		else
 		{
 			m_data->HudLBM.chosse = "ConfusSkip";
-/*			std::cout << m_data->HudLBM.chosse << std::endl;
-			std::cout << m_data->HudLBM.name << std::endl;
-			std::cout << m_data->HudLBM.state << std::endl;
-			std::cout << m_data->HudLBM.active << std::endl;
-			std::cout << m_data->HudLBM.swap << std::endl;
-			std::cout << m_data->HudLBM.rando << std::endl*/;
+			/*			std::cout << m_data->HudLBM.chosse << std::endl;
+						std::cout << m_data->HudLBM.name << std::endl;
+						std::cout << m_data->HudLBM.state << std::endl;
+						std::cout << m_data->HudLBM.active << std::endl;
+						std::cout << m_data->HudLBM.swap << std::endl;
+						std::cout << m_data->HudLBM.rando << std::endl*/;
 		}
 		SetBoardState(STATE);
 	}
@@ -1867,13 +1873,7 @@ void BaseGame::UpdateLBM(float _dt)
 			{
 				ImuniteMalus();
 			}
-			else if (m_data->HudLBM.chosse == "Swap")
-			{
-				SwapPlayers(m_data->HudLBM.swap);
-				return;
-			}
-
-			if (m_data->HudLBM.chosse == "CaseMoin")
+			else if (m_data->HudLBM.chosse == "CaseMoin")
 			{
 				CaseMoins(m_data->HudLBM.rando);
 			}
@@ -2150,7 +2150,7 @@ void BaseGame::DrawIconePlayer(sf::RenderWindow& _renderWindow, int _i)
 		break;
 	}
 
-	
+
 	if (_i != m_data->currentPlayerIndex)
 	{
 		m_data->icone.setColor({ 255,255,255,155 });

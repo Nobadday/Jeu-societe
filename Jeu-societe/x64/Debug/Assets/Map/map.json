@@ -4,34 +4,46 @@
  "layers":[
         {
          "draworder":"topdown",
+         "id":12,
+         "name":"Camera",
+         "objects":[
+                {
+                 "height":1088,
+                 "id":78,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":6592,
+                 "x":0,
+                 "y":0
+                }],
+         "opacity":1,
+         "parallaxx":1.1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
          "id":2,
          "name":"fond",
          "objects":[
                 {
                  "gid":1,
-                 "height":3166.54545454545,
-                 "id":5,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":6560,
-                 "x":17,
-                 "y":3166.54545454545
-                }, 
-                {
-                 "gid":1,
                  "height":1080,
                  "id":76,
-                 "name":"",
+                 "name":"map",
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":9995,
                  "x":-1605,
-                 "y":1084
+                 "y":1043
                 }],
          "opacity":1,
+         "parallaxx":1.4,
          "type":"objectgroup",
          "visible":true,
          "x":0,
@@ -55,6 +67,7 @@
                  "y":1086
                 }],
          "opacity":1,
+         "parallaxx":1.3,
          "type":"objectgroup",
          "visible":true,
          "x":0,
@@ -78,6 +91,7 @@
                  "y":1080.3
                 }],
          "opacity":1,
+         "parallaxx":1.3,
          "type":"objectgroup",
          "visible":true,
          "x":0,
@@ -125,6 +139,7 @@
                  "y":1090
                 }],
          "opacity":1,
+         "parallaxx":1.1,
          "type":"objectgroup",
          "visible":true,
          "x":0,
@@ -148,6 +163,7 @@
                  "y":1087
                 }],
          "opacity":1,
+         "parallaxx":1.1,
          "type":"objectgroup",
          "visible":true,
          "x":0,
@@ -171,6 +187,7 @@
                  "y":1090
                 }],
          "opacity":1,
+         "parallaxx":1.1,
          "type":"objectgroup",
          "visible":true,
          "x":0,
@@ -677,6 +694,7 @@
                  "y":787.879
                 }],
          "opacity":1,
+         "parallaxx":1.1,
          "type":"objectgroup",
          "visible":true,
          "x":0,
@@ -808,13 +826,14 @@
                  "y":1096
                 }],
          "opacity":1,
+         "parallaxx":1.1,
          "type":"objectgroup",
          "visible":true,
          "x":0,
          "y":0
         }],
- "nextlayerid":12,
- "nextobjectid":77,
+ "nextlayerid":13,
+ "nextobjectid":90,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.2",
@@ -837,73 +856,73 @@
          "tiles":[
                 {
                  "id":0,
-                 "image":"png/map.png",
+                 "image":"png\/map.png",
                  "imageheight":1080,
                  "imagewidth":9995
                 }, 
                 {
                  "id":2,
-                 "image":"png/mountain.png",
+                 "image":"png\/mountain.png",
                  "imageheight":1080,
                  "imagewidth":6576
                 }, 
                 {
                  "id":3,
-                 "image":"png/clouds.png",
+                 "image":"png\/clouds.png",
                  "imageheight":1080,
                  "imagewidth":6576
                 }, 
                 {
                  "id":4,
-                 "image":"png/dirt-path.png",
+                 "image":"png\/dirt-path.png",
                  "imageheight":1080,
                  "imagewidth":6576
                 }, 
                 {
                  "id":5,
-                 "image":"png/cases.png",
+                 "image":"png\/cases.png",
                  "imageheight":1080,
                  "imagewidth":6576
                 }, 
                 {
                  "id":6,
-                 "image":"png/bush-water.png",
+                 "image":"png\/bush-water.png",
                  "imageheight":1080,
                  "imagewidth":6576
                 }, 
                 {
                  "id":7,
-                 "image":"png/grass.png",
+                 "image":"png\/grass.png",
                  "imageheight":1080,
                  "imagewidth":6576
                 }, 
                 {
                  "id":8,
-                 "image":"png/pont.png",
+                 "image":"png\/pont.png",
                  "imageheight":1080,
                  "imagewidth":6576
                 }, 
                 {
                  "id":9,
-                 "image":"png/duel.png",
+                 "image":"png\/duel.png",
                  "imageheight":1080,
                  "imagewidth":6576
-                },
+                }, 
                 {
                  "id":10,
-                 "image":"png/bonus malus.png",
+                 "image":"png\/bonus malus.png",
                  "imageheight":1080,
                  "imagewidth":6576
                 }, 
                 {
                  "id":11,
-                 "image":"png/chance.png",
+                 "image":"png\/chance.png",
                  "imageheight":1080,
                  "imagewidth":6576
                 }, 
                 {
                  "id":12,
-                 "image":"png/unlucky.png",
+                 "image":"png\/unlucky.png",
                  "imageheight":1080,
                  "imagewidth":6576
                 }],
