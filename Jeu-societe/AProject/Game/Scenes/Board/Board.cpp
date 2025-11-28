@@ -419,6 +419,8 @@ void BaseGame::Update(float _deltaTime)
 
 		UpdateCameraFollowPlayer(_deltaTime);
 
+		UpdateCameraToShowAllPlayers();
+
 	}
 	else
 	{
@@ -1266,22 +1268,22 @@ void BaseGame::UpdateCameraToShowAllPlayers()
 	sf::Vector2f minPos = m_data->players[0].boardPosition;
 	sf::Vector2f maxPos = m_data->players[0].boardPosition;
 
-	//for (const auto& player : m_data->players)
-	//{
-	//	minPos.x = std::min(minPos.x, player.boardPosition.x);
-	//	minPos.y = std::min(minPos.y, player.boardPosition.y);
-	//	maxPos.x = std::max(maxPos.x, player.boardPosition.x);
-	//	maxPos.y = std::max(maxPos.y, player.boardPosition.y);
-	//}
+	for (const auto& player : m_data->players)
+	{
+		minPos.x = std::min(minPos.x, player.boardPosition.x);
+		minPos.y = std::min(minPos.y, player.boardPosition.y);
+		maxPos.x = std::max(maxPos.x, player.boardPosition.x);
+		maxPos.y = std::max(maxPos.y, player.boardPosition.y);
+	}
 
 	//// Calculer le centre
-	//sf::Vector2f center = (minPos + maxPos) / 2.0f;
+	sf::Vector2f center = (minPos + maxPos) / 2.0f;
 
 	sf::FloatRect viewRect = m_data->tile.GetMapLayer("Camera").GetObject(0).GetBounds();
 
 	m_data->camera.SetLimitations(viewRect);
 
-	//m_data->camera.SetCenter(center);
+	m_data->camera.SetCenter(center);
 	m_data->camera.SetZoom(1.0f);
 }
 
