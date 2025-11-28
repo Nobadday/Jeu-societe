@@ -2,15 +2,14 @@
 
 #include "Game/Scenes/Board/Board.hpp"
 
+
 #include "./Game/scenes/RockPaperScissors/RockPaperScissors.hpp"
 #include "Game/Scenes/ArmWrestling/ArmWrestling.hpp"
 #include "Game/Scenes/Basket/Basket.hpp"
 
-// donn�es du jeu a faire passer entre les sc�nes ici
 #include "./Game/Scenes/RussianRoulette/RussianRoulette.hpp"
 #include "./Game/Scenes/RandCard/RandCard.hpp"
 #include "Game/Scenes/FlagGame/FlagGame.hpp"
-//Pue la merde (faut un bon menu systeme)
 #include "Game/Scenes/Menu/Menu.hpp"
 
 #include "./Game/Scenes/Podium/Podium.hpp"
@@ -58,7 +57,9 @@ int main(void)
 
 	MainData mainData;
 
-	//mainData.gameData.m_playerDataList.resize(2);
+
+    //Unusefull with menu
+	//mainData.gameData.m_playerDataList.resize(3);
 	//for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
 	//{
 	//	mainData.gameData.m_playerDataList[i].SetJoystickID(i);
@@ -67,7 +68,6 @@ int main(void)
 
 
 	MainDataLoad(mainData);
-
 
 	while (mainData.renderWindow.isOpen())
 	{
@@ -93,6 +93,7 @@ int main(void)
 void MainDataLoad(MainData& _mainData)
 {
 	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "SFML", sf::Style::Default);
+
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
 
 	// GAME DATA
@@ -118,7 +119,7 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
 	_mainData.scenes.AddScene<Podium>("Podium");
 
-	//_mainData.scenes.SelectScene("rockPaperSizor", true);
+	_mainData.scenes.SelectScene("rockPaperSizor", true);
 
 	_mainData.clock.restart();
 }
