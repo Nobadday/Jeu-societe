@@ -23,7 +23,7 @@ void RandCard::Load(void)
 	for (int i = 0; i < nbOfPlayers; ++i)
 	{
 		int playerId = (int)m_data->gameData->m_gonnaPlayIndex.at(i);
-		m_data->players.push_back({ playersNames[i],  (short)playerId });
+		m_data->players.push_back({ (short)playerId });
 	}
 
 	//Font
