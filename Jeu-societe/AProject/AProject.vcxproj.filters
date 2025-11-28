@@ -144,10 +144,16 @@
     <ClCompile Include="Game\Scenes\RandCard\RandCard.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Utilities\BetterWindow\BW.cpp">
+    <ClCompile Include="Animation\Graphics\AtlasContainer.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Animation\Graphics\AtlasContainer.cpp">
+    <ClCompile Include="Game\Scenes\Podium\Podium.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\HealthBar.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities\BetterWindow\BetterWindow.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Game\Scenes\Podium\Podium.cpp">
@@ -305,10 +311,16 @@
     <ClInclude Include="Game\Scenes\RandCard\RandCard.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Utilities\BetterWindow\BW.hpp">
+    <ClInclude Include="Animation\Graphics\AtlasContainer.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Animation\Graphics\AtlasContainer.hpp">
+    <ClInclude Include="Game\Scenes\Podium\Podium.hpp">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\HealthBar.hpp">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\BetterWindow\BetterWindow.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Game\Scenes\Podium\Podium.hpp">

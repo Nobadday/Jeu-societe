@@ -6,6 +6,8 @@
 #include "../../Common.hpp"
 #include "../../Scenes/Scene.hpp"
 #include "../../Animation/Animation/Timer.hpp" 
+#include "../../Animation/Graphics.hpp"
+#include "../../Animation/Animation.hpp"
 
 
 class RockPaperScissors : public SceneBase
@@ -27,8 +29,7 @@ class RockPaperScissors : public SceneBase
 		STATE_WARMUP,
 		STATE_PLAY,
 		STATE_PAUSE,
-		STATE_VICTORY,
-		STATE_EQUALITY
+		STATE_ENDGAME,
 	};
 
 	struct SceneData
@@ -36,7 +37,11 @@ class RockPaperScissors : public SceneBase
 		sf::Sprite spriteTab[6];                                                                                                                             
 		sf::Text timerText;
 
-		sf::Sprite playerChoiceSprite[2];
+		sf::Sprite background;
+
+
+		RPS_Choice playersChoice[2];
+		SpriteAnimated playerChoiceSprite[2];
 		Timer timer;
 
 
@@ -44,8 +49,9 @@ class RockPaperScissors : public SceneBase
 		State state = STATE_NONE;
 		GameData* gameData = NULL;
 
-		RPS_Choice playersChoice[4];
 		int roundNB = 0;
+
+		anim::Animator animator[2];
 	};
 	SceneData* m_data;
 

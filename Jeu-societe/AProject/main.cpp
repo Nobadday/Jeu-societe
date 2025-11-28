@@ -2,23 +2,24 @@
 
 #include "Game/Scenes/Board/Board.hpp"
 
-// passage de données entre les scènes fait ici 
 #include "./Game/scenes/RockPaperScissors/RockPaperScissors.hpp"
 #include "Game/Scenes/ArmWrestling/ArmWrestling.hpp"
 #include "Game/Scenes/Basket/Basket.hpp"
+
+// donnï¿½es du jeu a faire passer entre les scï¿½nes ici
 #include "./Game/Scenes/RussianRoulette/RussianRoulette.hpp"
 #include "./Game/Scenes/RandCard/RandCard.hpp"
-
 #include "Game/Scenes/FlagGame/FlagGame.hpp"
 //Pue la merde (faut un bon menu systeme)
 #include "Game/Scenes/Menu/Menu.hpp"
 
+#include "./Game/Scenes/Podium/Podium.hpp"
 
 
 
 typedef struct MainData
 {
-	sf::RenderWindow renderWindow;
+	sfMod::RenderWindow renderWindow;
 	AssetManager assetManager;
 	AudioEngine audioEngine;
 
@@ -26,12 +27,12 @@ typedef struct MainData
 	sf::Clock clock;
 	SceneHandler scenes;
 
-	//RussianRoulette sceneRussianRoulette;
-	//RandCard randCard;
+	RussianRoulette sceneRussianRoulette;
+	RandCard randCard;
 
-	//SceneBase* armWrestlingScene;
-	//SceneBase* basketScene;
-	//SceneBase* flagGameScene;
+	SceneBase* armWrestlingScene;
+	SceneBase* basketScene;
+	SceneBase* flagGameScene;
 
 	GameData gameData;
 } MainData;
@@ -57,12 +58,12 @@ int main(void)
 
 	MainData mainData;
 
-	//mainData.gameData.m_playerDataList.resize(2);
-	//for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
-	//{
-	//	mainData.gameData.m_playerDataList[i].SetJoystickID(i);
-	//	mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 8));
-	//}
+	mainData.gameData.m_playerDataList.resize(2);
+	for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
+	{
+		mainData.gameData.m_playerDataList[i].SetJoystickID(i);
+		mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 8));
+	}
 
 
 	MainDataLoad(mainData);
@@ -91,7 +92,7 @@ int main(void)
 
 void MainDataLoad(MainData& _mainData)
 {
-	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "SFML", sf::Style::Close);
+	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "SFML", sf::Style::Default);
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
 
 	// GAME DATA
@@ -115,12 +116,9 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<FlagGame>("FlagGame");
 	_mainData.scenes.AddScene<RandCard>("RandCard");
 	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
-	
+	_mainData.scenes.AddScene<Podium>("Podium");
 
-	//_mainData.scenes.SelectScene("Board", true);
-	
-	//_mainData.scenes.SelectScene("RuRoul", true);
-	//_mainData.scenes.SelectScene("RandCard", true);
+	_mainData.scenes.SelectScene("rockPaperSizor", true);
 
 	_mainData.clock.restart();
 }
@@ -138,7 +136,67 @@ void PollEvent(MainData& _mainData)
 				_mainData.renderWindow.close();
 				return;
 				break;
+			//case sf::Event::JoystickDisconnected:
+			//	std::cout << " disconnected (joystick ID " << event.joystickConnect.joystickId << std::endl;
+			//	for (short i = 0; i < _mainData.gameData.m_playerDataList.size(); i++)
+			//	{
+			//		if (_mainData.gameData.m_playerDataList[i].GetJoystickId() == event.joystickConnect.joystickId)
+			//		{
+			//			std::cout << "Joueur " << i + 1 << " disconnected (joystick ID " << event.joystickConnect.joystickId << "), changement de son id a -1" << std::endl;
+			//			//_mainData.gameData.m_playerDataList[i].SetJoystickID(-1);
+			//		}
+			//		else if (_mainData.gameData.m_playerDataList[i].GetJoystickId() > event.joystickConnect.joystickId)
+			//		{
+			//			//std::cout << "changement ID pour joueur " << i << " de Id: " << _mainData.gameData.m_playerDataList[i].GetJoystickId() << " a ID :" << _mainData.gameData.m_playerDataList[i].GetJoystickId() -1 << std::endl;
+			//			//_mainData.gameData.m_playerDataList[i].SetJoystickID(_mainData.gameData.m_playerDataList[i].GetJoystickId() - 1);
+			//		}
+			//	}
 
+			//	std::cout << std::endl << std::endl;
+			//	for (short i = 0; i < _mainData.gameData.m_playerDataList.size(); i++)
+			//	{
+			//		std::cout << "Player " << i + 1 << ": id Manette : " << _mainData.gameData.m_playerDataList[i].GetJoystickId() << std::endl;
+			//	}
+			//	std::cout << std::endl;
+
+
+			//	break;
+
+			//case sf::Event::JoystickConnected:
+			//{
+			//	bool isAlreadyConnected = false;
+
+			//	std::cout << "Manette connectee avec ID : " << event.joystickConnect.joystickId << std::endl;
+			//	for (short i = 0; i < _mainData.gameData.m_playerDataList.size(); i++)
+			//	{
+			//		if (_mainData.gameData.m_playerDataList[i].GetJoystickId() == event.joystickConnect.joystickId)
+			//		{
+			//			std::cout << "Mannette deja pairee avec un joueur" << std::endl;
+			//			isAlreadyConnected = true;
+			//		}
+			//	}
+
+			//	for (short i = 0; i < _mainData.gameData.m_playerDataList.size(); i++)
+			//	{
+			//		if (!isAlreadyConnected)
+			//		{
+			//			if (_mainData.gameData.m_playerDataList[i].GetJoystickId() == -1)
+			//			{
+			//				std::cout << "Reassignation de la manette avec ID : " << event.joystickConnect.joystickId << " au joueur " << i << std::endl;
+			//				_mainData.gameData.m_playerDataList[i].SetJoystickID(event.joystickConnect.joystickId);
+			//				isAlreadyConnected = true;
+			//			}
+			//		}
+			//	}
+
+			//	std::cout << std::endl << std::endl;
+			//	for (short i = 0; i < _mainData.gameData.m_playerDataList.size(); i++)
+			//	{
+			//		std::cout << "Player " << i + 1 << ": id Manette : " << _mainData.gameData.m_playerDataList[i].GetJoystickId() << std::endl;
+			//	}
+			//	std::cout << std::endl;
+			//}
+				break;
 			default:
 				_mainData.scenes.PollEvent(event);
 				break;
@@ -149,6 +207,20 @@ void PollEvent(MainData& _mainData)
 void Update(MainData& _mainData)
 {
 	float deltaTime = _mainData.clock.restart().asSeconds();
+
+	//
+
+	//for (short i = 0; i < _mainData.gameData.m_playerDataList.size(); i++)
+	//{
+	//	if (sf::Joystick::isConnected(_mainData.gameData.m_playerDataList[i].GetJoystickId()))
+	//	{
+	//		std::cout << "Joystick id : " << _mainData.gameData.m_playerDataList[i].GetJoystickId() << " is connected" <<  std::endl;
+	//	}
+	//	else
+	//	{
+	//		std::cout << "Joystick id : " << _mainData.gameData.m_playerDataList[i].GetJoystickId() << " is not connected" << std::endl;
+	//	}
+	//}
 	//float dtFixed = deltaTime / (1.0f / 60.0f);
 	_mainData.scenes.Update(deltaTime);
 }

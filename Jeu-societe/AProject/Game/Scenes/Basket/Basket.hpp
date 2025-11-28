@@ -18,7 +18,7 @@ private:
 	{
 		short m_id = 0;
 		bool m_won = 0;
-		int m_winOrder = 0;  // NOUVEAU: Ordre de victoire (1 = premier, 2 = deuxième, etc.)
+		int m_winOrder = 0;  // NOUVEAU: Ordre de victoire (1 = premier, 2 = deuxiï¿½me, etc.)
 		
 		sf::Sprite m_ballSprite;
 		sf::Sprite m_hoopSprite;

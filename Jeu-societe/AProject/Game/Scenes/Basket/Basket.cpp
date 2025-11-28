@@ -29,7 +29,7 @@ void Basket::Load(void)
 		((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(1);
 	}
 
-	// Créer les joueurs basés sur m_gonnaPlayIndex
+	// Crï¿½er les joueurs basï¿½s sur m_gonnaPlayIndex
 	for (size_t i = 0; i < m_data->gameData->m_gonnaPlayIndex.size(); ++i)
 	{
 		int playerIndex = m_data->gameData->m_gonnaPlayIndex[i];
@@ -37,7 +37,7 @@ void Basket::Load(void)
 		BasketPlayer player;
 		player.m_id = playerIndex;
 		player.m_won = false;
-		player.m_winOrder = -1;  // NOUVEAU: -1 = n'a pas encore gagné
+		player.m_winOrder = -1;  // NOUVEAU: -1 = n'a pas encore gagnï¿½
 		player.m_aimLine = sf::VertexArray(sf::Lines, 2);
 
 		player.m_ballSprite.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("ball"));
@@ -83,7 +83,7 @@ void Basket::PollEvent(sf::Event& _event)
 		{
 			if (_event.joystickButton.button == GAMEPAD_A)
 			{
-				// Retour au Board avec les résultats
+				// Retour au Board avec les rï¿½sultats
 				ChangeScene("Board", false);
 			}
 		}
@@ -105,10 +105,10 @@ void Basket::Update(float _deltaTime)
 			m_data->timer = 0.f;
 			m_data->state = STATE_GAMEOVER;
 
-			// Trier les joueurs par ordre de victoire et mettre à jour m_winIndex
+			// Trier les joueurs par ordre de victoire et mettre ï¿½ jour m_winIndex
 			m_data->gameData->m_winIndex.clear();
 			
-			// Créer un vecteur de paires (winOrder, playerID) pour trier
+			// Crï¿½er un vecteur de paires (winOrder, playerID) pour trier
 			std::vector<std::pair<int, int>> winOrderList;
 			
 			for (BasketPlayer& player : m_data->players)
@@ -120,12 +120,12 @@ void Basket::Update(float _deltaTime)
 				}
 				else
 				{
-					// Les perdants ont un winOrder très élevé (fin de liste)
+					// Les perdants ont un winOrder trï¿½s ï¿½levï¿½ (fin de liste)
 					winOrderList.push_back({9999, player.m_id});
 				}
 			}
 			
-			// Trier par ordre de victoire (1er, 2ème, 3ème, puis perdants)
+			// Trier par ordre de victoire (1er, 2ï¿½me, 3ï¿½me, puis perdants)
 			std::sort(winOrderList.begin(), winOrderList.end());
 			
 			// Remplir m_winIndex dans l'ordre
@@ -134,7 +134,7 @@ void Basket::Update(float _deltaTime)
 				m_data->gameData->AddPlayerWin(pair.second);
 			}
 
-			// Mise à jour du texte gagnant
+			// Mise ï¿½ jour du texte gagnant
 			std::string winners;
 			bool hasWinner = false;
 			
@@ -167,7 +167,7 @@ void Basket::Update(float _deltaTime)
 			m_data->winnerText.setPosition(SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f);
 		}
 
-		// Mise à jour de tous les joueurs
+		// Mise ï¿½ jour de tous les joueurs
 		for (size_t i = 0; i < m_data->players.size(); ++i)
 		{
 			BasketPlayer& player = m_data->players[i];
@@ -180,7 +180,7 @@ void Basket::Update(float _deltaTime)
 				continue;
 			}
 
-			// Vérifier si le joueur participe
+			// Vï¿½rifier si le joueur participe
 			if (!m_data->gameData->IsPlayerParticipating(m_data->players[i].m_id))
 				continue;
 

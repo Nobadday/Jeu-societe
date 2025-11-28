@@ -2,18 +2,23 @@
 #define _INC_BOARD_HPP
 
 #include "../../Common.hpp"
-//#include "../../Scenes/Scene.hpp"
+
 #include "../../Map/Tiled.h"
+
 #include "../../Utilities/Camera/Camera.hpp"
-//#include "../../Utilities/MathPlus.hpp"
-//#include "../../Utilities/Random.hpp"
+
 #include "../../Animation/Animation/Animator.hpp"
+
 #include "../../Animation/Graphics/SpriteAnimated.hpp"
+
 #include "../../Animation/Graphics/AnimatedObject.hpp"
+
 #include "../../Animation/Graphics/TextureAnimated.hpp"
+
 #include "../../Animation/Graphics/TextureAtlas.hpp"
 
 #define TIME_WIN_DISPLAY 1.0f
+#define MAX_TOUR_EFFECT 2
 
 class BaseGame : public SceneBase
 {
@@ -23,13 +28,27 @@ class BaseGame : public SceneBase
 			START,
 			PLAY,
 			DEPLACEMENT,
+			DEPLACEMENT_SPLIT,
+			DEPLACEMENT_BRIGE,
 			DEPLACEMENT_ACTION,
+			DEPLACEMENT_ACTION_BACK,
 			CASE_ACTION,
 			BATTLE_ACTION,
 			DUEL,
 			WIN,
 			WIN_DEPLACEMENT,
 			CASE_ACTION_END,
+			WAITING_BRIDGE_ROLL,
+			WAITING_PATH_CHOICE
+		};
+
+		enum StatePlayer
+		{
+			NONE = -1,
+			INFEC,
+			IMMUN,
+			CANT_PLAY,
+			CONFUSED
 		};
 
 		struct Player
@@ -43,6 +62,14 @@ class BaseGame : public SceneBase
 			int currentCaseIndex;
 
 			int startRandom;
+
+			StatePlayer state;
+
+			int tourstate;
+
+			int pendingMovement;  // Nouveau : mouvement restant
+			int currentPathId;    // Nouveau : ID du chemin actuel (-1 = chemin principal)
+			bool waitingBridgeRoll;  // Nouveau : en attente du lancer pour le pont
 		};
 
 		struct SceneData
@@ -64,6 +91,7 @@ class BaseGame : public SceneBase
 
 			int currentPlayerIndex;
 
+			std::vector<int> pathChoices;
 		};
 
 		GameData* m_gameData;
@@ -91,6 +119,24 @@ class BaseGame : public SceneBase
 		void UpdateCameraToShowAllPlayers();
 		
 		void UpdateCameraFollowPlayer(float _deltaTime);
+
+		void BonusMalusLuck(bool _malus);
+
+		void Bonus(int _chance);
+		
+		void Malus(int _chance);
+
+		bool HasPathChoice(int caseIndex);
+
+		std::vector<int> GetAvailablePaths(int caseIndex);
+
+		std::vector<int> GetAvailablePathsBack(int caseIndex);
+
+		int GetNextCaseIndex(int currentIndex, int pathChoice);
+
+		void ProcessPathChoice(int choiceIndex);
+
+		void ProcessBridgeRoll();
 
 	public:
 		virtual void Load(void);

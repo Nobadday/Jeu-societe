@@ -1,9 +1,8 @@
 #pragma once
-#ifndef _INC_COMMON_HPP
-#define _INC_COMMON_HPP
 
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
+#include "./Utilities/BetterWindow/BetterWindow.hpp"
 
 #include "Screen.hpp"
 
@@ -22,6 +21,5 @@
 #include <numeric>
 #include <map>
 #include <SFML/Audio.hpp>
-
 
 #endif // !_INC_COMMON_HPP
