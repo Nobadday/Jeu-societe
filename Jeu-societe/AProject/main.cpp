@@ -54,8 +54,9 @@ int main(void)
 
 void MainDataLoad(MainData& _mainData)
 {
-	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "SFML", sf::Style::Default);
+	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Cute And Cursed", sf::Style::Default);
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
+	_mainData.renderWindow.SetFullscreenPrefered(true);
 	
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 
@@ -66,6 +67,7 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.ta.LoadFromFile("./Assets/ButtonPlaceholder.anim", TextureAnimated::ANIMATION_ANIM);
 	_mainData.btn.setTexture(_mainData.ta);
 	_mainData.btn.setPosition(200.0f, 200.0f);
+
 
 	_mainData.clock.restart();
 }
