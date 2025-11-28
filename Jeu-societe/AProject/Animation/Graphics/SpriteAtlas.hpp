@@ -27,4 +27,4 @@ class SpriteAtlas : public sf::Sprite
 
 
 #endif
-// Sprite Atlas SFML 2.6.2 || v1.0
+// Sprite Atlas SFML 2.6.2 || v1.0.2

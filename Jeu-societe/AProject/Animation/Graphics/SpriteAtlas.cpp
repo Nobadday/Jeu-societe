@@ -16,6 +16,7 @@ m_textureAtlas (_copy.m_textureAtlas)
 
 void SpriteAtlas::setTexture(TextureAtlas& _textureAtlas, bool _resetRect)
 {
+	this->m_textureAtlas = &_textureAtlas;
 	this->sf::Sprite::setTexture(_textureAtlas.GetTextureRef(), _resetRect);
 }
 
@@ -43,4 +44,4 @@ void SpriteAtlas::SetTextureFrame(const std::string& _name)
 }
 
 
-// Sprite Atlas SFML 2.6.2 || v1.0
+// Sprite Atlas SFML 2.6.2 || v1.0.2
