@@ -62,6 +62,9 @@ void BaseGame::Load(void)
 		m_data->players[i].v.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
 		m_data->players[i].v.setString(L"⌂");
 
+		m_data->players[i].boardPosition = m_data->posCase[0].GetPosition() + sf::Vector2f{ -40.f * i ,0.f };
+
+		std::cout << "Player " << i << " start position: " << m_data->players[i].boardPosition.x << ", " << m_data->players[i].boardPosition.y <<" Name" << m_data->posCase[0].GetName() << std::endl;
 
 		m_data->players[i].posIcone = PosIcone(i);
 
@@ -81,7 +84,7 @@ void BaseGame::Load(void)
 		m_data->players[i].playeur.setPosition(m_data->players[i].boardPosition + sf::Vector2f{ 0.f,-120.f });
 
 
-		m_data->players[i].boardPosition = m_data->posCase[0].GetPosition() + sf::Vector2f{ -40.f * i ,0.f };
+		
 		m_data->players[i].currentCaseIndex = 0;
 		m_data->players[i].startRandom = 0;
 		m_data->players[i].state = StatePlayer::NONE;
@@ -105,7 +108,7 @@ void BaseGame::Load(void)
 	{
 		auto& mapObject = m_data->posCase[i];
 
-		if (mapObject.GetName() == "10")
+		if (mapObject.GetName() == "19")
 		{
 			posMin = mapObject.GetPosition();
 		}
@@ -429,7 +432,8 @@ void BaseGame::Update(float _deltaTime)
 void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 {
 	const sf::View& referenceView = m_data->camera.GetView();
-	_renderWindow.setView(referenceView);
+	/*sf::RenderWindow* mod = m_gameData->m_renderWindow;
+	mod->setView(referenceView);*/
 
 	std::string layer = "point";
 
