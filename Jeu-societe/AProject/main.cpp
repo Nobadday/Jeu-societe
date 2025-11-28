@@ -104,31 +104,22 @@ void MainDataLoad(MainData& _mainData)
 
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 
-	_mainData.scenes.AddScene<BaseGame>("Board");
-	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
-	_mainData.scenes.AddScene<ArmWrestling>("ArmWrestling");
-	_mainData.scenes.AddScene<Basket>("Basket");
-	_mainData.scenes.AddScene<FlagGame>("FlagGame");
-	_mainData.scenes.AddScene<RandCard>("RandCard");
-	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
-
-	//_mainData.scenes.SelectScene("RandCard", true);
-
-
-	_mainData.scenes.SetTransferedData(&_mainData.gameData);
-
-	_mainData.scenes.AddScene<BaseGame>("Board");
-	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
-	_mainData.scenes.AddScene<ArmWrestling>("ArmWrestling");
-	_mainData.scenes.AddScene<Basket>("Basket");
-	_mainData.scenes.AddScene<FlagGame>("FlagGame");
-	_mainData.scenes.AddScene<RandCard>("RandCard");
-	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
 	_mainData.scenes.AddScene<Menu>("Menu");
 
+	_mainData.scenes.SelectScene("Menu", true);
+
+	_mainData.scenes.AddScene<BaseGame>("Board");
+	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
+	_mainData.scenes.AddScene<ArmWrestling>("ArmWrestling");
+	_mainData.scenes.AddScene<Basket>("Basket");
+	_mainData.scenes.AddScene<FlagGame>("FlagGame");
+	_mainData.scenes.AddScene<RandCard>("RandCard");
+	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
+	
+
 	//_mainData.scenes.SelectScene("Board", true);
-	//_mainData.scenes.SelectScene("Menu", true);
-	_mainData.scenes.SelectScene("RuRoul", true);
+	
+	//_mainData.scenes.SelectScene("RuRoul", true);
 	//_mainData.scenes.SelectScene("RandCard", true);
 
 	_mainData.clock.restart();

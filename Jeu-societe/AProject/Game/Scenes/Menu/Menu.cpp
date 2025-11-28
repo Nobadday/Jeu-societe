@@ -365,10 +365,10 @@ void Menu::PressSelection(int _id)
 						m_data->gameData->m_playerDataList[_id].SetPlayerSkin((PlayerData::PlayerSkin)m_data->currentCharaSelected);
 					}
 
-					if (_id == m_data->gameData->m_playerDataList.size())
+					if (_id == m_data->gameData->m_playerDataList.size() - 1)
 					{
 						std::cout << "leave\n";
-						//SceneBase::ChangeScene("Board");
+						SceneBase::ChangeScene("Board");
 					}
 
 					m_data->currentPlayer++;
@@ -396,7 +396,7 @@ void Menu::PressSelection(int _id)
 		case PLAY_SELECTION:
 		{
 			std::cout << "player count : " << m_data->gameSettings.playerCount;
-			for (int i = 0; i < m_data->gameSettings.playerCount; i++)
+			for (int i = 0; i < m_data->gameSettings.playerCount + 1; i++)
 			{
 				PlayerData newPlayer;
 				newPlayer.m_joystickId = i;
