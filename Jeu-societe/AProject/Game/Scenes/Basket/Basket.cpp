@@ -8,6 +8,7 @@ void Basket::Load(void)
 	
 	m_data->gameData->m_assetManager->LoadManifest("Manifests/Basket.json", "basket");
 
+	m_data->gameData->m_assetManager->GetAsset<sf::Font>()
 	m_data->timerText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("BasketFont"));
 	m_data->timerText.setCharacterSize(25);
 	m_data->timerText.setFillColor(sf::Color::Yellow);
