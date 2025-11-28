@@ -13,6 +13,7 @@
 #include "Map/JsonReader.h"
 
 #include "Utilities/NewMath.hpp"
+#include "Utilities/MathPlus.hpp"
 #include "Utilities/StringFormat.hpp"
 #include "Utilities/Binds.hpp"
 

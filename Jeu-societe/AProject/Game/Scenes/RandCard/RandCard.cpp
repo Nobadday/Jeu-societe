@@ -10,14 +10,20 @@ void RandCard::Load(void)
 {
 	m_data = new SceneData;
 
+	//m_data->menuSystem = new MenuSystem();
+	//m_data->menuSystem->MenuAdd("TestMenu", true);
+
 	// Liaison au GameData passé dans m_keptData (comme dans RockPaperScissors)
 	m_data->gameData = (GameData*)this->m_keptData;
 	m_data->gameData->m_assetManager->LoadManifest("Manifests/RandCard.json", "RandCard");
 
 	//Debug names
 	std::string playersNames[4] = { "Yann", "Lorenzo", "Kyllian", "Damien" };
-	//m_data->gameData->m_gonnaPlayIndex.push_back(0);
-	//m_data->gameData->m_gonnaPlayIndex.push_back(1);
+	if (m_data->gameData->m_gonnaPlayIndex.size() == 0)
+	{
+		m_data->gameData->m_gonnaPlayIndex.push_back(0);
+		m_data->gameData->m_gonnaPlayIndex.push_back(1);
+	}
 
 	int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size();
 	std::cout << "nb of player " << nbOfPlayers << std::endl;
@@ -28,6 +34,15 @@ void RandCard::Load(void)
 		int playerId = (int)m_data->gameData->m_gonnaPlayIndex.at(i);
 		m_data->players.push_back({ playersNames[i],  (short)playerId });
 	}
+
+	//m_data->buttonTest = new Button();
+	//
+	//m_data->textanim = new TextureAnimated();
+	//m_data->textanim->LoadFromFile("Assets/Sprites/ButtonPlaceHolder.anim", TextureAnimated::AnimationType::ANIMATION_ANIM);
+	//m_data->buttonTest->setTexture(*m_data->textanim);
+
+	//m_data->menuSystem->MenuAddButton("TestMenu", "ButtonTest", m_data->buttonTest);
+	//m_data->menuSystem->SetMenuHolder("TestMenu");
 
 	//Font
 	m_data->text.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("RandCardFont"));
@@ -213,11 +228,11 @@ void RandCard::Update(float _deltaTime)
 
 						//Save data
 						int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size() - 1;
-						for (int i = 0 ; i < nbOfPlayers; i++)
+						for (int i = m_data->deadPlayers.size() - 1; i > 0; i--)
 						{
 							//Print if you want check
 							//std::cout << "END, player rank" << i << " player : " << m_data->deadPlayers.at(i).id << " name :" << m_data->deadPlayers.at(i).name << std::endl;
-							m_data->gameData->AddPlayerWin(m_data->deadPlayers.at(nbOfPlayers - i).id);
+							m_data->gameData->AddPlayerWin(m_data->deadPlayers.at(i).id);
 						}
 						SceneBase::ChangeScene("Board", false);
 						return;

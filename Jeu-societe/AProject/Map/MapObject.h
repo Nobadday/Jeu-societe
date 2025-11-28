@@ -3,6 +3,32 @@
 
 #include "../Common.hpp"
 
+class MapObjectProperty
+{
+private:
+    std::string m_name;           // Nom de l'objet
+    std::string m_type;           // Type de l'objet
+    std::string m_stringValue;    // 2eme Type de l'objet
+    int m_value;                  //value de l'objet int
+
+public:
+    // Constructeurs
+    MapObjectProperty();
+
+    // Getters
+    const std::string& GetName() const { return m_name; }
+    const std::string& GetType() const { return m_type; }
+    const std::string& GetStringValue() const { return m_stringValue; }
+    const int& GetValue() const { return m_value; }
+
+
+    // Setters
+    void SetName(const std::string& name) { m_name = name; }
+    void SetType(const std::string& type) { m_type = type; }
+    void SetValue(const std::string& value) { m_stringValue = value; }
+    void SetValue(const int& value) { m_value = value; }
+};
+
 class MapObject
 {
 private:
@@ -10,9 +36,10 @@ private:
     sf::Vector2f m_position;      // Position (x, y)
     sf::Vector2f m_size;          // Taille (width, height)
     std::string m_name;           // Nom de l'objet
-    std::string m_type;           // Type de l'objet
+    std::string m_type;           // Type de l'objet 
     float m_rotation;             // Rotation en degrés
     bool m_visible;               // Visibilité de l'objet
+	std::vector<MapObjectProperty> m_properties; // Propriétés personnalisées
 
 public:
     // Constructeurs
@@ -28,6 +55,10 @@ public:
     const std::string& GetType() const { return m_type; }
     float GetRotation() const { return m_rotation; }
     bool IsVisible() const { return m_visible; }
+	// properties
+	const std::vector<MapObjectProperty>& GetProperties() const { return m_properties; }
+	//get a property by name
+	const MapObjectProperty* GetPropertyByName(const std::string& name) const;
     
     float GetX() const { return m_position.x; }
     float GetY() const { return m_position.y; }
@@ -45,8 +76,12 @@ public:
     void SetRotation(float rotation) { m_rotation = rotation; }
     void SetVisible(bool visible) { m_visible = visible; }
 
+	void AddProperty(const MapObjectProperty& property) { m_properties.push_back(property); }
+
     // Méthodes utilitaires
     sf::FloatRect GetBounds() const;
     bool Contains(const sf::Vector2f& point) const;
 };
+
+
 #endif // MAPOBJECT_H

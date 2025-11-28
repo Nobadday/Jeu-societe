@@ -10,6 +10,7 @@
 #include "../Utilities/AssetManager.hpp"
 #include "../Utilities/AudioEngine/AudioEngine.hpp"
 
+#include "../Utilities/BetterWindow/BetterWindow.hpp"
 
 class GameData
 {

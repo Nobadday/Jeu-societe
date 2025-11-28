@@ -1,0 +1,71 @@
+{
+    "assets": 
+    [
+        {
+            "name" : "PLACEHOLDER:Font",
+            "type" : "Font",
+            "path" : "Assets/Fonts/Font.ttf"
+        },
+        {
+            "name" : "PLACEHOLDER:Texture",
+            "type" : "Texture",
+            "path" : "Assets/Images/PlaceHolder.png"
+        },
+        {
+            "name" : "PLACEHOLDER:Image",
+            "type" : "Image",
+            "path" : "Assets/Shared/Images/PlaceHolder.png"
+        },
+        {
+            "name" : "PLACEHOLDER:Sound Buffer",
+            "type" : "Sound Buffer",
+            "path" : "Assets/Audio/Sounds/PlaceHolder.mp3"
+        },
+        {
+            "name" : "PLACEHOLDER:Music",
+            "type" : "Music",
+            "path" : "Assets/Audio/Musics/PlaceHolder.mp3"
+        },
+        {
+            "name" : "PLACEHOLDER:Texture Animated",
+            "type" : "Texture Animated",
+            "path" : "Assets/Shared/PlaceHolder.anim", 
+            "subType" : 1
+        },
+        {
+            "name": "Abutton",
+            "type": "Texture",
+            "path":  "./Assets/Shared/Images/A.png"
+        },
+        {
+            "name": "Bbutton",
+            "type": "Texture",
+            "path":  "./Assets/Shared/Images/B.png"
+        },
+        {
+            "name": "Xbutton",
+            "type": "Texture",
+            "path":  "./Assets/Shared/Images/X.png"
+        },
+        {
+            "name": "Ybutton",
+            "type": "Texture",
+            "path":  "./Assets/Shared/Images/Y.png"
+        },
+        {
+            "name": "RBbutton",
+            "type": "Texture",
+            "path":  "./Assets/Shared/Images/RB.png"
+        },
+        {
+            "name": "LBbutton",
+            "type": "Texture",
+            "path":  "./Assets/Shared/Images/LB.png"
+        },
+        {
+            "name": "MinigameBackground",
+            "type": "Texture",
+            "path": "Assets/shared/MinigameBackground.png"
+        }
+    ]
+}

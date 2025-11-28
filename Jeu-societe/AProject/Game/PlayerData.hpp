@@ -7,13 +7,14 @@ class PlayerData
 		enum PlayerSkin
 		{
 			CHARACTER_1_1,
-			CHARACTER_1_2,
 			CHARACTER_2_1,
-			CHARACTER_2_2,
 			CHARACTER_3_1,
-			CHARACTER_3_2,
 			CHARACTER_4_1,
-			CHARACTER_4_2,
+
+			CHARACTER_1_2,
+			CHARACTER_2_2,
+			CHARACTER_3_2,
+			CHARACTER_4_2
 		};
 
 		int m_joystickId;

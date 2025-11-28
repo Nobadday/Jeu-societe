@@ -1,0 +1,11 @@
+{
+    "assetPath":"PlaceHolder.atlas",
+    "framerate": 5,
+	"animations": [
+        {
+            "name":"IDLE",
+            "atlas":"IDLE",
+            "loop": true
+        }
+    ]
+}

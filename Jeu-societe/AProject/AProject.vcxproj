@@ -162,9 +162,11 @@
     <ClCompile Include="Game\Scenes\Basket\Basket.cpp" />
     <ClCompile Include="Game\Scenes\Board\Board.cpp" />
     <ClCompile Include="Game\Scenes\FlagGame\FlagGame.cpp" />
+    <ClCompile Include="Game\Scenes\Podium\Podium.cpp" />
     <ClCompile Include="Game\Scenes\RandCard\RandCard.cpp" />
     <ClCompile Include="Game\Scenes\RockPaperScissors\RockPaperScissors.cpp" />
     <ClCompile Include="Game\Scenes\RussianRoulette\RussianRoulette.cpp" />
+    <ClCompile Include="Graphics\HealthBar.cpp" />
     <ClCompile Include="Map\JsonReader.cpp" />
     <ClCompile Include="Map\MapLayer.cpp" />
     <ClCompile Include="Map\MapObject.cpp" />
@@ -188,7 +190,6 @@
     <ClCompile Include="Utilities\MathPlus.cpp" />
     <ClCompile Include="Utilities\NewMath.cpp" />
     <ClCompile Include="Utilities\Random.cpp" />
-    <ClCompile Include="Utilities\StringFormat.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation\Animation.hpp" />
@@ -214,9 +215,11 @@
     <ClInclude Include="Game\Scenes\Basket\Basket.hpp" />
     <ClInclude Include="Game\Scenes\Board\Board.hpp" />
     <ClInclude Include="Game\Scenes\FlagGame\FlagGame.hpp" />
+    <ClInclude Include="Game\Scenes\Podium\Podium.hpp" />
     <ClInclude Include="Game\Scenes\RandCard\RandCard.hpp" />
     <ClInclude Include="Game\Scenes\RockPaperScissors\RockPaperScissors.hpp" />
     <ClInclude Include="Game\Scenes\RussianRoulette\RussianRoulette.hpp" />
+    <ClInclude Include="Graphics\HealthBar.hpp" />
     <ClInclude Include="Map\JsonReader.h" />
     <ClInclude Include="Map\MapLayer.h" />
     <ClInclude Include="Map\MapObject.h" />
@@ -241,7 +244,6 @@
     <ClInclude Include="Utilities\MathPlus.hpp" />
     <ClInclude Include="Utilities\NewMath.hpp" />
     <ClInclude Include="Utilities\Random.hpp" />
-    <ClInclude Include="Utilities\StringFormat.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

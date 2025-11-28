@@ -33,7 +33,7 @@ sf::Font& StringFormat::GetDefaultFont(void)
 void StringFormat::Load()
 {
 	defaultFont = new sf::Font();
-	defaultFont->loadFromFile("Assets/Font.ttf");
+	defaultFont->loadFromFile("Assets/Fonts/Font.ttf");
 }
 
 void StringFormat::Unload()

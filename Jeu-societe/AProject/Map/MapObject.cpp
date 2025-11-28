@@ -8,6 +8,7 @@ MapObject::MapObject()
     , m_type("")
     , m_rotation(0.0f)
     , m_visible(true)
+	, m_properties()
 {
 }
 
@@ -19,6 +20,7 @@ MapObject::MapObject(int gid, const sf::Vector2f& position, const sf::Vector2f& 
     , m_type("")
     , m_rotation(0.0f)
     , m_visible(true)
+    , m_properties()
 {
 }
 
@@ -30,6 +32,27 @@ MapObject::MapObject(int gid, float x, float y, float width, float height)
     , m_type("")
     , m_rotation(0.0f)
     , m_visible(true)
+    , m_properties()
+{
+}
+
+const MapObjectProperty* MapObject::GetPropertyByName(const std::string& name) const
+{
+    for (const auto& property : m_properties)
+    {
+        if (property.GetName() == name)
+        {
+            return &property;
+        }
+    }
+	return nullptr;
+}
+
+MapObjectProperty::MapObjectProperty()
+    : m_name("")
+    , m_type("")
+    , m_stringValue("")
+    , m_value(-1)
 {
 }
 

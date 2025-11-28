@@ -1,5 +1,4 @@
 #include "FlagGame.hpp"
-#include "../../Utilities/Random.hpp"
 
 #define ROUND_TIME 5.0f
 #define ROUND_END_TIME 3.0f
@@ -10,17 +9,24 @@ void FlagGame::Load(void)
 {
 	m_data = new SceneData();
 	m_data->gameData = (GameData*)this->m_keptData;
+	
+	if (((GameData*)this->m_keptData)->m_gonnaPlayIndex.size() == 0)
+	{
+		((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(0);
+		((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(1);
+		((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(2);
+		((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(3);
+	}
+
+	m_data->gameData->m_assetManager->LoadManifest("Manifests/FlagGame.json", "FlagGame");
 	m_data->state = STATE_WAITING;
 	m_data->currentRound = 0;
 	m_data->playersRemaining = 0;
 	m_data->eliminationCounter = 0;
 	m_data->totalGameTime = 0.0f;
 
-	// Load font
-	m_data->font.loadFromFile("Assets/Font.ttf");
-
 	// Initialize title text
-	m_data->titleText.setFont(m_data->font);
+	m_data->titleText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("FlagFont"));
 	m_data->titleText.setCharacterSize(24);
 	m_data->titleText.setFillColor(sf::Color::White);
 	m_data->titleText.setString("Flag Game Mini-Game");
@@ -28,25 +34,25 @@ void FlagGame::Load(void)
 	m_data->titleText.setOrigin(m_data->titleText.getLocalBounds().width / 2, 0);
 
 	// Initialize round text
-	m_data->roundText.setFont(m_data->font);
+	m_data->roundText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("FlagFont"));
 	m_data->roundText.setCharacterSize(25);
 	m_data->roundText.setFillColor(sf::Color::Blue);
 	m_data->roundText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4);
 
 	// Initialize timer text
-	m_data->timerText.setFont(m_data->font);
+	m_data->timerText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("FlagFont"));
 	m_data->timerText.setCharacterSize(25);
 	m_data->timerText.setFillColor(sf::Color::White);
 	m_data->timerText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3);
 
 	// Initialize required input text
-	m_data->requiredInputText.setFont(m_data->font);
+	m_data->requiredInputText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("FlagFont"));
 	m_data->requiredInputText.setCharacterSize(25);
 	m_data->requiredInputText.setFillColor(sf::Color::Yellow);
 	m_data->requiredInputText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.5f);
 
 	// Initialize not enough players text
-	m_data->notEnoughPlayersText.setFont(m_data->font);
+	m_data->notEnoughPlayersText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("FlagFont"));
 	m_data->notEnoughPlayersText.setCharacterSize(25);
 	m_data->notEnoughPlayersText.setFillColor(sf::Color::Red);
 	m_data->notEnoughPlayersText.setString("Not Enough Players Connected!");
@@ -54,19 +60,19 @@ void FlagGame::Load(void)
 	m_data->notEnoughPlayersText.setOrigin(m_data->notEnoughPlayersText.getLocalBounds().width / 2, m_data->notEnoughPlayersText.getLocalBounds().height / 2);
 
 	// Initialize result text
-	m_data->resultText.setFont(m_data->font);
+	m_data->resultText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("FlagFont"));
 	m_data->resultText.setCharacterSize(30);
 	m_data->resultText.setFillColor(sf::Color::Green);
 	m_data->resultText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
-	m_data->buttonTexture[0].loadFromFile("Assets/Sprites/FlagGame/A.png");
-	m_data->buttonTexture[1].loadFromFile("Assets/Sprites/FlagGame/B.png");
-	m_data->buttonTexture[2].loadFromFile("Assets/Sprites/FlagGame/X.png");
-	m_data->buttonTexture[3].loadFromFile("Assets/Sprites/FlagGame/Y.png");
-	m_data->buttonTexture[4].loadFromFile("Assets/Sprites/FlagGame/LB.png");
-	m_data->buttonTexture[5].loadFromFile("Assets/Sprites/FlagGame/RB.png");
-
 	m_data->buttonSprite.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.5f);
+
+	m_data->stringTab[0] = "Abutton";
+	m_data->stringTab[1] = "Bbutton";
+	m_data->stringTab[2] = "Xbutton";
+	m_data->stringTab[3] = "Ybutton";
+	m_data->stringTab[4] = "LBbutton";
+	m_data->stringTab[5] = "RBbutton";
 
 
 	// Initialize player data for all players in m_gonnaPlayIndex
@@ -77,7 +83,7 @@ void FlagGame::Load(void)
 		m_data->playerData[i].eliminationOrder = 0;
 		m_data->playerData[i].eliminationTime = 0.0f;
 
-		m_data->playerData[i].inputText.setFont(m_data->font);
+		m_data->playerData[i].inputText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("FlagFont"));
 		m_data->playerData[i].inputText.setCharacterSize(20);
 		m_data->playerData[i].inputText.setFillColor(sf::Color::Green);
 	}
@@ -333,7 +339,6 @@ void FlagGame::StartNewRound(void)
 			}
 		}
 	}
-	m_data->backgroundMusic.PlayMusic("Assets/Music/FlagGame_BGM.wav", true);
 	UpdatePlayerInputTexts();
 
 	// Set timers
@@ -344,9 +349,6 @@ void FlagGame::StartNewRound(void)
 void FlagGame::EvaluateRound(void)
 {
 	// Check each participating player's input
-
-	m_data->backgroundMusic.StopMusic();
-	m_data->endRound.PlaySound("Assets/Sounds/EndRound.wav", false);
 	if (m_data->gameData)
 	{
 		for (int playerID : m_data->gameData->m_gonnaPlayIndex)
@@ -387,11 +389,6 @@ void FlagGame::EvaluateRound(void)
 					std::snprintf(resultBuffer, 50, "Player %d Wins!", playerID + 1);
 					m_data->resultText.setString(resultBuffer);
 					m_data->resultText.setOrigin(m_data->resultText.getLocalBounds().width / 2, m_data->resultText.getLocalBounds().height / 2);
-					if(!m_data->audioPlayed)
-					{
-						m_data->winnerSound.PlaySound("Assets/Sounds/Winner.wav", false);
-						m_data->audioPlayed = true;
-					}
 					break;
 				}
 			}
@@ -401,7 +398,6 @@ void FlagGame::EvaluateRound(void)
 	{
 		m_data->resultText.setString("No Winner!");
 		m_data->resultText.setOrigin(m_data->resultText.getLocalBounds().width / 2, m_data->resultText.getLocalBounds().height / 2);
-		m_data->gameOverSound.PlaySound("Assets/Sounds/GameOver.wav", false);
 	}
 
 	m_data->state = STATE_ROUND_END;
@@ -411,10 +407,9 @@ void FlagGame::EvaluateRound(void)
 void FlagGame::ChangeRequiredInput(void)
 {
 	m_data->requiredInput = GetRandomValidInput();
-	m_data->buttonSprite.setTexture(m_data->buttonTexture[(int)m_data->requiredInput]);
-	m_data->buttonSprite.setOrigin(m_data->buttonSprite.getLocalBounds().width / 2, m_data->buttonSprite.getLocalBounds().height / 2);
+	m_data->buttonSprite.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>(m_data->stringTab[(int)m_data->requiredInput]));
 
-	m_data->newFlagSound.PlaySound("Assets/Sounds/NewFlag.wav", false);
+	m_data->buttonSprite.setOrigin(m_data->buttonSprite.getLocalBounds().width / 2, m_data->buttonSprite.getLocalBounds().height / 2);
 
 	char inputBuffer[100];
 	std::snprintf(inputBuffer, 100, "Press: %s", GetGamePadButtonName(m_data->requiredInput));
@@ -473,10 +468,7 @@ void FlagGame::UpdatePlayerInputTexts(void)
 				m_data->playerData[playerID].inputText.setString(buffer);
 
 				m_data->playerData[playerID].buttonSprite.setColor(sf::Color::White);
-				m_data->playerData[playerID].buttonSprite.setTexture(
-					m_data->buttonTexture[(int)m_data->playerData[playerID].currentInput]
-				);
-				m_data->playerData->inputPressed.PlaySound("Assets/Sounds/InputPressed.wav", false);
+				m_data->playerData[playerID].buttonSprite.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>(m_data->stringTab[(int)m_data->playerData[playerID].currentInput]));
 			}
 			else
 			{

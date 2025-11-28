@@ -34,10 +34,13 @@ class AniMath
 		static int ModuloPositiveI(int _value, int _modulo);
 
 
-		inline static float Interpolate(float _start, float _end, float _coefficient);
+
+		static float Interpolate(float _start, float _end, float _coefficient);
+		static int InterpolateI(int _start, int _end, float _coefficient);
+		
 };
 
 }
 
 #endif
-// Animation Math || v1.1
+// Animation Math || v1.2
