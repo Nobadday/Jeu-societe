@@ -233,9 +233,41 @@ void FlagGame::Update(float _deltaTime)
 			// Return to board
 			if (m_data->gameData)
 			{
-				// Award winner if there is one (first in m_winIndex)
-				if (m_data->playersRemaining == 1)
+				// Check if it's a tie (all players eliminated simultaneously)
+				int totalPlayers = m_data->gameData->m_gonnaPlayIndex.size();
+				int eliminatedPlayers = 0;
+				int maxEliminationOrder = 0;
+				int playersWithMaxOrder = 0;
+
+				// Count eliminated players and find the highest elimination order
+				for (int playerID : m_data->gameData->m_gonnaPlayIndex)
 				{
+					if (m_data->playerData[playerID].isEliminated)
+					{
+						eliminatedPlayers++;
+						if (m_data->playerData[playerID].eliminationOrder > maxEliminationOrder)
+						{
+							maxEliminationOrder = m_data->playerData[playerID].eliminationOrder;
+							playersWithMaxOrder = 1;
+						}
+						else if (m_data->playerData[playerID].eliminationOrder == maxEliminationOrder)
+						{
+							playersWithMaxOrder++;
+						}
+					}
+				}
+
+				// If all players are eliminated and multiple players share the last elimination order, it's a tie
+				bool isTie = (m_data->playersRemaining == 0 && playersWithMaxOrder > 1);
+
+				if (isTie)
+				{
+					// Tie scenario - don't add anyone to the win list
+					std::cout << "Game ended in a tie! No winners added to win list." << std::endl;
+				}
+				else if (m_data->playersRemaining == 1)
+				{
+					// Award winner if there is one
 					for (int playerID : m_data->gameData->m_gonnaPlayIndex)
 					{
 						if (!m_data->playerData[playerID].isEliminated)
@@ -245,33 +277,32 @@ void FlagGame::Update(float _deltaTime)
 							break;
 						}
 					}
-				}
 
-				// Add losers in REVERSE order of elimination (last eliminated first, first eliminated last)
-				// Create a list of eliminated players sorted by elimination order
-				std::vector<std::pair<int, int>> eliminatedPlayers; // <playerID, eliminationOrder>
+					// Add losers in REVERSE order of elimination (last eliminated first, first eliminated last)
+					std::vector<std::pair<int, int>> eliminatedPlayersList;
 
-				for (int playerID : m_data->gameData->m_gonnaPlayIndex)
-				{
-					if (m_data->playerData[playerID].isEliminated && m_data->playerData[playerID].eliminationOrder > 0)
+					for (int playerID : m_data->gameData->m_gonnaPlayIndex)
 					{
-						eliminatedPlayers.push_back({ playerID, m_data->playerData[playerID].eliminationOrder });
+						if (m_data->playerData[playerID].isEliminated && m_data->playerData[playerID].eliminationOrder > 0)
+						{
+							eliminatedPlayersList.push_back({ playerID, m_data->playerData[playerID].eliminationOrder });
+						}
 					}
-				}
 
-				// Sort by elimination order in DESCENDING order (last eliminated first)
-				std::sort(eliminatedPlayers.begin(), eliminatedPlayers.end(),
-					[](const std::pair<int, int>& a, const std::pair<int, int>& b) {
-						return a.second > b.second; // Reversed: higher order first
-					});
+					// Sort by elimination order in DESCENDING order (last eliminated first)
+					std::sort(eliminatedPlayersList.begin(), eliminatedPlayersList.end(),
+						[](const std::pair<int, int>& a, const std::pair<int, int>& b) {
+							return a.second > b.second;
+						});
 
-				// Add all losers in reverse order (first eliminated will be last)
-				for (const auto& player : eliminatedPlayers)
-				{
-					m_data->gameData->AddPlayerWin(player.first);
-					std::cout << "Player " << (player.first + 1) << " added as loser (order "
-						<< player.second << ", time: "
-						<< m_data->playerData[player.first].eliminationTime << "s)" << std::endl;
+					// Add all losers in reverse order
+					for (const auto& player : eliminatedPlayersList)
+					{
+						m_data->gameData->AddPlayerWin(player.first);
+						std::cout << "Player " << (player.first + 1) << " added as loser (order "
+							<< player.second << ", time: "
+							<< m_data->playerData[player.first].eliminationTime << "s)" << std::endl;
+					}
 				}
 			}
 
@@ -348,6 +379,9 @@ void FlagGame::StartNewRound(void)
 
 void FlagGame::EvaluateRound(void)
 {
+	// Track players eliminated this round
+	std::vector<int> playersEliminatedThisRound;
+
 	// Check each participating player's input
 	if (m_data->gameData)
 	{
@@ -365,6 +399,8 @@ void FlagGame::EvaluateRound(void)
 					m_data->playerData[playerID].eliminationOrder = m_data->eliminationCounter;
 					m_data->playerData[playerID].eliminationTime = m_data->totalGameTime;
 
+					playersEliminatedThisRound.push_back(playerID);
+
 					std::cout << "Player " << (playerID + 1) << " eliminated! (Order: "
 						<< m_data->eliminationCounter << ", Time: "
 						<< m_data->totalGameTime << "s)" << std::endl;
@@ -375,8 +411,18 @@ void FlagGame::EvaluateRound(void)
 
 	UpdatePlayerInputTexts();
 
+	// Check if all remaining players were eliminated this round (tie scenario)
+	bool isTie = (m_data->playersRemaining == 0 && playersEliminatedThisRound.size() > 1);
+
 	// Prepare for next round or game over
-	if (m_data->playersRemaining == 1)
+	if (isTie)
+	{
+		// It's a tie - all players lost simultaneously
+		m_data->resultText.setString("Tie! No Winner!");
+		m_data->resultText.setOrigin(m_data->resultText.getLocalBounds().width / 2, m_data->resultText.getLocalBounds().height / 2);
+		std::cout << "Tie detected! All remaining players eliminated in round " << m_data->currentRound << std::endl;
+	}
+	else if (m_data->playersRemaining == 1)
 	{
 		// Find winner
 		if (m_data->gameData)

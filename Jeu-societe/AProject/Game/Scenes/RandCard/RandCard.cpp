@@ -13,13 +13,15 @@ void RandCard::Load(void)
 	//m_data->menuSystem = new MenuSystem();
 	//m_data->menuSystem->MenuAdd("TestMenu", true);
 
-	// Liaison au GameData passé dans m_keptData (comme dans RockPaperScissors)
+	// Liaison au GameData passï¿½ dans m_keptData (comme dans RockPaperScissors)
 	m_data->gameData = (GameData*)this->m_keptData;
 	m_data->gameData->m_assetManager->LoadManifest("Manifests/RandCard.json", "RandCard");
 
 	//Debug names
-	std::string playersNames[4] = { "Yann", "Lorenzo", "Kyllian", "Damien" };
-	if (m_data->gameData->m_gonnaPlayIndex.size() == 0)
+
+	std::string playersNames[4] = { "Yann", "Lorenzo", "Kyllian", "Benoit" };
+
+	if(m_data->gameData->m_gonnaPlayIndex.empty())
 	{
 		m_data->gameData->m_gonnaPlayIndex.push_back(0);
 		m_data->gameData->m_gonnaPlayIndex.push_back(1);
