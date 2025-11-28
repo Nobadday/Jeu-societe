@@ -13,8 +13,7 @@
 		{
 			GameData* gameData;
 
-			sf::Sprite Podium;
-			std::vector<SpriteAnimated> playerSpriteArray;
+			//std::vector<SpriteAtlas> playerSpriteArray;
 			std::vector<TextPlus> playerTextArray;
 
 			sf::Sprite background;

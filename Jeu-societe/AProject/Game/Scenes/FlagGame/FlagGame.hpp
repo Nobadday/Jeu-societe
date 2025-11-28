@@ -39,6 +39,7 @@ private:
 		sf::Text resultText;
 
 		sf::Sprite buttonSprite;
+		sf::Sprite backGround;
 		
 		State state;
 		GameData* gameData;

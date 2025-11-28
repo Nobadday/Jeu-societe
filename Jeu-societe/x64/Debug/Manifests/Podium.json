@@ -1,14 +1,15 @@
 {
     "assets" : [
         {
-            "name" : "podium",
-            "type" : "Texture",
-            "path" : "Assets/Images/Podium/podium.png"
-        },
-        {
             "name" : "podiumFont",
             "type" : "Font",
             "path" : "Assets/Fonts/Font.ttf"
+        },
+        {
+            "name" : "CharactersPoses",
+            "type" : "Texture Atlas",
+            "path" : "Assets/Sprites/Podium/Win Lose.json",
+            "subType" : 3
         }
     ]
 }

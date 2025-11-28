@@ -112,6 +112,8 @@ void FlagGame::Load(void)
 
 	UpdatePlayerInputTexts();
 
+	m_data->backGround.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground"));
+
 	// Start the game if enough players
 	if (HasEnoughPlayers())
 	{
@@ -314,6 +316,7 @@ void FlagGame::Update(float _deltaTime)
 
 void FlagGame::Draw(sf::RenderWindow& _renderWindow)
 {
+	_renderWindow.draw(m_data->backGround);
 	if (!HasEnoughPlayers())
 	{
 		_renderWindow.draw(m_data->notEnoughPlayersText);
