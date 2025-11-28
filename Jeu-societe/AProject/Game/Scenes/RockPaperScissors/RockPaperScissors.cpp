@@ -52,15 +52,6 @@ void RockPaperScissors::Load()
 	m_data->playerChoiceSprite[0].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAtlas>("RPSHand", AssetManager::AssetType::TEXTURE_ATLAS));
 	m_data->playerChoiceSprite[1].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAtlas>("RPSHand", AssetManager::AssetType::TEXTURE_ATLAS));
 
-	m_data->playerChoiceSprite[0].setOrigin(sf::Vector2f(0.f, 0.f));
-	m_data->playerChoiceSprite[1].setOrigin(sf::Vector2f(1.F, 0.f));
-
-	m_data->playerChoiceSprite[0].setScale(-1.f, 1);
-
-	m_data->playerChoiceSprite[0].setPosition({SCREEN_WIDTH * 0.1f, SCREEN_HEIGHT * 0.66f});
-	m_data->playerChoiceSprite[1].setPosition({SCREEN_WIDTH * 0.9f, SCREEN_HEIGHT * 0.66f});
-
-
 	m_data->victoryText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("RPSFont", AssetManager::AssetType::FONT));
 	m_data->victoryText.setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 });
 	
@@ -68,7 +59,7 @@ void RockPaperScissors::Load()
 	if (((GameData*)this->m_keptData)->m_gonnaPlayIndex.size() == 0)
 	{
 		((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(0);
-		((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(2);
+		((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(1);
 	}
 
 	m_data->timer.SetTimeTarget(PLAY_TIME);
@@ -87,6 +78,17 @@ void RockPaperScissors::Load()
 		m_data->animator[i].SetRotation(0.f, powf(-1, i+1) * 45.f);
 		m_data->animator[i].SetAnimationEasing(anim::Animator::ROTATION, anim::Easing::INSINE);
 	}
+
+	m_data->playerChoiceSprite[0].setOrigin(sf::Vector2f(1.f, 0.f));
+	m_data->playerChoiceSprite[1].setOrigin(sf::Vector2f(1.f, 0.f));
+
+	m_data->playerChoiceSprite[0].setScale(-1.3f, 1.3f);
+	m_data->playerChoiceSprite[1].setScale(1.3f, 1.3f);
+
+
+
+	m_data->playerChoiceSprite[0].setPosition({ -50, SCREEN_HEIGHT * 0.5f });
+	m_data->playerChoiceSprite[1].setPosition({ SCREEN_WIDTH + 50, SCREEN_HEIGHT * 0.5f });
 
 	ChangePlayersChoiceTexture();
 }                               
