@@ -1,9 +1,14 @@
 {
     "assets": [
-        {
-            "name": "ArmWrestlingFont",
-            "type": "Font",
-            "path": "./Assets/Fonts/Font.ttf"
-        }
+      {
+        "name": "ArmWrestlingFont",
+        "type": "Font",
+        "path": "./Assets/Fonts/Font.ttf"
+      },
+      {
+        "name": "InputPressed",
+        "type": "Sound Buffer",
+        "path": "Assets/Audio/Sounds/InputPressed.wav"
+      } 
     ]
 }

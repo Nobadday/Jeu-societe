@@ -1,8 +1,11 @@
 #include "ArmWrestling.hpp"
 
+AudioEngine* ArmWrestling::SceneData::audio = nullptr;
+
 void ArmWrestling::Load(void)
 {
 	m_data = new SceneData();
+
 	m_data->timer = 0.0f;
 
 	// Title text (membre par valeur)
@@ -40,6 +43,7 @@ void ArmWrestling::Load(void)
 	// Liaison au GameData passé dans m_keptData (comme dans RockPaperScissors)
 	m_data->gameData = (GameData*)this->m_keptData;
 
+	m_data->audio = (AudioEngine*)m_data->gameData->m_audioEngine;
 	// Préparer le texte de résultat (vide pour l'instant)
 	m_data->resultText.setFont(StringFormat::GetDefaultFont());
 	m_data->resultText.setCharacterSize(20);
@@ -163,6 +167,12 @@ void ArmWrestling::Draw(sf::RenderWindow& _renderWindow)
 	}
 }
 
+AudioEngine& ArmWrestling::GetAudioEngine()
+{
+	AudioEngine* audio = ArmWrestling::SceneData::audio;
+	return *audio;
+}
+
 ArmWrestlingPlayer::ArmWrestlingPlayer(sf::Vector2f _pos, sf::Color _color, float _scale, short _id)
 {
 	id = _id;
@@ -204,6 +214,10 @@ void ArmWrestlingPlayer::SetForce(short _force)
 void ArmWrestlingPlayer::Update(float _dt, std::vector<ArmWrestlingPlayer>& allPlayers)
 {
 	(void)_dt;
+	if (shape.getScale().y != 1.f)
+	{
+		shape.setScale(Lerp2D(shape.getScale(), sf::Vector2f(shape.getScale().x, 1.f), 10*_dt));
+	}
 	if (GetGamePadPressed(GAMEPAD_A, id, true))
 	{
 		// Trouver l'autre joueur dans la liste fournie
@@ -212,6 +226,8 @@ void ArmWrestlingPlayer::Update(float _dt, std::vector<ArmWrestlingPlayer>& allP
 			if (player.GetID() != id)
 			{
 				// Augmenter la taille du bras du joueur courant et diminuer celle de l'autre
+				ArmWrestling::GetAudioEngine().PlaySound("InputPressed", false);
+				PopBarr();
 				shape.setSize(sf::Vector2f(shape.getSize().x + force, shape.getSize().y));
 				player.shape.setSize(sf::Vector2f(player.shape.getSize().x - force, player.shape.getSize().y));
 				break;
@@ -248,4 +264,9 @@ short ArmWrestlingPlayer::GetOtherPlayerID(short _callerID, const std::vector<Ar
 float ArmWrestlingPlayer::GetArmWidth() const
 {
 	return shape.getSize().x;
+}
+
+void ArmWrestlingPlayer::PopBarr(void)
+{
+	shape.setScale(shape.getScale().x, 2);
 }

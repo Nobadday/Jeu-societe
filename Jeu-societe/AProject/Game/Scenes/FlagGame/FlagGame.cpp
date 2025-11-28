@@ -118,7 +118,7 @@ void FlagGame::Load(void)
 
 void FlagGame::Unload(void)
 {
-	m_data->audioPlayed;
+	m_data->audioPlayed = false;
 	delete m_data;
 	m_data = nullptr;
 }

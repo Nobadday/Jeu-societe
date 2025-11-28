@@ -23,7 +23,7 @@ private:
 	short force;
 	sf::RectangleShape shape;
 	sf::Text nameText;
-
+	void PopBarr(void);
 	short GetOtherPlayerID(short _callerID, const std::vector<ArmWrestlingPlayer>& allPlayers) const;
 };
 
@@ -40,6 +40,7 @@ public:
 		std::vector<ArmWrestlingPlayer> allPlayers;
 		short nextID = 0;
 
+		static AudioEngine* audio;
 		// Ajoutés pour gérer l'affichage du résultat et la communication avec GameData
 		GameData* gameData = nullptr;
 		sf::Text resultText;
@@ -54,6 +55,7 @@ public:
 	virtual void PollEvent(sf::Event& _event);
 	virtual void Update(float _deltaTime);
 	virtual void Draw(sf::RenderWindow& _renderWindow);
+	static AudioEngine& GetAudioEngine();
 private:
 
 };

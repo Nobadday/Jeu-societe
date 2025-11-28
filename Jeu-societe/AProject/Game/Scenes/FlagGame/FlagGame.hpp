@@ -41,10 +41,6 @@ private:
 		sf::Text resultText;
 
 		AudioEngine* audio;
-		//AudioEngine endRound;
-		//AudioEngine gameOverSound;
-		//AudioEngine backgroundMusic;
-		//AudioEngine winnerSound;
 		bool audioPlayed;
 		sf::Texture buttonTexture[6];
 		sf::Sprite buttonSprite;
