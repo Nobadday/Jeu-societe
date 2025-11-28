@@ -419,7 +419,7 @@ void BaseGame::Update(float _deltaTime)
 
 		UpdateCameraFollowPlayer(_deltaTime);
 
-		UpdateCameraToShowAllPlayers();
+		//UpdateCameraToShowAllPlayers();
 
 	}
 	else
@@ -1035,8 +1035,9 @@ void BaseGame::BoardStateUpdate(float _dt)
 			m_gameData->AddPlayerPlaying(i);
 
 		SetBoardState(WIN);
-		m_data->camera.Reset(m_gameData->m_renderWindow->getDefaultView());
-		m_gameData->m_renderWindow->setView(m_data->camera);
+		//m_data->camera.Reset(m_gameData->m_renderWindow->getDefaultView());
+		m_gameData->m_renderWindow->ResetView();
+		//m_gameData->m_renderWindow->setView(m_data->camera);
 		ChangeScene(RandomBattle(), true);
 		break;
 
@@ -1046,8 +1047,9 @@ void BaseGame::BoardStateUpdate(float _dt)
 		m_gameData->AddPlayerPlaying(OnSameCase());
 
 		SetBoardState(WIN);
-		m_data->camera.Reset(m_gameData->m_renderWindow->getDefaultView());
-		m_gameData->m_renderWindow->setView(m_data->camera);
+		//m_data->camera.Reset(m_gameData->m_renderWindow->getDefaultView());
+		m_gameData->m_renderWindow->ResetView();
+		//m_gameData->m_renderWindow->setView(m_data->camera);
 		ChangeScene(RandomDuel(), true);
 		break;
 
