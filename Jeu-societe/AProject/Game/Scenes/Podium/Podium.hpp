@@ -11,16 +11,13 @@
 	private:
 		struct SceneData
 		{
-			MenuSystem menuSystem;
+			GameData* gameData;
 
-			std::vector<PlayerData> m_playerDataList;
-			std::vector<int> playerOrder;
-
-			sf::Texture PodiumTexture;
 			sf::Sprite Podium;
+			std::vector<SpriteAnimated> playerSpriteArray;
+			std::vector<TextPlus> playerTextArray;
 
-			sf::Text playerTab[4];
-			sf::Font font;
+			sf::Sprite background;
 		};
 		SceneData* m_data;
 

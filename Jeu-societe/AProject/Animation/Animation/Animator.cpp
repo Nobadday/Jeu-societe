@@ -155,7 +155,7 @@ sf::Color Animator::GetColor(void)
 
 float Animator::GetRotation(float _start, float _end, float _coefficient, Easing::Type _easing)
 {
-	return Easing::GetCoefficient(AniMath::Interpolate(_start, _end, _coefficient), _easing);
+	return AniMath::Interpolate(_start, _end, Easing::GetCoefficient(_coefficient, _easing));
 }
 
 float Animator::GetRotation(Easing::Type _easing)
@@ -171,4 +171,4 @@ float Animator::GetRotation(void)
 
 }
 
-// Animator v1.2
+// Animator v1.2.2

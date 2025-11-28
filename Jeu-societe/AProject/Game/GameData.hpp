@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef _INC_GAMEDATA_HPP
 #define _INC_GAMEDATA_HPP
 
@@ -6,6 +8,9 @@
 
 #include "PlayerData.hpp"
 #include "../Utilities/AssetManager.hpp"
+#include "../Utilities/AudioEngine/AudioEngine.hpp"
+
+#include "../Utilities/BetterWindow/BetterWindow.hpp"
 
 class GameData
 {
@@ -14,6 +19,8 @@ class GameData
 	public:
 		sf::RenderWindow* m_renderWindow;
 		AssetManager* m_assetManager;
+		void* m_audioEngine;
+
 
 		std::vector<PlayerData> m_playerDataList;
 		std::vector<int> m_gonnaPlayIndex;

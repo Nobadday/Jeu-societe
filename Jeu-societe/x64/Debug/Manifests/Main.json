@@ -61,6 +61,11 @@
             "name": "LBbutton",
             "type": "Texture",
             "path":  "./Assets/Shared/Images/LB.png"
+        },
+        {
+            "name": "MinigameBackground",
+            "type": "Texture",
+            "path": "Assets/shared/MinigameBackground.png"
         }
     ]
 }

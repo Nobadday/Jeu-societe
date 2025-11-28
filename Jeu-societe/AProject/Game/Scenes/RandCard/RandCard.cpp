@@ -13,8 +13,7 @@ void RandCard::Load(void)
 	//m_data->menuSystem = new MenuSystem();
 	//m_data->menuSystem->MenuAdd("TestMenu", true);
 
-
-	// Liaison au GameData passé dans m_keptData (comme dans RockPaperScissors)
+	// Liaison au GameData passï¿½ dans m_keptData (comme dans RockPaperScissors)
 	m_data->gameData = (GameData*)this->m_keptData;
 	m_data->gameData->m_assetManager->LoadManifest("Manifests/RandCard.json", "RandCard");
 
@@ -231,11 +230,11 @@ void RandCard::Update(float _deltaTime)
 
 						//Save data
 						int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size() - 1;
-						for (int i = 0 ; i < nbOfPlayers; i++)
+						for (int i = m_data->deadPlayers.size() - 1; i > 0; i--)
 						{
 							//Print if you want check
 							//std::cout << "END, player rank" << i << " player : " << m_data->deadPlayers.at(i).id << " name :" << m_data->deadPlayers.at(i).name << std::endl;
-							m_data->gameData->AddPlayerWin(m_data->deadPlayers.at(nbOfPlayers - i).id);
+							m_data->gameData->AddPlayerWin(m_data->deadPlayers.at(i).id);
 						}
 						SceneBase::ChangeScene("Board", false);
 						return;
