@@ -14,7 +14,7 @@ public:
 	void Update(float _dt, std::vector<ArmWrestlingPlayer>& allPlayers);
 	void Draw(sf::RenderWindow& _renderWindow);
 
-	// Ajouté : accès en lecture à la taille actuelle du bras
+	// Ajoutï¿½ : accï¿½s en lecture ï¿½ la taille actuelle du bras
 	float GetArmWidth() const;
 	void SetFont(sf::Font _font);
 private:
@@ -40,7 +40,7 @@ public:
 		std::vector<ArmWrestlingPlayer> allPlayers;
 		short nextID = 0;
 
-		// Ajoutés pour gérer l'affichage du résultat et la communication avec GameData
+		// Ajoutï¿½s pour gï¿½rer l'affichage du rï¿½sultat et la communication avec GameData
 		GameData* gameData = nullptr;
 		sf::Text resultText;
 		bool finished = false;

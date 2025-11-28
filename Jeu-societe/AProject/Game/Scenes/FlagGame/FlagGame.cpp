@@ -1,4 +1,5 @@
 #include "FlagGame.hpp"
+#include "../../Utilities/Random.hpp"
 
 #define ROUND_TIME 5.0f
 #define ROUND_END_TIME 3.0f
