@@ -119,8 +119,8 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
 	_mainData.scenes.AddScene<Podium>("Podium");
 
-	//_mainData.scenes.SelectScene("Board", true);
-	_mainData.scenes.SelectScene("Menu", true);
+	_mainData.scenes.SelectScene("Board", true);
+	//_mainData.scenes.SelectScene("Menu", true);
 	//_mainData.scenes.SelectScene("RuRoul", true);
 	//_mainData.scenes.SelectScene("RandCard", true);
 

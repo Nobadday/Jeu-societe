@@ -35,8 +35,8 @@ class RandCard : public SceneBase
 		};
 		struct SceneData
 		{
-			sf::Sprite staticCardSpr;
-			SpriteAnimated cardSprAnim;
+			SpriteAnimated cardChosenSprAnim;
+			SpriteAnimated cardUnchosenSprAnim;
 			SpriteAnimated iconsChara;
 			sf::Sprite background;
 
