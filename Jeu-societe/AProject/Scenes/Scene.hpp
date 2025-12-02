@@ -44,6 +44,7 @@ class SceneBase
 		void ChangeScene(const std::string& _sceneName, bool _keepLoaded = false);
 		void ChangeScene(int _index, bool _keepLoaded = false);
 
+
 		virtual void Load(void) = 0;
 		virtual void Unload(void) = 0;
 		virtual void PollEvent(sf::Event& _event) = 0;
@@ -98,13 +99,11 @@ class SceneBase
 class SceneExample : public SceneBase
 {
 	private:
-		struct SceneData
-		{
-
-		};
-		SceneData* m_data;
+		int value;
 
 	public:
+		SceneExample(void);
+
 		virtual void Load(void);
 		
 		virtual void Unload(void);
@@ -116,17 +115,21 @@ class SceneExample : public SceneBase
 
 	SceneExample.cpp
  
+void SceneExample::SceneExample(void) :
+m_value (69)
+{
+
+}
 void SceneExample::Load(void)
 {
-	m_data = new SceneData;
+	
 }
 void SceneExample::Unload(void)
 {
-	delete this->m_data;
-	this->m_data = NULL;
+
 }
 */
 
 
 #endif
-// Scene v1.2
+// Scene v1.2.2
