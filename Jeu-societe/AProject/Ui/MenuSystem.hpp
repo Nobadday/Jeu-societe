@@ -9,11 +9,10 @@
 #include "./Button.hpp"
 
 
-
 class MenuSystem : public sf::Drawable
 {
 	public:
-		class MenuHolder : public std::vector<Button>, public sf::Drawable
+		class MenuHolder : public std::map<std::string, Button>, public sf::Drawable
 		{
 			private:
 				int m_buttonSelected;
@@ -21,10 +20,12 @@ class MenuSystem : public sf::Drawable
 
 			public:
 				MenuHolder(void);
+				void PollEvent(const sf::Event& _event);
+				void Update(float _deltaTime);
+
 
 			private:
 				virtual void draw(sf::RenderTarget& _target, sf::RenderStates _states) const;
-
 		};
 
 
@@ -37,6 +38,7 @@ class MenuSystem : public sf::Drawable
 		MenuSystem(void);
 
 		MenuHolder& CreateMenu(const std::string& _name, bool _selectionWrap = false);
+
 
 
 	private:
