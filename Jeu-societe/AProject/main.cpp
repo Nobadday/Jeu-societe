@@ -59,12 +59,12 @@ int main(void)
 
 
     //Unusefull with menu
-	mainData.gameData.m_playerDataList.resize(2);
-	for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
-	{
-		mainData.gameData.m_playerDataList[i].SetJoystickID(i);
-		mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 8));
-	}
+	//mainData.gameData.m_playerDataList.resize(2);
+	//for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
+	//{
+	//	mainData.gameData.m_playerDataList[i].SetJoystickID(i);
+	//	mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 8));
+	//}
 
 
 	MainDataLoad(mainData);
@@ -119,8 +119,8 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
 	_mainData.scenes.AddScene<Podium>("Podium");
 
-	_mainData.scenes.SelectScene("Board", true);
-	//_mainData.scenes.SelectScene("Menu", true);
+	//_mainData.scenes.SelectScene("Board", true);
+	_mainData.scenes.SelectScene("Menu", true);
 	//_mainData.scenes.SelectScene("RuRoul", true);
 	//_mainData.scenes.SelectScene("RandCard", true);
 

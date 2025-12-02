@@ -30,13 +30,13 @@ void Menu::LoadUI(void)
 	//Game logo
 	m_data->ui.logoGame.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoGame"));
 	sf::Vector2u logoGameSize = m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoGame")->getSize();
-	m_data->ui.logoGame.setOrigin(sf::Vector2f( logoGameSize.x / 2, 1));
+	m_data->ui.logoGame.setOrigin(sf::Vector2f( logoGameSize.x / 2.f, 1.f));
 	m_data->ui.logoGame.setPosition({ SCREEN_WIDTH / 2, 0 });
 	m_data->ui.logoGame.setScale({ 0.8f,0.8f });
 	//Crea logo
 	m_data->ui.logoCrea.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoCrea"));
 	logoGameSize = m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoCrea")->getSize();
-	m_data->ui.logoCrea.setOrigin(sf::Vector2f( 1, logoGameSize.y / 2 ));
+	m_data->ui.logoCrea.setOrigin(sf::Vector2f( 1.f, logoGameSize.y / 2.f ));
 	m_data->ui.logoCrea.setPosition({ 10, SCREEN_HEIGHT / 1.5 });
 	m_data->ui.logoCrea.setScale({ 0.3f,0.3f });
 
@@ -114,19 +114,22 @@ void Menu::PollEvent(sf::Event& _event)
 			{
 				switch (_event.joystickMove.axis)
 				{
+					//All directions
 					case sf::Joystick::Axis::X:
+					case sf::Joystick::Axis::Y:
 					case sf::Joystick::Axis::U:
+					case sf::Joystick::Axis::V:
 
 						std::cout << "jostick : " << _event.joystickMove.position << "btn : " << m_data->controlerBtn << std::endl;
 
 						if (_event.joystickMove.position > 0)
 						{
-							ChangeSelection(1);
+							ChangeSelection(1, _event.joystickMove.joystickId);
 							m_data->inputDelay = 0.f;
 						}
 						else if (_event.joystickMove.position < 0)
 						{
-							ChangeSelection(-1);
+							ChangeSelection(-1, _event.joystickMove.joystickId);
 							m_data->inputDelay = 0.f;
 						}
 						break;
@@ -234,7 +237,7 @@ void Menu::DrawUI(sf::RenderWindow& _renderWindow)
 	}
 }
 
-void Menu::ChangeSelection(int _value)
+void Menu::ChangeSelection(int _value, int _joystick)
 {
 	sf::Vector2f mouseNewPos;
 
@@ -316,20 +319,25 @@ void Menu::ChangeSelection(int _value)
 
 		case PLAYER_SELECTION:
 			
-			if ((m_data->currentCharaSelected + _value) > m_data->ui.charaAvaible.size()-1)
+			if (m_data->charaSelected[_joystick] == false)
 			{
-				m_data->currentCharaSelected = 0;
-				//mouseNewPos = m_data->ui.buttonMap["moinsBtn"].getPosition();
+				if ((m_data->currentCharaSelected[_joystick] + _value) > m_data->ui.charaAvaible.size()-1)
+				{
+					m_data->currentCharaSelected[_joystick] = 0;
+					//mouseNewPos = m_data->ui.buttonMap["moinsBtn"].getPosition();
+				}
+				else if ((m_data->controlerBtn + _value) < 0)
+				{
+					m_data->currentCharaSelected[_joystick] = m_data->ui.charaAvaible.size() - 1;
+					//mouseNewPos = m_data->ui.buttonMap["plusBtn"].getPosition();
+				}
+				else
+				{
+					m_data->currentCharaSelected[_joystick] += _value;
+				}
 			}
-			else if ((m_data->controlerBtn + _value) < 0)
-			{
-				m_data->currentCharaSelected = m_data->ui.charaAvaible.size() - 1;
-				//mouseNewPos = m_data->ui.buttonMap["plusBtn"].getPosition();
-			}
-			else
-			{
-				m_data->currentCharaSelected += _value;
-			}
+
+
 			break;
 	}
 	//Set ON new button
@@ -360,18 +368,36 @@ void Menu::PressSelection(int _id)
 				case PLAYER_SELECTION:
 
 					std::cout << "id = " << _id << " size of datalist = " << m_data->gameData->m_playerDataList.size();
-					if (_id == m_data->currentPlayer)
-					{
-						m_data->gameData->m_playerDataList[_id].SetPlayerSkin((PlayerData::PlayerSkin)m_data->currentCharaSelected);
-					}
+					m_data->gameData->m_playerDataList[_id].SetPlayerSkin((PlayerData::PlayerSkin)m_data->currentCharaSelected[_id]);
+					m_data->charaSelected[_id] = true;
 
-					if (_id == m_data->gameData->m_playerDataList.size() - 1)
+					//if (_id == m_data->currentPlayer)
+					//{
+					//}
+
+					//if (_id == m_data->gameData->m_playerDataList.size() - 1)
+					//{
+					//	std::cout << "leave\n";
+					//	SceneBase::ChangeScene("Board");
+					//}
+					int result = 0;
+					for (auto selected : m_data->charaSelected)
 					{
-						std::cout << "leave\n";
+						result += (int)selected;
+					}
+					if (result == 4)
+					{
+						std::cout << "All players have their skin, go to game\n";
 						SceneBase::ChangeScene("Board");
-					}
 
-					m_data->currentPlayer++;
+					}
+					//if (_id == m_data->gameData->m_playerDataList.size() - 1)
+					//{
+					//	std::cout << "leave\n";
+					//	SceneBase::ChangeScene("Board");
+					//}
+
+					//m_data->currentPlayer++;
 					break;  
 			}
 
@@ -401,6 +427,8 @@ void Menu::PressSelection(int _id)
 				PlayerData newPlayer;
 				newPlayer.m_joystickId = i;
 				m_data->gameData->m_playerDataList.push_back(newPlayer);
+				m_data->charaSelected.push_back(false);
+				m_data->currentCharaSelected.push_back(0);
 			}
 			m_data->state = PLAYER_SELECTION;
 			m_data->controlerBtn = PLAY;
@@ -419,60 +447,79 @@ void Menu::PressSelection(int _id)
 void Menu::PrintIcons(sf::RenderWindow& _renderWindow)
 {
 	sf::Color tempColor = m_data->ui.iconsChara.getColor();
-	sf::Vector2f iconPos[] =
-	{
-		{ SCREEN_WIDTH / 2 - SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2 },
-		{SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 },
-		{SCREEN_WIDTH / 2 + SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2 }
-	};
 
+
+	//ON S EN BRANLE, TOUT LE MONDE PEUT JOUER TOUT LES PERSO
 	//Only one character available
-	if (m_data->ui.charaAvaible.size() == 1)
-	{
-		//Center
-		m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[0]);
-		m_data->ui.iconsChara.setPosition(iconPos[1]);
-		_renderWindow.draw(m_data->ui.iconsChara);
-	}
-	//2 characters available : one in center, one on left or right
-	else if(m_data->ui.charaAvaible.size() == 2)
-	{	
-		//First chara
-		if (m_data->currentCharaSelected == 0)
-		{
-			//Center
-			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[0]);
-			m_data->ui.iconsChara.setPosition(iconPos[1]);
-			_renderWindow.draw(m_data->ui.iconsChara);
+	//if (m_data->ui.charaAvaible.size() == 1)
+	//{
+	//	//Center
+	//	m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[0]);
+	//	m_data->ui.iconsChara.setPosition(iconPos[1]);
+	//	_renderWindow.draw(m_data->ui.iconsChara);
+	//}
+	////2 characters available : one in center, one on left or right
+	//else if(m_data->ui.charaAvaible.size() == 2)
+	//{	
+	//	//First chara
+	//	if (m_data->currentCharaSelected == 0)
+	//	{
+	//		//Center
+	//		m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[0]);
+	//		m_data->ui.iconsChara.setPosition(iconPos[1]);
+	//		_renderWindow.draw(m_data->ui.iconsChara);
 
-			//Right
-			tempColor.a = 100;
-			m_data->ui.iconsChara.setColor(tempColor);
-			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[1]);
-			m_data->ui.iconsChara.setPosition(iconPos[2]);
-			_renderWindow.draw(m_data->ui.iconsChara);
-		}
-		//End chara
-		else
-		{
-			//Center
-			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[0]);
-			m_data->ui.iconsChara.setPosition(iconPos[1]);
-			_renderWindow.draw(m_data->ui.iconsChara);
+	//		//Right
+	//		tempColor.a = 100;
+	//		m_data->ui.iconsChara.setColor(tempColor);
+	//		m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[1]);
+	//		m_data->ui.iconsChara.setPosition(iconPos[2]);
+	//		_renderWindow.draw(m_data->ui.iconsChara);
+	//	}
+	//	//End chara
+	//	else
+	//	{
+	//		//Center
+	//		m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[0]);
+	//		m_data->ui.iconsChara.setPosition(iconPos[1]);
+	//		_renderWindow.draw(m_data->ui.iconsChara);
 
-			//Left
-			tempColor.a = 100;
-			m_data->ui.iconsChara.setColor(tempColor);
-			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[1]);
-			m_data->ui.iconsChara.setPosition(iconPos[0]);
-			_renderWindow.draw(m_data->ui.iconsChara);
-		}
-	}
-	//Print 3 characters
-	else
+	//		//Left
+	//		tempColor.a = 100;
+	//		m_data->ui.iconsChara.setColor(tempColor);
+	//		m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[1]);
+	//		m_data->ui.iconsChara.setPosition(iconPos[0]);
+	//		_renderWindow.draw(m_data->ui.iconsChara);
+	//	}
+	//}
+	////Print 3 characters
+	//else
+
+	
+	//Same usage of randcard printcard()
+	//std::cout << "player count = " << m_data->gameSettings.playerCount << std::endl;
+	//float iconSpacing = (SCREEN_WIDTH) / (m_data->gameSettings.playerCount + 1);
+	float iconSpacing = (SCREEN_WIDTH - 2 * 100.f) / m_data->gameSettings.playerCount;
+
+
+	//std::cout << " players : " << m_data->gameSettings.playerCount << std::endl;
+
+	for (int i = 0; i < m_data->gameSettings.playerCount + 1; i++)
 	{
+		sf::Vector2f iconPos[] =
+		{
+			{(float)(100.f + i * iconSpacing), SCREEN_HEIGHT / 2.f - SCREEN_HEIGHT / 4.f},
+			{(float)(100.f + i * iconSpacing), SCREEN_HEIGHT / 2.f },
+			{(float)(100.f + i * iconSpacing), SCREEN_HEIGHT / 2.f + SCREEN_HEIGHT / 4.f}
+		};
+
+
+		//std::cout << "icon pos x = " << iconPos[1].x << std::endl;
+		//std::cout << "i = " << i << std::endl;
+
+
 		//First chara
-		if (m_data->currentCharaSelected == 0)
+		if (m_data->currentCharaSelected[i] == 0)
 		{
 			//Left
 			tempColor.a = 100;
@@ -482,30 +529,48 @@ void Menu::PrintIcons(sf::RenderWindow& _renderWindow)
 			_renderWindow.draw(m_data->ui.iconsChara);
 			//Center
 			tempColor.a = 255;
-			m_data->ui.iconsChara.setColor(tempColor);
-			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected]);
+			if (m_data->charaSelected[i] == true)
+			{
+				//m_data->ui.iconsChara.setColor(sf::Color(20, 20, 20, tempColor.a));
+				m_data->ui.iconsChara.setColor(sf::Color(0, 0, 0, 255));
+
+			}
+			else
+			{
+				m_data->ui.iconsChara.setColor(tempColor);
+			}
+			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected[i]]);
 			m_data->ui.iconsChara.setPosition(iconPos[1]);
 			_renderWindow.draw(m_data->ui.iconsChara);
 			//Right
 			tempColor.a = 100;
 			m_data->ui.iconsChara.setColor(tempColor);
-			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected + 1]);
+			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected[i] + 1]);
 			m_data->ui.iconsChara.setPosition(iconPos[2]);
 			_renderWindow.draw(m_data->ui.iconsChara);
 		}
 		//End chara
-		else if (m_data->currentCharaSelected == m_data->ui.charaAvaible.size() - 1)
+		else if (m_data->currentCharaSelected[i] == m_data->ui.charaAvaible.size() - 1)
 		{
 			//Left
 			tempColor.a = 100;
 			m_data->ui.iconsChara.setColor(tempColor);
-			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected - 1]);
+			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected[i] - 1]);
 			m_data->ui.iconsChara.setPosition(iconPos[0]);
 			_renderWindow.draw(m_data->ui.iconsChara);
 			//Center
 			tempColor.a = 255;
+			if (m_data->charaSelected[i] == true)
+			{
+				//m_data->ui.iconsChara.setColor(sf::Color(20, 20, 20, tempColor.a));
+				m_data->ui.iconsChara.setColor(sf::Color(0, 0, 0, 255));
+			}
+			else
+			{
+				m_data->ui.iconsChara.setColor(tempColor);
+			}
 			m_data->ui.iconsChara.setColor(tempColor);
-			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected]);
+			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected[i]]);
 			m_data->ui.iconsChara.setPosition(iconPos[1]);
 			_renderWindow.draw(m_data->ui.iconsChara);
 			//Right
@@ -521,25 +586,34 @@ void Menu::PrintIcons(sf::RenderWindow& _renderWindow)
 			//Left
 			tempColor.a = 100;
 			m_data->ui.iconsChara.setColor(tempColor);
-			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected - 1]);
+			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected[i] - 1]);
 			m_data->ui.iconsChara.setPosition(iconPos[0]);
 			_renderWindow.draw(m_data->ui.iconsChara);
 			//Center
 			tempColor.a = 255;
+			if (m_data->charaSelected[i] == true)
+			{
+				//m_data->ui.iconsChara.setColor(sf::Color(20, 20, 20, tempColor.a));
+				m_data->ui.iconsChara.setColor(sf::Color(0, 0, 0, 255));
+
+			}
+			else
+			{
+				m_data->ui.iconsChara.setColor(tempColor);
+			}
 			m_data->ui.iconsChara.setColor(tempColor);
-			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected]);
+			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected[i]]);
 			m_data->ui.iconsChara.setPosition(iconPos[1]);
 			_renderWindow.draw(m_data->ui.iconsChara);
 			//Right
 			tempColor.a = 100;
 			m_data->ui.iconsChara.setColor(tempColor);
-			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected + 1]);
+			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected[i] + 1]);
 			m_data->ui.iconsChara.setPosition(iconPos[2]);
 			_renderWindow.draw(m_data->ui.iconsChara);
 		}
 	}
 
-	//Reset color 
-	tempColor.a = 255;
-	m_data->ui.iconsChara.setColor(tempColor);
+
+	m_data->ui.iconsChara.setColor(sf::Color(255,255,255,255));
 }

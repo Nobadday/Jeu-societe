@@ -58,7 +58,8 @@ private:
 		ControlerCurrentButton controlerBtn = PLAY;
 		float inputDelay = 0.f;
 		int currentPlayer = 0;
-		int currentCharaSelected = 0;
+		std::vector<int> currentCharaSelected;
+		std::vector<bool> charaSelected;
 
 		std::vector<PlayerData> playerDataVec;
 
@@ -72,7 +73,7 @@ private:
 	void ButtonsUpdate(float _dt);
 	void ButtonsPollEvent(sf::Event& _event);
 	void DrawUI(sf::RenderWindow& _renderWindow);
-	void ChangeSelection(int _value);
+	void ChangeSelection(int _value, int _joystick);
 	void PressSelection(int _id);
 	void PrintIcons(sf::RenderWindow& _renderWindow);
 
