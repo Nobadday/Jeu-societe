@@ -67,12 +67,12 @@ void FlagGame::Load(void)
 
 	m_data->buttonSprite.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.5f);
 
-	m_data->stringTab[0] = "Abutton";
-	m_data->stringTab[1] = "Bbutton";
-	m_data->stringTab[2] = "Xbutton";
-	m_data->stringTab[3] = "Ybutton";
-	m_data->stringTab[4] = "LBbutton";
-	m_data->stringTab[5] = "RBbutton";
+	m_data->stringTab[0] = "A";
+	m_data->stringTab[1] = "B";
+	m_data->stringTab[2] = "X";
+	m_data->stringTab[3] = "Y";
+	m_data->stringTab[4] = "LB";
+	m_data->stringTab[5] = "RB";
 
 
 	// Initialize player data for all players in m_gonnaPlayIndex
