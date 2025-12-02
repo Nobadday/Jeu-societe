@@ -70,7 +70,7 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
         m_data->players[i].sprite.setOrigin({ 0.5f,1.f });
         m_data->players[i].v.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
         m_data->players[i].v.setString(L"⌂");
-        m_data->players[i].boardPosition = m_data->posCase[0].GetPosition() + sf::Vector2f{ -40.f * i ,0.f };
+        m_data->players[i].boardPosition = m_data->posCase[0].GetPosition() + sf::Vector2f{ -40.f * i + 50 ,0.f };
         m_data->players[i].posIcone = PosIcone(i);
 
         sf::FloatRect textRect = m_data->players[i].v.getLocalBounds();
