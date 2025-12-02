@@ -1,10 +1,15 @@
 #include "Scene.hpp"
 
 
-void SceneBase::LaunchEvent(SceneEvent::Type _type)
+SceneBase::SceneBase(void) :
+m_sceneAction (),
+m_keptData	  (NULL)
 {
-	this->m_sceneAction.type = _type;
-	this->m_sceneAction.shouldListen = true;
+
+}
+SceneBase::~SceneBase(void)
+{
+
 }
 
 SceneEvent& SceneBase::FetchActions(void)
@@ -29,6 +34,12 @@ void SceneBase::ChangeScene(int _index, bool _keepLoaded)
 	this->LaunchEvent(SceneEvent::Type::LOAD_INDEX);
 }
 
+void SceneBase::LaunchEvent(SceneEvent::Type _type)
+{
+	this->m_sceneAction.type = _type;
+	this->m_sceneAction.shouldListen = true;
+}
 
 
-// Scene v1.1
+
+// Scene v1.2.2
