@@ -65,7 +65,11 @@ void FlagGame::Load(void)
 	m_data->resultText.setFillColor(sf::Color::Green);
 	m_data->resultText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
+	m_data->buttonSprite.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAtlas>("Input"));
+	m_data->buttonSprite.setOrigin({0.5f,0.5f});
 	m_data->buttonSprite.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.5f);
+
+	m_data->buttonSprite.SetTextureFrame("A");
 
 	m_data->stringTab[0] = "A";
 	m_data->stringTab[1] = "B";
@@ -104,8 +108,11 @@ void FlagGame::Load(void)
 					SCREEN_WIDTH / ((float)m_data->gameData->m_gonnaPlayIndex.size() + 1) * (i + 1),
 					175.f
 				);
+				m_data->playerData[playerID].buttonSprite.setOrigin({ 0.5f,0.5f });
 				m_data->playerData[playerID].buttonSprite.setPosition(SCREEN_WIDTH / ((float)m_data->gameData->m_gonnaPlayIndex.size() + 1) * (i + 1),
 					100.f);
+				m_data->playerData[playerID].buttonSprite.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAtlas>("Input"));
+				m_data->playerData[playerID].buttonSprite.SetTextureFrame("A");
 			}
 		}
 	}
@@ -453,9 +460,9 @@ void FlagGame::EvaluateRound(void)
 void FlagGame::ChangeRequiredInput(void)
 {
 	m_data->requiredInput = GetRandomValidInput();
-	m_data->buttonSprite.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>(m_data->stringTab[(int)m_data->requiredInput]));
-
-	m_data->buttonSprite.setOrigin(m_data->buttonSprite.getLocalBounds().width / 2, m_data->buttonSprite.getLocalBounds().height / 2);
+	//m_data->buttonSprite.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>(m_data->stringTab[(int)m_data->requiredInput]));
+	m_data->buttonSprite.SetTextureFrame(m_data->stringTab[(int)m_data->requiredInput]);
+	//m_data->buttonSprite.setOrigin(m_data->buttonSprite.getLocalBounds().width / 2, m_data->buttonSprite.getLocalBounds().height / 2);
 
 	char inputBuffer[100];
 	std::snprintf(inputBuffer, 100, "Press: %s", GetGamePadButtonName(m_data->requiredInput));
@@ -514,7 +521,8 @@ void FlagGame::UpdatePlayerInputTexts(void)
 				m_data->playerData[playerID].inputText.setString(buffer);
 
 				m_data->playerData[playerID].buttonSprite.setColor(sf::Color::White);
-				m_data->playerData[playerID].buttonSprite.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>(m_data->stringTab[(int)m_data->playerData[playerID].currentInput]));
+				//m_data->playerData[playerID].buttonSprite.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>(m_data->stringTab[(int)m_data->playerData[playerID].currentInput]));
+				m_data->playerData[playerID].buttonSprite.SetTextureFrame(m_data->stringTab[(int)m_data->requiredInput]);
 			}
 			else
 			{
@@ -528,10 +536,7 @@ void FlagGame::UpdatePlayerInputTexts(void)
 			m_data->playerData[playerID].inputText.getLocalBounds().width / 2,
 			m_data->playerData[playerID].inputText.getLocalBounds().height / 2
 		);
-		m_data->playerData[playerID].buttonSprite.setOrigin(
-			m_data->playerData[playerID].buttonSprite.getLocalBounds().width / 2,
-			m_data->playerData[playerID].buttonSprite.getLocalBounds().height / 2
-		);
+		
 	}
 }
 
