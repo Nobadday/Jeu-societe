@@ -1,6 +1,7 @@
 ﻿#include "Common.hpp"
 
 #include "Game/Scenes/Board/Board.hpp"
+#include "Game/Scenes/Loading/LoadingScreen.hpp"
 
 
 #include "./Game/scenes/RockPaperScissors/RockPaperScissors.hpp"
@@ -91,6 +92,8 @@ void MainDataLoad(MainData& _mainData)
 
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 
+	// Ajouter les scènes
+	_mainData.scenes.AddScene<LoadingScreen>("Lo");
 	_mainData.scenes.AddScene<BaseGame>("Board");
 	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
 	_mainData.scenes.AddScene<ArmWrestling>("ArmWrestling");
@@ -100,7 +103,8 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
 	_mainData.scenes.AddScene<Podium>("Podium");
 
-	_mainData.scenes.SelectScene("Board", true);
+	// Sélectionner le LoadingScreen
+	_mainData.scenes.SelectScene("Lo", true);
 
 	_mainData.clock.restart();
 }

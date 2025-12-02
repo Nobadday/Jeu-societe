@@ -7,129 +7,134 @@ constexpr unsigned int hash(const char* str, int h = 0)
 	return !str[h] ? 5381 : (hash(str, h + 1) * 33) ^ str[h];
 }
 
+// Ajouter cette nouvelle méthode avant BaseGame::Load
+void BaseGame::LoadAsync(std::atomic<float>& progress)
+{
+    m_data = new SceneData;
+    m_gameData = (GameData*)this->m_keptData;
+
+    progress.store(0.1f);
+
+    // CHANGEMENT : Ne plus charger le manifest ici car il est déjà chargé par LoadingScreen
+    // m_gameData->m_assetManager->LoadManifest("Manifests/Board.json", "Board");
+    progress.store(0.3f);
+
+    // Configuration des éléments UI
+    m_data->HudLBM.text.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
+    m_data->HudLBM.sprite.setTexture(*m_gameData->m_assetManager->GetAsset<TextureAnimated>("Anim_card", AssetManager::AssetType::TEXTURE_ANIMATED));
+    m_data->HudLBM.state = NONELBM;
+    m_data->HudLBM.active = false;
+    progress.store(0.4f);
+
+    // Chargement de la carte
+    m_data->tile.InitTiled("Assets/Map/map.json");
+    m_data->camera.Reset(m_gameData->m_renderWindow->getDefaultView());
+    progress.store(0.5f);
+
+    MapLayer layer = m_data->tile.GetMapLayer("point");
+    m_data->posCase = layer.GetObjects();
+
+    m_data->players.resize(m_gameData->m_playerDataList.size());
+    m_data->state = START;
+
+    m_data->icone.setTexture(*m_gameData->m_assetManager->GetAsset<TextureAnimated>("Icone", AssetManager::AssetType::TEXTURE_ANIMATED));
+    m_data->icone.setOrigin({ 0.5f,1 });
+
+    m_data->timeWin = TIME_WIN_DISPLAY;
+    m_data->timeLBM = TIME_LBM_DISPLAY;
+    progress.store(0.6f);
+
+    // Initialisation des joueurs
+    for (int i = 0; i < m_data->players.size(); i++)
+    {
+        switch (m_gameData->m_playerDataList[i].GetPlayerSkin())
+        {
+        case PlayerData::CHARACTER_1_1:
+            m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-1", AssetManager::AssetType::TEXTURE_ANIMATED);
+            break;
+        case PlayerData::CHARACTER_2_1:
+            m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso2-1", AssetManager::AssetType::TEXTURE_ANIMATED);
+            break;
+        case PlayerData::CHARACTER_3_1:
+            m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso3-1", AssetManager::AssetType::TEXTURE_ANIMATED);
+            break;
+        case PlayerData::CHARACTER_4_1:
+            m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso4-1", AssetManager::AssetType::TEXTURE_ANIMATED);
+            break;
+        default:
+            m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-1", AssetManager::AssetType::TEXTURE_ANIMATED);
+            break;
+        }
+
+        m_data->players[i].sprite.setTexture(m_data->players[i].texture);
+        m_data->players[i].sprite.setOrigin({ 0.5f,1.f });
+        m_data->players[i].v.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
+        m_data->players[i].v.setString(L"⌂");
+        m_data->players[i].boardPosition = m_data->posCase[0].GetPosition() + sf::Vector2f{ -40.f * i ,0.f };
+        m_data->players[i].posIcone = PosIcone(i);
+
+        sf::FloatRect textRect = m_data->players[i].v.getLocalBounds();
+        m_data->players[i].v.setOrigin({ textRect.width / 2, textRect.height / 2 });
+        m_data->players[i].v.setPosition(m_data->players[i].boardPosition + sf::Vector2f{ 0.f,-100.f });
+
+        m_data->players[i].playeur.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
+        m_data->players[i].playeur.setString("P" + std::to_string(i + 1));
+
+        textRect = m_data->players[i].playeur.getLocalBounds();
+        m_data->players[i].playeur.setOrigin({ textRect.width / 2, textRect.height / 2 });
+        m_data->players[i].playeur.setPosition(m_data->players[i].boardPosition + sf::Vector2f{ 0.f,-120.f });
+
+        m_data->players[i].currentCaseIndex = 0;
+        m_data->players[i].startRandom = 0;
+        m_data->players[i].state = StatePlayer::NONE;
+        m_data->players[i].pendingMovement = 0;
+        m_data->players[i].currentPathId = -1;
+
+        progress.store(0.6f + (0.2f * (i + 1) / m_data->players.size()));
+    }
+
+    m_data->currentPlayerIndex = 0;
+    m_data->smokeOff = false;
+    m_data->smoke.loadFromFile("Assets/Sprites/Board/smoke-export.png");
+    progress.store(0.85f);
+
+    UpdateCameraToShowAllPlayers();
+
+    sf::Vector2f posMin;
+    sf::Vector2f posMax;
+
+    for (int i = 0; i < m_data->posCase.size(); i++)
+    {
+        auto& mapObject = m_data->posCase[i];
+        if (mapObject.GetName() == "19")
+        {
+            posMin = mapObject.GetPosition();
+        }
+        if (i == m_data->posCase.size() - 1)
+        {
+            posMax = mapObject.GetPosition();
+        }
+    }
+
+    CreateSmokeEffectAnotherPart(posMin, posMax);
+    progress.store(0.95f);
+
+    // Configuration des animateurs
+    m_data->animator.Modify(1.0f, 60.0f, false, 1.0f);
+    m_data->animator2.Modify(1.0f, 60.0f, false, 1.0f);
+    m_data->animator.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::INOUTSINE);
+    m_data->animator2.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::INOUTSINE);
+    m_data->animator.End();
+    m_data->animator2.End();
+
+    progress.store(1.0f);
+}
+
 void BaseGame::Load(void)
 {
-	m_data = new SceneData;
-	m_gameData = (GameData*)this->m_keptData;
-
-	m_gameData->m_assetManager->LoadManifest("Manifests/Board.json", "Board");
-
-	m_data->HudLBM.text.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
-	m_data->HudLBM.sprite.setTexture(*m_gameData->m_assetManager->GetAsset<TextureAnimated>("Anim_card", AssetManager::AssetType::TEXTURE_ANIMATED));
-	m_data->HudLBM.state = NONELBM;
-	m_data->HudLBM.active = false;
-
-	m_data->tile.InitTiled("Assets/Map/map.json");
-	m_data->camera.Reset(m_gameData->m_renderWindow->getDefaultView());
-
-	MapLayer layer = m_data->tile.GetMapLayer("point");
-	m_data->posCase = layer.GetObjects();
-
-	m_data->players.resize(m_gameData->m_playerDataList.size());
-	m_data->state = START;
-
-	m_data->icone.setTexture(*m_gameData->m_assetManager->GetAsset<TextureAnimated>("Icone", AssetManager::AssetType::TEXTURE_ANIMATED));
-	m_data->icone.setOrigin({ 0.5f,1 });
-
-	m_data->timeWin = TIME_WIN_DISPLAY;
-	m_data->timeLBM = TIME_LBM_DISPLAY;
-
-	// Initialisation des joueurs
-
-	for (int i = 0; i < m_data->players.size(); i++)
-	{
-		switch (m_gameData->m_playerDataList[i].GetPlayerSkin())
-		{
-		case PlayerData::CHARACTER_1_1:
-			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-1", AssetManager::AssetType::TEXTURE_ANIMATED);
-			break;
-		case PlayerData::CHARACTER_2_1:
-			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso2-1", AssetManager::AssetType::TEXTURE_ANIMATED);
-			break;
-		case PlayerData::CHARACTER_3_1:
-			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso3-1", AssetManager::AssetType::TEXTURE_ANIMATED);
-			break;
-		case PlayerData::CHARACTER_4_1:
-			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso4-1", AssetManager::AssetType::TEXTURE_ANIMATED);
-			break;
-		default:
-			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-1", AssetManager::AssetType::TEXTURE_ANIMATED);
-			break;
-		}
-
-		m_data->players[i].sprite.setTexture(m_data->players[i].texture);
-
-		m_data->players[i].sprite.setOrigin({ 0.5f,1.f });
-
-		m_data->players[i].v.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
-		m_data->players[i].v.setString(L"⌂");
-
-		m_data->players[i].boardPosition = m_data->posCase[0].GetPosition() + sf::Vector2f{ -40.f * i ,0.f };
-
-		std::cout << "Player " << i << " start position: " << m_data->players[i].boardPosition.x << ", " << m_data->players[i].boardPosition.y << " Name" << m_data->posCase[0].GetName() << std::endl;
-
-		m_data->players[i].posIcone = PosIcone(i);
-
-		sf::FloatRect textRect = m_data->players[i].v.getLocalBounds();
-
-		m_data->players[i].v.setOrigin({ textRect.width / 2, textRect.height / 2 });
-
-		m_data->players[i].v.setPosition(m_data->players[i].boardPosition + sf::Vector2f{ 0.f,-100.f });
-
-		m_data->players[i].playeur.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
-		m_data->players[i].playeur.setString("P" + std::to_string(i + 1));
-
-		textRect = m_data->players[i].playeur.getLocalBounds();
-
-		m_data->players[i].playeur.setOrigin({ textRect.width / 2, textRect.height / 2 });
-
-		m_data->players[i].playeur.setPosition(m_data->players[i].boardPosition + sf::Vector2f{ 0.f,-120.f });
-
-
-
-		m_data->players[i].currentCaseIndex = 0;
-		m_data->players[i].startRandom = 0;
-		m_data->players[i].state = StatePlayer::NONE;
-		m_data->players[i].pendingMovement = 0;      // Nouveau
-		m_data->players[i].currentPathId = -1;       // Nouveau : -1 = chemin principal
-	}
-
-	m_data->currentPlayerIndex = 0;
-
-	m_data->smokeOff = false;
-
-	m_data->smoke.loadFromFile("Assets/Sprites/Board/smoke-export.png");
-
-	// Position initiale de la caméra : afficher tous les joueurs
-	UpdateCameraToShowAllPlayers();
-
-	sf::Vector2f posMin;
-	sf::Vector2f posMax;
-
-	for (int i = 0; i < m_data->posCase.size(); i++)
-	{
-		auto& mapObject = m_data->posCase[i];
-
-		if (mapObject.GetName() == "19")
-		{
-			posMin = mapObject.GetPosition();
-		}
-
-		if (i == m_data->posCase.size() - 1)
-		{
-			posMax = mapObject.GetPosition();
-		}
-	}
-
-	CreateSmokeEffectAnotherPart(posMin, posMax);
-
-	// Configuration des animateurs
-	m_data->animator.Modify(1.0f, 60.0f, false, 1.0f);
-	m_data->animator2.Modify(1.0f, 60.0f, false, 1.0f);
-	m_data->animator.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::INOUTSINE);
-	m_data->animator2.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::INOUTSINE);
-	m_data->animator.End();
-	m_data->animator2.End();
+    // Version synchrone pour compatibilité
+    std::atomic<float> dummyProgress{0.0f};
+    LoadAsync(dummyProgress);
 }
 
 void BaseGame::Unload(void)
@@ -2083,21 +2088,21 @@ void BaseGame::DrawIconePlayer(sf::RenderWindow& _renderWindow, int _i)
 	case UP_LEFT:
 		if (_i != m_data->currentPlayerIndex)
 		{
-			m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.55f });
+			m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.40f });
 		}
 		else
 		{
-			m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.70f });
+			m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.50f });
 		}
 		break;
 	case UP_RIGHT:
 		if (_i != m_data->currentPlayerIndex)
 		{
-			m_data->icone.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f , size2.y - SCREEN_HEIGHT / 2 + 305.f * 0.50f });
+			m_data->icone.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f , size2.y - SCREEN_HEIGHT / 2 + 305.f * 0.40f });
 		}
 		else
 		{
-			m_data->icone.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f , size2.y - SCREEN_HEIGHT / 2 + 305.f * 0.70f });
+			m_data->icone.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f , size2.y - SCREEN_HEIGHT / 2 + 305.f * 0.50f });
 		}
 		break;
 	case DOWN_LEFT:
@@ -2158,11 +2163,11 @@ void BaseGame::DrawIconePlayer(sf::RenderWindow& _renderWindow, int _i)
 	if (_i != m_data->currentPlayerIndex)
 	{
 		m_data->icone.setColor({ 255,255,255,155 });
-		m_data->icone.setScale({ 0.75f,0.75f });
+		m_data->icone.setScale({ 0.5f,0.5f });
 	}
 
 	_renderWindow.draw(m_data->icone);
 
 	m_data->icone.setColor({ 255,255,255,255 });
-	m_data->icone.setScale({ 1,1 });
+	m_data->icone.setScale({ 0.75f,0.75f });
 }

@@ -210,6 +210,8 @@ class BaseGame : public SceneBase
 			LuckBonusMalus HudLBM;
 
 			SpriteAnimated icone;
+			
+			bool active;
 		};
 
 		GameData* m_gameData;
@@ -284,6 +286,8 @@ class BaseGame : public SceneBase
 		void DrawIconePlayer(sf::RenderWindow& _renderWindow, int _i);
 
 	public:
+		void LoadAsync(std::atomic<float>& progress);
+
 		virtual void Load(void);
 		
 		virtual void Unload(void);
