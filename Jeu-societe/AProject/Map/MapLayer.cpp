@@ -93,6 +93,12 @@ void MapLayer::Draw(sf::RenderTarget& _target, TilesetManager& _tilesetManager, 
         float screenX = worldX - parallaxOffsetX;
         float screenY = worldY - parallaxOffsetY;
 
+		// Correction : calculer le rectangle de la texture pour afficher que se qui est dans la caméra 
+        
+		/*sf::IntRect cameraBouns;
+
+        sprite.setTextureRect(cameraBouns);*/
+
         sprite.setPosition(screenX, screenY);
 
         // Appliquer la taille
