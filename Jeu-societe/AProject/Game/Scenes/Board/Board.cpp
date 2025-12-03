@@ -28,7 +28,8 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 
     // Chargement de la carte
     m_data->tile.InitTiled("Assets/Map/map.json");
-    m_data->camera.Reset(m_gameData->m_renderWindow->getDefaultView());
+    m_gameData->m_renderWindow->ResetView();
+	m_data->camera.Reset(m_gameData->m_renderWindow->getView());
     progress.store(0.5f);
 
     MapLayer layer = m_data->tile.GetMapLayer("point");
@@ -42,6 +43,56 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 
     m_data->timeWin = TIME_WIN_DISPLAY;
     m_data->timeLBM = TIME_LBM_DISPLAY;
+    m_data->timeDice = TIME_LBM_DISPLAY;
+    
+    // NOUVEAU : Initialisation de la vidéo du dé
+    m_data->diceAnimationPlaying = false;
+    m_data->diceResult = 0;
+    m_data->dicePosition = sf::Vector2f(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f);
+    
+    // Charger la vidéo du dé (à adapter selon votre fichier vidéo)
+    if (!m_data->movieDe.openFromFile("Assets/Video/De1.mov"))
+    {
+        std::cout << "Erreur : Impossible de charger la vidéo du dé" << std::endl;
+    }
+    else
+    {
+        m_data->movieDe.setOrigin(m_data->movieDe.getSize().x/2, m_data->movieDe.getSize().y / 2);
+        m_data->movieDe.setPosition(m_data->dicePosition);
+        m_data->movieDe.setVolume(50.0f);  // Ajuster le volume
+        
+        // NOUVEAU : Charger le shader pour la transparence
+        if (!m_data->chromaKeyShader.loadFromMemory(
+            R"(
+            uniform sampler2D texture;
+            uniform vec3 keyColor; // Couleur à rendre transparente (ex: vert)
+            uniform float threshold; // Seuil de tolérance
+
+            void main()
+            {
+                vec4 pixel = texture2D(texture, gl_TexCoord[0].xy);
+                float dist = distance(pixel.rgb, keyColor);
+                
+                // Si la couleur est proche de keyColor, rendre transparent
+                if (dist < threshold)
+                {
+                    pixel.a = 0.0;
+                }
+                
+                gl_FragColor = pixel * gl_Color;
+            }
+            )", sf::Shader::Fragment))
+        {
+            std::cout << "Erreur : Impossible de charger le shader chroma key" << std::endl;
+        }
+        else
+        {
+            // Définir la couleur à rendre transparente (vert dans cet exemple)
+            m_data->chromaKeyShader.setUniform("keyColor", sf::Glsl::Vec3(0.0f, 1.0f, 0.0f)); // RGB vert
+            m_data->chromaKeyShader.setUniform("threshold", 0.4f); // Ajuster selon vos besoins
+        }
+    }
+    
     progress.store(0.6f);
 
     // Initialisation des joueurs
@@ -295,56 +346,60 @@ void BaseGame::PollEvent(sf::Event& _event)
 
 	// Lambda pour factoriser le comportement du lancer de dé
 	auto processDiceRoll = [this](int rando)
+	{
+		std::cout << "Roll Dice: " << rando << std::endl;
+		std::cout << "Player startRandom: " << m_data->players[m_data->currentPlayerIndex].startRandom << std::endl;
+
+		const int posCaseCount = static_cast<int>(m_data->posCase.size());
+
+		if (m_data->state != START)
 		{
-			std::cout << "Roll Dice: " << rando << std::endl;
-			std::cout << "Player startRandom: " << m_data->players[m_data->currentPlayerIndex].startRandom << std::endl;
+			auto& player = m_data->players[m_data->currentPlayerIndex];
 
-			const int posCaseCount = static_cast<int>(m_data->posCase.size());
+			// NOUVEAU : Stocker le résultat et lancer l'animation
+			m_data->diceResult = rando;
 
-			//m_data->animator.Modify((float)rando, 60.0f, false, 1.0f);
-
-			if (m_data->state != START)
+			switch (rando)
 			{
-				auto& player = m_data->players[m_data->currentPlayerIndex];
-
-				// CORRECTION : Initialiser le mouvement restant
-				player.pendingMovement = rando;
-
-				// Calculer le prochain index (première case du déplacement)
-				int nextIndex = 0;
-
-				if (player.state != NONE)
-				{
-					player.tourstate += 1;
-					if (player.tourstate > MAX_TOUR_EFFECT)
-					{
-						player.tourstate = 0;
-						player.state = StatePlayer::NONE;
-					}
-				}
-
-				if (player.state != StatePlayer::CONFUSED)
-				{
-					SetBoardState(DEPLACEMENT, nextIndex);
-				}
-				else
-				{
-					player.tourstate = 0;
-					player.state = StatePlayer::NONE;
-					SetBoardState(DEPLACEMENT_BACK, nextIndex);
-				}
+			case 1 :
+				m_data->movieDe.openFromFile("Assets/Video/De1.mov");
+				break;
+			case 2:
+				m_data->movieDe.openFromFile("Assets/Video/De2.mov");
+				break;
+			case 3:
+				m_data->movieDe.openFromFile("Assets/Video/De3.mov");
+				break;
+			case 4:
+				m_data->movieDe.openFromFile("Assets/Video/De4.mov");
+				break;
+			case 5:
+				m_data->movieDe.openFromFile("Assets/Video/De5.mov");
+				break;
+			case 6:
+				m_data->movieDe.openFromFile("Assets/Video/De6.mov");
+				break;
+			default:
+				break;
 			}
-			else
-			{
-				m_data->players[m_data->currentPlayerIndex].startRandom = rando;
-				std::cout << "Place: " << rando << std::endl;
-			}
-		};
+
+			m_data->movieDe.setPosition(m_gameData->m_renderWindow->getView().getCenter());
+			m_data->diceAnimationPlaying = true;
+
+			m_data->movieDe.play();
+			SetBoardState(DICE_ANIMATION);
+		}
+		else
+		{
+			m_data->players[m_data->currentPlayerIndex].startRandom = rando;
+			std::cout << "Place: " << rando << std::endl;
+		}
+	};
 
 	// Gestion des entrées joystick
 	if (_event.type == sf::Event::JoystickButtonPressed)
 	{
-		if (m_gameData->m_playerDataList[m_data->currentPlayerIndex].m_joystickId == _event.joystickButton.joystickId && m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE)
+		if (m_gameData->m_playerDataList[m_data->currentPlayerIndex].m_joystickId == _event.joystickButton.joystickId && m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE && m_data->state != DICE_ANIMATION)
 		{
 			if (_event.joystickButton.button == 0 && m_data->animator.IsFinished())
 			{
@@ -357,7 +412,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 	// Gestion des entrées clavier (DEBUG)
 	if (_event.type == sf::Event::KeyPressed)
 	{
-		if (_event.key.code == sf::Keyboard::Space && m_data->animator.IsFinished() && m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE)
+		if (_event.key.code == sf::Keyboard::Space && m_data->animator.IsFinished() && m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE && m_data->state != DICE_ANIMATION)
 		{
 			int rando = randmt::RandomInt(1, 6);
 			processDiceRoll(rando);
@@ -495,6 +550,16 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 	{
 		DrawIconePlayer(*mod, idx);
 	}
+    
+    // NOUVEAU : Dessiner la vidéo du dé si elle est en cours
+    if (m_data->diceAnimationPlaying && m_data->state == DICE_ANIMATION)
+    {
+        sf::RenderStates states;
+        states.shader = &m_data->chromaKeyShader;
+        states.transform = m_data->movieDe.getTransform();
+        
+        mod->draw(m_data->movieDe, states);
+    }
 }
 
 void BaseGame::CaseAction()
@@ -822,6 +887,9 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 	case CASE_ACTION_END:
 		SetBoardState(PLAY, 0);
 		break;
+    case DICE_ANIMATION:
+        m_data->movieDe.update();
+        break;
 	default:
 		break;
 	}
@@ -911,6 +979,46 @@ void BaseGame::BoardStateUpdate(float _dt)
 	case START:
 		SortStart();
 		break;
+    case DICE_ANIMATION:
+        m_data->movieDe.update();
+        
+        // Vérifier si la vidéo est terminée
+        if (m_data->movieDe.getStatus() == sfe::Stopped)
+        {
+			m_data->timeDice -= _dt;
+			if (m_data->timeDice <= 0)
+			{
+				m_data->diceAnimationPlaying = false;
+				auto& player = m_data->players[m_data->currentPlayerIndex];
+
+				// Initialiser le mouvement restant avec le résultat du dé
+				player.pendingMovement = m_data->diceResult;
+
+				int nextIndex = 0;
+
+				if (player.state != NONE)
+				{
+					player.tourstate += 1;
+					if (player.tourstate > MAX_TOUR_EFFECT)
+					{
+						player.tourstate = 0;
+						player.state = StatePlayer::NONE;
+					}
+				}
+
+				if (player.state != StatePlayer::CONFUSED)
+				{
+					SetBoardState(DEPLACEMENT, nextIndex);
+				}
+				else
+				{
+					player.tourstate = 0;
+					player.state = StatePlayer::NONE;
+					SetBoardState(DEPLACEMENT_BACK, nextIndex);
+				}
+			}
+        }
+        break;
 	case DEPLACEMENT_SPLIT:
 		[[fallthrough]];
 	case DEPLACEMENT_BRIGE:

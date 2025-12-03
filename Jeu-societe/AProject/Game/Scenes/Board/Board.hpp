@@ -9,7 +9,7 @@
 
 #include "../../Animation/Animation/Animator.hpp"
 
-#include "../../Animation/Graphics/SpriteAnimated.hpp"
+#include "../../Animation/Graphics/SpriteAnimated.hpp"0
 
 #include "../../Animation/Graphics/AnimatedObject.hpp"
 
@@ -19,6 +19,7 @@
 
 #define TIME_WIN_DISPLAY 1.0f
 #define TIME_LBM_DISPLAY 6.0f
+#define TIME_DIS_DISPLAY 0.001f
 #define MAX_TOUR_EFFECT 2
 
 class Effect
@@ -88,6 +89,7 @@ class BaseGame : public SceneBase
 			STATE = -1,
 			START,
 			PLAY,
+			DICE_ANIMATION,  // NOUVEAU : État pour l'animation du dé
 			DEPLACEMENT,
 			DEPLACEMENT_BACK,
 			DEPLACEMENT_SPLIT,
@@ -210,8 +212,20 @@ class BaseGame : public SceneBase
 			LuckBonusMalus HudLBM;
 
 			SpriteAnimated icone;
-			
+
+			sfe::Movie movieDe;
+
 			bool active;
+			
+			// NOUVEAU : Variables pour gérer l'animation du dé
+			int diceResult;           // Résultat du lancer de dé (1-6)
+			bool diceAnimationPlaying;  // Indique si la vidéo est en cours
+			sf::Vector2f dicePosition;  // Position d'affichage du dé
+
+			float timeDice;
+
+			// NOUVEAU : Shader pour le chroma key
+			sf::Shader chromaKeyShader;
 		};
 
 		GameData* m_gameData;
