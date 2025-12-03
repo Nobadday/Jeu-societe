@@ -12,7 +12,7 @@ void Podium::Load()
 		m_data->gameData->m_gonnaPlayIndex.push_back(2);
 		m_data->gameData->m_gonnaPlayIndex.push_back(0);
 		m_data->gameData->m_gonnaPlayIndex.push_back(1);
-		//m_data->gameData->m_gonnaPlayIndex.push_back(3);
+		m_data->gameData->m_gonnaPlayIndex.push_back(3);
 	}
 
 	m_data->playerSpriteArray.resize(m_data->gameData->m_gonnaPlayIndex.size());
@@ -26,6 +26,7 @@ void Podium::Load()
 
 		//Recup position joueur actuel (joueur 1 - 2 - 3 - 4)
 		int playerPos = 0;
+
 		for (short j = 0; j < m_data->gameData->m_gonnaPlayIndex.size(); j++)
 		{
 			if (m_data->gameData->m_gonnaPlayIndex[j] == currentPlayer)
@@ -55,13 +56,13 @@ void Podium::Load()
 		m_data->playerSpriteArray[i].setOrigin(sf::Vector2f(0.5f, 1.f));
 		m_data->podiumsSpriteArray[i].setOrigin(sf::Vector2f(0.5f, 1.f));
 
-		m_data->playerSpriteArray[i].setPosition(sf::Vector2f(SCREEN_WIDTH / (m_data->gameData->m_gonnaPlayIndex.size() + 1) * (i + 1), SCREEN_HEIGHT - (150 * (m_data->gameData->m_gonnaPlayIndex.size() - playerPos))));
+		m_data->playerSpriteArray[i].setPosition(sf::Vector2f(SCREEN_WIDTH / (m_data->gameData->m_gonnaPlayIndex.size() + 1) * (i + 1), SCREEN_HEIGHT - 450 + 150 * (playerPos - 1)));
 		m_data->podiumsSpriteArray[i].setPosition(sf::Vector2f(SCREEN_WIDTH / (m_data->gameData->m_gonnaPlayIndex.size() + 1) * (i + 1), SCREEN_HEIGHT + 1));
 
 
 		m_data->playerTextArray[i].SetOutline(2, sf::Color::Black);
-		m_data->playerTextArray[i].setString("Player " + std::to_string(m_data->gameData->m_gonnaPlayIndex[i] + 1));
-		m_data->playerTextArray[i].setPosition(m_data->playerSpriteArray[currentPlayer].getPosition().x, m_data->playerSpriteArray[currentPlayer].getPosition().y - m_data->playerSpriteArray[currentPlayer].getGlobalBounds().height * 1.1f);
+		m_data->playerTextArray[i].setString("Player " + std::to_string(i + 1));
+		m_data->playerTextArray[i].setPosition(m_data->playerSpriteArray[currentPlayer].getPosition().x, m_data->playerSpriteArray[currentPlayer].getPosition().y - m_data->playerSpriteArray[currentPlayer].getGlobalBounds().height);
 
 		currentPlayer++;
 	}
@@ -96,17 +97,17 @@ void Podium::Draw(sf::RenderWindow& _renderWindow)
 {
 	_renderWindow.draw(m_data->background);
 
+	for (auto& it : m_data->podiumsSpriteArray)
+	{
+		_renderWindow.draw(it);
+	}
+
 	for (auto& it : m_data->playerTextArray)
 	{
 		_renderWindow.draw(it);
 	}
 
 	for (auto& it : m_data->playerSpriteArray)
-	{
-		_renderWindow.draw(it);
-	}
-
-	for (auto& it : m_data->podiumsSpriteArray)
 	{
 		_renderWindow.draw(it);
 	}
