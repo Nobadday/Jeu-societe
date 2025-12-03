@@ -3,121 +3,159 @@
 //#include "Camera.h"
 
 MapLayer::MapLayer()
-    : m_id(0)
-    , m_name("")
-    , m_type("")
-    , m_visible(true)
-    , m_opacity(1.0f)
-    , m_parallaxX(1.0f)
-    , m_parallaxY(1.0f)
-    , m_tintColor(sf::Color::White)
+	: m_id(0)
+	, m_name("")
+	, m_type("")
+	, m_visible(true)
+	, m_opacity(1.0f)
+	, m_parallaxX(1.0f)
+	, m_parallaxY(1.0f)
+	, m_tintColor(sf::Color::White)
 {
 }
 
 MapLayer::MapLayer(int _id, const std::string& _name, const std::string& _type)
-    : m_id(_id)
-    , m_name(_name)
-    , m_type(_type)
-    , m_visible(true)
-    , m_opacity(1.0f)
-    , m_parallaxX(1.0f)
-    , m_parallaxY(1.0f)
-    , m_tintColor(sf::Color::White)
+	: m_id(_id)
+	, m_name(_name)
+	, m_type(_type)
+	, m_visible(true)
+	, m_opacity(1.0f)
+	, m_parallaxX(1.0f)
+	, m_parallaxY(1.0f)
+	, m_tintColor(sf::Color::White)
 {
 }
 
 void MapLayer::AddObject(const MapObject& _object)
 {
-    m_objects.push_back(_object);
+	m_objects.push_back(_object);
 }
 
 MapObject& MapLayer::GetObject(size_t _index)
 {
-    return m_objects[_index];
+	return m_objects[_index];
 }
 
 MapObject& MapLayer::GetObject(std::string _name)
 {
-    for (int i = 0; i < m_objects.size(); i++)
-    {
-        if (_name == m_objects[i].GetName())
-        {
-            return m_objects[i];
-        }
-    }
-    return m_objects[0];
+	for (int i = 0; i < m_objects.size(); i++)
+	{
+		if (_name == m_objects[i].GetName())
+		{
+			return m_objects[i];
+		}
+	}
+	return m_objects[0];
 }
 
 const MapObject& MapLayer::GetObject(size_t _index) const
 {
-    return m_objects[_index];
+	return m_objects[_index];
 }
 
 void MapLayer::Draw(sf::RenderTarget& _target, TilesetManager& _tilesetManager, const sf::Vector2f& _camera) const
 {
-    if (!m_visible)
-        return;
+	if (!m_visible)
+		return;
 
-    sf::Vector2f parallax = sf::Vector2f(m_parallaxX - 1.f, m_parallaxY - 1.f );
+	sf::Vector2f parallax = sf::Vector2f(m_parallaxX - 1.f, m_parallaxY - 1.f);
 
-    // Calculer l'offset de la caméra avec parallaxe
-    float parallaxOffsetX = _camera.x * parallax.x;
-    float parallaxOffsetY = _camera.y * parallax.y;
+	// Calculer l'offset de la caméra avec parallaxe
+	float parallaxOffsetX = _camera.x * parallax.x;
+	float parallaxOffsetY = _camera.y * parallax.y;
 
-    for (const auto& object : m_objects)
-    {
-        if (!object.IsVisible())
-            continue;
+	// Obtenir les limites de la caméra
+	sf::Vector2f viewSize = _target.getView().getSize();
+	sf::Vector2f viewCenter = _target.getView().getCenter();
+	
+	sf::FloatRect cameraBounds(
+		viewCenter.x - viewSize.x / 2.0f,
+		viewCenter.y - viewSize.y / 2.0f,
+		viewSize.x,
+		viewSize.y
+	);
 
-        int gid = object.GetGid();
-        if (gid == 0)
-            continue;
+	for (const auto& object : m_objects)
+	{
+		if (!object.IsVisible())
+			continue;
 
-        // Obtenir la texture correspondante au GID
-        sf::Texture* texture = _tilesetManager.GetTextureByGid(gid);
-        if (!texture)
-            continue;
+		int gid = object.GetGid();
+		if (gid == 0)
+			continue;
 
-        // Créer un sprite
-        sf::Sprite sprite;
-        sprite.setTexture(*texture);
+		// Obtenir la texture correspondante au GID
+		sf::Texture* texture = _tilesetManager.GetTextureByGid(gid);
+		if (!texture)
+			continue;
 
-        // Calculer la position avec parallaxe
-        float worldX = object.GetX();
-        float worldY = object.GetY();
+		// Calculer la position avec parallaxe
+		float worldX = object.GetX();
+		float worldY = object.GetY();
 
-        // Dans Tiled, l'origine Y est en bas de l'objet pour les images
-        worldY -= object.GetHeight();
+		// Dans Tiled, l'origine Y est en bas de l'objet pour les images
+		worldY -= object.GetHeight();
 
-        // Appliquer la transformation de la caméra avec parallaxe
-        float screenX = worldX - parallaxOffsetX;
-        float screenY = worldY - parallaxOffsetY;
+		// Appliquer la transformation de la caméra avec parallaxe
+		float screenX = worldX - parallaxOffsetX;
+		float screenY = worldY - parallaxOffsetY;
 
-		// Correction : calculer le rectangle de la texture pour afficher que se qui est dans la caméra 
-        
-		/*sf::IntRect cameraBouns;
+		// Vérifier si l'objet est visible dans la caméra
+		sf::FloatRect objectBounds(
+			screenX,
+			screenY,
+			object.GetWidth(),
+			object.GetHeight()
+		);
 
-        sprite.setTextureRect(cameraBouns);*/
+		// Si l'objet n'intersecte pas avec la caméra, on ne le dessine pas
+		if (!cameraBounds.intersects(objectBounds))
+			continue;
 
-        sprite.setPosition(screenX, screenY);
+		 // Calculer l'intersection entre l'objet et la caméra
+		sf::FloatRect visibleRect;
+		if (!cameraBounds.intersects(objectBounds, visibleRect))
+			continue;
 
-        // Appliquer la taille
-        float scaleX = object.GetWidth() / texture->getSize().x;
-        float scaleY = object.GetHeight() / texture->getSize().y;
-        sprite.setScale(scaleX, scaleY);
+		// Créer un sprite
+		sf::Sprite sprite;
+		sprite.setTexture(*texture);
 
-        // Appliquer la rotation
-        if (object.GetRotation() != 0.0f)
-        {
-            sprite.setRotation(object.GetRotation());
-        }
+		// Calculer les échelles
+		float scaleX = object.GetWidth() / texture->getSize().x;
+		float scaleY = object.GetHeight() / texture->getSize().y;
 
-        // Appliquer l'opacité et la couleur de teinte
-        sf::Color color = m_tintColor;
-        color.a = static_cast<sf::Uint8>(m_opacity * 255);
-        sprite.setColor(color);
+		// Calculer quelle partie de la texture afficher
+		// Convertir les coordonnées écran en coordonnées texture
+		float texOffsetX = (visibleRect.left - screenX) / scaleX;
+		float texOffsetY = (visibleRect.top - screenY) / scaleY;
+		float texWidth = visibleRect.width / scaleX;
+		float texHeight = visibleRect.height / scaleY;
 
-        // Dessiner le sprite
-        _target.draw(sprite);
-    }
+		// Définir le rectangle de texture à afficher
+		sf::IntRect textureRect(
+			static_cast<int>(texOffsetX),
+			static_cast<int>(texOffsetY),
+			static_cast<int>(texWidth),
+			static_cast<int>(texHeight)
+		);
+
+		sprite.setTextureRect(textureRect);
+		sprite.setPosition(visibleRect.left, visibleRect.top);
+		sprite.setScale(scaleX, scaleY);
+
+		// Appliquer la rotation
+		if (object.GetRotation() != 0.0f)
+		{
+			sprite.setRotation(object.GetRotation());
+		}
+
+		// Appliquer l'opacité et la couleur de teinte
+		sf::Color color = m_tintColor;
+		color.a = static_cast<sf::Uint8>(m_opacity * 255);
+		sprite.setColor(color);
+
+		// Dessiner le sprite
+		_target.draw(sprite);
+	}
 }
