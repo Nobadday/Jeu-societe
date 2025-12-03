@@ -4,6 +4,15 @@
 
 #include "../../Common.hpp"
 #include "../AssetManager.hpp"
+#include "../../Animation/Utilities/Math.hpp"
+
+
+enum TransitionType
+{
+	FADED_MIX,
+	FADED_ONE_BY_ONE
+
+};
 
 
 class AudioEngine
@@ -36,6 +45,17 @@ public:
 	void PlayMusic(const std::string& _musicName, bool _loop = false);
 	//Play music given, store name of music (function when you dont use asset manager)
 	void PlayMusic(const std::string& _musicName, sf::Music* _music, bool _loop = false);
+	/// <summary>
+	/// Remplace music playing by the given with transition.
+	/// If any music playing, just play music.
+	/// If current music playing is same than given, transition and restart
+	/// </summary>
+	/// <param name="_musicName"></param>
+	/// <param name="_loop">If true, loop the music you given at his end</param>
+	/// <param name="_transitionTime">Transition between current music playing and the new</param>
+	void PlayMusic(const std::string& _musicName, bool _loop = false, float _transitionDuration = 5.f, TransitionType _type = FADED_ONE_BY_ONE);
+	void UpdateMusicTransition(float _dt);
+
 	void SetMusicVolume(float& _vol);
 	void TogglePauseMusic(void);
 	void StopMusic(void);
@@ -46,6 +66,14 @@ private:
 	AssetManager* m_assetManager;
 
 	sf::Music* m_music;
+	//Music transition settings
+	sf::Music* m_nextMusic;
+	std::string m_nextMusicName;
+	float m_transitionDuration;
+	float timer;
+	TransitionType m_tansitionType;
+	//
+
 	sf::Sound* m_soundProtected = nullptr;
 	std::string m_currentMusic;
 	float m_musicVol;

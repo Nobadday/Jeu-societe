@@ -5,7 +5,7 @@
 #include "../../../Scenes/Scene.hpp"
 #include "../../../Common.hpp"
 #include "../../../Animation/Graphics.hpp"
-#include "../../../Ui/MenuSystem.hpp"
+#include "../../../Ui/Button.hpp"
 
 class Menu : public SceneBase
 {
