@@ -2,7 +2,6 @@
 #define PLAYERDATA_HPP
 
 #include <string>
-#include <iostream>
 
 class PlayerData
 {

@@ -17,12 +17,12 @@ class RandCard : public SceneBase
 		//Final ;)
 		struct Player
 		{
+			std::string name;
 			short id;
 		};
 		enum GameState
 		{
 			//Wait for input
-			WAITING_BETWEEN_PLAYER,
 			CHOOSE_CARD,
 			//Animation 
 			ANIMATION,
@@ -35,10 +35,8 @@ class RandCard : public SceneBase
 		};
 		struct SceneData
 		{
-			SpriteAnimated cardChosenSprAnim;
-			SpriteAnimated cardUnchosenSprAnim;
-			SpriteAnimated iconsChara;
-			sf::Sprite background;
+			sf::Sprite staticCardSpr;
+			SpriteAnimated cardSprAnim;
 
 			std::vector<CardType> cards;
 			std::vector<Player> players;
@@ -50,10 +48,10 @@ class RandCard : public SceneBase
 			//Delay when you change card with joystick
 			float inputDelay = 0.2f;
 
-			int currentPlayer = 0;
-			TextPlus text;
 
-			Timer timer;
+			//DEBUG
+			int currentPlayer = 0;
+			sf::Text text;
 
 			int playerCountLeft = 0;
 		};

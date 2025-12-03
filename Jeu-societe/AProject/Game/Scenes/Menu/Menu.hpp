@@ -4,7 +4,9 @@
 
 #include "../../../Scenes/Scene.hpp"
 #include "../../../Common.hpp"
-#include "../../../Animation/Graphics.hpp"
+#include "../../../Animation/Graphics/SpriteAnimated.hpp"
+#include "../../../Animation/Graphics/TextPlus.hpp"
+#include "../../../Animation/Graphics/TextureAnimated.hpp"
 #include "../../../Ui/MenuSystem.hpp"
 
 class Menu : public SceneBase
@@ -16,7 +18,7 @@ private:
 		OPTIONS,
 		CREDITS,
 		PLAYER_NB_SELECTION,
-		PLAYER_SELECTION,
+		PLAYER_SELECTION
 	};
 	enum ControlerCurrentButton
 	{
@@ -44,40 +46,30 @@ private:
 	{
 		std::map<std::string, Button> buttonMap;
 		sf::Sprite background;
-		sf::Sprite logoGame;
-		sf::Sprite logoCrea;
-		SpriteAnimated iconsChara;
-		std::vector<std::string> charaAvaible;
 		TextPlus playerCount;
 	};
 	struct SceneData
 	{
 		UI ui;
-
-		MenuState state = MAIN_MENU;
 		ControlerCurrentButton controlerBtn = PLAY;
 		float inputDelay = 0.f;
-		int currentPlayer = 0;
-		std::vector<int> currentCharaSelected;
-		std::vector<bool> charaSelected;
 
-		std::vector<PlayerData> playerDataVec;
 
+		MenuState state;
+		//MenuSystem* menuSystem;
 		GameSettings gameSettings;
 		GameData* gameData;
 		//* of audio because i'm tired of cast void*
 		AudioEngine* audio;
+
 	};
 	SceneData* m_data;
 	void LoadUI(void);
 	void ButtonsUpdate(float _dt);
 	void ButtonsPollEvent(sf::Event& _event);
 	void DrawUI(sf::RenderWindow& _renderWindow);
-	void ChangeSelection(int _value, int _joystick);
-	void PressSelection(int _id);
-	void PrintIcons(sf::RenderWindow& _renderWindow);
-	void PrintOptions(sf::RenderWindow& _renderWindow);
-
+	void ChangeSelection(int _value);
+	void PressSelection(void);
 public:
 	virtual void Load(void);
 	virtual void Unload(void);
