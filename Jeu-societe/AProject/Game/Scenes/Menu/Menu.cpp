@@ -219,20 +219,19 @@ void Menu::DrawUI(sf::RenderWindow& _renderWindow)
 			break;
 
 		case OPTIONS:
+			PrintOptions(_renderWindow);
+
 			break;
 
 		case PLAYER_NB_SELECTION:
-
 			_renderWindow.draw(m_data->ui.buttonMap["playBtn"]);
 			_renderWindow.draw(m_data->ui.buttonMap["moinsBtn"]);
 			_renderWindow.draw(m_data->ui.playerCount);
 			_renderWindow.draw(m_data->ui.buttonMap["plusBtn"]);
-
 			break;
+
 		case PLAYER_SELECTION:
-
 			PrintIcons(_renderWindow);
-
 			break;
 	}
 }
@@ -351,7 +350,6 @@ void Menu::PressSelection(int _id)
 	switch (m_data->controlerBtn)
 	{
 		case PLAY:
-			//m_data->state = (MenuState)(m_data->state + 1);
 
 			switch (m_data->state)
 			{
@@ -371,40 +369,31 @@ void Menu::PressSelection(int _id)
 					m_data->gameData->m_playerDataList[_id].SetPlayerSkin((PlayerData::PlayerSkin)m_data->currentCharaSelected[_id]);
 					m_data->charaSelected[_id] = true;
 
-					//if (_id == m_data->currentPlayer)
-					//{
-					//}
-
-					//if (_id == m_data->gameData->m_playerDataList.size() - 1)
-					//{
-					//	std::cout << "leave\n";
-					//	SceneBase::ChangeScene("Board");
-					//}
 					int result = 0;
 					for (auto selected : m_data->charaSelected)
 					{
-						result += (int)selected;
+						if (selected)
+						{
+							result++;
+						}
 					}
-					if (result == 4)
+					if (result == m_data->gameSettings.playerCount + 1)
 					{
 						std::cout << "All players have their skin, go to game\n";
 						SceneBase::ChangeScene("Board");
-
 					}
-					//if (_id == m_data->gameData->m_playerDataList.size() - 1)
-					//{
-					//	std::cout << "leave\n";
-					//	SceneBase::ChangeScene("Board");
-					//}
-
-					//m_data->currentPlayer++;
 					break;  
 			}
-
 			break;
 
 		case SETTINGS:
-			//Bruh i need render window to exit, here i cant
+			m_data->state = OPTIONS;
+			m_data->controlerBtn = MORE;
+
+
+
+
+
 			break;
 
 		case LEAVE:
@@ -448,75 +437,26 @@ void Menu::PrintIcons(sf::RenderWindow& _renderWindow)
 {
 	sf::Color tempColor = m_data->ui.iconsChara.getColor();
 
-
-	//ON S EN BRANLE, TOUT LE MONDE PEUT JOUER TOUT LES PERSO
-	//Only one character available
-	//if (m_data->ui.charaAvaible.size() == 1)
-	//{
-	//	//Center
-	//	m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[0]);
-	//	m_data->ui.iconsChara.setPosition(iconPos[1]);
-	//	_renderWindow.draw(m_data->ui.iconsChara);
-	//}
-	////2 characters available : one in center, one on left or right
-	//else if(m_data->ui.charaAvaible.size() == 2)
-	//{	
-	//	//First chara
-	//	if (m_data->currentCharaSelected == 0)
-	//	{
-	//		//Center
-	//		m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[0]);
-	//		m_data->ui.iconsChara.setPosition(iconPos[1]);
-	//		_renderWindow.draw(m_data->ui.iconsChara);
-
-	//		//Right
-	//		tempColor.a = 100;
-	//		m_data->ui.iconsChara.setColor(tempColor);
-	//		m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[1]);
-	//		m_data->ui.iconsChara.setPosition(iconPos[2]);
-	//		_renderWindow.draw(m_data->ui.iconsChara);
-	//	}
-	//	//End chara
-	//	else
-	//	{
-	//		//Center
-	//		m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[0]);
-	//		m_data->ui.iconsChara.setPosition(iconPos[1]);
-	//		_renderWindow.draw(m_data->ui.iconsChara);
-
-	//		//Left
-	//		tempColor.a = 100;
-	//		m_data->ui.iconsChara.setColor(tempColor);
-	//		m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[1]);
-	//		m_data->ui.iconsChara.setPosition(iconPos[0]);
-	//		_renderWindow.draw(m_data->ui.iconsChara);
-	//	}
-	//}
-	////Print 3 characters
-	//else
-
-	
-	//Same usage of randcard printcard()
-	//std::cout << "player count = " << m_data->gameSettings.playerCount << std::endl;
-	//float iconSpacing = (SCREEN_WIDTH) / (m_data->gameSettings.playerCount + 1);
-	float iconSpacing = (SCREEN_WIDTH - 2 * 100.f) / m_data->gameSettings.playerCount;
-
-
-	//std::cout << " players : " << m_data->gameSettings.playerCount << std::endl;
+	//For placement 
+	float border = 200.f;
+	float iconSpacing = (SCREEN_WIDTH - 2 * border) / m_data->gameSettings.playerCount;
 
 	for (int i = 0; i < m_data->gameSettings.playerCount + 1; i++)
 	{
 		sf::Vector2f iconPos[] =
 		{
-			{(float)(100.f + i * iconSpacing), SCREEN_HEIGHT / 2.f - SCREEN_HEIGHT / 4.f},
-			{(float)(100.f + i * iconSpacing), SCREEN_HEIGHT / 2.f },
-			{(float)(100.f + i * iconSpacing), SCREEN_HEIGHT / 2.f + SCREEN_HEIGHT / 4.f}
+			{(float)(border + i * iconSpacing), SCREEN_HEIGHT / 2.f - SCREEN_HEIGHT / 4.f},
+			{(float)(border + i * iconSpacing), SCREEN_HEIGHT / 2.f },
+			{(float)(border + i * iconSpacing), SCREEN_HEIGHT / 2.f + SCREEN_HEIGHT / 4.f}
 		};
+		sf::Vector2f pos = { iconPos[0].x, iconPos[0].y - 70.f };
+		m_data->ui.playerCount.setPosition(pos);
 
-
-		//std::cout << "icon pos x = " << iconPos[1].x << std::endl;
-		//std::cout << "i = " << i << std::endl;
-
+		char buffer[30];
+		std::snprintf(buffer, 30, "Player : %d", i);
+		m_data->ui.playerCount.setString(buffer);
+		m_data->ui.playerCount.setCharacterSize(60u);
+		_renderWindow.draw(m_data->ui.playerCount);
 
 		//First chara
 		if (m_data->currentCharaSelected[i] == 0)
@@ -614,6 +554,23 @@ void Menu::PrintIcons(sf::RenderWindow& _renderWindow)
 		}
 	}
 
-
+	//Reset
 	m_data->ui.iconsChara.setColor(sf::Color(255,255,255,255));
+}
+
+void Menu::PrintOptions(sf::RenderWindow& _renderWindow)
+{
+	m_data->ui.playerCount.setPosition(SCREEN_WIDTH / 2.f, 1.f / SCREEN_HEIGHT);
+	m_data->ui.playerCount.setCharacterSize(150u);
+
+	m_data->ui.playerCount.setPosition(SCREEN_WIDTH / 2.f, 2.f / SCREEN_HEIGHT);
+	_renderWindow.draw(m_data->ui.playerCount);
+
+
+	m_data->ui.buttonMap["plusBtn"].setPosition(SCREEN_WIDTH / 1.2f, 2.f / SCREEN_HEIGHT);
+	_renderWindow.draw(m_data->ui.buttonMap["plusBtn"]);
+	m_data->ui.buttonMap["moinsBtn"].setPosition(SCREEN_WIDTH / 1.5f, 2.f / SCREEN_HEIGHT);
+	_renderWindow.draw(m_data->ui.buttonMap["moinsBtn"]);
+	m_data->ui.buttonMap["playBtn"].setPosition(SCREEN_WIDTH / 2.f, 3.f / SCREEN_HEIGHT);
+	_renderWindow.draw(m_data->ui.buttonMap["playBtn"]);
 }

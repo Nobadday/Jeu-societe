@@ -76,6 +76,7 @@ private:
 	void ChangeSelection(int _value, int _joystick);
 	void PressSelection(int _id);
 	void PrintIcons(sf::RenderWindow& _renderWindow);
+	void PrintOptions(sf::RenderWindow& _renderWindow);
 
 public:
 	virtual void Load(void);
