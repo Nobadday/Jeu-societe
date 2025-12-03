@@ -12,7 +12,7 @@ void Podium::Load()
 		m_data->gameData->m_gonnaPlayIndex.push_back(2);
 		m_data->gameData->m_gonnaPlayIndex.push_back(0);
 		m_data->gameData->m_gonnaPlayIndex.push_back(1);
-		m_data->gameData->m_gonnaPlayIndex.push_back(3);
+		//m_data->gameData->m_gonnaPlayIndex.push_back(3);
 	}
 
 	m_data->playerSpriteArray.resize(m_data->gameData->m_gonnaPlayIndex.size());
@@ -47,8 +47,6 @@ void Podium::Load()
 		std::string PodiumTextureName = "Podium_";
 		PodiumTextureName += std::to_string(currentPlayer + 1) + "_" + std::to_string(playerPos);
 
-		std::cout << PodiumTextureName << std::endl;
-
 		m_data->playerSpriteArray[i].SetTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAtlas>("CharactersPoses", AssetManager::AssetType::TEXTURE_ATLAS), playerTextureName);
 		m_data->podiumsSpriteArray[i].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAtlas>("Podiums", AssetManager::AssetType::TEXTURE_ATLAS));
 
@@ -61,12 +59,14 @@ void Podium::Load()
 		m_data->podiumsSpriteArray[i].setPosition(sf::Vector2f(SCREEN_WIDTH / (m_data->gameData->m_gonnaPlayIndex.size() + 1) * (i + 1), SCREEN_HEIGHT + 1));
 
 
-		//m_data->playerTextArray[i].setString("Player " + std::to_string(m_data->gameData->m_gonnaPlayIndex[i] ));
-		//m_data->playerTextArray[i].setPosition({ (float)150 * (i + 1), 100.f });
+		m_data->playerTextArray[i].SetOutline(2, sf::Color::Black);
+		m_data->playerTextArray[i].setString("Player " + std::to_string(m_data->gameData->m_gonnaPlayIndex[i] + 1));
+		m_data->playerTextArray[i].setPosition(m_data->playerSpriteArray[currentPlayer].getPosition().x, m_data->playerSpriteArray[currentPlayer].getPosition().y - m_data->playerSpriteArray[currentPlayer].getGlobalBounds().height * 1.1f);
 
 		currentPlayer++;
 	}
 }
+
 
 void Podium::Unload()
 {

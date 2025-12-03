@@ -1,6 +1,5 @@
 #include "RockPaperScissors.hpp"
 
-
 #define PLAY_TIME 5
 #define PAUSE_TIME 2
 
@@ -10,6 +9,8 @@ std::string choiceString[RockPaperScissors::RPS_Choice::RPS_CHOICE_COUNT]{
 	"_S"
 
 };
+
+
 
 void RockPaperScissors::Load()
 {
@@ -82,13 +83,13 @@ void RockPaperScissors::Load()
 	m_data->playerChoiceSprite[0].setOrigin(sf::Vector2f(1.f, 0.f));
 	m_data->playerChoiceSprite[1].setOrigin(sf::Vector2f(1.f, 0.f));
 
-	m_data->playerChoiceSprite[0].setScale(-1.3f, 1.3f);
-	m_data->playerChoiceSprite[1].setScale(1.3f, 1.3f);
+	m_data->playerChoiceSprite[0].setScale(-1.25f, 1.25f);
+	m_data->playerChoiceSprite[1].setScale(1.25f, 1.25f);
 
 
 
-	m_data->playerChoiceSprite[0].setPosition({ -50, SCREEN_HEIGHT * 0.5f });
-	m_data->playerChoiceSprite[1].setPosition({ SCREEN_WIDTH + 50, SCREEN_HEIGHT * 0.5f });
+	m_data->playerChoiceSprite[0].setPosition({ -170, SCREEN_HEIGHT * 0.45f });
+	m_data->playerChoiceSprite[1].setPosition({ SCREEN_WIDTH + 170, SCREEN_HEIGHT * 0.45f });
 
 	ChangePlayersChoiceTexture();
 }                               
@@ -104,27 +105,27 @@ void RockPaperScissors::PollEvent(sf::Event& _event)
 {
 	switch (_event.type)
 	{
-		if (m_data->state == STATE_PLAY)
+
+		case sf::Event::JoystickButtonPressed:
 		{
-			if (!m_data->timer.IsFinished())
+			if (m_data->state == STATE_PLAY && !m_data->timer.IsFinished())
 			{
-				case sf::Event::JoystickButtonPressed:
+				//Check id joueur = joueur QUI joue
+				//Check ses boutons
+				int playerID = this->m_data->gameData->GetPlayerIDFromJoystick(_event.joystickButton.joystickId);
+				if (this->m_data->gameData->IsPlayerParticipating(playerID))
 				{
-					//Check id joueur = joueur QUI joue
-					//Check ses boutons
-					int playerID = this->m_data->gameData->GetPlayerIDFromJoystick(_event.joystickButton.joystickId);
-					if (this->m_data->gameData->IsPlayerParticipating(playerID))
+					int realID = 0;
+					for (int temp = 0; temp < this->m_data->gameData->m_gonnaPlayIndex.size(); temp++)
 					{
-						int realID = 0;
-						for (int temp = 0; temp < this->m_data->gameData->m_gonnaPlayIndex.size(); temp++)
+						if (this->m_data->gameData->m_gonnaPlayIndex[temp] == playerID)
 						{
-							if (this->m_data->gameData->m_gonnaPlayIndex[temp] == playerID)
-							{
-								realID = temp;
-							}
+							realID = temp;
 						}
-						switch (_event.joystickButton.button)
-						{
+					}
+
+					switch (_event.joystickButton.button)
+					{
 						case 0:
 							this->m_data->playersChoice[realID] = RPS_SCISSORS;
 							break;
@@ -136,14 +137,13 @@ void RockPaperScissors::PollEvent(sf::Event& _event)
 						case 2:
 							this->m_data->playersChoice[realID] = RPS_PAPER;
 							break;
-
-						default:
-							break;
-						}
+					default:
+						break;
 					}
+
 				}
-				break;
 			}
+			
 		}
 		break;
 

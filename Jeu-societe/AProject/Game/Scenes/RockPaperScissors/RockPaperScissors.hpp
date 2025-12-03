@@ -21,6 +21,7 @@ class RockPaperScissors : public SceneBase
 		RPS_SCISSORS,
 		RPS_CHOICE_COUNT
 	};
+	
 	private:
 
 	enum State
