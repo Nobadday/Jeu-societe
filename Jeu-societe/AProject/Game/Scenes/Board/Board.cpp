@@ -1164,7 +1164,9 @@ std::string BaseGame::RandomDuel()
 
 	std::cout << "Random minigame selected: " << miniGames[randomIndex] << std::endl;
 
-	return "FlagGame";
+	//return "FlagGame";
+	//return "RuRoul";
+	return "RandCard";
 	//return miniGames[randomIndex];
 }
 
@@ -1247,7 +1249,9 @@ std::string BaseGame::RandomBattle()
 
 	std::cout << "Random minigame selected: " << miniGames[randomIndex] << std::endl;
 
-	return "FlagGame" ;
+	//return "FlagGame" ;
+	//return "RuRoul" ;
+	return "RandCard";
 	//return miniGames[randomIndex];
 }
 

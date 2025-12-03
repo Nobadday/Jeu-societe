@@ -11,7 +11,6 @@
 #include "../Utilities/AudioEngine/AudioEngine.hpp"
 
 #include "../Utilities/BetterWindow/BetterWindow.hpp"
-
 class GameData
 {
 	private:
