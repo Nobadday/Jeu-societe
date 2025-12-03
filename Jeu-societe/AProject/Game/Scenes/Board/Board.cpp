@@ -392,7 +392,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 					// Redémarrer depuis le début
 					m_data->currentDiceVideo->stop();  // S'assurer qu'elle est arrêtée
 					m_data->currentDiceVideo->setPosition(
-						m_gameData->m_renderWindow->getView().getCenter()
+						m_data->dicePosition
 					);
 					m_data->currentDiceVideo->play();
 
