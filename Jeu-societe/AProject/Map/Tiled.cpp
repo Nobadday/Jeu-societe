@@ -66,11 +66,11 @@ void Tiled::InitTiled(const char* _Map)
 		   /* std::cout << "Chargement des textures..." << std::endl;*/
 			if (tilesetManager.LoadAllTextures("Assets/Map/"))
 			{
-				std::cout << "Toutes les textures ont été chargées avec succès!" << std::endl;
+				//std::cout << "Toutes les textures ont été chargées avec succès!" << std::endl;
 			}
 			else
 			{
-				std::cerr << "Certaines textures n'ont pas pu être chargées." << std::endl;
+				//std::cerr << "Certaines textures n'ont pas pu être chargées." << std::endl;
 			}
 			std::cout << std::endl;
 		}

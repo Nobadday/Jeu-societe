@@ -1,6 +1,7 @@
 ﻿#include "Common.hpp"
 
 #include "Game/Scenes/Board/Board.hpp"
+#include "Game/Scenes/Loading/LoadingScreen.hpp"
 
 
 #include "./Game/scenes/RockPaperScissors/RockPaperScissors.hpp"
@@ -91,6 +92,8 @@ void MainDataLoad(MainData& _mainData)
 
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 
+	// Ajouter les scènes
+	_mainData.scenes.AddScene<LoadingScreen>("Lo");
 	_mainData.scenes.AddScene<BaseGame>("Board");
 	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
 	_mainData.scenes.AddScene<ArmWrestling>("ArmWrestling");
@@ -100,7 +103,8 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
 	_mainData.scenes.AddScene<Podium>("Podium");
 
-	_mainData.scenes.SelectScene("Podium", true);
+	// Sélectionner le LoadingScreen
+	_mainData.scenes.SelectScene("Lo", true);
 
 	_mainData.clock.restart();
 }
@@ -118,66 +122,7 @@ void PollEvent(MainData& _mainData)
 				_mainData.renderWindow.close();
 				return;
 				break;
-			//case sf::Event::JoystickDisconnected:
-			//	std::cout << " disconnected (joystick ID " << event.joystickConnect.joystickId << std::endl;
-			//	for (short i = 0; i < _mainData.gameData.m_playerDataList.size(); i++)
-			//	{
-			//		if (_mainData.gameData.m_playerDataList[i].GetJoystickId() == event.joystickConnect.joystickId)
-			//		{
-			//			std::cout << "Joueur " << i + 1 << " disconnected (joystick ID " << event.joystickConnect.joystickId << "), changement de son id a -1" << std::endl;
-			//			//_mainData.gameData.m_playerDataList[i].SetJoystickID(-1);
-			//		}
-			//		else if (_mainData.gameData.m_playerDataList[i].GetJoystickId() > event.joystickConnect.joystickId)
-			//		{
-			//			//std::cout << "changement ID pour joueur " << i << " de Id: " << _mainData.gameData.m_playerDataList[i].GetJoystickId() << " a ID :" << _mainData.gameData.m_playerDataList[i].GetJoystickId() -1 << std::endl;
-			//			//_mainData.gameData.m_playerDataList[i].SetJoystickID(_mainData.gameData.m_playerDataList[i].GetJoystickId() - 1);
-			//		}
-			//	}
 
-			//	std::cout << std::endl << std::endl;
-			//	for (short i = 0; i < _mainData.gameData.m_playerDataList.size(); i++)
-			//	{
-			//		std::cout << "Player " << i + 1 << ": id Manette : " << _mainData.gameData.m_playerDataList[i].GetJoystickId() << std::endl;
-			//	}
-			//	std::cout << std::endl;
-
-
-			//	break;
-
-			//case sf::Event::JoystickConnected:
-			//{
-			//	bool isAlreadyConnected = false;
-
-			//	std::cout << "Manette connectee avec ID : " << event.joystickConnect.joystickId << std::endl;
-			//	for (short i = 0; i < _mainData.gameData.m_playerDataList.size(); i++)
-			//	{
-			//		if (_mainData.gameData.m_playerDataList[i].GetJoystickId() == event.joystickConnect.joystickId)
-			//		{
-			//			std::cout << "Mannette deja pairee avec un joueur" << std::endl;
-			//			isAlreadyConnected = true;
-			//		}
-			//	}
-
-			//	for (short i = 0; i < _mainData.gameData.m_playerDataList.size(); i++)
-			//	{
-			//		if (!isAlreadyConnected)
-			//		{
-			//			if (_mainData.gameData.m_playerDataList[i].GetJoystickId() == -1)
-			//			{
-			//				std::cout << "Reassignation de la manette avec ID : " << event.joystickConnect.joystickId << " au joueur " << i << std::endl;
-			//				_mainData.gameData.m_playerDataList[i].SetJoystickID(event.joystickConnect.joystickId);
-			//				isAlreadyConnected = true;
-			//			}
-			//		}
-			//	}
-
-			//	std::cout << std::endl << std::endl;
-			//	for (short i = 0; i < _mainData.gameData.m_playerDataList.size(); i++)
-			//	{
-			//		std::cout << "Player " << i + 1 << ": id Manette : " << _mainData.gameData.m_playerDataList[i].GetJoystickId() << std::endl;
-			//	}
-			//	std::cout << std::endl;
-			//}
 				break;
 			default:
 				_mainData.scenes.PollEvent(event);
@@ -190,20 +135,6 @@ void Update(MainData& _mainData)
 {
 	float deltaTime = _mainData.clock.restart().asSeconds();
 
-	//
-
-	//for (short i = 0; i < _mainData.gameData.m_playerDataList.size(); i++)
-	//{
-	//	if (sf::Joystick::isConnected(_mainData.gameData.m_playerDataList[i].GetJoystickId()))
-	//	{
-	//		std::cout << "Joystick id : " << _mainData.gameData.m_playerDataList[i].GetJoystickId() << " is connected" <<  std::endl;
-	//	}
-	//	else
-	//	{
-	//		std::cout << "Joystick id : " << _mainData.gameData.m_playerDataList[i].GetJoystickId() << " is not connected" << std::endl;
-	//	}
-	//}
-	//float dtFixed = deltaTime / (1.0f / 60.0f);
 	_mainData.scenes.Update(deltaTime);
 }
 
