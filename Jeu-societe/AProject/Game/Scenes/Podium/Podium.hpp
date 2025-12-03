@@ -16,10 +16,9 @@
 			GameData* gameData;
 
 			std::vector<SpriteAtlas> playerSpriteArray;
-			std::vector<TextPlus> playerTextArray;
-
 			std::vector<SpriteAtlas> podiumsSpriteArray;
 
+			std::vector<TextPlus> playerTextArray;
 
 			sf::Sprite background;
 		};
