@@ -14,6 +14,16 @@ enum TransitionType
 
 };
 
+struct TransitionSettings
+{
+	sf::Music* nextMusic;
+	std::string nextMusicName;
+	float transitionDuration;
+	float timer;
+	TransitionType tansitionType;
+};
+
+
 
 class AudioEngine
 {
@@ -53,7 +63,7 @@ public:
 	/// <param name="_musicName"></param>
 	/// <param name="_loop">If true, loop the music you given at his end</param>
 	/// <param name="_transitionTime">Transition between current music playing and the new</param>
-	void PlayMusic(const std::string& _musicName, bool _loop = false, float _transitionDuration = 5.f, TransitionType _type = FADED_ONE_BY_ONE);
+	void PlayMusicTransition(const std::string& _musicName, bool _loop = false, float _transitionDuration = 5.f, TransitionType _type = FADED_ONE_BY_ONE);
 	void UpdateMusicTransition(float _dt);
 
 	void SetMusicVolume(float& _vol);
@@ -66,13 +76,7 @@ private:
 	AssetManager* m_assetManager;
 
 	sf::Music* m_music;
-	//Music transition settings
-	sf::Music* m_nextMusic;
-	std::string m_nextMusicName;
-	float m_transitionDuration;
-	float timer;
-	TransitionType m_tansitionType;
-	//
+	TransitionSettings m_transition;
 
 	sf::Sound* m_soundProtected = nullptr;
 	std::string m_currentMusic;

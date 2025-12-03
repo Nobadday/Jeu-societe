@@ -17,6 +17,8 @@ void Menu::Load(void)
 	m_data->gameData->m_assetManager->LoadManifest("Manifests/Menu.json", "Menu");
 	m_data->audio = (AudioEngine*)m_data->gameData->m_audioEngine;	
 	LoadUI();
+	m_data->audio->PlayMusic("Music1", true);
+
 }
 void Menu::LoadUI(void)
 {
@@ -167,6 +169,7 @@ void Menu::ButtonsPollEvent(sf::Event& _event)
 
 void Menu::Update(float _deltaTime)
 {
+	m_data->audio->UpdateMusicTransition(_deltaTime);
 	ButtonsUpdate(_deltaTime);
 	
 	//std::cout << "current chara = " << m_data->currentCharaSelected << std::endl;
@@ -354,6 +357,8 @@ void Menu::PressSelection(int _id)
 			switch (m_data->state)
 			{
 				case MAIN_MENU:
+
+					m_data->audio->PlayMusicTransition("Music2", true, 10.f, TransitionType::FADED_MIX);
 
 					m_data->state = PLAYER_NB_SELECTION;
 					m_data->controlerBtn = PLAY_SELECTION;

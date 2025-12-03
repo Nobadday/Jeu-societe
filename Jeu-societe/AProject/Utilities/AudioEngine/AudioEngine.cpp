@@ -3,9 +3,8 @@
 //Init Audio engine, set to null all things
 AudioEngine::AudioEngine(void)
 	: m_currentMusic(""), m_assetManager(nullptr), m_music(nullptr),
-	m_nextMusic(nullptr), m_transitionDuration(0.f), timer(0.f),
-	m_tansitionType(FADED_ONE_BY_ONE), m_soundProtected(nullptr),
-	m_musicVol(100.f), m_soundVol(100.f), m_nextMusicName("")
+	m_soundProtected(nullptr), m_musicVol(100.f), 
+	m_soundVol(100.f), m_transition({NULL})
 {
 	//initial size to prevent bug
 	this->m_soundVec.resize((size_t)20);
@@ -260,13 +259,13 @@ void AudioEngine::PlayMusic(const std::string& _musicName, sf::Music* _music, bo
 	}
 
 }
-void AudioEngine::PlayMusic(const std::string& _musicName, bool _loop, float _transitionDuration, TransitionType _type)
+void AudioEngine::PlayMusicTransition(const std::string& _musicName, bool _loop, float _transitionDuration, TransitionType _type)
 {
 	//Remove big problem
 	//If next music != nullptr ->
 	//One transition is in activity : 
 	//WE DO NOT TO INTERFER WITH CURRENT TRANSITION
-	if (m_nextMusic != nullptr)
+	if (m_transition.nextMusic != nullptr)
 	{
 		std::cout << "CRITICAL PROBLEM : OMG YOU WANT ADD MUSIC AND TRANSITION BUT CURRENT TRANSITION ISNT FINISHED" << std::endl;
 		return;
@@ -282,57 +281,49 @@ void AudioEngine::PlayMusic(const std::string& _musicName, bool _loop, float _tr
 			std::cout << "WARNING : you want to play with transition the music that already playing," << std::endl
 				<< "This is what you want ? Ok so I do it" << std::endl;
 
-			m_nextMusic = music;
-			m_transitionDuration = _transitionDuration;
-			timer = 0.f; 
-			m_tansitionType = _type;
-			m_nextMusic->setVolume(0.f);
+			m_transition.nextMusic = music;
+			m_transition.transitionDuration = _transitionDuration;
+			m_transition.timer = 0.f;
+			m_transition.tansitionType = _type;
+			m_transition.nextMusic->setVolume(0.f);
+			m_transition.nextMusic->setLoop(_loop);
 			if (_type == FADED_MIX)
 			{
-				m_nextMusic->play();
+				m_transition.nextMusic->play();
 			}
 
 
 		}
 		else
 		{
-
-
-
-
-
-
-
-			//Launch music
-			music->play();
-			music->setLoop(_loop);
-			music->setVolume(this->m_musicVol);
-			this->m_music = music;
-			m_currentMusic = _musicName;
+			m_transition.nextMusic = music;
+			m_transition.transitionDuration = _transitionDuration;
+			m_transition.timer = 0.f;
+			m_transition.tansitionType = _type;
+			m_transition.nextMusic->setVolume(0.f);
+			m_transition.nextMusic->setLoop(_loop);
+			if (_type == FADED_MIX)
+			{
+				m_transition.nextMusic->play();
+			}
 		}
 	}
 	else
 	{
 		//Search if asset exist
 		sf::Music* music = ((sf::Music*)(m_assetManager->GetAsset(_musicName, AssetManager::MUSIC)));
-		if (music != NULL && m_currentMusic != "")
+		if (music != NULL)
 		{
-			this->StopMusic();
-
-			//Launch music
-			music->play();
-			music->setLoop(_loop);
-			music->setVolume(this->m_musicVol);
-			this->m_music = music;
-			m_currentMusic = _musicName;
-		}
-		else if (music != NULL)
-		{
-			//Launch music
-			music->play();
-			music->setLoop(_loop);
-			this->m_music = music;
-			m_currentMusic = _musicName;
+			m_transition.nextMusic = music;
+			m_transition.transitionDuration = _transitionDuration;
+			m_transition.timer = 0.f;
+			m_transition.tansitionType = _type;
+			m_transition.nextMusic->setVolume(0.f);
+			m_transition.nextMusic->setLoop(_loop);
+			if (_type == FADED_MIX)
+			{
+				m_transition.nextMusic->play();
+			}
 		}
 		else
 		{
@@ -342,51 +333,52 @@ void AudioEngine::PlayMusic(const std::string& _musicName, bool _loop, float _tr
 }
 void AudioEngine::UpdateMusicTransition(float _dt)
 {
-	if (m_nextMusic != nullptr)
+	if (m_transition.nextMusic != nullptr)
 	{
-		if (timer < m_transitionDuration)
+		if (m_transition.timer < m_transition.transitionDuration)
 		{
-			timer += _dt;
+			m_transition.timer += _dt;
 
-			switch (m_tansitionType)
+			switch (m_transition.tansitionType)
 			{
 			case FADED_MIX:
 
-				m_nextMusic->setVolume(timer / m_transitionDuration * 100.f);
+				m_transition.nextMusic->setVolume(m_transition.timer / m_transition.transitionDuration * 100.f);
 				//m_nextMusic->setVolume(ANIMATION_NAMESPACE::AniMath::Interpolate(0.f, m_transitionDuration, timer / m_transitionDuration));
-				m_music->setVolume((m_transitionDuration - timer) / m_transitionDuration * 100.f);
+				m_music->setVolume((m_transition.transitionDuration - m_transition.timer) / m_transition.transitionDuration * 100.f);
 				//m_music->setVolume(ANIMATION_NAMESPACE::AniMath::Interpolate(m_transitionDuration, 0, timer / m_transitionDuration));
 
 				break;
 			case FADED_ONE_BY_ONE:
 
-				if (timer < m_transitionDuration / 2.f)
+				if (m_transition.timer < m_transition.transitionDuration / 2.f)
 				{
 					//m_music->setVolume(ANIMATION_NAMESPACE::AniMath::Interpolate(m_transitionDuration, 0, timer / m_transitionDuration));
-					m_music->setVolume(((m_transitionDuration / 2.f) - timer) / (m_transitionDuration / 2.f) * 100.f);
+					m_music->setVolume(((m_transition.transitionDuration / 2.f) - m_transition.timer) / (m_transition.transitionDuration / 2.f) * 100.f);
 				}
 				else
 				{
-					if (m_nextMusic->getStatus() != sf::Music::Status::Playing)
+					if (m_transition.nextMusic->getStatus() != sf::Music::Status::Playing)
 					{
-						m_nextMusic->play();
+						m_transition.nextMusic->play();
 					}
 
 					//Coeficient du temp, xSon
 					//Temp / TempMax * 100
-					m_nextMusic->setVolume((timer - m_transitionDuration / 2) / (m_transitionDuration / 2) * 100.f);
+					m_transition.nextMusic->setVolume((m_transition.timer - m_transition.transitionDuration / 2) / (m_transition.transitionDuration / 2) * 100.f);
 				}
 				break;
 			}
 		}
-		else if (m_nextMusic != nullptr)
+		else if (m_transition.nextMusic != nullptr)
 		{
-			m_music = m_nextMusic;
-			m_nextMusic->stop();
-			m_nextMusic = nullptr;
-			timer = 0.f;
-			m_currentMusic = m_nextMusicName;
-			m_nextMusicName = "";
+			
+			m_music = m_transition.nextMusic;
+			//m_nextMusic->stop();
+			m_transition.nextMusic = nullptr;
+			m_transition.timer = 0.f;
+			m_currentMusic = m_transition.nextMusicName;
+			m_transition.nextMusicName = "";
 		}
 	}
 }
