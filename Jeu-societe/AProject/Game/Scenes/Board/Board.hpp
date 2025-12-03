@@ -4,6 +4,7 @@
 #include "../../Common.hpp"
 
 #include "../../Map/Tiled.h"
+#include "../../Video+Audio/HighResVideoPlayer.hpp"
 
 #include "../../Utilities/Camera/Camera.hpp"
 
@@ -213,8 +214,6 @@ class BaseGame : public SceneBase
 
 			SpriteAnimated icone;
 
-			//sfe::Movie movieDe;
-
 			bool active;
 			
 			// NOUVEAU : Variables pour gérer l'animation du dé
@@ -226,10 +225,9 @@ class BaseGame : public SceneBase
 
 			// NOUVEAU : Shader pour le chroma key
 			sf::Shader chromaKeyShader;
-
-			 // MODIFICATION : Stocker des pointeurs vers les vidéos
-			std::vector<sfe::Movie> diceVideos;
-			sfe::Movie* currentDiceVideo;  // NOUVEAU : Pointeur vers la vidéo courante
+			std::vector<HighResVideoPlayer*> diceVideos;
+			// MODIFICATION : Stocker des pointeurs vers les vidéos
+			
 		};
 
 		GameData* m_gameData;

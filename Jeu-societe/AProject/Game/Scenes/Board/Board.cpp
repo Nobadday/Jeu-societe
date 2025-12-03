@@ -52,34 +52,22 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 
 	// NOUVEAU : Pré-charger toutes les vidéos des dés
 	m_data->diceVideos.resize(6);
-
 	for (int i = 0; i < 6; i++)
 	{
+		m_data->diceVideos[i] = new HighResVideoPlayer();
 		std::string videoPath = "Assets/Video/De" + std::to_string(i + 1) + ".mov";
-		if (!m_data->diceVideos[i].openFromFile(videoPath))
+		if (!m_data->diceVideos[i]->loadFromFile(videoPath))
 		{
-			std::cout << "Erreur : Impossible de charger " << videoPath << std::endl;
+			std::cout << "Erreur : Impossible de charger la video du de: " << videoPath << std::endl;
 		}
 		else
 		{
-			m_data->diceVideos[i].setOrigin(
-				m_data->diceVideos[i].getSize().x / 2,
-				m_data->diceVideos[i].getSize().y / 2
-			);
-			m_data->diceVideos[i].setVolume(50.0f);
-
-			// NOUVEAU : Afficher la durée pour vérification
-			sf::Time duration = m_data->diceVideos[i].getDuration();
-			std::cout << "Vidéo De" << (i + 1) << " - Durée: "
-				<< duration.asSeconds() << "s" << std::endl;
+			HighResConfig config;
+			config.enableLoop = false;
+			m_data->diceVideos[i]->setConfig(config);
 		}
 	}
 
-	// Initialiser le pointeur à nullptr
-	if (!m_data->diceVideos.empty())
-	{
-		m_data->currentDiceVideo = &m_data->diceVideos[0];
-	}
 	progress.store(0.7f);
 
 	// NOUVEAU : Charger le shader pour la transparence
@@ -379,23 +367,8 @@ void BaseGame::PollEvent(sf::Event& _event)
 				// CORRECTION : Utiliser un pointeur au lieu de copier
 				if (rando >= 1 && rando <= 6)
 				{
-					// Arrêter la vidéo précédente si elle joue
-					if (m_data->currentDiceVideo != nullptr &&
-						m_data->currentDiceVideo->getStatus() == sfe::Playing)
-					{
-						m_data->currentDiceVideo->stop();
-					}
-
-					// Pointer vers la vidéo pré-chargée
-					m_data->currentDiceVideo = &m_data->diceVideos[rando - 1];
-
-					// Redémarrer depuis le début
-					m_data->currentDiceVideo->stop();  // S'assurer qu'elle est arrêtée
-					m_data->currentDiceVideo->setPosition(
-						m_data->dicePosition
-					);
-					m_data->currentDiceVideo->play();
-
+					// Lancer la vidéo correspondante
+					m_data->diceVideos[m_data->diceResult - 1]->play();
 					m_data->diceAnimationPlaying = true;
 					SetBoardState(DICE_ANIMATION);
 				}
@@ -562,31 +535,17 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 		DrawIconePlayer(*mod, idx);
 	}
 
-	// NOUVEAU : Dessiner la vidéo du dé si elle est en cours
-	if (m_data->diceAnimationPlaying && m_data->state == DICE_ANIMATION)
+	if (m_data->state == DICE_ANIMATION)
 	{
-		sf::RenderStates states;
-		states.shader = &m_data->chromaKeyShader;
-		states.transform = m_data->currentDiceVideo->getTransform();
+		// Afficher la vidéo du dé avec le shader de chroma key
 
-		mod->draw(*m_data->currentDiceVideo, states);
-	}
+		//sf::Sprite videoSprite(m_data->diceVideos[m_data->diceResult]->getSprite());
+		/*videoSprite.setPosition(m_data->dicePosition);
+		videoSprite.setOrigin(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);*/
+		// Dessiner avec le shader de chroma key
+		mod->draw(m_data->diceVideos[m_data->diceResult]->getSprite()/*, &m_data->chromaKeyShader*/);
 
-	// CORRECTION : Dessiner la vidéo via le pointeur
-	if (m_data->diceAnimationPlaying && m_data->state == DICE_ANIMATION)
-	{
-		if (m_data->currentDiceVideo != nullptr)
-		{
-			// Vérifier que la vidéo est bien en cours de lecture
-			if (m_data->currentDiceVideo->getStatus() != sfe::Stopped)
-			{
-				sf::RenderStates states;
-				states.shader = &m_data->chromaKeyShader;
-				states.transform = m_data->currentDiceVideo->getTransform();
 
-				mod->draw(*m_data->currentDiceVideo, states);
-			}
-		}
 	}
 }
 
@@ -916,25 +875,6 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 		SetBoardState(PLAY, 0);
 		break;
 	case DICE_ANIMATION:
-		if (m_data->currentDiceVideo != nullptr)
-		{
-			//m_data->currentDiceVideo->update();
-
-			sfe::Status status = m_data->currentDiceVideo->getStatus();
-			sf::Time currentTime = m_data->currentDiceVideo->getPlayingOffset();
-			sf::Time totalDuration = m_data->currentDiceVideo->getDuration();
-
-			// DEBUG : Afficher les informations
-			std::cout << "Vidéo - Temps: " << currentTime.asSeconds()
-				<< "s / " << totalDuration.asSeconds()
-				<< "s | Status: " << status << std::endl;
-
-			if (status == sfe::Stopped)
-			{
-				std::cout << "Vidéo terminée normalement" << std::endl;
-				// ... transition ...
-			}
-		}
 		break;
 	default:
 		break;
@@ -1028,13 +968,8 @@ void BaseGame::BoardStateUpdate(float _dt)
 
 	case DICE_ANIMATION:
 	{
-		m_data->currentDiceVideo->update();
-
-		sfe::Status status = m_data->currentDiceVideo->getStatus();
-
-		std::cout << "Video status: " << status << std::endl;  // DEBUG
-
-		if (status == sfe::Stopped)
+		m_data->diceVideos[m_data->diceResult - 1]->update(_dt);
+		if (m_data->diceVideos[m_data->diceResult - 1]->isFinish())
 		{
 			m_data->timeDice -= _dt;
 			if (m_data->timeDice <= 0)
@@ -1047,7 +982,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 
 				int nextIndex = 0;
 
-				m_data->timeDice = TIME_DIS_DISPLAY *100;
+				m_data->timeDice = TIME_DIS_DISPLAY;
 
 				if (player.state != NONE)
 				{
@@ -1071,6 +1006,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 				}
 			}
 		}
+
 	}
 	break;
 	case DEPLACEMENT_SPLIT:
