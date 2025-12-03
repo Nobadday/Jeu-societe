@@ -10,182 +10,202 @@ constexpr unsigned int hash(const char* str, int h = 0)
 // Ajouter cette nouvelle méthode avant BaseGame::Load
 void BaseGame::LoadAsync(std::atomic<float>& progress)
 {
-    m_data = new SceneData;
-    m_gameData = (GameData*)this->m_keptData;
+	m_data = new SceneData;
+	m_gameData = (GameData*)this->m_keptData;
 
-    progress.store(0.1f);
+	progress.store(0.1f);
 
-    // CHANGEMENT : Ne plus charger le manifest ici car il est déjà chargé par LoadingScreen
-    // m_gameData->m_assetManager->LoadManifest("Manifests/Board.json", "Board");
-    progress.store(0.3f);
+	// CHANGEMENT : Ne plus charger le manifest ici car il est déjà chargé par LoadingScreen
+	// m_gameData->m_assetManager->LoadManifest("Manifests/Board.json", "Board");
+	progress.store(0.3f);
 
-    // Configuration des éléments UI
-    m_data->HudLBM.text.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
-    m_data->HudLBM.sprite.setTexture(*m_gameData->m_assetManager->GetAsset<TextureAnimated>("Anim_card", AssetManager::AssetType::TEXTURE_ANIMATED));
-    m_data->HudLBM.state = NONELBM;
-    m_data->HudLBM.active = false;
-    progress.store(0.4f);
+	// Configuration des éléments UI
+	m_data->HudLBM.text.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
+	m_data->HudLBM.sprite.setTexture(*m_gameData->m_assetManager->GetAsset<TextureAnimated>("Anim_card", AssetManager::AssetType::TEXTURE_ANIMATED));
+	m_data->HudLBM.state = NONELBM;
+	m_data->HudLBM.active = false;
+	progress.store(0.4f);
 
-    // Chargement de la carte
-    m_data->tile.InitTiled("Assets/Map/map.json");
-    m_gameData->m_renderWindow->ResetView();
+	// Chargement de la carte
+	m_data->tile.InitTiled("Assets/Map/map.json");
+	m_gameData->m_renderWindow->ResetView();
 	m_data->camera.Reset(m_gameData->m_renderWindow->getView());
-    progress.store(0.5f);
+	progress.store(0.5f);
 
-    MapLayer layer = m_data->tile.GetMapLayer("point");
-    m_data->posCase = layer.GetObjects();
+	MapLayer layer = m_data->tile.GetMapLayer("point");
+	m_data->posCase = layer.GetObjects();
 
-    m_data->players.resize(m_gameData->m_playerDataList.size());
-    m_data->state = START;
+	m_data->players.resize(m_gameData->m_playerDataList.size());
+	m_data->state = START;
 
-    m_data->icone.setTexture(*m_gameData->m_assetManager->GetAsset<TextureAnimated>("Icone", AssetManager::AssetType::TEXTURE_ANIMATED));
-    m_data->icone.setOrigin({ 0.5f,1 });
+	m_data->icone.setTexture(*m_gameData->m_assetManager->GetAsset<TextureAnimated>("Icone", AssetManager::AssetType::TEXTURE_ANIMATED));
+	m_data->icone.setOrigin({ 0.5f,1 });
 
-    m_data->timeWin = TIME_WIN_DISPLAY;
-    m_data->timeLBM = TIME_LBM_DISPLAY;
-    m_data->timeDice = TIME_LBM_DISPLAY;
-    
-    // NOUVEAU : Initialisation de la vidéo du dé
-    m_data->diceAnimationPlaying = false;
-    m_data->diceResult = 0;
-    m_data->dicePosition = sf::Vector2f(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f);
-    
-    // Charger la vidéo du dé (à adapter selon votre fichier vidéo)
-    if (!m_data->movieDe.openFromFile("Assets/Video/De1.mov"))
-    {
-        std::cout << "Erreur : Impossible de charger la vidéo du dé" << std::endl;
-    }
-    else
-    {
-        m_data->movieDe.setOrigin(m_data->movieDe.getSize().x/2, m_data->movieDe.getSize().y / 2);
-        m_data->movieDe.setPosition(m_data->dicePosition);
-        m_data->movieDe.setVolume(50.0f);  // Ajuster le volume
-        
-        // NOUVEAU : Charger le shader pour la transparence
-        if (!m_data->chromaKeyShader.loadFromMemory(
-            R"(
-            uniform sampler2D texture;
-            uniform vec3 keyColor; // Couleur à rendre transparente (ex: vert)
-            uniform float threshold; // Seuil de tolérance
+	m_data->timeWin = TIME_WIN_DISPLAY;
+	m_data->timeLBM = TIME_LBM_DISPLAY;
+	m_data->timeDice = TIME_LBM_DISPLAY;
 
-            void main()
+	// NOUVEAU : Initialisation de la vidéo du dé
+	m_data->diceAnimationPlaying = false;
+	m_data->diceResult = 0;
+	m_data->dicePosition = sf::Vector2f(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f);
+
+	// NOUVEAU : Pré-charger toutes les vidéos des dés
+	m_data->diceVideos.resize(6);
+
+	for (int i = 0; i < 6; i++)
+	{
+		std::string videoPath = "Assets/Video/De" + std::to_string(i + 1) + ".mov";
+		if (!m_data->diceVideos[i].openFromFile(videoPath))
+		{
+			std::cout << "Erreur : Impossible de charger " << videoPath << std::endl;
+		}
+		else
+		{
+			m_data->diceVideos[i].setOrigin(
+				m_data->diceVideos[i].getSize().x / 2,
+				m_data->diceVideos[i].getSize().y / 2
+			);
+			m_data->diceVideos[i].setVolume(50.0f);
+
+			// NOUVEAU : Afficher la durée pour vérification
+			sf::Time duration = m_data->diceVideos[i].getDuration();
+			std::cout << "Vidéo De" << (i + 1) << " - Durée: "
+				<< duration.asSeconds() << "s" << std::endl;
+		}
+	}
+
+	// Initialiser le pointeur à nullptr
+	if (!m_data->diceVideos.empty())
+	{
+		m_data->currentDiceVideo = &m_data->diceVideos[0];
+	}
+	progress.store(0.7f);
+
+	// NOUVEAU : Charger le shader pour la transparence
+	if (!m_data->chromaKeyShader.loadFromMemory(
+		R"(
+        uniform sampler2D texture;
+        uniform vec3 keyColor; // Couleur à rendre transparente (ex: vert)
+        uniform float threshold; // Seuil de tolérance
+
+        void main()
+        {
+            vec4 pixel = texture2D(texture, gl_TexCoord[0].xy);
+            float dist = distance(pixel.rgb, keyColor);
+            
+            // Si la couleur est proche de keyColor, rendre transparent
+            if (dist < threshold)
             {
-                vec4 pixel = texture2D(texture, gl_TexCoord[0].xy);
-                float dist = distance(pixel.rgb, keyColor);
-                
-                // Si la couleur est proche de keyColor, rendre transparent
-                if (dist < threshold)
-                {
-                    pixel.a = 0.0;
-                }
-                
-                gl_FragColor = pixel * gl_Color;
+                pixel.a = 0.0;
             }
-            )", sf::Shader::Fragment))
-        {
-            std::cout << "Erreur : Impossible de charger le shader chroma key" << std::endl;
+            
+            gl_FragColor = pixel * gl_Color;
         }
-        else
-        {
-            // Définir la couleur à rendre transparente (vert dans cet exemple)
-            m_data->chromaKeyShader.setUniform("keyColor", sf::Glsl::Vec3(0.0f, 1.0f, 0.0f)); // RGB vert
-            m_data->chromaKeyShader.setUniform("threshold", 0.4f); // Ajuster selon vos besoins
-        }
-    }
-    
-    progress.store(0.6f);
+        )", sf::Shader::Fragment))
+	{
+		std::cout << "Erreur : Impossible de charger le shader chroma key" << std::endl;
+	}
+	else
+	{
+		// Définir la couleur à rendre transparente (vert dans cet exemple)
+		m_data->chromaKeyShader.setUniform("keyColor", sf::Glsl::Vec3(0.0f, 1.0f, 0.0f)); // RGB vert
+		m_data->chromaKeyShader.setUniform("threshold", 0.5f); // Ajuster selon vos besoins
+	}
 
-    // Initialisation des joueurs
-    for (int i = 0; i < m_data->players.size(); i++)
-    {
-        switch (m_gameData->m_playerDataList[i].GetPlayerSkin())
-        {
-        case PlayerData::CHARACTER_1_1:
-            m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-1", AssetManager::AssetType::TEXTURE_ANIMATED);
-            break;
-        case PlayerData::CHARACTER_2_1:
-            m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso2-1", AssetManager::AssetType::TEXTURE_ANIMATED);
-            break;
-        case PlayerData::CHARACTER_3_1:
-            m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso3-1", AssetManager::AssetType::TEXTURE_ANIMATED);
-            break;
-        case PlayerData::CHARACTER_4_1:
-            m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso4-1", AssetManager::AssetType::TEXTURE_ANIMATED);
-            break;
-        default:
-            m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-1", AssetManager::AssetType::TEXTURE_ANIMATED);
-            break;
-        }
+	progress.store(0.6f);
 
-        m_data->players[i].sprite.setTexture(m_data->players[i].texture);
-        m_data->players[i].sprite.setOrigin({ 0.5f,1.f });
-        m_data->players[i].v.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
-        m_data->players[i].v.setString(L"⌂");
-        m_data->players[i].boardPosition = m_data->posCase[0].GetPosition() + sf::Vector2f{ -40.f * i + 50 ,0.f };
-        m_data->players[i].posIcone = PosIcone(i);
+	// Initialisation des joueurs
+	for (int i = 0; i < m_data->players.size(); i++)
+	{
+		switch (m_gameData->m_playerDataList[i].GetPlayerSkin())
+		{
+		case PlayerData::CHARACTER_1_1:
+			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-1", AssetManager::AssetType::TEXTURE_ANIMATED);
+			break;
+		case PlayerData::CHARACTER_2_1:
+			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso2-1", AssetManager::AssetType::TEXTURE_ANIMATED);
+			break;
+		case PlayerData::CHARACTER_3_1:
+			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso3-1", AssetManager::AssetType::TEXTURE_ANIMATED);
+			break;
+		case PlayerData::CHARACTER_4_1:
+			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso4-1", AssetManager::AssetType::TEXTURE_ANIMATED);
+			break;
+		default:
+			m_data->players[i].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-1", AssetManager::AssetType::TEXTURE_ANIMATED);
+			break;
+		}
 
-        sf::FloatRect textRect = m_data->players[i].v.getLocalBounds();
-        m_data->players[i].v.setOrigin({ textRect.width / 2, textRect.height / 2 });
-        m_data->players[i].v.setPosition(m_data->players[i].boardPosition + sf::Vector2f{ 0.f,-100.f });
+		m_data->players[i].sprite.setTexture(m_data->players[i].texture);
+		m_data->players[i].sprite.setOrigin({ 0.5f,1.f });
+		m_data->players[i].v.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
+		m_data->players[i].v.setString(L"⌂");
+		m_data->players[i].boardPosition = m_data->posCase[0].GetPosition() + sf::Vector2f{ -40.f * i + 50 ,0.f };
+		m_data->players[i].posIcone = PosIcone(i);
 
-        m_data->players[i].playeur.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
-        m_data->players[i].playeur.setString("P" + std::to_string(i + 1));
+		sf::FloatRect textRect = m_data->players[i].v.getLocalBounds();
+		m_data->players[i].v.setOrigin({ textRect.width / 2, textRect.height / 2 });
+		m_data->players[i].v.setPosition(m_data->players[i].boardPosition + sf::Vector2f{ 0.f,-100.f });
 
-        textRect = m_data->players[i].playeur.getLocalBounds();
-        m_data->players[i].playeur.setOrigin({ textRect.width / 2, textRect.height / 2 });
-        m_data->players[i].playeur.setPosition(m_data->players[i].boardPosition + sf::Vector2f{ 0.f,-120.f });
+		m_data->players[i].playeur.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
+		m_data->players[i].playeur.setString("P" + std::to_string(i + 1));
 
-        m_data->players[i].currentCaseIndex = 0;
-        m_data->players[i].startRandom = 0;
-        m_data->players[i].state = StatePlayer::NONE;
-        m_data->players[i].pendingMovement = 0;
-        m_data->players[i].currentPathId = -1;
+		textRect = m_data->players[i].playeur.getLocalBounds();
+		m_data->players[i].playeur.setOrigin({ textRect.width / 2, textRect.height / 2 });
+		m_data->players[i].playeur.setPosition(m_data->players[i].boardPosition + sf::Vector2f{ 0.f,-120.f });
 
-        progress.store(0.6f + (0.2f * (i + 1) / m_data->players.size()));
-    }
+		m_data->players[i].currentCaseIndex = 0;
+		m_data->players[i].startRandom = 0;
+		m_data->players[i].state = StatePlayer::NONE;
+		m_data->players[i].pendingMovement = 0;
+		m_data->players[i].currentPathId = -1;
 
-    m_data->currentPlayerIndex = 0;
-    m_data->smokeOff = false;
-    m_data->smoke.loadFromFile("Assets/Sprites/Board/smoke-export.png");
-    progress.store(0.85f);
+		progress.store(0.6f + (0.2f * (i + 1) / m_data->players.size()));
+	}
 
-    UpdateCameraToShowAllPlayers();
+	m_data->currentPlayerIndex = 0;
+	m_data->smokeOff = false;
+	m_data->smoke.loadFromFile("Assets/Sprites/Board/smoke-export.png");
+	progress.store(0.85f);
 
-    sf::Vector2f posMin;
-    sf::Vector2f posMax;
+	UpdateCameraToShowAllPlayers();
 
-    for (int i = 0; i < m_data->posCase.size(); i++)
-    {
-        auto& mapObject = m_data->posCase[i];
-        if (mapObject.GetName() == "19")
-        {
-            posMin = mapObject.GetPosition();
-        }
-        if (i == m_data->posCase.size() - 1)
-        {
-            posMax = mapObject.GetPosition();
-        }
-    }
+	sf::Vector2f posMin;
+	sf::Vector2f posMax;
 
-    CreateSmokeEffectAnotherPart(posMin, posMax);
-    progress.store(0.95f);
+	for (int i = 0; i < m_data->posCase.size(); i++)
+	{
+		auto& mapObject = m_data->posCase[i];
+		if (mapObject.GetName() == "19")
+		{
+			posMin = mapObject.GetPosition();
+		}
+		if (i == m_data->posCase.size() - 1)
+		{
+			posMax = mapObject.GetPosition();
+		}
+	}
 
-    // Configuration des animateurs
-    m_data->animator.Modify(1.0f, 60.0f, false, 1.0f);
-    m_data->animator2.Modify(1.0f, 60.0f, false, 1.0f);
-    m_data->animator.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::INOUTSINE);
-    m_data->animator2.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::INOUTSINE);
-    m_data->animator.End();
-    m_data->animator2.End();
+	CreateSmokeEffectAnotherPart(posMin, posMax);
+	progress.store(0.95f);
 
-    progress.store(1.0f);
+	// Configuration des animateurs
+	m_data->animator.Modify(1.0f, 60.0f, false, 1.0f);
+	m_data->animator2.Modify(1.0f, 60.0f, false, 1.0f);
+	m_data->animator.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::INOUTSINE);
+	m_data->animator2.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::INOUTSINE);
+	m_data->animator.End();
+	m_data->animator2.End();
+
+	progress.store(1.0f);
 }
 
 void BaseGame::Load(void)
 {
-    // Version synchrone pour compatibilité
-    std::atomic<float> dummyProgress{0.0f};
-    LoadAsync(dummyProgress);
+	// Version synchrone pour compatibilité
+	std::atomic<float> dummyProgress{ 0.0f };
+	LoadAsync(dummyProgress);
 }
 
 void BaseGame::Unload(void)
@@ -346,55 +366,46 @@ void BaseGame::PollEvent(sf::Event& _event)
 
 	// Lambda pour factoriser le comportement du lancer de dé
 	auto processDiceRoll = [this](int rando)
-	{
-		std::cout << "Roll Dice: " << rando << std::endl;
-		std::cout << "Player startRandom: " << m_data->players[m_data->currentPlayerIndex].startRandom << std::endl;
-
-		const int posCaseCount = static_cast<int>(m_data->posCase.size());
-
-		if (m_data->state != START)
 		{
-			auto& player = m_data->players[m_data->currentPlayerIndex];
+			std::cout << "Roll Dice: " << rando << std::endl;
 
-			// NOUVEAU : Stocker le résultat et lancer l'animation
-			m_data->diceResult = rando;
-
-			switch (rando)
+			if (m_data->state != START)
 			{
-			case 1 :
-				m_data->movieDe.openFromFile("Assets/Video/De1.mov");
-				break;
-			case 2:
-				m_data->movieDe.openFromFile("Assets/Video/De2.mov");
-				break;
-			case 3:
-				m_data->movieDe.openFromFile("Assets/Video/De3.mov");
-				break;
-			case 4:
-				m_data->movieDe.openFromFile("Assets/Video/De4.mov");
-				break;
-			case 5:
-				m_data->movieDe.openFromFile("Assets/Video/De5.mov");
-				break;
-			case 6:
-				m_data->movieDe.openFromFile("Assets/Video/De6.mov");
-				break;
-			default:
-				break;
+				auto& player = m_data->players[m_data->currentPlayerIndex];
+
+				// Stocker le résultat
+				m_data->diceResult = rando;
+
+				// CORRECTION : Utiliser un pointeur au lieu de copier
+				if (rando >= 1 && rando <= 6)
+				{
+					// Arrêter la vidéo précédente si elle joue
+					if (m_data->currentDiceVideo != nullptr &&
+						m_data->currentDiceVideo->getStatus() == sfe::Playing)
+					{
+						m_data->currentDiceVideo->stop();
+					}
+
+					// Pointer vers la vidéo pré-chargée
+					m_data->currentDiceVideo = &m_data->diceVideos[rando - 1];
+
+					// Redémarrer depuis le début
+					m_data->currentDiceVideo->stop();  // S'assurer qu'elle est arrêtée
+					m_data->currentDiceVideo->setPosition(
+						m_gameData->m_renderWindow->getView().getCenter()
+					);
+					m_data->currentDiceVideo->play();
+
+					m_data->diceAnimationPlaying = true;
+					SetBoardState(DICE_ANIMATION);
+				}
 			}
-
-			m_data->movieDe.setPosition(m_gameData->m_renderWindow->getView().getCenter());
-			m_data->diceAnimationPlaying = true;
-
-			m_data->movieDe.play();
-			SetBoardState(DICE_ANIMATION);
-		}
-		else
-		{
-			m_data->players[m_data->currentPlayerIndex].startRandom = rando;
-			std::cout << "Place: " << rando << std::endl;
-		}
-	};
+			else
+			{
+				m_data->players[m_data->currentPlayerIndex].startRandom = rando;
+				std::cout << "Place: " << rando << std::endl;
+			}
+		};
 
 	// Gestion des entrées joystick
 	if (_event.type == sf::Event::JoystickButtonPressed)
@@ -550,16 +561,33 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 	{
 		DrawIconePlayer(*mod, idx);
 	}
-    
-    // NOUVEAU : Dessiner la vidéo du dé si elle est en cours
-    if (m_data->diceAnimationPlaying && m_data->state == DICE_ANIMATION)
-    {
-        sf::RenderStates states;
-        states.shader = &m_data->chromaKeyShader;
-        states.transform = m_data->movieDe.getTransform();
-        
-        mod->draw(m_data->movieDe, states);
-    }
+
+	// NOUVEAU : Dessiner la vidéo du dé si elle est en cours
+	if (m_data->diceAnimationPlaying && m_data->state == DICE_ANIMATION)
+	{
+		sf::RenderStates states;
+		states.shader = &m_data->chromaKeyShader;
+		states.transform = m_data->currentDiceVideo->getTransform();
+
+		mod->draw(*m_data->currentDiceVideo, states);
+	}
+
+	// CORRECTION : Dessiner la vidéo via le pointeur
+	if (m_data->diceAnimationPlaying && m_data->state == DICE_ANIMATION)
+	{
+		if (m_data->currentDiceVideo != nullptr)
+		{
+			// Vérifier que la vidéo est bien en cours de lecture
+			if (m_data->currentDiceVideo->getStatus() != sfe::Stopped)
+			{
+				sf::RenderStates states;
+				states.shader = &m_data->chromaKeyShader;
+				states.transform = m_data->currentDiceVideo->getTransform();
+
+				mod->draw(*m_data->currentDiceVideo, states);
+			}
+		}
+	}
 }
 
 void BaseGame::CaseAction()
@@ -887,9 +915,27 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 	case CASE_ACTION_END:
 		SetBoardState(PLAY, 0);
 		break;
-    case DICE_ANIMATION:
-        m_data->movieDe.update();
-        break;
+	case DICE_ANIMATION:
+		if (m_data->currentDiceVideo != nullptr)
+		{
+			//m_data->currentDiceVideo->update();
+
+			sfe::Status status = m_data->currentDiceVideo->getStatus();
+			sf::Time currentTime = m_data->currentDiceVideo->getPlayingOffset();
+			sf::Time totalDuration = m_data->currentDiceVideo->getDuration();
+
+			// DEBUG : Afficher les informations
+			std::cout << "Vidéo - Temps: " << currentTime.asSeconds()
+				<< "s / " << totalDuration.asSeconds()
+				<< "s | Status: " << status << std::endl;
+
+			if (status == sfe::Stopped)
+			{
+				std::cout << "Vidéo terminée normalement" << std::endl;
+				// ... transition ...
+			}
+		}
+		break;
 	default:
 		break;
 	}
@@ -979,12 +1025,17 @@ void BaseGame::BoardStateUpdate(float _dt)
 	case START:
 		SortStart();
 		break;
-    case DICE_ANIMATION:
-        m_data->movieDe.update();
-        
-        // Vérifier si la vidéo est terminée
-        if (m_data->movieDe.getStatus() == sfe::Stopped)
-        {
+
+	case DICE_ANIMATION:
+	{
+		m_data->currentDiceVideo->update();
+
+		sfe::Status status = m_data->currentDiceVideo->getStatus();
+
+		std::cout << "Video status: " << status << std::endl;  // DEBUG
+
+		if (status == sfe::Stopped)
+		{
 			m_data->timeDice -= _dt;
 			if (m_data->timeDice <= 0)
 			{
@@ -995,6 +1046,8 @@ void BaseGame::BoardStateUpdate(float _dt)
 				player.pendingMovement = m_data->diceResult;
 
 				int nextIndex = 0;
+
+				m_data->timeDice = TIME_DIS_DISPLAY *100;
 
 				if (player.state != NONE)
 				{
@@ -1017,8 +1070,9 @@ void BaseGame::BoardStateUpdate(float _dt)
 					SetBoardState(DEPLACEMENT_BACK, nextIndex);
 				}
 			}
-        }
-        break;
+		}
+	}
+	break;
 	case DEPLACEMENT_SPLIT:
 		[[fallthrough]];
 	case DEPLACEMENT_BRIGE:
