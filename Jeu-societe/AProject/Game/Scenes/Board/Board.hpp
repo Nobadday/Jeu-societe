@@ -213,7 +213,7 @@ class BaseGame : public SceneBase
 
 			SpriteAnimated icone;
 
-			sfe::Movie movieDe;
+			//sfe::Movie movieDe;
 
 			bool active;
 			
@@ -226,6 +226,10 @@ class BaseGame : public SceneBase
 
 			// NOUVEAU : Shader pour le chroma key
 			sf::Shader chromaKeyShader;
+
+			 // MODIFICATION : Stocker des pointeurs vers les vidéos
+			std::vector<sfe::Movie> diceVideos;
+			sfe::Movie* currentDiceVideo;  // NOUVEAU : Pointeur vers la vidéo courante
 		};
 
 		GameData* m_gameData;
