@@ -1,5 +1,4 @@
 #pragma once
-
 #ifndef _INC_HEALTHBAR_HPP
 #define _INC_HEALTHBAR_HPP
 
@@ -11,27 +10,20 @@
 class HealthBar : public sf::Drawable, public sf::Transformable
 {
 	private:
-		sf::Texture* m_textureBG;
-		sf::Texture* m_textureFiller;
+		mutable sf::RectangleShape m_rectShape;
 
-		sf::Color m_colorBG;
-		sf::Color m_colorFiller;
+		// 0 : BG
+		// 1 : Filler
+		const sf::Texture* m_textures[2];
+		sf::Color m_colors[2];
 
 		sf::Vector2f m_size;
 
-	protected:
-		mutable sf::RectangleShape m_rectShape;
-
 		float m_fillCoefficient;
 
-	protected:
-		void SetRect(const sf::Color& _color, const sf::Texture* _texture, float _fillCoef = 1.0f) const;
+		bool m_avoidOverflow;
 
-		virtual void DrawBG(sf::RenderTarget& _target, sf::RenderStates _states) const;
-		virtual void DrawFiller(sf::RenderTarget& _target, sf::RenderStates _states) const;
-
-	private:
-		virtual void draw(sf::RenderTarget& _target, sf::RenderStates _states) const;
+		bool m_isVertical;
 
 
 	public:
@@ -45,12 +37,24 @@ class HealthBar : public sf::Drawable, public sf::Transformable
 		// Set how far the bar is using virtual health system or something
 		void SetBarCompletion(float _value, float _maximum, float _minimum = 0.0f);
 
+		// If _autoVertical is True : Sets it as vertical if the height is higher than the width
+		void SetSize(const sf::Vector2f& _size, bool _autoVertical = true);
 
-		void SetSize(const sf::Vector2f& _size);
+		// If set to True, the bar will not overflow
+		void SetAvoidOverflow(bool _avoidOverflow);
 
-		// TODO :
-		//void SetTextureBG(const sf::Texture* _texture);
+		void SetVertical(bool _vertical);
 
+		// False for BG
+		// True for Filler
+		void SetTexture(const sf::Texture* _texture, bool _filler, bool _resetColor = true);
+		void SetTextureBG(const sf::Texture* _texture, bool _resetColor = true);
+		void SetTextureFiller(const sf::Texture* _texture, bool _resetColor = true);
+
+
+		// False for BG
+		// True for Filler
+		void SetColor(const sf::Color& _color, bool _filler);
 		void SetColorBG(const sf::Color& _color);
 		void SetColorFiller(const sf::Color& _color);
 
@@ -58,7 +62,19 @@ class HealthBar : public sf::Drawable, public sf::Transformable
 		sf::FloatRect GetLocalBounds(void);
 		sf::FloatRect GetGlobalBounds(void);
 
+		// Get the coefficient of the completion of the bar
 		float GetBarCompletion(void);
+
+		bool IsVertical(void);
+
+	protected:
+		void SetRect(const sf::Color& _color, const sf::Texture* _texture, float _fillCoef = 1.0f) const;
+
+		virtual void DrawBG(sf::RenderTarget& _target, sf::RenderStates _states) const;
+		virtual void DrawFiller(sf::RenderTarget& _target, sf::RenderStates _states) const;
+
+	private:
+		virtual void draw(sf::RenderTarget& _target, sf::RenderStates _states) const;
 
 };
 
@@ -66,4 +82,4 @@ class HealthBar : public sf::Drawable, public sf::Transformable
 
 #endif
 
-// HealthBar C++ || v1.0
+// HealthBar C++ || v1.1

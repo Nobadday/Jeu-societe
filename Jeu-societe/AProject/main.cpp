@@ -1,6 +1,7 @@
 #include "Common.hpp"
 #include "./Animation/Graphics.hpp"
 #include "./Ui/Button.hpp"
+#include "./Graphics/HealthBar.hpp"
 
 typedef struct MainData
 {
@@ -11,6 +12,7 @@ typedef struct MainData
 	TextureAnimated ta;
 	Button btn;
 
+	HealthBar hb;
 	GameData gameData;
 } MainData;
 
@@ -35,6 +37,9 @@ int main(void)
 	mainData.renderWindow.setIcon("./Assets/Images/Placeholder.png");
 	mainData.renderWindow.SetFullscreenPrefered(true);
 
+	mainData.hb.SetSize(sf::Vector2f(50.0f, 200.0f));
+	mainData.hb.setPosition(sf::Vector2f(200.0f, 50.0f));
+	mainData.hb.SetAvoidOverflow(true);
 
 	while (mainData.renderWindow.isOpen())
 	{
@@ -68,7 +73,7 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.btn.setTexture(_mainData.ta);
 	_mainData.btn.setPosition(200.0f, 200.0f);
 
-
+	
 	_mainData.clock.restart();
 }
 
@@ -111,6 +116,7 @@ void Update(MainData& _mainData)
 	if (_mainData.btn.HasBeenClicked())
 	{
 		printf("kys%d\n", random::RandomInt(0,69));
+		_mainData.hb.SetBarCompletion(_mainData.hb.GetBarCompletion() - 0.05f);
 	}
 }
 
@@ -121,6 +127,7 @@ void Draw(MainData& _mainData)
 	_mainData.scenes.Draw(_mainData.renderWindow);
 	
 	_mainData.renderWindow.draw(_mainData.btn);
+	_mainData.renderWindow.draw(_mainData.hb);
 
 	_mainData.renderWindow.display();
 }
