@@ -1,0 +1,12 @@
+{
+    "assetPath":"gun_annim_mort.json",
+    "framerate": 15,
+	"animations": [
+        {
+            "name":"IDLE"
+        },
+        {
+            "name":"ON"
+        }
+    ]
+}
