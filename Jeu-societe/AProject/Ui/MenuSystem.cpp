@@ -11,10 +11,13 @@ m_selectionLoop  (false)
 
 void MenuHolder::PollEvent(const sf::Event& _event)
 {
-	for (auto& btn : *this)
+	for (auto it = this->rbegin(); it != this->rend(); it++)
 	{
-		btn.second.CheckEvent(_event);
-		
+		it->second.CheckEvent(_event);
+		if (it->second.GetState() != Button::State::STATE_IDLE)
+		{
+			return;
+		}
 	}
 }
 void MenuHolder::Update(float _deltaTime)
@@ -44,11 +47,23 @@ void MenuHolder::SetSelection(int _selection, bool _looping)
 		}
 	}
 	this->m_buttonSelected = _selection;
-
+}
+void MenuHolder::SetSelection(int _selection)
+{
+	this->SetSelection(_selection, this->m_selectionLoop);
 }
 void MenuHolder::AddSelection(int _value, bool _looping)
 {
 	this->SetSelection(this->m_buttonSelected + _value, _looping);
+}
+void MenuHolder::AddSelection(int _value)
+{
+	this->AddSelection(_value, this->m_selectionLoop);
+}
+
+void MenuHolder::SetSelectionLoop(bool _condition)
+{
+	this->m_selectionLoop = _condition;
 }
 
 void MenuHolder::draw(sf::RenderTarget& _target, sf::RenderStates _states) const
@@ -96,9 +111,39 @@ void MenuSystem::Update(float _deltaTime)
 }
 void MenuSystem::SetMenu(const std::string& _menuName)
 {
-	this->m_currentMenu = _menuName;
-
+	if (this->count(_menuName))
+	{
+		this->m_currentMenu = _menuName;
+	}
+	else
+	{
+		printf("[WARNING] MenuSystem : Couldn't set the menu, \"%s\" does not exist\n", _menuName.c_str());
+	}
 }
+
+void MenuSystem::SetSelection(int _selection)
+{
+	if (this->HasMenuSelected())
+	{
+		this->at(this->m_currentMenu).SetSelection(_selection);
+	}
+}
+void MenuSystem::AddSelection(int _value)
+{
+	if (this->HasMenuSelected())
+	{
+		this->at(this->m_currentMenu).AddSelection(_value);
+	}
+}
+
+void MenuSystem::SetSelectionLoop(bool _condition)
+{
+	if (this->HasMenuSelected())
+	{
+		this->at(this->m_currentMenu).SetSelectionLoop(_condition);
+	}
+}
+
 MenuHolder& MenuSystem::GetCurrentMenu(void)
 {
 	return this->at(this->m_currentMenu);
@@ -115,3 +160,5 @@ void MenuSystem::draw(sf::RenderTarget& _target, sf::RenderStates _states) const
 		_target.draw(this->at(this->m_currentMenu), _states);
 	}
 }
+
+// MenuSystem || v1.0

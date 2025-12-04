@@ -1,7 +1,9 @@
 #include "Common.hpp"
 #include "./Animation/Graphics.hpp"
 #include "./Ui/Button.hpp"
-#include "./Graphics/HealthBar.hpp"
+#include "./Ui/HealthBar/HealthBar.hpp"
+#include "./Ui/MenuSystem.hpp"
+
 
 typedef struct MainData
 {
@@ -10,7 +12,7 @@ typedef struct MainData
 	SceneHandler scenes;
 
 	TextureAnimated ta;
-	Button btn;
+	MenuSystem sys;
 
 	HealthBar hb;
 	GameData gameData;
@@ -37,9 +39,21 @@ int main(void)
 	mainData.renderWindow.setIcon("./Assets/Images/Placeholder.png");
 	mainData.renderWindow.SetFullscreenPrefered(true);
 
-	mainData.hb.SetSize(sf::Vector2f(50.0f, 200.0f));
+	mainData.sys["Testicule"]["Fuck1"];
+	mainData.sys["Testicule"]["Fuck2"];
+	mainData.sys["Testicule"]["Fuck3"];
+	mainData.sys["Testicule"]["Fuck4"];
+
+	for (auto& btn : mainData.sys["Testicule"])
+	{
+		btn.second.setTexture(mainData.ta);
+		btn.second.setPosition(random::RandomFloat(0, 500), random::RandomFloat(0, 500));
+	}
+	mainData.sys.SetMenu("Testicule");
+
+	mainData.hb.SetSize(sf::Vector2f(200.0f,50.0f ));
 	mainData.hb.setPosition(sf::Vector2f(200.0f, 50.0f));
-	mainData.hb.SetAvoidOverflow(true);
+	mainData.hb.SetAvoidOverflow(false);
 
 	while (mainData.renderWindow.isOpen())
 	{
@@ -70,8 +84,6 @@ void MainDataLoad(MainData& _mainData)
 	
 
 	_mainData.ta.LoadFromFile("./Assets/ButtonPlaceholder.anim", TextureAnimated::ANIMATION_ANIM);
-	_mainData.btn.setTexture(_mainData.ta);
-	_mainData.btn.setPosition(200.0f, 200.0f);
 
 	
 	_mainData.clock.restart();
@@ -84,7 +96,7 @@ void PollEvent(MainData& _mainData)
 
 	while (_mainData.renderWindow.pollEvent(event))
 	{
-		_mainData.btn.CheckEvent(event);
+		_mainData.sys.PollEvent(event);
 		switch (event.type)
 		{
 			case sf::Event::Closed:
@@ -93,7 +105,8 @@ void PollEvent(MainData& _mainData)
 				break;
 
 			case sf::Event::KeyPressed:
-				_mainData.btn.Click();
+				_mainData.sys.AddSelection(1);
+				//_mainData.btn.Click();
 				break;
 
 			default:
@@ -112,11 +125,15 @@ void Update(MainData& _mainData)
 
 	_mainData.scenes.Update(deltaTime);
 
-	_mainData.btn.Update(deltaTime);
-	if (_mainData.btn.HasBeenClicked())
-	{
-		printf("kys%d\n", random::RandomInt(0,69));
-		_mainData.hb.SetBarCompletion(_mainData.hb.GetBarCompletion() - 0.05f);
+
+	_mainData.sys.Update(deltaTime);
+	for (auto& btn : _mainData.sys["Testicule"])
+	{	
+		if (btn.second.HasBeenClicked())
+		{
+			printf("kys%d\n", random::RandomInt(0, 69));
+			_mainData.hb.SetBarCompletion(_mainData.hb.GetBarCompletion() - 0.05f);
+		}
 	}
 }
 
@@ -126,7 +143,7 @@ void Draw(MainData& _mainData)
 	
 	_mainData.scenes.Draw(_mainData.renderWindow);
 	
-	_mainData.renderWindow.draw(_mainData.btn);
+	_mainData.renderWindow.draw(_mainData.sys);
 	_mainData.renderWindow.draw(_mainData.hb);
 
 	_mainData.renderWindow.display();

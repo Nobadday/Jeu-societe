@@ -17,21 +17,28 @@ class MenuHolder : public std::map<std::string, Button>, public sf::Drawable
 		int m_buttonSelected;
 		bool m_selectionLoop;
 
+
 	public:
 		MenuHolder(void);
 		void PollEvent(const sf::Event& _event);
 		void Update(float _deltaTime);
 
 
-		void SetSelection(int _selection, bool _looping = false);
-		void AddSelection(int _value, bool _looping = false);
+		void SetSelection(int _selection, bool _looping);
+		void SetSelection(int _selection);
+		void AddSelection(int _value, bool _looping);
+		void AddSelection(int _value);
+
+		void SetSelectionLoop(bool _condition);
 
 	private:
 		virtual void draw(sf::RenderTarget& _target, sf::RenderStates _states) const;
 };
 
 
-class MenuSystem : public sf::Drawable, public std::map<std::string, MenuHolder>
+
+// A Map made of multiple containers of buttons
+class MenuSystem : public std::map<std::string, MenuHolder>, public sf::Drawable
 {
 	private:
 		std::map<std::string, MenuHolder> m_menus;
@@ -47,6 +54,15 @@ class MenuSystem : public sf::Drawable, public std::map<std::string, MenuHolder>
 		void Update(float _deltaTime);
 
 		void SetMenu(const std::string& _menuName);
+
+		// Sets the button selected of the current menu
+		void SetSelection(int _selection);
+		// Iterate through the button selected of the current menu
+		void AddSelection(int _value);
+
+		// Enables or not selection loop for the current menu
+		void SetSelectionLoop(bool _condition);
+
 		MenuHolder& GetCurrentMenu(void);
 		bool HasMenuSelected(void);
 
@@ -54,4 +70,6 @@ class MenuSystem : public sf::Drawable, public std::map<std::string, MenuHolder>
 		virtual void draw(sf::RenderTarget& _target, sf::RenderStates _states) const;
 };
 
+
 #endif
+// MenuSystem || v1.0
