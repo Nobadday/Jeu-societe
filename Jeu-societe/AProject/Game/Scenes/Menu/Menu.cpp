@@ -56,9 +56,7 @@ void Menu::LoadUI(void)
 	m_data->ui.buttonMap["playBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 });
 	m_data->ui.buttonMap["settingsBtn"]. setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + buttonRect.height});
 	m_data->ui.buttonMap["leaveBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 2 * buttonRect.height });
-	m_data->ui.buttonMap["moinsBtn"].setPosition({ SCREEN_WIDTH / 2 - 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2 });
-	m_data->ui.buttonMap["plusBtn"].setPosition({ SCREEN_WIDTH / 2 + 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2 });
-	
+
 	
 	m_data->ui.buttonMap["playBtn"].setOrigin({ 0.5f,0.5f });
 	m_data->ui.buttonMap["settingsBtn"].setOrigin({ 0.5f,0.5f });
@@ -93,7 +91,22 @@ void Menu::PollEvent(sf::Event& _event)
 		case sf::Event::KeyPressed:
 			if (_event.key.code == sf::Keyboard::Escape)
 			{
-				m_data->gameData->m_renderWindow->close();
+				switch (m_data->state)
+				{
+					case MAIN_MENU:
+
+						m_data->gameData->m_renderWindow->close();
+						break;
+					case OPTIONS:
+					case PLAYER_NB_SELECTION:
+
+						m_data->state = MAIN_MENU;
+						break;
+					case PLAYER_SELECTION:
+
+						m_data->state = PLAYER_NB_SELECTION;
+						break;
+				}
 			}
 			else if (_event.key.code != sf::Keyboard::Enter)
 			{
@@ -122,7 +135,7 @@ void Menu::PollEvent(sf::Event& _event)
 					case sf::Joystick::Axis::U:
 					case sf::Joystick::Axis::V:
 
-						std::cout << "jostick : " << _event.joystickMove.position << "btn : " << m_data->controlerBtn << std::endl;
+						//std::cout << "jostick : " << _event.joystickMove.position << "btn : " << m_data->controlerBtn << std::endl;
 
 						if (_event.joystickMove.position > 0)
 						{
@@ -157,6 +170,9 @@ void Menu::ButtonsPollEvent(sf::Event& _event)
 			break;
 
 		case OPTIONS:
+			m_data->ui.buttonMap["playBtn"].PollEvent(_event);
+			m_data->ui.buttonMap["plusBtn"].PollEvent(_event);
+			m_data->ui.buttonMap["moinsBtn"].PollEvent(_event);
 			break;
 
 		case PLAYER_NB_SELECTION:
@@ -188,6 +204,9 @@ void Menu::ButtonsUpdate(float _dt)
 			break;
 
 		case OPTIONS:
+			m_data->ui.buttonMap["playBtn"].Update(_dt);
+			m_data->ui.buttonMap["plusBtn"].Update(_dt);
+			m_data->ui.buttonMap["moinsBtn"].Update(_dt);
 			break;
 
 		case PLAYER_NB_SELECTION:
@@ -245,7 +264,6 @@ void Menu::ChangeSelection(int _value, int _joystick)
 
 	m_data->audio->PlaySound("uiSoundON");
 
-
 	switch (m_data->state)
 	{
 		case MAIN_MENU:
@@ -283,6 +301,37 @@ void Menu::ChangeSelection(int _value, int _joystick)
 			break;
 
 		case OPTIONS:
+
+			if ((m_data->controlerBtn + _value) > MORE)
+			{
+				m_data->controlerBtn = LESS;
+				mouseNewPos = m_data->ui.buttonMap["moinsBtn"].getPosition();
+			}
+			else if ((m_data->controlerBtn + _value) < LESS)
+			{
+				m_data->controlerBtn = MORE;
+				mouseNewPos = m_data->ui.buttonMap["plusBtn"].getPosition();
+			}
+			else
+			{
+				m_data->controlerBtn = (ControlerCurrentButton)(m_data->controlerBtn + _value);
+
+				//Ok, racism
+				switch (m_data->controlerBtn)
+				{
+				case MORE:
+					mouseNewPos = m_data->ui.buttonMap["plusBtn"].getPosition();
+					break;
+
+				case LESS:
+					mouseNewPos = m_data->ui.buttonMap["moinsBtn"].getPosition();
+					break;
+
+				case PLAY_SELECTION:
+					mouseNewPos = m_data->ui.buttonMap["playBtn"].getPosition();
+					break;
+				}
+			}		
 			break;
 
 		case PLAYER_NB_SELECTION:
@@ -358,16 +407,21 @@ void Menu::PressSelection(int _id)
 			{
 				case MAIN_MENU:
 
-					m_data->audio->PlayMusicTransition("Music2", true, 10.f, TransitionType::FADED_MIX);
+					m_data->audio->PlayMusicTransition("Music2", true, false, 5.f, TransitionType::FADED_MIX);
 
 					m_data->state = PLAYER_NB_SELECTION;
 					m_data->controlerBtn = PLAY_SELECTION;
+					m_data->ui.buttonMap["plusBtn"].setScale(1, 1);
+					m_data->ui.buttonMap["moinsBtn"].setScale(1, 1);
 					m_data->ui.buttonMap["playBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.5 });
+					m_data->ui.buttonMap["moinsBtn"].setPosition({ SCREEN_WIDTH / 2 - 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2 });
+					m_data->ui.buttonMap["plusBtn"].setPosition({ SCREEN_WIDTH / 2 + 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2 });
+					m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
 					break;
 
 				case PLAYER_NB_SELECTION:
-
 					break;
+	
 				case PLAYER_SELECTION:
 
 					std::cout << "id = " << _id << " size of datalist = " << m_data->gameData->m_playerDataList.size();
@@ -387,18 +441,22 @@ void Menu::PressSelection(int _id)
 						std::cout << "All players have their skin, go to game\n";
 						SceneBase::ChangeScene("Board");
 					}
-					break;  
+					break;  				
 			}
 			break;
 
 		case SETTINGS:
+
 			m_data->state = OPTIONS;
 			m_data->controlerBtn = MORE;
 
+			m_data->ui.buttonMap["plusBtn"].setScale(0.8,0.8);
+			m_data->ui.buttonMap["moinsBtn"].setScale(0.8,0.8);
 
-
-
-
+			m_data->ui.buttonMap["plusBtn"].setPosition(SCREEN_WIDTH / 1.2f, 2.1f / 4.f * SCREEN_HEIGHT);
+			m_data->ui.buttonMap["moinsBtn"].setPosition(SCREEN_WIDTH / 1.5f, 2.1f / 4.f * SCREEN_HEIGHT);
+			m_data->ui.buttonMap["playBtn"].setPosition(SCREEN_WIDTH / 2.f, 3.f / 4.f * SCREEN_HEIGHT);
+			m_data->controlerBtn = PLAY_SELECTION;
 			break;
 
 		case LEAVE:
@@ -406,33 +464,79 @@ void Menu::PressSelection(int _id)
 			break;
 
 		case LESS:
-			if (m_data->gameSettings.playerCount > MIN_PLAYERS)
+			switch (m_data->state)
 			{
-				m_data->gameSettings.playerCount -= 1;
-				m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
+				case PLAYER_NB_SELECTION:
+
+					if (m_data->gameSettings.playerCount > MIN_PLAYERS)
+					{
+						m_data->gameSettings.playerCount -= 1;
+						m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
+					}
+					break;
+
+				case OPTIONS:
+				
+					m_data->audio->AddMusicVolume(-10.f);
+					m_data->audio->AddSoundVolume(-10.f);
+					break;
 			}
 			break;
 
 		case PLAY_SELECTION:
 		{
-			std::cout << "player count : " << m_data->gameSettings.playerCount;
-			for (int i = 0; i < m_data->gameSettings.playerCount + 1; i++)
+			switch (m_data->state)
 			{
-				PlayerData newPlayer;
-				newPlayer.m_joystickId = i;
-				m_data->gameData->m_playerDataList.push_back(newPlayer);
-				m_data->charaSelected.push_back(false);
-				m_data->currentCharaSelected.push_back(0);
+				case PLAYER_NB_SELECTION:
+
+					m_data->audio->PlayMusicTransition("Music1", true, true, 5.f, TransitionType::FADED_MIX);
+
+					std::cout << "player count : " << m_data->gameSettings.playerCount;
+					for (int i = 0; i < m_data->gameSettings.playerCount + 1; i++)
+					{
+						PlayerData newPlayer;
+						newPlayer.m_joystickId = i;
+						m_data->gameData->m_playerDataList.push_back(newPlayer);
+						m_data->charaSelected.push_back(false);
+						m_data->currentCharaSelected.push_back(0);
+					}
+					m_data->state = PLAYER_SELECTION;
+					m_data->controlerBtn = PLAY;
+					break;
+
+				case OPTIONS:
+
+					m_data->ui.playerCount.setCharacterSize(200u);
+					m_data->ui.playerCount.setOrigin({ 0.6f,0.8f });
+
+					m_data->state = MAIN_MENU;
+					m_data->controlerBtn = PLAY;
+					sf::FloatRect buttonRect = m_data->ui.buttonMap["playBtn"].getLocalBounds();
+					m_data->ui.buttonMap["playBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 });
+					m_data->ui.buttonMap["settingsBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + buttonRect.height });
+					m_data->ui.buttonMap["leaveBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 2 * buttonRect.height });
+					break;
 			}
-			m_data->state = PLAYER_SELECTION;
-			m_data->controlerBtn = PLAY;
 			break;
 		}		
 		case MORE:
-			if (m_data->gameSettings.playerCount < MAX_PLAYERS)
+
+			switch (m_data->state)
 			{
-				m_data->gameSettings.playerCount += 1;
-				m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
+				case PLAYER_NB_SELECTION:
+
+					if (m_data->gameSettings.playerCount < MAX_PLAYERS)
+					{
+						m_data->gameSettings.playerCount += 1;
+						m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
+					}
+					break;
+
+				case OPTIONS:
+
+					m_data->audio->AddMusicVolume(10.f);
+					m_data->audio->AddSoundVolume(10.f);
+					break;
 			}
 			break;
 	}
@@ -565,17 +669,25 @@ void Menu::PrintIcons(sf::RenderWindow& _renderWindow)
 
 void Menu::PrintOptions(sf::RenderWindow& _renderWindow)
 {
-	m_data->ui.playerCount.setPosition(SCREEN_WIDTH / 2.f, 1.f / SCREEN_HEIGHT);
-	m_data->ui.playerCount.setCharacterSize(150u);
+	m_data->ui.playerCount.setCharacterSize(50u);
+	m_data->ui.playerCount.setOrigin({ 0.f,0.f });
+	m_data->ui.playerCount.setPosition(0.f, 2.f / 4.f * SCREEN_HEIGHT);
+	m_data->ui.playerCount.setCharacterSize(100u);
+	char buffer[100];
+	std::snprintf(buffer, 100, "Game volume : %0.0f", m_data->audio->GetMusicVolume());
+	m_data->ui.playerCount.setString(buffer);
+	_renderWindow.draw(m_data->ui.playerCount);
 
-	m_data->ui.playerCount.setPosition(SCREEN_WIDTH / 2.f, 2.f / SCREEN_HEIGHT);
+	m_data->ui.playerCount.setCharacterSize(150u);
+	m_data->ui.playerCount.setOrigin({ 0.6f,0.8f });
+	m_data->ui.playerCount.setPosition(SCREEN_WIDTH / 2.f, 1.f / 4.f * SCREEN_HEIGHT);
+	m_data->ui.playerCount.setString("Settings");
 	_renderWindow.draw(m_data->ui.playerCount);
 
 
-	m_data->ui.buttonMap["plusBtn"].setPosition(SCREEN_WIDTH / 1.2f, 2.f / SCREEN_HEIGHT);
+
+
 	_renderWindow.draw(m_data->ui.buttonMap["plusBtn"]);
-	m_data->ui.buttonMap["moinsBtn"].setPosition(SCREEN_WIDTH / 1.5f, 2.f / SCREEN_HEIGHT);
 	_renderWindow.draw(m_data->ui.buttonMap["moinsBtn"]);
-	m_data->ui.buttonMap["playBtn"].setPosition(SCREEN_WIDTH / 2.f, 3.f / SCREEN_HEIGHT);
 	_renderWindow.draw(m_data->ui.buttonMap["playBtn"]);
 }
