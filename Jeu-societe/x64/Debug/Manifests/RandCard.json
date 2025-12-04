@@ -13,19 +13,8 @@
         {
             "name" : "AnimCard",
             "type" : "Texture Animated",
-            "path" : "Assets/Sprites/RandomCard/CardV2.anim",
-            "subType" : 1
-        },
-        {
-            "name" : "Icone",
-            "type" : "Texture Animated",
-            "path" : "Assets/Sprites/Menu/Icone-Perso.anim",
-			"subType" : 1
-        },
-        {
-            "name" : "GameFont",
-            "type" : "Font",
-            "path" : "Assets/Fonts/BootlegTimBurton-Regular.ttf"
+            "path" : "Assets/Sprites/RandomCard/CardData.texanim",
+            "subType" : 0
         }
     ]
 }

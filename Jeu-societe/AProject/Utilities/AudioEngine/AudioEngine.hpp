@@ -33,16 +33,10 @@ public:
 	~AudioEngine(void);
 
 	//Play sound by his name given
+	//PROTECTION : You cant play sound who isnt in asset manager (logic)
 	void PlaySound(const std::string& _soundName, bool _loop = false);
-	//Play sound by soundbuffer* given (when you dont use asset manager)
-	void PlaySound(sf::SoundBuffer* _soundbuff, bool _loop = false);
-	//Play only one sound. If you call the function but sound playing, he dont let
-	//you play the sound util the end of previous sound
-	void PlaySoundProtected(sf::SoundBuffer* _soundbuff);
 	//Parse the vector of sound, and pop stopped sound
 	void CleanOldSound(void);
-
-	//[ONLY WITH ASSET MANAGER]
 	//Togle pause or play on the first specified sound
 	void TogglePauseSound(const std::string& _soundName);
 	//Set the volume for ALL sound
@@ -77,7 +71,7 @@ public:
 	
 
 private:
-	std::vector<sf::Sound> m_soundVec;
+	std::vector< sf::Sound> m_soundVec;
 	AssetManager* m_assetManager;
 
 	sf::Music* m_music;
@@ -92,4 +86,4 @@ private:
 
 };
 
-#endif // !_INC_AUDIO_ENGINE_HPP
+#endif // _INC_AUDIO_ENGINE_HPP

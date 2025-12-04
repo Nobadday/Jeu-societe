@@ -21,16 +21,11 @@
             "path": "./Assets/Fonts/Font.ttf"
         },
         {
-            "name": "RightHands",
-            "type": "Texture Animated",
-            "path": "./Assets/Sprites/RockPaperScissor/Right_Hands.anim",
-            "subType" : 1
-        },
-        {
-            "name": "LeftHands",
-            "type": "Texture Animated",
-            "path": "./Assets/Sprites/RockPaperScissor/Left_Hands.anim",
-            "subType" : 1
+            "name" : "RPSHand",
+            "type" : "Texture Atlas",
+            "path" : "./Assets/Sprites/RockPaperScissor/RPS_hands.json",
+            "subType" : 3
         }
+
     ]
 }

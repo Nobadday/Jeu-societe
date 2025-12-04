@@ -10,6 +10,7 @@ class SpriteAtlas : public sf::Sprite
 {
 	private:
 		TextureAtlas* m_textureAtlas;
+		sf::Vector2f m_originCoef;
 
 	public:
 		SpriteAtlas(void);
@@ -23,8 +24,14 @@ class SpriteAtlas : public sf::Sprite
 
 		// Sets the texture rect based on the frame name
 		void SetTextureFrame(const std::string& _name);
+
+		void setOrigin(float _x, float _y);
+		void setOrigin(const sf::Vector2f& _origin);
+
+	private:
+		void UpdateOrigin(void);
 };
 
 
 #endif
-// Sprite Atlas SFML 2.6.2 || v1.0
+// Sprite Atlas SFML 2.6.2 || v1.0.3
