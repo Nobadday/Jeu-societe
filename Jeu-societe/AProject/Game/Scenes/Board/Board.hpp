@@ -20,7 +20,7 @@
 
 #define TIME_WIN_DISPLAY 1.0f
 #define TIME_LBM_DISPLAY 6.0f
-#define TIME_DIS_DISPLAY 0.001f
+#define TIME_DIS_DISPLAY 0.1f
 #define MAX_TOUR_EFFECT 2
 
 class Effect
@@ -226,6 +226,7 @@ class BaseGame : public SceneBase
 			// NOUVEAU : Shader pour le chroma key
 			sf::Shader chromaKeyShader;
 			std::vector<HighResVideoPlayer*> diceVideos;
+			HighResVideoPlayer* currentDiceVideo;
 			// MODIFICATION : Stocker des pointeurs vers les vidéos
 			
 		};

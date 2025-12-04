@@ -43,7 +43,7 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 
 	m_data->timeWin = TIME_WIN_DISPLAY;
 	m_data->timeLBM = TIME_LBM_DISPLAY;
-	m_data->timeDice = TIME_LBM_DISPLAY;
+	m_data->timeDice = TIME_DIS_DISPLAY;
 
 	// NOUVEAU : Initialisation de la vidéo du dé
 	m_data->diceAnimationPlaying = false;
@@ -368,7 +368,10 @@ void BaseGame::PollEvent(sf::Event& _event)
 				if (rando >= 1 && rando <= 6)
 				{
 					// Lancer la vidéo correspondante
-					m_data->diceVideos[m_data->diceResult - 1]->play();
+
+					m_data->currentDiceVideo = m_data->diceVideos[rando - 1];
+
+					m_data->currentDiceVideo->play();
 					m_data->diceAnimationPlaying = true;
 					SetBoardState(DICE_ANIMATION);
 				}
@@ -537,15 +540,22 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 
 	if (m_data->state == DICE_ANIMATION)
 	{
-		// Afficher la vidéo du dé avec le shader de chroma key
+		// CORRECTION : Positionner la vidéo au centre de la vue (caméra) au lieu de coordonnées écran fixes
+		sf::Vector2f cameraCenter = referenceView.getCenter();
 
-		//sf::Sprite videoSprite(m_data->diceVideos[m_data->diceResult]->getSprite());
-		/*videoSprite.setPosition(m_data->dicePosition);
-		videoSprite.setOrigin(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);*/
+		sf::Sprite videoSprite(m_data->currentDiceVideo->getSprite());
+
+		// Obtenir la taille du sprite vidéo
+		sf::FloatRect videoBounds = videoSprite.getLocalBounds();
+
+		// Centrer l'origine du sprite
+		videoSprite.setOrigin(videoBounds.width / 2.0f, videoBounds.height / 2.0f);
+
+		// Positionner au centre de la caméra (suit les personnages)
+		videoSprite.setPosition(cameraCenter);
+
 		// Dessiner avec le shader de chroma key
-		mod->draw(m_data->diceVideos[m_data->diceResult]->getSprite()/*, &m_data->chromaKeyShader*/);
-
-
+		mod->draw(videoSprite, &m_data->chromaKeyShader);
 	}
 }
 
@@ -968,8 +978,8 @@ void BaseGame::BoardStateUpdate(float _dt)
 
 	case DICE_ANIMATION:
 	{
-		m_data->diceVideos[m_data->diceResult - 1]->update(_dt);
-		if (m_data->diceVideos[m_data->diceResult - 1]->isFinish())
+		m_data->currentDiceVideo->update(_dt);
+		if (m_data->currentDiceVideo->isFinish())
 		{
 			m_data->timeDice -= _dt;
 			if (m_data->timeDice <= 0)
