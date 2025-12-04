@@ -104,7 +104,7 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<Podium>("Podium");
 
 	// Sélectionner le LoadingScreen
-	_mainData.scenes.SelectScene("Lo", true);
+	_mainData.scenes.SelectScene("Lo", false);
 
 	_mainData.clock.restart();
 }
