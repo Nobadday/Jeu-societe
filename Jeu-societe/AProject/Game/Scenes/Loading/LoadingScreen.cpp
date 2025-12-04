@@ -37,7 +37,7 @@ void LoadingScreen::Load(void)
     m_data->loadFunction = [this]() {
         // Chargement du manifest Board dans le thread de chargement
         m_gameData->m_assetManager->LoadManifest("Manifests/Board.json", "Board");
-        m_data->loadingProgress.store(1.1f);
+        m_data->loadingProgress.store(1.f);
     };
 
     LoadResourcesAsync();
