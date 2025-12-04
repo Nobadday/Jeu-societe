@@ -9,7 +9,7 @@
 
 #include "../../Animation/Animation/Animator.hpp"
 
-#include "../../Animation/Graphics/SpriteAnimated.hpp"0
+#include "../../Animation/Graphics/SpriteAnimated.hpp"
 
 #include "../../Animation/Graphics/AnimatedObject.hpp"
 

@@ -165,6 +165,7 @@
     <ClCompile Include="Game\Scenes\Board\Board.cpp" />
     <ClCompile Include="Game\Scenes\FlagGame\FlagGame.cpp" />
     <ClCompile Include="Game\Scenes\Loading\LoadingScreen.cpp" />
+    <ClCompile Include="Game\Scenes\Menu\Menu.cpp" />
     <ClCompile Include="Game\Scenes\Podium\Podium.cpp" />
     <ClCompile Include="Game\Scenes\RandCard\RandCard.cpp" />
     <ClCompile Include="Game\Scenes\RockPaperScissors\RockPaperScissors.cpp" />
@@ -220,6 +221,7 @@
     <ClInclude Include="Game\Scenes\Board\Board.hpp" />
     <ClInclude Include="Game\Scenes\FlagGame\FlagGame.hpp" />
     <ClInclude Include="Game\Scenes\Loading\LoadingScreen.hpp" />
+    <ClInclude Include="Game\Scenes\Menu\Menu.hpp" />
     <ClInclude Include="Game\Scenes\Podium\Podium.hpp" />
     <ClInclude Include="Game\Scenes\RandCard\RandCard.hpp" />
     <ClInclude Include="Game\Scenes\RockPaperScissors\RockPaperScissors.hpp" />

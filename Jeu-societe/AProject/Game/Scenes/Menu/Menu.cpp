@@ -5,7 +5,9 @@
 //1 = 2 players
 #define MIN_PLAYERS 1
 //Delay to scroll in buttons with controler
-#define INPUT_DELAY 0.2f
+#define INPUT_DELAY 0.5f
+
+
 
 void Menu::Load(void)
 {
@@ -25,12 +27,34 @@ void Menu::LoadUI(void)
 	m_data->ui.buttonMap["leaveBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("leaveBtn"));
 	m_data->ui.buttonMap["moinsBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("moinsBtn"));
 	m_data->ui.buttonMap["plusBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("plusBtn"));
+	//Background
 	m_data->ui.background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("background"));
+	//Game logo
+	m_data->ui.logoGame.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoGame"));
+	sf::Vector2u logoGameSize = m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoGame")->getSize();
+	m_data->ui.logoGame.setOrigin(sf::Vector2f( logoGameSize.x / 2.f, 1.f));
+	m_data->ui.logoGame.setPosition({ SCREEN_WIDTH / 2, 0 });
+	m_data->ui.logoGame.setScale({ 0.8f,0.8f });
+	//Crea logo
+	m_data->ui.logoCrea.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoCrea"));
+	logoGameSize = m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoCrea")->getSize();
+	m_data->ui.logoCrea.setOrigin(sf::Vector2f( 1.f, logoGameSize.y / 2.f ));
+	m_data->ui.logoCrea.setPosition({ 10, SCREEN_HEIGHT / 1.5 });
+	m_data->ui.logoCrea.setScale({ 0.3f,0.3f });
 
+	//Icons chara
+	m_data->ui.charaAvaible.push_back("Perso1-1");
+	m_data->ui.charaAvaible.push_back("Perso2-1");
+	m_data->ui.charaAvaible.push_back("Perso3-1");
+	m_data->ui.charaAvaible.push_back("Perso4-1");
+
+	m_data->ui.iconsChara.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Icone", AssetManager::AssetType::TEXTURE_ANIMATED));
+	m_data->ui.iconsChara.SetAnimation("Perso1-1");
+	m_data->ui.iconsChara.setOrigin({ 0.5f,0.5f });
 
 	sf::FloatRect buttonRect = m_data->ui.buttonMap["playBtn"].getLocalBounds();
 	m_data->ui.buttonMap["playBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 });
-	m_data->ui.buttonMap["settingsBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + buttonRect.height});
+	m_data->ui.buttonMap["settingsBtn"]. setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + buttonRect.height});
 	m_data->ui.buttonMap["leaveBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 2 * buttonRect.height });
 
 	
@@ -41,16 +65,13 @@ void Menu::LoadUI(void)
 	m_data->ui.buttonMap["plusBtn"].setOrigin({ 0.5f,0.5f });
 
 
-
 	m_data->ui.playerCount.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("MenuFont"));
 	m_data->ui.playerCount.setCharacterSize(200u);
 	m_data->ui.playerCount.setPosition({ SCREEN_WIDTH / 2 , SCREEN_HEIGHT / 2 });
 	sf::FloatRect rect = m_data->ui.playerCount.getGlobalBounds();
-	//Font sucks
+	//This font sucks bro
 	m_data->ui.playerCount.setOrigin({0.6f,0.8f});
 	m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
-
-
 }
 void Menu::Unload(void)
 {
@@ -68,7 +89,7 @@ void Menu::PollEvent(sf::Event& _event)
 		//If we press Enter, it's like press button on controler
 		//Unusefull if we play only on controler
 		case sf::Event::KeyPressed:
-			if (_event.key.code != sf::Keyboard::Enter)
+			if (_event.key.code == sf::Keyboard::Escape)
 			{
 				switch (m_data->state)
 				{
@@ -93,26 +114,43 @@ void Menu::PollEvent(sf::Event& _event)
 			}
 		case sf::Event::JoystickButtonPressed:
 
-			PressSelection();
+			m_data->audio->PlaySound("uiSoundClick");
+			PressSelection(_event.joystickButton.joystickId);
+			//_event.joystick
 			break;
+
 		case sf::Event::JoystickMoved:
 
 			//X Y joystick gauche
 			//U V joystick droite
 			//Z R pression des gachettes
-			//La croix povX povY				
-
+			//La croix povX povY		
 			if (m_data->inputDelay > INPUT_DELAY)
 			{
 				switch (_event.joystickMove.axis)
 				{
-				case sf::Joystick::Axis::X:
-				case sf::Joystick::Axis::U:
+					//All directions
+					case sf::Joystick::Axis::X:
+					case sf::Joystick::Axis::Y:
+					case sf::Joystick::Axis::U:
+					case sf::Joystick::Axis::V:
 
 						//std::cout << "jostick : " << _event.joystickMove.position << "btn : " << m_data->controlerBtn << std::endl;
 
-				default:
-					break;
+						if (_event.joystickMove.position > 0)
+						{
+							ChangeSelection(1, _event.joystickMove.joystickId);
+							m_data->inputDelay = 0.f;
+						}
+						else if (_event.joystickMove.position < 0)
+						{
+							ChangeSelection(-1, _event.joystickMove.joystickId);
+							m_data->inputDelay = 0.f;
+						}
+						break;
+
+					default:
+						break;
 				}
 			}
 			break;
@@ -126,21 +164,21 @@ void Menu::ButtonsPollEvent(sf::Event& _event)
 	switch (m_data->state)
 	{
 		case MAIN_MENU:
-			m_data->ui.buttonMap["playBtn"].PollEvent(_event);
-			m_data->ui.buttonMap["settingsBtn"].PollEvent(_event);
-			m_data->ui.buttonMap["leaveBtn"].PollEvent(_event);
+			m_data->ui.buttonMap["playBtn"].CheckEvent(_event);
+			m_data->ui.buttonMap["settingsBtn"].CheckEvent(_event);
+			m_data->ui.buttonMap["leaveBtn"].CheckEvent(_event);
 			break;
 
 		case OPTIONS:
-			m_data->ui.buttonMap["playBtn"].PollEvent(_event);
-			m_data->ui.buttonMap["plusBtn"].PollEvent(_event);
-			m_data->ui.buttonMap["moinsBtn"].PollEvent(_event);
+			m_data->ui.buttonMap["playBtn"].CheckEvent(_event);
+			m_data->ui.buttonMap["plusBtn"].CheckEvent(_event);
+			m_data->ui.buttonMap["moinsBtn"].CheckEvent(_event);
 			break;
 
 		case PLAYER_NB_SELECTION:
-			m_data->ui.buttonMap["playBtn"].PollEvent(_event);
-			m_data->ui.buttonMap["plusBtn"].PollEvent(_event);
-			m_data->ui.buttonMap["moinsBtn"].PollEvent(_event);
+			m_data->ui.buttonMap["playBtn"].CheckEvent(_event);
+			m_data->ui.buttonMap["plusBtn"].CheckEvent(_event);
+			m_data->ui.buttonMap["moinsBtn"].CheckEvent(_event);
 			break;
 	}
 }
@@ -149,8 +187,10 @@ void Menu::Update(float _deltaTime)
 {
 	m_data->audio->UpdateMusicTransition(_deltaTime);
 	ButtonsUpdate(_deltaTime);
-
-	//Update timer for 
+	
+	//std::cout << "current chara = " << m_data->currentCharaSelected << std::endl;
+	//std::cout << "current state = " << m_data->state << std::endl;
+	//Update timer for delay between input
 	m_data->inputDelay += _deltaTime;
 }
 void Menu::ButtonsUpdate(float _dt)
@@ -161,17 +201,6 @@ void Menu::ButtonsUpdate(float _dt)
 			m_data->ui.buttonMap["playBtn"].Update(_dt);
 			m_data->ui.buttonMap["settingsBtn"].Update(_dt);
 			m_data->ui.buttonMap["leaveBtn"].Update(_dt);
-	
-			if (m_data->ui.buttonMap["playBtn"].HasBeenClicked())
-			{
-				m_data->controlerBtn = PLAY;
-				PressSelection();
-			}
-			else if (m_data->ui.buttonMap["settingsBtn"].HasBeenClicked())
-			{
-				m_data->controlerBtn = SETTINGS;
-				PressSelection();
-			}
 			break;
 
 		case OPTIONS:
@@ -184,29 +213,6 @@ void Menu::ButtonsUpdate(float _dt)
 			m_data->ui.buttonMap["playBtn"].Update(_dt);
 			m_data->ui.buttonMap["plusBtn"].Update(_dt);
 			m_data->ui.buttonMap["moinsBtn"].Update(_dt);
-
-
-			if (m_data->ui.buttonMap["plusBtn"].HasBeenClicked())
-			{
-				if (m_data->gameSettings.playerCount < MAX_PLAYERS)
-				{
-					m_data->controlerBtn = MORE;
-					PressSelection();
-				}
-			}
-			else if (m_data->ui.buttonMap["moinsBtn"].HasBeenClicked())
-			{
-				if (m_data->gameSettings.playerCount > MIN_PLAYERS)
-				{
-					m_data->controlerBtn = LESS;
-					PressSelection();
-				}
-			}
-			else if (m_data->ui.buttonMap["playBtn"].HasBeenClicked())
-			{
-				m_data->controlerBtn = PLAY_SELECTION;
-				PressSelection();
-			}
 			break;
 	}
 }
@@ -225,40 +231,38 @@ void Menu::DrawUI(sf::RenderWindow& _renderWindow)
 			_renderWindow.draw(m_data->ui.buttonMap["playBtn"]);
 			_renderWindow.draw(m_data->ui.buttonMap["settingsBtn"]);
 			_renderWindow.draw(m_data->ui.buttonMap["leaveBtn"]);
+			_renderWindow.draw(m_data->ui.logoGame);
+			_renderWindow.draw(m_data->ui.logoCrea);
 
-			if (m_data->ui.buttonMap["leaveBtn"].IsClicked(mousePos.x, mousePos.y))
+			if (m_data->ui.buttonMap["leaveBtn"].HasBeenClicked())
 			{
 				_renderWindow.close();
 			}
 			break;
 
 		case OPTIONS:
+			PrintOptions(_renderWindow);
+
 			break;
 
 		case PLAYER_NB_SELECTION:
-
 			_renderWindow.draw(m_data->ui.buttonMap["playBtn"]);
 			_renderWindow.draw(m_data->ui.buttonMap["moinsBtn"]);
 			_renderWindow.draw(m_data->ui.playerCount);
 			_renderWindow.draw(m_data->ui.buttonMap["plusBtn"]);
+			break;
 
+		case PLAYER_SELECTION:
+			PrintIcons(_renderWindow);
 			break;
 	}
 }
 
-void Menu::ChangeSelection(int _value)
+void Menu::ChangeSelection(int _value, int _joystick)
 {
+	sf::Vector2f mouseNewPos;
+
 	m_data->audio->PlaySound("uiSoundON");
-	//Reset old button
-	int i = 0;
-	for (auto& button : m_data->ui.buttonMap)
-	{
-		if (i == _value)
-		{
-			button.second.SetState(Button::STATE_IDLE);
-		}
-		i++;
-	}
 
 	switch (m_data->state)
 	{
@@ -267,14 +271,32 @@ void Menu::ChangeSelection(int _value)
 			if ((m_data->controlerBtn + _value) < PLAY)
 			{
 				m_data->controlerBtn = LEAVE;
+				mouseNewPos = m_data->ui.buttonMap["leaveBtn"].getPosition();
 			}
 			else if ((m_data->controlerBtn + _value) > LEAVE)
 			{
 				m_data->controlerBtn = PLAY;
+				mouseNewPos = m_data->ui.buttonMap["playBtn"].getPosition();
 			}
 			else
 			{
 				m_data->controlerBtn = (ControlerCurrentButton)(m_data->controlerBtn + _value);
+				
+				//Ok, racism
+				switch (m_data->controlerBtn)
+				{
+					case PLAY:
+						mouseNewPos = m_data->ui.buttonMap["playBtn"].getPosition();
+						break;
+
+					case LEAVE:
+						mouseNewPos = m_data->ui.buttonMap["leaveBtn"].getPosition();
+						break;
+				
+					case SETTINGS:
+						mouseNewPos = m_data->ui.buttonMap["settingsBtn"].getPosition();
+						break;
+				}				
 			}
 			break;
 
@@ -314,47 +336,76 @@ void Menu::ChangeSelection(int _value)
 
 		case PLAYER_NB_SELECTION:
 
-			if ((m_data->controlerBtn + _value) < MORE)
+			if ((m_data->controlerBtn + _value) > MORE)
 			{
 				m_data->controlerBtn = LESS;
+				mouseNewPos = m_data->ui.buttonMap["moinsBtn"].getPosition();
 			}
-			else if ((m_data->controlerBtn + _value) > LESS)
+			else if ((m_data->controlerBtn + _value) < LESS)
 			{
 				m_data->controlerBtn = MORE;
+				mouseNewPos = m_data->ui.buttonMap["plusBtn"].getPosition();
 			}
 			else
 			{
 				m_data->controlerBtn = (ControlerCurrentButton)(m_data->controlerBtn + _value);
+
+				//Ok, racism
+				switch (m_data->controlerBtn)
+				{
+					case MORE:
+						mouseNewPos = m_data->ui.buttonMap["plusBtn"].getPosition();
+						break;
+
+					case LESS:
+						mouseNewPos = m_data->ui.buttonMap["moinsBtn"].getPosition();
+						break;
+
+					case PLAY_SELECTION:
+						mouseNewPos = m_data->ui.buttonMap["playBtn"].getPosition();
+						break;
+				}
 			}
+			break;
+
+		case PLAYER_SELECTION:
+			
+			if (m_data->charaSelected[_joystick] == false)
+			{
+				if ((m_data->currentCharaSelected[_joystick] + _value) > m_data->ui.charaAvaible.size()-1)
+				{
+					m_data->currentCharaSelected[_joystick] = 0;
+					//mouseNewPos = m_data->ui.buttonMap["moinsBtn"].getPosition();
+				}
+				else if ((m_data->controlerBtn + _value) < 0)
+				{
+					m_data->currentCharaSelected[_joystick] = m_data->ui.charaAvaible.size() - 1;
+					//mouseNewPos = m_data->ui.buttonMap["plusBtn"].getPosition();
+				}
+				else
+				{
+					m_data->currentCharaSelected[_joystick] += _value;
+				}
+			}
+
+
 			break;
 	}
 	//Set ON new button
-	i = 0;
-	for (auto& button : m_data->ui.buttonMap)
-	{
-		if (i == _value)
-		{
-			button.second.SetState(Button::STATE_ON);
-		}
-		i++;
-	}
+	//std::cout << "mouse x = " << mouseNewPos.x << " y = " << mouseNewPos.y << std::endl;
+	sf::Mouse::setPosition(sf::Vector2i(mouseNewPos), *m_data->gameData->m_renderWindow);
 }
 
-void Menu::PressSelection(void)
+void Menu::PressSelection(int _id)
 {
+	m_data->audio->PlaySound("uiSoundClick");
 	switch (m_data->controlerBtn)
 	{
 		case PLAY:
 
-
-			m_data->state = (MenuState)(m_data->state + 1);
-			//if (m_data->state == )
-
-
-
 			switch (m_data->state)
 			{
-			case MAIN_MENU:
+				case MAIN_MENU:
 
 					m_data->audio->PlayMusicTransition("Music2", true, false, 5.f, TransitionType::FADED_MIX);
 
@@ -373,8 +424,9 @@ void Menu::PressSelection(void)
 	
 				case PLAYER_SELECTION:
 
-				break;
-			case PLAYER_SELECTION:
+					std::cout << "id = " << _id << " size of datalist = " << m_data->gameData->m_playerDataList.size();
+					m_data->gameData->m_playerDataList[_id].SetPlayerSkin((PlayerData::PlayerSkin)m_data->currentCharaSelected[_id]);
+					m_data->charaSelected[_id] = true;
 
 					int result = 0;
 					for (auto selected : m_data->charaSelected)
@@ -407,12 +459,8 @@ void Menu::PressSelection(void)
 			m_data->controlerBtn = PLAY_SELECTION;
 			break;
 
-		case SETTINGS:
-			//Bruh i need render window to exit, here i cant
-			break;
-
 		case LEAVE:
-			//Later
+			m_data->gameData->m_renderWindow->close();
 			break;
 
 		case LESS:
