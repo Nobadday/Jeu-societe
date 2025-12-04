@@ -562,7 +562,7 @@ void Menu::PrintIcons(sf::RenderWindow& _renderWindow)
 		m_data->ui.playerCount.setPosition(pos);
 
 		char buffer[30];
-		std::snprintf(buffer, 30, "Player : %d", i);
+		std::snprintf(buffer, 30, "Player : %d", i + 1);
 		m_data->ui.playerCount.setString(buffer);
 		m_data->ui.playerCount.setCharacterSize(60u);
 		_renderWindow.draw(m_data->ui.playerCount);
