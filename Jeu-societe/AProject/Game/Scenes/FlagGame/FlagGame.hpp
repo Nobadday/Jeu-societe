@@ -5,6 +5,8 @@
 #include "../../../Scenes/Scene.hpp"
 #include "../../../Utilities/StringFormat.hpp"
 #include "../../../Animation/Animation/Timer.hpp" 
+#include "../../../Animation/Graphics/SpriteAtlas.hpp" 
+#include "../../../Animation/Graphics/TextureAtlas.hpp" 
 
 #define MAX_ROUND 3
 
@@ -24,9 +26,9 @@ private:
 		bool isEliminated;
 		GamePadBindList currentInput;
 		sf::Text inputText;
-		int eliminationOrder; // Order of elimination (0 = not eliminated, 1 = first eliminated, etc.)
-		float eliminationTime; // Time when player was eliminated
-		sf::Sprite buttonSprite;
+		int eliminationOrder;
+		float eliminationTime;
+		SpriteAtlas buttonSprite;
 	};
 
 	struct SceneData
@@ -38,7 +40,10 @@ private:
 		sf::Text requiredInputText;
 		sf::Text resultText;
 
-		sf::Sprite buttonSprite;
+		SpriteAtlas buttonSprite;
+		
+		// Ajout du sprite pour le background
+		sf::Sprite backgroundSprite;
 		
 		State state;
 		GameData* gameData;
@@ -46,8 +51,8 @@ private:
 		PlayerData playerData[4];
 		int currentRound;
 		int playersRemaining;
-		int eliminationCounter; // Counter for tracking elimination order
-		float totalGameTime; // Total time elapsed in game
+		int eliminationCounter;
+		float totalGameTime;
 		
 		Timer roundTimer;
 		Timer inputChangeTimer;
@@ -73,7 +78,7 @@ private:
 	bool IsInputValid(GamePadBindList _input);
 	void UpdatePlayerInputTexts(void);
 	bool HasEnoughPlayers(void);
-	int GetFirstEliminatedPlayer(void); // Returns the player ID of the first eliminated player
+	int GetFirstEliminatedPlayer(void);
 };
 
 #endif // !FLAGGAME_H

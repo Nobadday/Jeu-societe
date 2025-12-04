@@ -28,7 +28,7 @@ bool JsonReader::LoadFromFile(const std::string& _filename)
         file.close();
         m_loaded = true;
 
-        std::cout << "Fichier JSON chargé avec succès: " << _filename << std::endl;
+        //std::cout << "Fichier JSON chargé avec succès: " << _filename << std::endl;
         return true;
     }
     catch (const std::exception& e)
@@ -50,7 +50,7 @@ void JsonReader::Print() const
 {
     if (!m_loaded)
     {
-        std::cout << "Aucun fichier JSON chargé." << std::endl;
+        //std::cout << "Aucun fichier JSON chargé." << std::endl;
         return;
     }
 

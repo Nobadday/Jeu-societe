@@ -35,6 +35,10 @@ namespace RANDOM_HPP_NAMESPACE
 
 	// Chance between _minChance -> _maxChange
 	bool Chance(float _value, float _minimumChance = 0.0f, float _maximumChange = 1.0f);
+
+	// Returns a random index based on a chance probability vector
+	// If all probabilities fails, the last one will have 100% chance
+	size_t ChanceList(const std::vector<float>& _chances, float _minimumChance = 0.0f, float _maximumChange = 1.0f);
 }
 
 
@@ -53,10 +57,13 @@ namespace RANDOM_MT_HPP_NAMESPACE
 
 	bool Chance(float _value, float _minimumChance = 0.0f, float _maximumChange = 1.0f);
 
+	// Returns a random index based on a chance probability vector
+	// If all probabilities fails, the last one will have 100% chance
+	size_t ChanceList(const std::vector<float>& _chances, float _minimumChance = 0.0f, float _maximumChange = 1.0f);
 
 	unsigned GetSeed(void);
 	unsigned GetSeedDefault(void);
 }
 
 #endif
-// Random C++ v1.1
+// Random C++ v1.2

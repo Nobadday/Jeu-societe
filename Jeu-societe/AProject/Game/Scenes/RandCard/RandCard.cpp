@@ -10,36 +10,53 @@ void RandCard::Load(void)
 {
 	m_data = new SceneData;
 
+	//m_data->menuSystem = new MenuSystem();
+	//m_data->menuSystem->MenuAdd("TestMenu", true);
+
+	// Liaison au GameData pass� dans m_keptData (comme dans RockPaperScissors)
 	m_data->gameData = (GameData*)this->m_keptData;
 	m_data->gameData->m_assetManager->LoadManifest("Manifests/RandCard.json", "RandCard");
 
-	m_data->timer.SetTimeTarget(3.f);
+	//Debug names
+
+	std::string playersNames[4] = { "Yann", "Lorenzo", "Kyllian", "Benoit" };
+
+	if(m_data->gameData->m_gonnaPlayIndex.empty())
+	{
+		m_data->gameData->m_gonnaPlayIndex.push_back(0);
+		m_data->gameData->m_gonnaPlayIndex.push_back(1);
+	}
 
 	int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size();
 	std::cout << "nb of player " << nbOfPlayers << std::endl;
 
-	//Copy players playig from GameData
+	//Copy pnlayers playig from GameData
 	for (int i = 0; i < nbOfPlayers; ++i)
 	{
 		int playerId = (int)m_data->gameData->m_gonnaPlayIndex.at(i);
-		m_data->players.push_back({ (short)playerId });
+		m_data->players.push_back({ playersNames[i],  (short)playerId });
 	}
+
+	//m_data->buttonTest = new Button();
+	//
+	//m_data->textanim = new TextureAnimated();
+	//m_data->textanim->LoadFromFile("Assets/Sprites/ButtonPlaceHolder.anim", TextureAnimated::AnimationType::ANIMATION_ANIM);
+	//m_data->buttonTest->setTexture(*m_data->textanim);
+
+	//m_data->menuSystem->MenuAddButton("TestMenu", "ButtonTest", m_data->buttonTest);
+	//m_data->menuSystem->SetMenuHolder("TestMenu");
 
 	//Font
 	m_data->text.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("RandCardFont"));
 	m_data->text.setCharacterSize(15u);
-	m_data->text.setOrigin({0.5f, 0.5f});
-	m_data->text.setPosition({ SCREEN_WIDTH / 2.f, 0.8 * SCREEN_HEIGHT });
+	m_data->text.setOrigin(0, 0);
 
-		 	 
+	//Static Card
+	m_data->staticCardSpr.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("StaticCard"));
+	 	 
 	//Anim Card
-	m_data->cardChosenSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("AnimCard", AssetManager::AssetType::TEXTURE_ANIMATED));
-	m_data->cardUnchosenSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("AnimCard", AssetManager::AssetType::TEXTURE_ANIMATED));
-
-	m_data->cardChosenSprAnim.setScale(0.2f, 0.2f);
-	m_data->cardUnchosenSprAnim.setScale(0.2f, 0.2f);
-
-	m_data->background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground", AssetManager::AssetType::TEXTURE));
+	m_data->cardSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("AnimCard"));
+	m_data->cardSprAnim.setScale(1.2f, 1.2f);
 
 
 	int nbOfNormalCard = 2 * int(m_data->players.size());
@@ -79,6 +96,7 @@ void RandCard::Load(void)
 	{
 		std::cout << "Card n " << i << " : " << m_data->cards[i] << std::endl;
 	}
+
 }
 void RandCard::Unload(void)
 {
@@ -99,7 +117,7 @@ void RandCard::PollEvent(sf::Event& _event)
 		case CHOOSE_CARD:
 
 			//Restart card, when you comme from the last animation
-			m_data->cardChosenSprAnim.SetAnimation("OFF");
+			m_data->cardSprAnim.SetAnimation("OFF");
 
 			switch (_event.type)
 			{
@@ -114,15 +132,15 @@ void RandCard::PollEvent(sf::Event& _event)
 							switch (cardType)
 							{
 							case NORMAL:
-								m_data->cardChosenSprAnim.SetAnimation("NORMAL");
+								m_data->cardSprAnim.SetAnimation("NORMAL");
 								break;
 							case BOMB:
-								m_data->cardChosenSprAnim.SetAnimation("BOMB");
+								m_data->cardSprAnim.SetAnimation("BOMB");
 								break;
 							}
 							m_data->gameState = ANIMATION;
 							//m_data->cardSprAnim.RestartAnimation();
-							m_data->cardChosenSprAnim.Restart();
+							m_data->cardSprAnim.Restart();
 						}
 					}
 					break;
@@ -180,16 +198,6 @@ void RandCard::Update(float _deltaTime)
 
 	switch (m_data->gameState) 
 	{
-		case WAITING_BETWEEN_PLAYER:
-
-			m_data->timer.Update(_deltaTime);
-			if (m_data->timer.IsFinished())
-			{
-				m_data->timer.Restart();
-				NextPlayer();
-			}
-			break;
-
 		case CHOOSE_CARD:
 
 			m_data->inputDelay += _deltaTime;
@@ -198,8 +206,8 @@ void RandCard::Update(float _deltaTime)
 
 		case ANIMATION:
 
-			m_data->cardChosenSprAnim.Update(_deltaTime);
-			if (m_data->cardChosenSprAnim.IsFinished())
+			m_data->cardSprAnim.Update(_deltaTime);
+			if (m_data->cardSprAnim.IsFinished())
 			{
 				//std::cout << "Current player : " << m_data->currentPlayer << std::endl;
 				//std::cout << "Player Vector size : " << m_data->players.size() << std::endl;
@@ -209,6 +217,7 @@ void RandCard::Update(float _deltaTime)
 					m_data->deadPlayers.push_back(m_data->players.at(m_data->currentPlayer));
 					m_data->players.erase(m_data->players.begin() + m_data->currentPlayer);
 
+					NextPlayer();
 					
 					//Check if only one player left
 					if (m_data->players.size() <= 1)
@@ -230,8 +239,6 @@ void RandCard::Update(float _deltaTime)
 						SceneBase::ChangeScene("Board", false);
 						return;
 					}					
-					//Wait 3 sec and next player
-					m_data->gameState = WAITING_BETWEEN_PLAYER;					
 				}
 				else
 				{
@@ -258,7 +265,8 @@ void RandCard::Update(float _deltaTime)
 
 void RandCard::Draw(sf::RenderWindow& _renderWindow)
 {
-	_renderWindow.draw(m_data->background);
+	//
+	// m_data->menuSystem->Draw(_renderWindow, sf::RenderStates::Default);
 	_renderWindow.draw(m_data->text);
 	PrintCards(_renderWindow);
 }
@@ -273,13 +281,14 @@ void RandCard::PrintCards(sf::RenderWindow& _renderWindow)
 	{
 		if (i == m_data->cardChosen)
 		{
-			m_data->cardChosenSprAnim.setPosition(BORDER_X + cardSpacing * i, SCREEN_HEIGHT / 4.f);
-			_renderWindow.draw(m_data->cardChosenSprAnim);
+			m_data->cardSprAnim.setPosition(BORDER_X + cardSpacing * i, SCREEN_HEIGHT / 4.f);
+			//m_data->cardSprAnim.draw(_renderWindow, sf::RenderStates::Default);
+			_renderWindow.draw(m_data->cardSprAnim);
 		}
 		else
 		{
-			m_data->cardUnchosenSprAnim.setPosition(BORDER_X + cardSpacing * i, SCREEN_HEIGHT / 4.f);
-			_renderWindow.draw(m_data->cardUnchosenSprAnim);
+			m_data->staticCardSpr.setPosition(BORDER_X + cardSpacing * i, SCREEN_HEIGHT / 4.f);
+			_renderWindow.draw(m_data->staticCardSpr, sf::RenderStates::Default);
 		}
 	}
 
