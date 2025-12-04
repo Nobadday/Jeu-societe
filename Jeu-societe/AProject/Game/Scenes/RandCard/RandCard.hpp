@@ -4,8 +4,7 @@
 
 #include "../../../Scenes/Scene.hpp"
 #include "../../../Common.hpp"
-#include "../../../Animation/Graphics/SpriteAnimated.hpp"
-#include "../../../Animation/Graphics/TextureAnimated.hpp"
+#include "../../../Animation/Graphics.hpp"
 #include "../../../Ui/MenuSystem.hpp"
 
 
@@ -17,12 +16,12 @@ class RandCard : public SceneBase
 		//Final ;)
 		struct Player
 		{
-			std::string name;
 			short id;
 		};
 		enum GameState
 		{
 			//Wait for input
+			WAITING_BETWEEN_PLAYER,
 			CHOOSE_CARD,
 			//Animation 
 			ANIMATION,
@@ -35,8 +34,10 @@ class RandCard : public SceneBase
 		};
 		struct SceneData
 		{
-			sf::Sprite staticCardSpr;
-			SpriteAnimated cardSprAnim;
+			SpriteAnimated cardChosenSprAnim;
+			SpriteAnimated cardUnchosenSprAnim;
+			SpriteAnimated iconsChara;
+			sf::Sprite background;
 
 			std::vector<CardType> cards;
 			std::vector<Player> players;
@@ -48,10 +49,10 @@ class RandCard : public SceneBase
 			//Delay when you change card with joystick
 			float inputDelay = 0.2f;
 
-
-			//DEBUG
 			int currentPlayer = 0;
-			sf::Text text;
+			TextPlus text;
+
+			Timer timer;
 
 			int playerCountLeft = 0;
 		};
