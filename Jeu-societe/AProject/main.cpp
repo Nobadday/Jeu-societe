@@ -1,23 +1,33 @@
-#include "Common.hpp"
-#include "./Animation/Graphics.hpp"
-#include "./Ui/Button.hpp"
-#include "./Ui/HealthBar/HealthBar.hpp"
-#include "./Ui/MenuSystem.hpp"
+﻿#include "Common.hpp"
 
+#include "Game/Scenes/Board/Board.hpp"
+#include "Game/Scenes/Loading/LoadingScreen.hpp"
+
+
+#include "./Game/scenes/RockPaperScissors/RockPaperScissors.hpp"
+#include "Game/Scenes/ArmWrestling/ArmWrestling.hpp"
+#include "Game/Scenes/Basket/Basket.hpp"
+
+
+#include "./Game/Scenes/RussianRoulette/RussianRoulette.hpp"
+#include "./Game/Scenes/RandCard/RandCard.hpp"
+#include "Game/Scenes/FlagGame/FlagGame.hpp"
+
+#include "./Game/Scenes/Podium/Podium.hpp"
 
 typedef struct MainData
 {
 	sfMod::RenderWindow renderWindow;
+	AssetManager assetManager;
+
 	sf::Clock clock;
 	SceneHandler scenes;
 
-	TextureAnimated ta;
-	MenuSystem sys;
-
-	HealthBar hb;
 	GameData gameData;
 } MainData;
 
+
+Binds* binds = nullptr;
 
 int main(void);
 
@@ -33,27 +43,20 @@ int main(void)
 	random::SetSeedPID();
 	randmt::SetSeedPID();
 
+	binds = new Binds();
+
 	MainData mainData;
-	MainDataLoad(mainData);
-	
-	mainData.renderWindow.setIcon("./Assets/Images/Placeholder.png");
-	mainData.renderWindow.SetFullscreenPrefered(true);
 
-	mainData.sys["Testicule"]["Fuck1"];
-	mainData.sys["Testicule"]["Fuck2"];
-	mainData.sys["Testicule"]["Fuck3"];
-	mainData.sys["Testicule"]["Fuck4"];
 
-	for (auto& btn : mainData.sys["Testicule"])
+	mainData.gameData.m_playerDataList.resize(4);
+	for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
 	{
-		btn.second.setTexture(mainData.ta);
-		btn.second.setPosition(random::RandomFloat(0, 500), random::RandomFloat(0, 500));
+		mainData.gameData.m_playerDataList[i].SetJoystickID(i);
+		mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 8));
 	}
-	mainData.sys.SetMenu("Testicule");
 
-	mainData.hb.SetSize(sf::Vector2f(200.0f,50.0f ));
-	mainData.hb.setPosition(sf::Vector2f(200.0f, 50.0f));
-	mainData.hb.SetAvoidOverflow(false);
+
+	MainDataLoad(mainData);
 
 	while (mainData.renderWindow.isOpen())
 	{
@@ -68,24 +71,44 @@ int main(void)
 			printf("-- MANUAL FREEZE : [OFF /    ] --\n");
 		}
 	}
+
+	delete binds;
+	binds = nullptr;
+	
 	return EXIT_SUCCESS;
 }
 
 void MainDataLoad(MainData& _mainData)
 {
-	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Cute And Cursed", sf::Style::Default);
-	_mainData.renderWindow.setKeyRepeatEnabled(false);
+	_mainData.renderWindow.SetAntiAliasing(sfMod::RenderWindow::AntiAliasing::X16);
+	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Cute & Cursed", sf::Style::Default);
 	_mainData.renderWindow.SetFullscreenPrefered(true);
-	
-	_mainData.scenes.SetTransferedData(&_mainData.gameData);
+	_mainData.renderWindow.setKeyRepeatEnabled(false);
+
+	//_mainData.renderWindow.setSize(sf::Vector2u(300u, 200u));
 
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
-	
+	_mainData.gameData.m_assetManager = &_mainData.assetManager;
 
-	_mainData.ta.LoadFromFile("./Assets/ButtonPlaceholder.anim", TextureAnimated::ANIMATION_ANIM);
+	_mainData.assetManager.LoadManifest("Manifests/Main.json", "main");
 
-	
+	_mainData.scenes.SetTransferedData(&_mainData.gameData);
+
+	// Ajouter les scènes
+	_mainData.scenes.AddScene<LoadingScreen>("Lo");
+	_mainData.scenes.AddScene<BaseGame>("Board");
+	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
+	_mainData.scenes.AddScene<ArmWrestling>("ArmWrestling");
+	_mainData.scenes.AddScene<Basket>("Basket");
+	_mainData.scenes.AddScene<FlagGame>("FlagGame");
+	_mainData.scenes.AddScene<RandCard>("RandCard");
+	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
+	_mainData.scenes.AddScene<Podium>("Podium");
+
+	// Sélectionner le LoadingScreen metre false pour tout scene au debut 
+	_mainData.scenes.SelectScene("Lo", false);
+
 	_mainData.clock.restart();
 }
 
@@ -93,10 +116,9 @@ void MainDataLoad(MainData& _mainData)
 void PollEvent(MainData& _mainData)
 {
 	sf::Event event;
-
+	
 	while (_mainData.renderWindow.pollEvent(event))
 	{
-		_mainData.sys.PollEvent(event);
 		switch (event.type)
 		{
 			case sf::Event::Closed:
@@ -104,15 +126,10 @@ void PollEvent(MainData& _mainData)
 				return;
 				break;
 
-			case sf::Event::KeyPressed:
-				_mainData.sys.AddSelection(1);
-				//_mainData.btn.Click();
 				break;
-
 			default:
 				_mainData.scenes.PollEvent(event);
 				break;
-
 		}
 	}
 }
@@ -120,21 +137,8 @@ void PollEvent(MainData& _mainData)
 void Update(MainData& _mainData)
 {
 	float deltaTime = _mainData.clock.restart().asSeconds();
-	float dtFixed = deltaTime / (1.0f / 60.0f);
-
 
 	_mainData.scenes.Update(deltaTime);
-
-
-	_mainData.sys.Update(deltaTime);
-	for (auto& btn : _mainData.sys["Testicule"])
-	{	
-		if (btn.second.HasBeenClicked())
-		{
-			printf("kys%d\n", random::RandomInt(0, 69));
-			_mainData.hb.SetBarCompletion(_mainData.hb.GetBarCompletion() - 0.05f);
-		}
-	}
 }
 
 void Draw(MainData& _mainData)
@@ -142,9 +146,6 @@ void Draw(MainData& _mainData)
 	_mainData.renderWindow.clear(sf::Color::Black);
 	
 	_mainData.scenes.Draw(_mainData.renderWindow);
-	
-	_mainData.renderWindow.draw(_mainData.sys);
-	_mainData.renderWindow.draw(_mainData.hb);
 
 	_mainData.renderWindow.display();
 }

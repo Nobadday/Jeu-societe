@@ -1,0 +1,21 @@
+{
+    "assets" : [
+        {
+            "name" : "podiumFont",
+            "type" : "Font",
+            "path" : "Assets/Fonts/Font.ttf"
+        },
+        {
+            "name" : "CharactersPoses",
+            "type" : "Texture Atlas",
+            "path" : "Assets/Sprites/Podium/Win Lose.json",
+            "subType" : 3
+        },
+        {
+            "name" : "Podiums",
+            "type" : "Texture Atlas",
+            "path" : "Assets/Sprites/Podium/Podiums.json",
+            "subType" : 3
+        }
+    ]
+}
