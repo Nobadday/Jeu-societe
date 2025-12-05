@@ -1,0 +1,73 @@
+{ "frames": [
+   {
+    "filename": "Bonus0",
+    "frame": { "x": 0, "y": 0, "w": 1849, "h": 1047 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 1849, "h": 1047 },
+    "sourceSize": { "w": 1849, "h": 1047 },
+    "duration": 100
+   },
+   {
+    "filename": "BonusFace1",
+    "frame": { "x": 1849, "y": 0, "w": 1849, "h": 1047 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 1849, "h": 1047 },
+    "sourceSize": { "w": 1849, "h": 1047 },
+    "duration": 100
+   },
+   {
+    "filename": "Malus2",
+    "frame": { "x": 3698, "y": 0, "w": 1849, "h": 1047 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 1849, "h": 1047 },
+    "sourceSize": { "w": 1849, "h": 1047 },
+    "duration": 100
+   },
+   {
+    "filename": "MalusFace3",
+    "frame": { "x": 0, "y": 1047, "w": 1849, "h": 1047 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 1849, "h": 1047 },
+    "sourceSize": { "w": 1849, "h": 1047 },
+    "duration": 100
+   },
+   {
+    "filename": "Luck4",
+    "frame": { "x": 1849, "y": 1047, "w": 1849, "h": 1047 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 1849, "h": 1047 },
+    "sourceSize": { "w": 1849, "h": 1047 },
+    "duration": 100
+   },
+   {
+    "filename": "LuckFace5",
+    "frame": { "x": 3698, "y": 1047, "w": 1849, "h": 1047 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 1849, "h": 1047 },
+    "sourceSize": { "w": 1849, "h": 1047 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.7-x64",
+  "image": "anim_card.png",
+  "format": "RGBA8888",
+  "size": { "w": 5547, "h": 2094 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "Bonus", "from": 0, "to": 0, "direction": "forward", "color": "#000000ff" },
+   { "name": "BonusFace", "from": 1, "to": 1, "direction": "forward", "color": "#000000ff" },
+   { "name": "Malus", "from": 2, "to": 2, "direction": "forward", "color": "#000000ff" },
+   { "name": "MalusFace", "from": 3, "to": 3, "direction": "forward", "color": "#000000ff" },
+   { "name": "Luck", "from": 4, "to": 4, "direction": "forward", "color": "#000000ff" },
+   { "name": "LuckFace", "from": 5, "to": 5, "direction": "forward", "color": "#000000ff" }
+  ]
+ }
+}

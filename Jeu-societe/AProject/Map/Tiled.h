@@ -18,6 +18,8 @@ class Tiled
 		std::vector<MapLayer>& GetMapLayers();
 		MapLayer& GetMapLayer(std::string _name);
 		void DrawMapLayers(sf::RenderWindow& _window, const sf::Vector2f& _camera);
+		void DrawMapLayers(sf::RenderWindow& _window, const sf::Vector2f& _camera, std::string _name);
+		void DrawMapLayers(sf::RenderWindow& _window, const sf::Vector2f& _camera, const char* _name);
 };
 
 

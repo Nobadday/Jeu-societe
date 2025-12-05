@@ -5,7 +5,6 @@
 #include "../../../Scenes/Scene.hpp"
 #include "../../../Utilities/StringFormat.hpp"
 #include "../../../Animation/Animation/Timer.hpp" 
-#include "../../../Utilities/AudioEngine.hpp"
 
 #define MAX_ROUND 3
 
@@ -27,7 +26,6 @@ private:
 		sf::Text inputText;
 		int eliminationOrder; // Order of elimination (0 = not eliminated, 1 = first eliminated, etc.)
 		float eliminationTime; // Time when player was eliminated
-
 		sf::Sprite buttonSprite;
 	};
 
@@ -40,12 +38,7 @@ private:
 		sf::Text requiredInputText;
 		sf::Text resultText;
 
-		AudioEngine* audio;
-		bool audioPlayed;
-		sf::Texture buttonTexture[6];
 		sf::Sprite buttonSprite;
-		
-		sf::Font font;
 		
 		State state;
 		GameData* gameData;
@@ -60,6 +53,7 @@ private:
 		Timer inputChangeTimer;
 		
 		GamePadBindList requiredInput;
+		sf::String stringTab[6];
 	};
 	
 	SceneData* m_data;

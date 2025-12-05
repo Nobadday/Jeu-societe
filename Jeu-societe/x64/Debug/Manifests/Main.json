@@ -14,7 +14,7 @@
         {
             "name" : "PLACEHOLDER:Image",
             "type" : "Image",
-            "path" : "Assets/Images/PlaceHolder.png"
+            "path" : "Assets/Shared/Images/PlaceHolder.png"
         },
         {
             "name" : "PLACEHOLDER:Sound Buffer",
@@ -29,8 +29,43 @@
         {
             "name" : "PLACEHOLDER:Texture Animated",
             "type" : "Texture Animated",
-            "path" : "Assets/Sprites/PlaceHolder.anim", 
+            "path" : "Assets/Shared/PlaceHolder.anim", 
             "subType" : 1
+        },
+        {
+            "name": "Abutton",
+            "type": "Texture",
+            "path":  "./Assets/Shared/Images/A.png"
+        },
+        {
+            "name": "Bbutton",
+            "type": "Texture",
+            "path":  "./Assets/Shared/Images/B.png"
+        },
+        {
+            "name": "Xbutton",
+            "type": "Texture",
+            "path":  "./Assets/Shared/Images/X.png"
+        },
+        {
+            "name": "Ybutton",
+            "type": "Texture",
+            "path":  "./Assets/Shared/Images/Y.png"
+        },
+        {
+            "name": "RBbutton",
+            "type": "Texture",
+            "path":  "./Assets/Shared/Images/RB.png"
+        },
+        {
+            "name": "LBbutton",
+            "type": "Texture",
+            "path":  "./Assets/Shared/Images/LB.png"
+        },
+        {
+            "name": "MinigameBackground",
+            "type": "Texture",
+            "path": "Assets/shared/MinigameBackground.png"
         }
     ]
 }

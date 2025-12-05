@@ -40,6 +40,24 @@ bool Chance(float _value, float _minimumChance, float _maximumChange)
 	return RandomFloat(_minimumChance, _maximumChange) <= _value;
 }
 
+size_t ChanceList(const std::vector<float>& _chances, float _minimumChance, float _maximumChange)
+{
+	size_t len = _chances.size();
+	
+	for (size_t i = 0u; i < len; i++)
+	{
+		if (i + 1 >= len)
+		{
+			return i;
+		}
+		else if (Chance(_chances[i], _minimumChance, _maximumChange))
+		{
+			return i;
+		}
+	}
+	return len - 1;
+}
+
 }
 
 
@@ -92,6 +110,24 @@ bool Chance(float _value, float _minimumChance, float _maximumChange)
 	return RandomFloat(_minimumChance, _maximumChange) <= _value;
 }
 
+size_t ChanceList(const std::vector<float>& _chances, float _minimumChance, float _maximumChange)
+{
+	size_t len = _chances.size();
+
+	for (size_t i = 0u; i < len; i++)
+	{
+		if (i + 1 >= len)
+		{
+			return i;
+		}
+		else if (Chance(_chances[i], _minimumChance, _maximumChange))
+		{
+			return i;
+		}
+	}
+	return len - 1;
+}
+
 unsigned GetSeed(void)
 {
 	return mtSeed;
@@ -104,4 +140,4 @@ unsigned GetSeedDefault(void)
 }
 
 
-// Random C++ v1.1
+// Random C++ v1.2

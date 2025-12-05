@@ -2,9 +2,8 @@
 #ifndef _INC_BASKET_HPP
 #define _INC_BASKET_HPP
 
-#include "../../../Common.hpp"
-#include "../../../Scenes/Scene.hpp"
-#include "../../../Utilities/StringFormat.hpp"
+#include "../../Common.hpp"
+#include "../../Scenes/Scene.hpp"
 
 class Basket : public SceneBase
 {
@@ -19,7 +18,7 @@ private:
 	{
 		short m_id = 0;
 		bool m_won = 0;
-		int m_winOrder = 0;  // NOUVEAU: Ordre de victoire (1 = premier, 2 = deuxième, etc.)
+		int m_winOrder = 0;  // NOUVEAU: Ordre de victoire (1 = premier, 2 = deuxiï¿½me, etc.)
 		
 		sf::Sprite m_ballSprite;
 		sf::Sprite m_hoopSprite;
@@ -32,10 +31,6 @@ private:
 	{
 		sf::Text timerText;
 		sf::Text winnerText;
-		sf::Font font;
-		
-		sf::Texture ballTexture;
-		sf::Texture hoopTexture;
 		
 		std::vector<BasketPlayer> players;
 		

@@ -104,4 +104,4 @@ class TextureAtlas : private sf::Texture, public AtlasContainer
 
 #endif
 
-// Texture Atlases for C++ & SFML v1.1.2
+// Texture Atlases for C++ & SFML v1.1.3

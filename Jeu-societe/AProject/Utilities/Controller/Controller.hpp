@@ -1,21 +1,27 @@
 #pragma once
-
 #ifndef _INC_CONTROLLER_HPP
 #define _INC_CONTROLLER_HPP
-
 
 #include <SFML/Window.hpp>
 #include <nlohmann/json.hpp>
 
-namespace sf
+
+namespace sfMod
 {
 
-class ControllerManager
+class Controller
 {
+	enum Button
+	{
+		A,
+		B,
+		X,
+		Y
+	};
 
 	public:
 		static bool LoadMap(const std::string& _filePath);
-
+		static bool LoadMap(const std::fstream& _file);
 };
 
 
@@ -24,3 +30,4 @@ class ControllerManager
 }
 
 #endif
+// Controller Mappings SFML || v0.0

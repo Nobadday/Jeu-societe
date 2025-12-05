@@ -1,8 +1,7 @@
 #pragma once
 
-#include "../../../Common.hpp"
-#include "../../../Scenes/Scene.hpp"
-#include "../../../Utilities/StringFormat.hpp"
+#include "../../Common.hpp"
+#include "../../Scenes/Scene.hpp"
 
 class ArmWrestlingPlayer
 {
@@ -15,15 +14,16 @@ public:
 	void Update(float _dt, std::vector<ArmWrestlingPlayer>& allPlayers);
 	void Draw(sf::RenderWindow& _renderWindow);
 
-	// Ajouté : accès en lecture à la taille actuelle du bras
+	// Ajoutï¿½ : accï¿½s en lecture ï¿½ la taille actuelle du bras
 	float GetArmWidth() const;
-
+	void SetFont(sf::Font _font);
 private:
 	short id;
 	short force;
 	sf::RectangleShape shape;
 	sf::Text nameText;
-	void PopBarr(void);
+
+
 	short GetOtherPlayerID(short _callerID, const std::vector<ArmWrestlingPlayer>& allPlayers) const;
 };
 
@@ -40,8 +40,7 @@ public:
 		std::vector<ArmWrestlingPlayer> allPlayers;
 		short nextID = 0;
 
-		static AudioEngine* audio;
-		// Ajoutés pour gérer l'affichage du résultat et la communication avec GameData
+		// Ajoutï¿½s pour gï¿½rer l'affichage du rï¿½sultat et la communication avec GameData
 		GameData* gameData = nullptr;
 		sf::Text resultText;
 		bool finished = false;
@@ -55,7 +54,6 @@ public:
 	virtual void PollEvent(sf::Event& _event);
 	virtual void Update(float _deltaTime);
 	virtual void Draw(sf::RenderWindow& _renderWindow);
-	static AudioEngine& GetAudioEngine();
 private:
 
 };

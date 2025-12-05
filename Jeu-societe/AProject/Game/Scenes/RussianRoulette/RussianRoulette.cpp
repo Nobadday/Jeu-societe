@@ -8,8 +8,11 @@ void RussianRoulette::Load(void)
 
 	m_data->gameData = (GameData*)this->m_keptData;
 
+	m_data->gameData->m_assetManager->LoadManifest("Manifests/RussianRoulette.json", "RussianRoulette");
+
 	//DEBUG
-	std::string playersNames[4] = { "Yann", "Lorenzo", "Kyllian", "Damien" };
+	std::string playersNames[4] = { "Yann", "Lorenzo", "Kyllian", "Benoit" };
+	
 	//m_data->gameData->m_gonnaPlayIndex.push_back(0);
 	//m_data->gameData->m_gonnaPlayIndex.push_back(1);
 
@@ -26,14 +29,12 @@ void RussianRoulette::Load(void)
 
 	m_data->bullet = random::RandomInt(1, 6);
 	
-	m_data->font.loadFromFile("Assets/Fonts/Platinum Sign.ttf");
-	m_data->text.setFont(m_data->font);
+	m_data->text.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("RRFont"));
 	m_data->text.setCharacterSize(15u);
 	m_data->text.setOrigin(0,0);
 
 	//m_data->gunTexAnim.LoadFromFile("Assets/Sprites/RussianRoulette/PiouMort.json", TextureAnimated::ANIMATION_ASEPRITE);
-	m_data->gunTexAnim.LoadFromFile("Assets/Sprites/RussianRoulette/Damien.texanim", TextureAnimated::ANIMATION_TEXANIM);
-	m_data->gunSprAnim.setTexture(m_data->gunTexAnim);
+	m_data->gunSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Damien"));
 	//m_data->gunSprAnim.SetFramerate(1.f);
 
 	m_data->gameState = WAITING;
@@ -41,6 +42,7 @@ void RussianRoulette::Load(void)
 
 void RussianRoulette::Unload(void)
 {
+	this->m_data->gameData->m_assetManager->DeleteContainer("RussianRoulette");
 	delete this->m_data;
 	this->m_data = NULL;
 }
@@ -163,22 +165,14 @@ void RussianRoulette::Update(float _deltaTime)
 
 					m_data->deadPlayers.push_back(m_data->players[m_data->currentPlayer]);
 
-
-
-
-
 					//Save data
 					int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size() - 1;
 					std::cout << "nb player : " << nbOfPlayers << std::endl;
 
-					for (int i = 0; i < nbOfPlayers; i++)
+					for (int i = m_data->deadPlayers.size(); i >= 0 ; i--)
 					{
-
-						m_data->gameData->AddPlayerWin(m_data->deadPlayers.at(nbOfPlayers - i).id);
+						m_data->gameData->AddPlayerWin(m_data->deadPlayers.at(i).id);
 					}
-
-
-
 
 					//Load bullet for next game, its not useful
 					m_data->bullet = random::RandomInt(1, 6);
@@ -211,8 +205,6 @@ void RussianRoulette::Update(float _deltaTime)
 }
 void RussianRoulette::Draw(sf::RenderWindow& _renderWindow)
 {
-
-
 	_renderWindow.draw(m_data->gunSprAnim);
 	_renderWindow.draw(m_data->text);
 }

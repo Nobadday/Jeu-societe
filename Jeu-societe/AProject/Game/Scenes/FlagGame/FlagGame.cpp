@@ -9,20 +9,24 @@ void FlagGame::Load(void)
 {
 	m_data = new SceneData();
 	m_data->gameData = (GameData*)this->m_keptData;
+	
+	if (((GameData*)this->m_keptData)->m_gonnaPlayIndex.size() == 0)
+	{
+		((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(0);
+		((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(1);
+		((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(2);
+		((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(3);
+	}
+
+	m_data->gameData->m_assetManager->LoadManifest("Manifests/FlagGame.json", "FlagGame");
 	m_data->state = STATE_WAITING;
 	m_data->currentRound = 0;
 	m_data->playersRemaining = 0;
 	m_data->eliminationCounter = 0;
 	m_data->totalGameTime = 0.0f;
-	m_data->audio = (AudioEngine*)m_data->gameData->m_audioEngine;
-	m_data->gameData->m_assetManager->LoadManifest("Manifests/FlagGame.json", "FlagGame");
-
-
-	// Load font
-	m_data->font.loadFromFile("Assets/Font.ttf");
 
 	// Initialize title text
-	m_data->titleText.setFont(m_data->font);
+	m_data->titleText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("FlagFont"));
 	m_data->titleText.setCharacterSize(24);
 	m_data->titleText.setFillColor(sf::Color::White);
 	m_data->titleText.setString("Flag Game Mini-Game");
@@ -30,25 +34,25 @@ void FlagGame::Load(void)
 	m_data->titleText.setOrigin(m_data->titleText.getLocalBounds().width / 2, 0);
 
 	// Initialize round text
-	m_data->roundText.setFont(m_data->font);
+	m_data->roundText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("FlagFont"));
 	m_data->roundText.setCharacterSize(25);
 	m_data->roundText.setFillColor(sf::Color::Blue);
 	m_data->roundText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4);
 
 	// Initialize timer text
-	m_data->timerText.setFont(m_data->font);
+	m_data->timerText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("FlagFont"));
 	m_data->timerText.setCharacterSize(25);
 	m_data->timerText.setFillColor(sf::Color::White);
 	m_data->timerText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3);
 
 	// Initialize required input text
-	m_data->requiredInputText.setFont(m_data->font);
+	m_data->requiredInputText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("FlagFont"));
 	m_data->requiredInputText.setCharacterSize(25);
 	m_data->requiredInputText.setFillColor(sf::Color::Yellow);
 	m_data->requiredInputText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.5f);
 
 	// Initialize not enough players text
-	m_data->notEnoughPlayersText.setFont(m_data->font);
+	m_data->notEnoughPlayersText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("FlagFont"));
 	m_data->notEnoughPlayersText.setCharacterSize(25);
 	m_data->notEnoughPlayersText.setFillColor(sf::Color::Red);
 	m_data->notEnoughPlayersText.setString("Not Enough Players Connected!");
@@ -56,19 +60,19 @@ void FlagGame::Load(void)
 	m_data->notEnoughPlayersText.setOrigin(m_data->notEnoughPlayersText.getLocalBounds().width / 2, m_data->notEnoughPlayersText.getLocalBounds().height / 2);
 
 	// Initialize result text
-	m_data->resultText.setFont(m_data->font);
+	m_data->resultText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("FlagFont"));
 	m_data->resultText.setCharacterSize(30);
 	m_data->resultText.setFillColor(sf::Color::Green);
 	m_data->resultText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
-	m_data->buttonTexture[0].loadFromFile("Assets/Sprites/FlagGame/A.png");
-	m_data->buttonTexture[1].loadFromFile("Assets/Sprites/FlagGame/B.png");
-	m_data->buttonTexture[2].loadFromFile("Assets/Sprites/FlagGame/X.png");
-	m_data->buttonTexture[3].loadFromFile("Assets/Sprites/FlagGame/Y.png");
-	m_data->buttonTexture[4].loadFromFile("Assets/Sprites/FlagGame/LB.png");
-	m_data->buttonTexture[5].loadFromFile("Assets/Sprites/FlagGame/RB.png");
-
 	m_data->buttonSprite.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.5f);
+
+	m_data->stringTab[0] = "Abutton";
+	m_data->stringTab[1] = "Bbutton";
+	m_data->stringTab[2] = "Xbutton";
+	m_data->stringTab[3] = "Ybutton";
+	m_data->stringTab[4] = "LBbutton";
+	m_data->stringTab[5] = "RBbutton";
 
 
 	// Initialize player data for all players in m_gonnaPlayIndex
@@ -79,7 +83,7 @@ void FlagGame::Load(void)
 		m_data->playerData[i].eliminationOrder = 0;
 		m_data->playerData[i].eliminationTime = 0.0f;
 
-		m_data->playerData[i].inputText.setFont(m_data->font);
+		m_data->playerData[i].inputText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("FlagFont"));
 		m_data->playerData[i].inputText.setCharacterSize(20);
 		m_data->playerData[i].inputText.setFillColor(sf::Color::Green);
 	}
@@ -118,7 +122,6 @@ void FlagGame::Load(void)
 
 void FlagGame::Unload(void)
 {
-	m_data->audioPlayed = false;
 	delete m_data;
 	m_data = nullptr;
 }
@@ -230,9 +233,41 @@ void FlagGame::Update(float _deltaTime)
 			// Return to board
 			if (m_data->gameData)
 			{
-				// Award winner if there is one (first in m_winIndex)
-				if (m_data->playersRemaining == 1)
+				// Check if it's a tie (all players eliminated simultaneously)
+				int totalPlayers = m_data->gameData->m_gonnaPlayIndex.size();
+				int eliminatedPlayers = 0;
+				int maxEliminationOrder = 0;
+				int playersWithMaxOrder = 0;
+
+				// Count eliminated players and find the highest elimination order
+				for (int playerID : m_data->gameData->m_gonnaPlayIndex)
 				{
+					if (m_data->playerData[playerID].isEliminated)
+					{
+						eliminatedPlayers++;
+						if (m_data->playerData[playerID].eliminationOrder > maxEliminationOrder)
+						{
+							maxEliminationOrder = m_data->playerData[playerID].eliminationOrder;
+							playersWithMaxOrder = 1;
+						}
+						else if (m_data->playerData[playerID].eliminationOrder == maxEliminationOrder)
+						{
+							playersWithMaxOrder++;
+						}
+					}
+				}
+
+				// If all players are eliminated and multiple players share the last elimination order, it's a tie
+				bool isTie = (m_data->playersRemaining == 0 && playersWithMaxOrder > 1);
+
+				if (isTie)
+				{
+					// Tie scenario - don't add anyone to the win list
+					std::cout << "Game ended in a tie! No winners added to win list." << std::endl;
+				}
+				else if (m_data->playersRemaining == 1)
+				{
+					// Award winner if there is one
 					for (int playerID : m_data->gameData->m_gonnaPlayIndex)
 					{
 						if (!m_data->playerData[playerID].isEliminated)
@@ -242,33 +277,32 @@ void FlagGame::Update(float _deltaTime)
 							break;
 						}
 					}
-				}
 
-				// Add losers in REVERSE order of elimination (last eliminated first, first eliminated last)
-				// Create a list of eliminated players sorted by elimination order
-				std::vector<std::pair<int, int>> eliminatedPlayers; // <playerID, eliminationOrder>
+					// Add losers in REVERSE order of elimination (last eliminated first, first eliminated last)
+					std::vector<std::pair<int, int>> eliminatedPlayersList;
 
-				for (int playerID : m_data->gameData->m_gonnaPlayIndex)
-				{
-					if (m_data->playerData[playerID].isEliminated && m_data->playerData[playerID].eliminationOrder > 0)
+					for (int playerID : m_data->gameData->m_gonnaPlayIndex)
 					{
-						eliminatedPlayers.push_back({ playerID, m_data->playerData[playerID].eliminationOrder });
+						if (m_data->playerData[playerID].isEliminated && m_data->playerData[playerID].eliminationOrder > 0)
+						{
+							eliminatedPlayersList.push_back({ playerID, m_data->playerData[playerID].eliminationOrder });
+						}
 					}
-				}
 
-				// Sort by elimination order in DESCENDING order (last eliminated first)
-				std::sort(eliminatedPlayers.begin(), eliminatedPlayers.end(),
-					[](const std::pair<int, int>& a, const std::pair<int, int>& b) {
-						return a.second > b.second; // Reversed: higher order first
-					});
+					// Sort by elimination order in DESCENDING order (last eliminated first)
+					std::sort(eliminatedPlayersList.begin(), eliminatedPlayersList.end(),
+						[](const std::pair<int, int>& a, const std::pair<int, int>& b) {
+							return a.second > b.second;
+						});
 
-				// Add all losers in reverse order (first eliminated will be last)
-				for (const auto& player : eliminatedPlayers)
-				{
-					m_data->gameData->AddPlayerWin(player.first);
-					std::cout << "Player " << (player.first + 1) << " added as loser (order "
-						<< player.second << ", time: "
-						<< m_data->playerData[player.first].eliminationTime << "s)" << std::endl;
+					// Add all losers in reverse order
+					for (const auto& player : eliminatedPlayersList)
+					{
+						m_data->gameData->AddPlayerWin(player.first);
+						std::cout << "Player " << (player.first + 1) << " added as loser (order "
+							<< player.second << ", time: "
+							<< m_data->playerData[player.first].eliminationTime << "s)" << std::endl;
+					}
 				}
 			}
 
@@ -336,7 +370,6 @@ void FlagGame::StartNewRound(void)
 			}
 		}
 	}
-	m_data->audio->PlayMusic("FlagGame_BGM", true);
 	UpdatePlayerInputTexts();
 
 	// Set timers
@@ -346,10 +379,10 @@ void FlagGame::StartNewRound(void)
 
 void FlagGame::EvaluateRound(void)
 {
-	// Check each participating player's input
+	// Track players eliminated this round
+	std::vector<int> playersEliminatedThisRound;
 
-	m_data->audio->StopMusic();
-	m_data->audio->PlaySound("EndRound", false);
+	// Check each participating player's input
 	if (m_data->gameData)
 	{
 		for (int playerID : m_data->gameData->m_gonnaPlayIndex)
@@ -366,6 +399,8 @@ void FlagGame::EvaluateRound(void)
 					m_data->playerData[playerID].eliminationOrder = m_data->eliminationCounter;
 					m_data->playerData[playerID].eliminationTime = m_data->totalGameTime;
 
+					playersEliminatedThisRound.push_back(playerID);
+
 					std::cout << "Player " << (playerID + 1) << " eliminated! (Order: "
 						<< m_data->eliminationCounter << ", Time: "
 						<< m_data->totalGameTime << "s)" << std::endl;
@@ -376,8 +411,18 @@ void FlagGame::EvaluateRound(void)
 
 	UpdatePlayerInputTexts();
 
+	// Check if all remaining players were eliminated this round (tie scenario)
+	bool isTie = (m_data->playersRemaining == 0 && playersEliminatedThisRound.size() > 1);
+
 	// Prepare for next round or game over
-	if (m_data->playersRemaining == 1)
+	if (isTie)
+	{
+		// It's a tie - all players lost simultaneously
+		m_data->resultText.setString("Tie! No Winner!");
+		m_data->resultText.setOrigin(m_data->resultText.getLocalBounds().width / 2, m_data->resultText.getLocalBounds().height / 2);
+		std::cout << "Tie detected! All remaining players eliminated in round " << m_data->currentRound << std::endl;
+	}
+	else if (m_data->playersRemaining == 1)
 	{
 		// Find winner
 		if (m_data->gameData)
@@ -390,11 +435,6 @@ void FlagGame::EvaluateRound(void)
 					std::snprintf(resultBuffer, 50, "Player %d Wins!", playerID + 1);
 					m_data->resultText.setString(resultBuffer);
 					m_data->resultText.setOrigin(m_data->resultText.getLocalBounds().width / 2, m_data->resultText.getLocalBounds().height / 2);
-					if(!m_data->audioPlayed)
-					{
-						m_data->audio->PlaySound("Winner", false);
-						m_data->audioPlayed = true;
-					}
 					break;
 				}
 			}
@@ -404,7 +444,6 @@ void FlagGame::EvaluateRound(void)
 	{
 		m_data->resultText.setString("No Winner!");
 		m_data->resultText.setOrigin(m_data->resultText.getLocalBounds().width / 2, m_data->resultText.getLocalBounds().height / 2);
-		m_data->audio->PlaySound("GameOver", false);
 	}
 
 	m_data->state = STATE_ROUND_END;
@@ -414,10 +453,9 @@ void FlagGame::EvaluateRound(void)
 void FlagGame::ChangeRequiredInput(void)
 {
 	m_data->requiredInput = GetRandomValidInput();
-	m_data->buttonSprite.setTexture(m_data->buttonTexture[(int)m_data->requiredInput]);
-	m_data->buttonSprite.setOrigin(m_data->buttonSprite.getLocalBounds().width / 2, m_data->buttonSprite.getLocalBounds().height / 2);
+	m_data->buttonSprite.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>(m_data->stringTab[(int)m_data->requiredInput]));
 
-	m_data->audio->PlaySound("NewFlag", false);
+	m_data->buttonSprite.setOrigin(m_data->buttonSprite.getLocalBounds().width / 2, m_data->buttonSprite.getLocalBounds().height / 2);
 
 	char inputBuffer[100];
 	std::snprintf(inputBuffer, 100, "Press: %s", GetGamePadButtonName(m_data->requiredInput));
@@ -476,10 +514,7 @@ void FlagGame::UpdatePlayerInputTexts(void)
 				m_data->playerData[playerID].inputText.setString(buffer);
 
 				m_data->playerData[playerID].buttonSprite.setColor(sf::Color::White);
-				m_data->playerData[playerID].buttonSprite.setTexture(
-					m_data->buttonTexture[(int)m_data->playerData[playerID].currentInput]
-				);
-				m_data->audio->PlaySound("InputPressed", false);
+				m_data->playerData[playerID].buttonSprite.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>(m_data->stringTab[(int)m_data->playerData[playerID].currentInput]));
 			}
 			else
 			{

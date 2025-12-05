@@ -2,9 +2,12 @@
 #ifndef _INC_ROCKPAPERSCISSORS_HPP
 #define _INC_ROCKPAPERSCISSORS_HPP
 
-#include "../../../Common.hpp"
-#include "../../../Scenes/Scene.hpp"
-#include "../../../Animation/Animation/Timer.hpp" 
+
+#include "../../Common.hpp"
+#include "../../Scenes/Scene.hpp"
+#include "../../Animation/Animation/Timer.hpp" 
+#include "../../Animation/Graphics.hpp"
+#include "../../Animation/Animation.hpp"
 
 
 class RockPaperScissors : public SceneBase
@@ -21,30 +24,34 @@ class RockPaperScissors : public SceneBase
 
 	enum State
 	{
+		STATE_NONE,
+
 		STATE_WARMUP,
 		STATE_PLAY,
 		STATE_PAUSE,
-		STATE_VICTORY,
-		STATE_EQUALITY
+		STATE_ENDGAME,
 	};
 
 	struct SceneData
 	{
 		sf::Sprite spriteTab[6];                                                                                                                             
-		sf::Texture textureTab[6];
+		sf::Text timerText;
 
-		sf::Sprite playerChoiceSprite[2];
+		sf::Sprite background;
+
+
+		RPS_Choice playersChoice[2];
+		SpriteAnimated playerChoiceSprite[2];
 		Timer timer;
 
-		sf::Text timerText;
-		sf::Font font;
 
 		sf::Text victoryText;
-		State state;
-		GameData* gameData;
+		State state = STATE_NONE;
+		GameData* gameData = NULL;
 
-		RPS_Choice playersChoice[4];
-		int roundNB;
+		int roundNB = 0;
+
+		anim::Animator animator[2];
 	};
 	SceneData* m_data;
 

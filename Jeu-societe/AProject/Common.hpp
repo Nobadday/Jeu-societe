@@ -2,6 +2,7 @@
 
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
+#include "./Utilities/BetterWindow/BetterWindow.hpp"
 
 #include "Screen.hpp"
 
@@ -12,6 +13,7 @@
 #include "Map/JsonReader.h"
 
 #include "Utilities/NewMath.hpp"
+#include "Utilities/MathPlus.hpp"
 #include "Utilities/StringFormat.hpp"
 #include "Utilities/Binds.hpp"
 

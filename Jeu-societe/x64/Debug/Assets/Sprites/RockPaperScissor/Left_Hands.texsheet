@@ -1,0 +1,43 @@
+{ "frames": [
+   {
+    "filename": "Scissors0",
+    "frame": { "x": 0, "y": 0, "w": 306, "h": 204 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 306, "h": 204 },
+    "sourceSize": { "w": 306, "h": 204 },
+    "duration": 100
+   },
+   {
+    "filename": "Rock1",
+    "frame": { "x": 306, "y": 0, "w": 306, "h": 204 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 306, "h": 204 },
+    "sourceSize": { "w": 306, "h": 204 },
+    "duration": 100
+   },
+   {
+    "filename": "Paper2",
+    "frame": { "x": 0, "y": 204, "w": 306, "h": 204 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 306, "h": 204 },
+    "sourceSize": { "w": 306, "h": 204 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.4-x64",
+  "image": "Left_Hands-sheet.png",
+  "format": "RGBA8888",
+  "size": { "w": 612, "h": 408 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "Scissors", "from": 0, "to": 0, "direction": "forward", "color": "#000000ff" },
+   { "name": "Rock", "from": 1, "to": 1, "direction": "forward", "color": "#000000ff" },
+   { "name": "Paper", "from": 2, "to": 2, "direction": "forward", "color": "#000000ff" }
+  ]
+ }
+}

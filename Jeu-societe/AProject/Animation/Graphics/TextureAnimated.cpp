@@ -116,7 +116,7 @@ bool TextureAnimated::LoadFromFile(std::fstream& _file, const std::string& _dirP
 
 				AnimationProperties& newAnim = this->m_animations[i];
 				newAnim.m_name = object["name"];
-				newAnim.m_loop = object.value("loop", false);
+				newAnim.m_loop = object.value("loop", ANIMATION_DEFAULT_LOOP);
 				newAnim.m_atlasIndex = object["from"];
 				newAnim.m_frameCount = (object["to"] - newAnim.m_atlasIndex) + 1;
 				

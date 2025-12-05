@@ -1,20 +1,5 @@
 {
     "assets": [
-         {
-            "name": "Abutton",
-            "type": "Texture",
-            "path":  "./Assets/Sprites/RockPaperScissor/A.png"
-        },
-        {
-            "name": "Bbutton",
-            "type": "Texture",
-            "path":  "./Assets/Sprites/RockPaperScissor/B.png"
-        },
-        {
-            "name": "Xbutton",
-            "type": "Texture",
-            "path":  "./Assets/Sprites/RockPaperScissor/X.png"
-        },
         {
             "name": "Pierre",
             "type": "Texture",
@@ -34,6 +19,18 @@
             "name": "RPSFont",
             "type": "Font",
             "path": "./Assets/Fonts/Font.ttf"
+        },
+        {
+            "name": "RightHands",
+            "type": "Texture Animated",
+            "path": "./Assets/Sprites/RockPaperScissor/Right_Hands.anim",
+            "subType" : 1
+        },
+        {
+            "name": "LeftHands",
+            "type": "Texture Animated",
+            "path": "./Assets/Sprites/RockPaperScissor/Left_Hands.anim",
+            "subType" : 1
         }
     ]
 }
