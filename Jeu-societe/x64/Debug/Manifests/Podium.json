@@ -14,7 +14,7 @@
         {
             "name" : "Podiums",
             "type" : "Texture Atlas",
-            "path" : "Assets/Sprites/Podium/Podiums.json",
+            "path" : "Assets/Sprites/Podium/Podium.json",
             "subType" : 3
         }
     ]

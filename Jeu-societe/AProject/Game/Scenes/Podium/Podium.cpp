@@ -45,7 +45,7 @@ void Podium::Load()
 		playerTextureName += "_" + std::to_string(playerPos);
 
 
-		std::string PodiumTextureName = "Podium_";
+		std::string PodiumTextureName = "PODIUM_";
 		PodiumTextureName += std::to_string(currentPlayer + 1) + "_" + std::to_string(playerPos);
 
 		m_data->playerSpriteArray[i].SetTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAtlas>("CharactersPoses", AssetManager::AssetType::TEXTURE_ATLAS), playerTextureName);
