@@ -23,4 +23,4 @@ void TextAnimated::OnFrameChange(void)
 	this->SetStringDisplay(anim::Easing::GetCoefficient(this->GetFrameCoefficient(), this->m_easing));
 }
 
-// TextAnimated C++ || v1.0
+// TextAnimated C++ || v1.1
