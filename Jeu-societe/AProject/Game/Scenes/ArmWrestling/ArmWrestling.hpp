@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../Common.hpp"
-#include "../../Scenes/Scene.hpp"
+#include "../../../Common.hpp"
+#include "../../../Scenes/Scene.hpp"
 
 class ArmWrestlingPlayer
 {
