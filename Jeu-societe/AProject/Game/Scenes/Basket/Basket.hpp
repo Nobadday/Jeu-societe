@@ -2,8 +2,8 @@
 #ifndef _INC_BASKET_HPP
 #define _INC_BASKET_HPP
 
-#include "../../../Common.hpp"
-#include "../../../Scenes/Scene.hpp"
+#include "../../Common.hpp"
+#include "../../Scenes/Scene.hpp"
 
 class Basket : public SceneBase
 {

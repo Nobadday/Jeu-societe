@@ -31,41 +31,28 @@
             "type" : "Texture Animated",
             "path" : "Assets/Shared/PlaceHolder.anim", 
             "subType" : 1
-        },
-        {
-            "name": "Abutton",
-            "type": "Texture",
-            "path":  "./Assets/Shared/Images/A.png"
-        },
-        {
-            "name": "Bbutton",
-            "type": "Texture",
-            "path":  "./Assets/Shared/Images/B.png"
-        },
-        {
-            "name": "Xbutton",
-            "type": "Texture",
-            "path":  "./Assets/Shared/Images/X.png"
-        },
-        {
-            "name": "Ybutton",
-            "type": "Texture",
-            "path":  "./Assets/Shared/Images/Y.png"
-        },
-        {
-            "name": "RBbutton",
-            "type": "Texture",
-            "path":  "./Assets/Shared/Images/RB.png"
-        },
-        {
-            "name": "LBbutton",
-            "type": "Texture",
-            "path":  "./Assets/Shared/Images/LB.png"
+        },{
+            "name" : "Input",
+            "type" : "Texture Atlas",
+            "path" : "Assets/Shared/Images/Input.json", 
+            "subType" : 3
         },
         {
             "name": "MinigameBackground",
             "type": "Texture",
-            "path": "Assets/shared/MinigameBackground.png"
+            "path": "Assets/Shared/MinigameBackground.png"
+        },
+		{
+            "name" : "IconeAura",
+            "type" : "Texture Animated",
+            "path" : "Assets/Shared/Icone/Icone-PersoAura.anim",
+			"subType" : 1
+        },
+		{
+            "name" : "Icone",
+            "type" : "Texture Animated",
+            "path" : "Assets/Shared/Icone/Icone-Perso.anim",
+			"subType" : 1
         }
     ]
 }

@@ -5,6 +5,7 @@
 
 #include "./Graphics/SpriteAnimated.hpp"
 #include "./Graphics/TextAnimated.hpp"
+#include "./Graphics/SpriteAtlas.hpp"
 
 #endif
 // Animation, graphics header group || v1.2

@@ -60,10 +60,10 @@
 			"subType" : 1
         },
 		{
-            "name" : "Icone",
-            "type" : "Texture Animated",
-            "path" : "Assets/Sprites/Board/Icone/Icone-Perso.anim",
-			"subType" : 1
+            "name" : "Effect",
+            "type" : "Texture Atlas",
+            "path" : "Assets/Sprites/Board/Effect/tete.json",
+			"subType" : 3
         }
     ]
 }   
