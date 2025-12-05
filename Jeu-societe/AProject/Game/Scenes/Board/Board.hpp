@@ -5,11 +5,15 @@
 
 #include "../../Map/Tiled.h"
 
+#include "../../Video+Audio/HighResVideoPlayer.hpp"
+
 #include "../../Utilities/Camera/Camera.hpp"
 
 #include "../../Animation/Animation/Animator.hpp"
 
 #include "../../Animation/Graphics/SpriteAnimated.hpp"
+
+#include "../../Animation/Graphics/SpriteAtlas.hpp"
 
 #include "../../Animation/Graphics/AnimatedObject.hpp"
 
@@ -17,8 +21,11 @@
 
 #include "../../Animation/Graphics/TextureAtlas.hpp"
 
+#include "../../Animation/Graphics/TextPlus.hpp"
+
 #define TIME_WIN_DISPLAY 1.0f
 #define TIME_LBM_DISPLAY 6.0f
+#define TIME_DIS_DISPLAY 0.1f
 #define MAX_TOUR_EFFECT 2
 
 class Effect
@@ -88,6 +95,7 @@ class BaseGame : public SceneBase
 			STATE = -1,
 			START,
 			PLAY,
+			DICE_ANIMATION,  // NOUVEAU : État pour l'animation du dé
 			DEPLACEMENT,
 			DEPLACEMENT_BACK,
 			DEPLACEMENT_SPLIT,
@@ -161,7 +169,7 @@ class BaseGame : public SceneBase
 		{
 			SpriteAnimated sprite;
 
-			sf::Text text;
+			TextPlus text;
 
 			std::string name;
 			
@@ -178,8 +186,6 @@ class BaseGame : public SceneBase
 
 		struct SceneData
 		{
-			Tiled tile;
-
 			std::vector<MapObject> posCase;
 
 			Camera camera;
@@ -210,6 +216,24 @@ class BaseGame : public SceneBase
 			LuckBonusMalus HudLBM;
 
 			SpriteAnimated icone;
+			SpriteAtlas iconeState;
+			SpriteAnimated iconeAura;
+
+			bool active;
+			
+			// NOUVEAU : Variables pour gérer l'animation du dé
+			int diceResult;           // Résultat du lancer de dé (1-6)
+			bool diceAnimationPlaying;  // Indique si la vidéo est en cours
+			sf::Vector2f dicePosition;  // Position d'affichage du dé
+
+			float timeDice;
+
+			// NOUVEAU : Shader pour le chroma key
+			sf::Shader chromaKeyShader;
+			std::vector<HighResVideoPlayer*> diceVideos;
+			HighResVideoPlayer* currentDiceVideo;
+			// MODIFICATION : Stocker des pointeurs vers les vidéos
+			
 		};
 
 		GameData* m_gameData;
@@ -284,6 +308,8 @@ class BaseGame : public SceneBase
 		void DrawIconePlayer(sf::RenderWindow& _renderWindow, int _i);
 
 	public:
+		void LoadAsync(std::atomic<float>& progress);
+
 		virtual void Load(void);
 		
 		virtual void Unload(void);
