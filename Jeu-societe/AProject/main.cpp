@@ -79,13 +79,14 @@ int main(void)
 
 void MainDataLoad(MainData& _mainData)
 {
-	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "SFML", sf::Style::Default);
-
+	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Cute & Cursed", sf::Style::Default);
+	_mainData.renderWindow.SetFullscreenPrefered(true);
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
 
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
 	_mainData.gameData.m_assetManager = &_mainData.assetManager;
+
 
 	_mainData.assetManager.LoadManifest("Manifests/Main.json", "main");
 
