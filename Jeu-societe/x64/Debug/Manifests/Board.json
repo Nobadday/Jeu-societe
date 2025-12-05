@@ -58,6 +58,12 @@
             "type" : "Texture Animated",
             "path" : "Assets/Sprites/Board/Card/anim_card.anim",
 			"subType" : 1
+        },
+		{
+            "name" : "Effect",
+            "type" : "Texture Atlas",
+            "path" : "Assets/Sprites/Board/Effect/tete.json",
+			"subType" : 3
         }
     ]
 }   
