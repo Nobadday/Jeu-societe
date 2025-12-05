@@ -20,16 +20,16 @@ void ArmWrestling::Load(void)
 
 	m_bar.SetColorFiller(sf::Color(5, 215, 223));
 	m_bar.SetColorBG(sf::Color(94, 6, 113));
-	m_bar.setOrigin(m_bar.GetLocalBounds().getSize().x / 2, m_bar.GetLocalBounds().getSize().y / 2);
-
-
-	m_currentValue = MAX / 2;
-
 	m_bar.SetSize(sf::Vector2f(SCREEN_WIDTH / 7, SCREEN_HEIGHT / 18));
+	m_bar.setOrigin(m_bar.GetLocalBounds().getSize().x / 2, m_bar.GetLocalBounds().getSize().y / 2);
 	m_bar.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.1f);
 
 	m_bar.SetBarCompletion(m_currentValue, MAX, 0);
 	m_bar.SetAvoidOverflow(true);
+
+
+	m_currentValue = MAX / 2;
+
 
 	m_timerText.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("ArmWrestlingFont", AssetManager::AssetType::FONT));
 	m_timerText.SetOutline(2, sf::Color::Black);
