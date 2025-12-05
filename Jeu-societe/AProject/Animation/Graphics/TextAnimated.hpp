@@ -27,4 +27,4 @@ class TextAnimated : public TextPlus, public Animation
 
 
 #endif
-// TextAnimated C++ || v1.0
+// TextAnimated C++ || v1.1
