@@ -18,7 +18,7 @@
         {
             "name": "RPSFont",
             "type": "Font",
-            "path": "./Assets/Fonts/Font.ttf"
+            "path": "./Assets/Fonts/pointfree.ttf"
         },
         {
             "name" : "RPSHand",
