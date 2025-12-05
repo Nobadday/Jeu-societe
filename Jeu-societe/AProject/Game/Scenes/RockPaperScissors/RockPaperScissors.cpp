@@ -25,7 +25,7 @@ void RockPaperScissors::Load()
 	m_data->timerText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("RPSFont", AssetManager::AssetType::FONT));
 	m_data->timerText.setOrigin(sf::Vector2f(0.6f, 0.8f));
 	m_data->timerText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.1f);
-	m_data->timerText.setCharacterSize(75);
+	m_data->timerText.setCharacterSize(75u);
 	m_data->timerText.SetOutline(2, sf::Color::Black);
 
 
@@ -118,7 +118,6 @@ void RockPaperScissors::PollEvent(sf::Event& _event)
 					default:
 						break;
 					}
-
 				}
 			}
 		}

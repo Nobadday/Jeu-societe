@@ -169,7 +169,6 @@
     <ClCompile Include="Game\Scenes\RandCard\RandCard.cpp" />
     <ClCompile Include="Game\Scenes\RockPaperScissors\RockPaperScissors.cpp" />
     <ClCompile Include="Game\Scenes\RussianRoulette\RussianRoulette.cpp" />
-    <ClCompile Include="Graphics\HealthBar.cpp" />
     <ClCompile Include="Map\JsonReader.cpp" />
     <ClCompile Include="Map\MapLayer.cpp" />
     <ClCompile Include="Map\MapObject.cpp" />
@@ -178,6 +177,7 @@
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Scenes\SceneHandler.cpp" />
     <ClCompile Include="Ui\Button.cpp" />
+    <ClCompile Include="Ui\HealthBar\HealthBar.cpp" />
     <ClCompile Include="Ui\MenuSystem.cpp" />
     <ClCompile Include="Utilities\AssetManager.cpp" />
     <ClCompile Include="Utilities\AudioEngine\AudioEngine.cpp" />
@@ -224,7 +224,6 @@
     <ClInclude Include="Game\Scenes\RandCard\RandCard.hpp" />
     <ClInclude Include="Game\Scenes\RockPaperScissors\RockPaperScissors.hpp" />
     <ClInclude Include="Game\Scenes\RussianRoulette\RussianRoulette.hpp" />
-    <ClInclude Include="Graphics\HealthBar.hpp" />
     <ClInclude Include="Map\JsonReader.h" />
     <ClInclude Include="Map\MapLayer.h" />
     <ClInclude Include="Map\MapObject.h" />
@@ -234,6 +233,7 @@
     <ClInclude Include="Scenes\SceneHandler.hpp" />
     <ClInclude Include="Screen.hpp" />
     <ClInclude Include="Ui\Button.hpp" />
+    <ClInclude Include="Ui\HealthBar\HealthBar.hpp" />
     <ClInclude Include="Ui\MenuSystem.hpp" />
     <ClInclude Include="Utilities\AssetManager.hpp" />
     <ClInclude Include="Utilities\AudioEngine\AudioEngine.hpp" />
