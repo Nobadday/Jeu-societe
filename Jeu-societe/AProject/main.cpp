@@ -85,7 +85,6 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.renderWindow.SetFullscreenPrefered(true);
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
 
-	//_mainData.renderWindow.setSize(sf::Vector2u(300u, 200u));
 
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
