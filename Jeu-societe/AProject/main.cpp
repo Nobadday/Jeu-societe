@@ -52,7 +52,7 @@ int main(void)
 	for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
 	{
 		mainData.gameData.m_playerDataList[i].SetJoystickID(i);
-		mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 8));
+		mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 4));
 	}
 
 
@@ -82,7 +82,7 @@ void MainDataLoad(MainData& _mainData)
 {
 	_mainData.renderWindow.SetAntiAliasing(sfMod::RenderWindow::X16);
 
-	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Cute and Curse", sf::Style::Default);
+	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Cute & Cursed", sf::Style::Default);
 
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
 
