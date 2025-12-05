@@ -96,7 +96,7 @@
     <ClCompile Include="Animation\Graphics\AtlasContainer.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\HealthBar.cpp">
+    <ClCompile Include="Ui\HealthBar\HealthBar.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Animation\Graphics\SpriteAtlas.cpp">
@@ -215,7 +215,7 @@
     <ClInclude Include="Animation\Graphics\AtlasContainer.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\HealthBar.hpp">
+    <ClInclude Include="Ui\HealthBar\HealthBar.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Animation\Graphics\SpriteAtlas.hpp">
