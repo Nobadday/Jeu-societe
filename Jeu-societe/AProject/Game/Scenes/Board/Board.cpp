@@ -27,12 +27,12 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	progress.store(0.4f);
 
 	// Chargement de la carte
-	m_data->tile.InitTiled("Assets/Map/map.json");
+	//m_gameData->m_tile.InitTiled("Assets/Map/map.json");
 	m_gameData->m_renderWindow->ResetView();
 	m_data->camera.Reset(m_gameData->m_renderWindow->getView());
 	progress.store(0.5f);
 
-	MapLayer layer = m_data->tile.GetMapLayer("point");
+	MapLayer layer = m_gameData->m_tile->GetMapLayer("point");
 	m_data->posCase = layer.GetObjects();
 
 	m_data->players.resize(m_gameData->m_playerDataList.size());
@@ -41,9 +41,15 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	m_data->icone.setTexture(*m_gameData->m_assetManager->GetAsset<TextureAnimated>("Icone", AssetManager::AssetType::TEXTURE_ANIMATED));
 	m_data->icone.setOrigin({ 0.5f,1 });
 
+	m_data->iconeState.setTexture(*m_gameData->m_assetManager->GetAsset<TextureAtlas>("Effect", AssetManager::AssetType::TEXTURE_ATLAS));
+	m_data->iconeState.setOrigin({ 0.5f,1 });
+
+	m_data->iconeAura.setTexture(*m_gameData->m_assetManager->GetAsset<TextureAnimated>("IconeAura", AssetManager::AssetType::TEXTURE_ANIMATED));
+	m_data->iconeAura.setOrigin({ 0.5f,1 });
+
 	m_data->timeWin = TIME_WIN_DISPLAY;
 	m_data->timeLBM = TIME_LBM_DISPLAY;
-	m_data->timeDice = TIME_LBM_DISPLAY;
+	m_data->timeDice = TIME_DIS_DISPLAY;
 
 	// NOUVEAU : Initialisation de la vidéo du dé
 	m_data->diceAnimationPlaying = false;
@@ -52,34 +58,22 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 
 	// NOUVEAU : Pré-charger toutes les vidéos des dés
 	m_data->diceVideos.resize(6);
-
 	for (int i = 0; i < 6; i++)
 	{
+		m_data->diceVideos[i] = new HighResVideoPlayer();
 		std::string videoPath = "Assets/Video/De" + std::to_string(i + 1) + ".mov";
-		if (!m_data->diceVideos[i].openFromFile(videoPath))
+		if (!m_data->diceVideos[i]->loadFromFile(videoPath))
 		{
-			std::cout << "Erreur : Impossible de charger " << videoPath << std::endl;
+			std::cout << "Erreur : Impossible de charger la video du de: " << videoPath << std::endl;
 		}
 		else
 		{
-			m_data->diceVideos[i].setOrigin(
-				m_data->diceVideos[i].getSize().x / 2,
-				m_data->diceVideos[i].getSize().y / 2
-			);
-			m_data->diceVideos[i].setVolume(50.0f);
-
-			// NOUVEAU : Afficher la durée pour vérification
-			sf::Time duration = m_data->diceVideos[i].getDuration();
-			std::cout << "Vidéo De" << (i + 1) << " - Durée: "
-				<< duration.asSeconds() << "s" << std::endl;
+			HighResConfig config;
+			config.enableLoop = false;
+			m_data->diceVideos[i]->setConfig(config);
 		}
 	}
 
-	// Initialiser le pointeur à nullptr
-	if (!m_data->diceVideos.empty())
-	{
-		m_data->currentDiceVideo = &m_data->diceVideos[0];
-	}
 	progress.store(0.7f);
 
 	// NOUVEAU : Charger le shader pour la transparence
@@ -379,23 +373,11 @@ void BaseGame::PollEvent(sf::Event& _event)
 				// CORRECTION : Utiliser un pointeur au lieu de copier
 				if (rando >= 1 && rando <= 6)
 				{
-					// Arrêter la vidéo précédente si elle joue
-					if (m_data->currentDiceVideo != nullptr &&
-						m_data->currentDiceVideo->getStatus() == sfe::Playing)
-					{
-						m_data->currentDiceVideo->stop();
-					}
+					// Lancer la vidéo correspondante
 
-					// Pointer vers la vidéo pré-chargée
-					m_data->currentDiceVideo = &m_data->diceVideos[rando - 1];
+					m_data->currentDiceVideo = m_data->diceVideos[rando - 1];
 
-					// Redémarrer depuis le début
-					m_data->currentDiceVideo->stop();  // S'assurer qu'elle est arrêtée
-					m_data->currentDiceVideo->setPosition(
-						m_gameData->m_renderWindow->getView().getCenter()
-					);
 					m_data->currentDiceVideo->play();
-
 					m_data->diceAnimationPlaying = true;
 					SetBoardState(DICE_ANIMATION);
 				}
@@ -512,7 +494,7 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 
 	std::string layer = "point";
 
-	m_data->tile.DrawMapLayers(*mod, referenceView.getCenter(), layer);
+	m_gameData->m_tile->DrawMapLayers(*mod, referenceView.getCenter(), layer);
 
 	// Créer un vecteur d'indices pour trier les joueurs par position Y
 	std::vector<int> indices(m_data->players.size());
@@ -543,7 +525,7 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 		mod->draw(m_data->players[idx].playeur);
 	}
 
-	m_data->tile.DrawMapLayers(*mod, referenceView.getCenter(), "point");
+	m_gameData->m_tile->DrawMapLayers(*mod, referenceView.getCenter(), "point");
 
 	for (auto& effect : m_data->effectSwap)
 	{
@@ -562,31 +544,24 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 		DrawIconePlayer(*mod, idx);
 	}
 
-	// NOUVEAU : Dessiner la vidéo du dé si elle est en cours
-	if (m_data->diceAnimationPlaying && m_data->state == DICE_ANIMATION)
+	if (m_data->state == DICE_ANIMATION)
 	{
-		sf::RenderStates states;
-		states.shader = &m_data->chromaKeyShader;
-		states.transform = m_data->currentDiceVideo->getTransform();
+		// CORRECTION : Positionner la vidéo au centre de la vue (caméra) au lieu de coordonnées écran fixes
+		sf::Vector2f cameraCenter = referenceView.getCenter();
 
-		mod->draw(*m_data->currentDiceVideo, states);
-	}
+		sf::Sprite videoSprite(m_data->currentDiceVideo->getSprite());
 
-	// CORRECTION : Dessiner la vidéo via le pointeur
-	if (m_data->diceAnimationPlaying && m_data->state == DICE_ANIMATION)
-	{
-		if (m_data->currentDiceVideo != nullptr)
-		{
-			// Vérifier que la vidéo est bien en cours de lecture
-			if (m_data->currentDiceVideo->getStatus() != sfe::Stopped)
-			{
-				sf::RenderStates states;
-				states.shader = &m_data->chromaKeyShader;
-				states.transform = m_data->currentDiceVideo->getTransform();
+		// Obtenir la taille du sprite vidéo
+		sf::FloatRect videoBounds = videoSprite.getLocalBounds();
 
-				mod->draw(*m_data->currentDiceVideo, states);
-			}
-		}
+		// Centrer l'origine du sprite
+		videoSprite.setOrigin(videoBounds.width / 2.0f, videoBounds.height / 2.0f);
+
+		// Positionner au centre de la caméra (suit les personnages)
+		videoSprite.setPosition(cameraCenter);
+
+		// Dessiner avec le shader de chroma key
+		mod->draw(videoSprite, &m_data->chromaKeyShader);
 	}
 }
 
@@ -633,9 +608,9 @@ void BaseGame::CaseAction()
 		m_data->HudLBM.sprite.SetAnimation(m_data->HudLBM.name);
 		sf::Vector2u size = m_data->HudLBM.sprite.getTexture()->getSize();
 
-		m_data->HudLBM.sprite.setScale({ 0.5f , 0.5f });
+		m_data->HudLBM.sprite.setScale({ 0.25f , 0.25f });
 		m_data->HudLBM.sprite.setOrigin({ 0.5,0.5 });
-		m_data->HudLBM.sprite.setPosition({ size2.x   ,  size2.y });
+		m_data->HudLBM.sprite.setPosition({ SCREEN_WIDTH / 2  ,   SCREEN_WIDTH / 10 });
 		m_data->timeLBM = TIME_LBM_DISPLAY;
 		BonusMalusLuck(false);
 	}
@@ -656,9 +631,9 @@ void BaseGame::CaseAction()
 
 		sf::Vector2u size = m_data->HudLBM.sprite.getTexture()->getSize();
 
-		m_data->HudLBM.sprite.setScale({ 0.5f , 0.5f });
+		m_data->HudLBM.sprite.setScale({ 0.25f , 0.25f });
 		m_data->HudLBM.sprite.setOrigin({ 0.5,0.5 });
-		m_data->HudLBM.sprite.setPosition({ size2.x   ,  size2.y });
+		m_data->HudLBM.sprite.setPosition({ SCREEN_WIDTH / 2  ,   SCREEN_WIDTH / 10 });
 		m_data->timeLBM = TIME_LBM_DISPLAY;
 
 		BonusMalusLuck(true);
@@ -676,9 +651,9 @@ void BaseGame::CaseAction()
 		m_data->HudLBM.sprite.SetAnimation(m_data->HudLBM.name);
 		sf::Vector2u size = m_data->HudLBM.sprite.getTexture()->getSize();
 
-		m_data->HudLBM.sprite.setScale({ 0.5f , 0.5f });
+		m_data->HudLBM.sprite.setScale({ 0.25f , 0.25f });
 		m_data->HudLBM.sprite.setOrigin({ 0.5,0.5 });
-		m_data->HudLBM.sprite.setPosition({ size2.x , size2.y });
+		m_data->HudLBM.sprite.setPosition({ SCREEN_WIDTH / 2  ,   SCREEN_WIDTH / 10 });
 		m_data->timeLBM = TIME_LBM_DISPLAY;
 
 		BonusMalusLuck(randmt::Chance(0.5f));
@@ -916,25 +891,6 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 		SetBoardState(PLAY, 0);
 		break;
 	case DICE_ANIMATION:
-		if (m_data->currentDiceVideo != nullptr)
-		{
-			//m_data->currentDiceVideo->update();
-
-			sfe::Status status = m_data->currentDiceVideo->getStatus();
-			sf::Time currentTime = m_data->currentDiceVideo->getPlayingOffset();
-			sf::Time totalDuration = m_data->currentDiceVideo->getDuration();
-
-			// DEBUG : Afficher les informations
-			std::cout << "Vidéo - Temps: " << currentTime.asSeconds()
-				<< "s / " << totalDuration.asSeconds()
-				<< "s | Status: " << status << std::endl;
-
-			if (status == sfe::Stopped)
-			{
-				std::cout << "Vidéo terminée normalement" << std::endl;
-				// ... transition ...
-			}
-		}
 		break;
 	default:
 		break;
@@ -1028,13 +984,8 @@ void BaseGame::BoardStateUpdate(float _dt)
 
 	case DICE_ANIMATION:
 	{
-		m_data->currentDiceVideo->update();
-
-		sfe::Status status = m_data->currentDiceVideo->getStatus();
-
-		std::cout << "Video status: " << status << std::endl;  // DEBUG
-
-		if (status == sfe::Stopped)
+		m_data->currentDiceVideo->update(_dt);
+		if (m_data->currentDiceVideo->isFinish())
 		{
 			m_data->timeDice -= _dt;
 			if (m_data->timeDice <= 0)
@@ -1047,7 +998,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 
 				int nextIndex = 0;
 
-				m_data->timeDice = TIME_DIS_DISPLAY *100;
+				m_data->timeDice = TIME_DIS_DISPLAY;
 
 				if (player.state != NONE)
 				{
@@ -1071,6 +1022,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 				}
 			}
 		}
+
 	}
 	break;
 	case DEPLACEMENT_SPLIT:
@@ -1448,7 +1400,7 @@ void BaseGame::UpdateCameraToShowAllPlayers()
 	//// Calculer le centre
 	sf::Vector2f center = (minPos + maxPos) / 2.0f;
 
-	sf::FloatRect viewRect = m_data->tile.GetMapLayer("Camera").GetObject(0).GetBounds();
+	sf::FloatRect viewRect = m_gameData->m_tile->GetMapLayer("Camera").GetObject(0).GetBounds();
 
 	m_data->camera.SetLimitations(viewRect);
 
@@ -2092,12 +2044,13 @@ void BaseGame::LBMDisplayUpdate(float _dt)
 
 		sf::Vector2f size2 = m_gameData->m_renderWindow->getView().getCenter();
 
-		m_data->HudLBM.sprite.setScale({ 0.5f , 0.5f });
+		m_data->HudLBM.sprite.setScale({ 0.25f , 0.25f });
 		m_data->HudLBM.sprite.setOrigin({ 0.5,0.5 });
-		m_data->HudLBM.sprite.setPosition({ size2.x, size2.y });
+		m_data->HudLBM.sprite.setPosition({ SCREEN_WIDTH / 2  , SCREEN_WIDTH / 10 });
 
 		//m_data->HudLBM.sprite.Update(0.016);
 
+		m_data->HudLBM.text.setOrigin({ 0.5f , 0.5f });
 
 		if (m_data->HudLBM.chosse == "CasePlus")
 		{
@@ -2105,23 +2058,15 @@ void BaseGame::LBMDisplayUpdate(float _dt)
 
 			m_data->HudLBM.text.setString("Avance de " + std::to_string(m_data->HudLBM.rando) + " Case ");
 
-			sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
-
-			m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
-
-			m_data->HudLBM.text.setPosition({ size2.x, size2.y });
+			m_data->HudLBM.text.setPosition({ SCREEN_WIDTH / 2  , SCREEN_WIDTH / 10 });
 
 			m_data->HudLBM.active = true;
 		}
 		else if (m_data->HudLBM.chosse == "Immunite")
 		{
-			m_data->HudLBM.text.setString("Imuniser au Malus Pendant 2 Tour");
+			m_data->HudLBM.text.setString("Imuniser au \nMalus Pendant 2 Tour");
 
-			sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
-
-			m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
-
-			m_data->HudLBM.text.setPosition({ size2.x, size2.y });
+			m_data->HudLBM.text.setPosition({ SCREEN_WIDTH / 2  , SCREEN_WIDTH / 10 });
 
 			m_data->HudLBM.active = true;
 		}
@@ -2133,13 +2078,9 @@ void BaseGame::LBMDisplayUpdate(float _dt)
 				m_data->HudLBM.swap = randmt::RandomInt(0, (int)m_data->players.size() - 1);
 			}
 
-			m_data->HudLBM.text.setString("Swap de Place avec le Joueur " + std::to_string(m_data->HudLBM.swap));
+			m_data->HudLBM.text.setString("Swap de Place \navec le Joueur " + std::to_string(m_data->HudLBM.swap));
 
-			sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
-
-			m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
-
-			m_data->HudLBM.text.setPosition({ size2.x, size2.y });
+			m_data->HudLBM.text.setPosition({ SCREEN_WIDTH / 2  , SCREEN_WIDTH / 10 });
 
 			m_data->HudLBM.active = true;
 		}
@@ -2150,36 +2091,26 @@ void BaseGame::LBMDisplayUpdate(float _dt)
 
 			m_data->HudLBM.text.setString("Recule de " + std::to_string(m_data->HudLBM.rando) + " Case ");
 
-			sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
-
-			m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
-
-			m_data->HudLBM.text.setPosition({ size2.x, size2.y });
+			m_data->HudLBM.text.setPosition({ SCREEN_WIDTH / 2  , SCREEN_WIDTH / 10 });
 
 			m_data->HudLBM.active = true;
 		}
 		else if (m_data->HudLBM.chosse == "Infection")
 		{
-			m_data->HudLBM.text.setString("Infecte pas de Bonus pendans 2 Tours ");
+			m_data->HudLBM.text.setString("Infecte pas de \nBonus pendans 2 Tours ");
 
 			sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
 
-			m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
-
-			m_data->HudLBM.text.setPosition({ size2.x, size2.y });
+			m_data->HudLBM.text.setPosition({ SCREEN_WIDTH / 2  , SCREEN_WIDTH / 10 });
 
 			m_data->HudLBM.active = true;
 		}
 		else if (m_data->HudLBM.chosse == "PaseTour")
 		{
 
-			m_data->HudLBM.text.setString("Passe son Tour au prochains Tour");
+			m_data->HudLBM.text.setString("Passe son Tour\n au prochains Tour");
 
-			sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
-
-			m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
-
-			m_data->HudLBM.text.setPosition({ size2.x, size2.y });
+			m_data->HudLBM.text.setPosition({ SCREEN_WIDTH / 2  , SCREEN_WIDTH / 10 });
 
 			m_data->HudLBM.active = true;
 		}
@@ -2191,26 +2122,18 @@ void BaseGame::LBMDisplayUpdate(float _dt)
 				m_data->HudLBM.swap = randmt::RandomInt(0, (int)m_data->players.size() - 1);
 			}
 
-			m_data->HudLBM.text.setString("Swap de Place avec le Joueur " + m_data->players[m_data->HudLBM.swap].playeur.getString());
+			m_data->HudLBM.text.setString("Swap de Place\n avec le Joueur " + m_data->players[m_data->HudLBM.swap].playeur.getString());
 
-			sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
-
-			m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
-
-			m_data->HudLBM.text.setPosition({ size2.x, size2.y });
+			m_data->HudLBM.text.setPosition({ SCREEN_WIDTH / 2  , SCREEN_WIDTH / 10 });
 
 			m_data->HudLBM.active = true;
 		}
 		else if (m_data->HudLBM.chosse == "Confus")
 		{
 
-			m_data->HudLBM.text.setString("Confus le Prochain Tour votre lance de Dée vous fait reculer");
+			m_data->HudLBM.text.setString("Confus le Prochain \n Tour votre lance de Dée vous fait reculer");
 
-			sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
-
-			m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
-
-			m_data->HudLBM.text.setPosition({ size2.x, size2.y });
+			m_data->HudLBM.text.setPosition({ SCREEN_WIDTH / 2  , SCREEN_WIDTH / 10 });
 
 			m_data->HudLBM.active = true;
 
@@ -2218,13 +2141,9 @@ void BaseGame::LBMDisplayUpdate(float _dt)
 		}
 		else if (m_data->HudLBM.chosse == "ConfusSkip")
 		{
-			m_data->HudLBM.text.setString("Confus Evite vous avez de la chance");
+			m_data->HudLBM.text.setString("Confus Evite \n vous avez de la chance");
 
-			sf::FloatRect s = m_data->HudLBM.text.getGlobalBounds();
-
-			m_data->HudLBM.text.setOrigin({ s.width / 2,s.height / 2 });
-
-			m_data->HudLBM.text.setPosition({ size2.x, size2.y });
+			m_data->HudLBM.text.setPosition({ SCREEN_WIDTH / 2  , SCREEN_WIDTH / 10 });
 
 			m_data->HudLBM.active = true;
 		}
@@ -2237,8 +2156,10 @@ void BaseGame::DrawLBM(sf::RenderWindow& _renderWindow)
 {
 	if (m_data->HudLBM.state != NONELBM)
 	{
-		_renderWindow.draw(m_data->HudLBM.sprite);
-		_renderWindow.draw(m_data->HudLBM.text);
+		m_gameData->m_renderWindow->ResetView();
+
+		m_gameData->m_renderWindow->draw(m_data->HudLBM.sprite);
+		m_gameData->m_renderWindow->draw(m_data->HudLBM.text);
 	}
 }
 
@@ -2251,40 +2172,52 @@ void BaseGame::DrawIconePlayer(sf::RenderWindow& _renderWindow, int _i)
 		if (_i != m_data->currentPlayerIndex)
 		{
 			m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.40f });
+			m_data->iconeAura.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.41f });
+			m_data->iconeState.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.30f });
 		}
 		else
 		{
 			m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.50f });
+			m_data->iconeAura.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.51f });
 		}
 		break;
 	case UP_RIGHT:
 		if (_i != m_data->currentPlayerIndex)
 		{
 			m_data->icone.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f , size2.y - SCREEN_HEIGHT / 2 + 305.f * 0.40f });
+			m_data->iconeAura.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f , size2.y - SCREEN_HEIGHT / 2 + 305.f * 0.41f });
+			m_data->iconeState.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.30f });
 		}
 		else
 		{
 			m_data->icone.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f , size2.y - SCREEN_HEIGHT / 2 + 305.f * 0.50f });
+			m_data->iconeAura.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f , size2.y - SCREEN_HEIGHT / 2 + 305.f * 0.51f });
 		}
 		break;
 	case DOWN_LEFT:
 		if (_i != m_data->currentPlayerIndex)
 		{
 			m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2 + 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 10 });
+			m_data->iconeAura.setPosition({ size2.x - SCREEN_WIDTH / 2 + 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 8 });
+			m_data->iconeAura.setPosition({ size2.x - SCREEN_WIDTH / 2 + 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 15 });
 		}
 		else
 		{
 			m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2 + 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 10 });
+			m_data->iconeAura.setPosition({ size2.x - SCREEN_WIDTH / 2 + 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 8 });
 		}
 		break;
 	case DONW_RIGHT:
 		if (_i != m_data->currentPlayerIndex)
 		{
 			m_data->icone.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 10 });
+			m_data->iconeAura.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 8 });
+			m_data->iconeAura.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 15 });
 		}
 		else
 		{
 			m_data->icone.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 10 });
+			m_data->iconeAura.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 8 });
 		}
 		break;
 	default:
@@ -2295,28 +2228,53 @@ void BaseGame::DrawIconePlayer(sf::RenderWindow& _renderWindow, int _i)
 	{
 	case PlayerData::CHARACTER_1_1:
 		m_data->icone.SetAnimation("Perso1-1");
+		m_data->iconeAura.SetAnimation("Perso1-1");
 		break;
 	case PlayerData::CHARACTER_1_2:
 		m_data->icone.SetAnimation("Perso1-2");
+		m_data->iconeAura.SetAnimation("Perso1-2");
 		break;
 	case PlayerData::CHARACTER_2_1:
 		m_data->icone.SetAnimation("Perso2-1");
+		m_data->iconeAura.SetAnimation("Perso2-1");
 		break;
 	case PlayerData::CHARACTER_2_2:
 		m_data->icone.SetAnimation("Perso2-2");
+		m_data->iconeAura.SetAnimation("Perso2-2");
 		break;
 	case PlayerData::CHARACTER_3_1:
 		m_data->icone.SetAnimation("Perso3-1");
+		m_data->iconeAura.SetAnimation("Perso3-1");
 		break;
 	case PlayerData::CHARACTER_3_2:
 		m_data->icone.SetAnimation("Perso3-2");
+		m_data->iconeAura.SetAnimation("Perso3-2");
 		break;
 	case PlayerData::CHARACTER_4_1:
 		m_data->icone.SetAnimation("Perso4-1");
+		m_data->iconeAura.SetAnimation("Perso4-1");
 		break;
 	case PlayerData::CHARACTER_4_2:
 		m_data->icone.SetAnimation("Perso4-2");
+		m_data->iconeAura.SetAnimation("Perso4-2");
 		break;
+	default:
+		break;
+	}
+
+
+	switch (m_data->players[m_data->currentPlayerIndex].state)
+	{
+	case INFEC :
+		m_data->iconeState.SetTextureFrame("Infected");
+		break;
+	case IMMUN:
+		m_data->iconeState.SetTextureFrame("Immune");
+		break;
+	case CONFUSED:
+		m_data->iconeState.SetTextureFrame("Confusion");
+		break;
+	
 	default:
 		break;
 	}
@@ -2326,10 +2284,18 @@ void BaseGame::DrawIconePlayer(sf::RenderWindow& _renderWindow, int _i)
 	{
 		m_data->icone.setColor({ 255,255,255,155 });
 		m_data->icone.setScale({ 0.5f,0.5f });
+		m_data->iconeAura.setColor({ 255,255,255,0 });
+		m_data->iconeState.setColor({ 255,255,255,0 });
+		m_data->iconeAura.setScale({ 0.55f,0.55f });
 	}
 
+	_renderWindow.draw(m_data->iconeAura);
 	_renderWindow.draw(m_data->icone);
 
 	m_data->icone.setColor({ 255,255,255,255 });
 	m_data->icone.setScale({ 0.75f,0.75f });
+	m_data->iconeAura.setColor({ 255,255,255,255 });
+	m_data->iconeAura.setScale({ 0.78f,0.78f });
+	m_data->iconeState.setColor({ 255,255,255,255 });
+	m_data->iconeState.setScale({ 0.5f,0.5f });
 }

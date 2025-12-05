@@ -1,9 +1,11 @@
-﻿#ifndef _INC_BOARD_HPP
+#ifndef _INC_BOARD_HPP
 #define _INC_BOARD_HPP
 
 #include "../../Common.hpp"
 
 #include "../../Map/Tiled.h"
+
+#include "../../Video+Audio/HighResVideoPlayer.hpp"
 
 #include "../../Utilities/Camera/Camera.hpp"
 
@@ -11,15 +13,19 @@
 
 #include "../../Animation/Graphics/SpriteAnimated.hpp"
 
+#include "../../Animation/Graphics/SpriteAtlas.hpp"
+
 #include "../../Animation/Graphics/AnimatedObject.hpp"
 
 #include "../../Animation/Graphics/TextureAnimated.hpp"
 
 #include "../../Animation/Graphics/TextureAtlas.hpp"
 
+#include "../../Animation/Graphics/TextPlus.hpp"
+
 #define TIME_WIN_DISPLAY 1.0f
 #define TIME_LBM_DISPLAY 6.0f
-#define TIME_DIS_DISPLAY 0.001f
+#define TIME_DIS_DISPLAY 0.1f
 #define MAX_TOUR_EFFECT 2
 
 class Effect
@@ -163,7 +169,7 @@ class BaseGame : public SceneBase
 		{
 			SpriteAnimated sprite;
 
-			sf::Text text;
+			TextPlus text;
 
 			std::string name;
 			
@@ -180,8 +186,6 @@ class BaseGame : public SceneBase
 
 		struct SceneData
 		{
-			Tiled tile;
-
 			std::vector<MapObject> posCase;
 
 			Camera camera;
@@ -212,8 +216,8 @@ class BaseGame : public SceneBase
 			LuckBonusMalus HudLBM;
 
 			SpriteAnimated icone;
-
-			//sfe::Movie movieDe;
+			SpriteAtlas iconeState;
+			SpriteAnimated iconeAura;
 
 			bool active;
 			
@@ -226,10 +230,10 @@ class BaseGame : public SceneBase
 
 			// NOUVEAU : Shader pour le chroma key
 			sf::Shader chromaKeyShader;
-
-			 // MODIFICATION : Stocker des pointeurs vers les vidéos
-			std::vector<sfe::Movie> diceVideos;
-			sfe::Movie* currentDiceVideo;  // NOUVEAU : Pointeur vers la vidéo courante
+			std::vector<HighResVideoPlayer*> diceVideos;
+			HighResVideoPlayer* currentDiceVideo;
+			// MODIFICATION : Stocker des pointeurs vers les vidéos
+			
 		};
 
 		GameData* m_gameData;

@@ -82,7 +82,9 @@ int main(void)
 
 void MainDataLoad(MainData& _mainData)
 {
-	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "SFML", sf::Style::Default);
+	_mainData.renderWindow.SetAntiAliasing(sfMod::RenderWindow::X16);
+
+	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Cute and Curse", sf::Style::Default);
 
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
 

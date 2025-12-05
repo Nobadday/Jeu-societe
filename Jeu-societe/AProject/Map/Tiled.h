@@ -3,8 +3,10 @@
 
 #include "../Common.hpp"
 
-#include "MapObject.h"
+#include "JsonReader.h"
+
 #include "MapLayer.h"
+
 #include "Tileset.h"
 
 class Tiled
@@ -12,7 +14,7 @@ class Tiled
 	private:
 		std::vector<MapLayer> mapLayers;
 		TilesetManager tilesetManager;
-		JsonReader config;
+		JsonReader m_config;
 	public:
 		void InitTiled(const char* _Map);
 		std::vector<MapLayer>& GetMapLayers();

@@ -32,12 +32,16 @@ void LoadingScreen::Load(void)
 
     // Configuration du chargement vers Board
     m_data->nextSceneName = "Board";
+
+	m_gameData->m_tile = new Tiled();
     
     // CHANGEMENT : Charger uniquement le manifest sans créer d'instance temporaire
     m_data->loadFunction = [this]() {
         // Chargement du manifest Board dans le thread de chargement
+        m_gameData->m_tile->InitTiled("Assets/Map/map.json");
+        m_data->loadingProgress.store(0.5f);
         m_gameData->m_assetManager->LoadManifest("Manifests/Board.json", "Board");
-        m_data->loadingProgress.store(1.1f);
+        m_data->loadingProgress.store(1.f);
     };
 
     LoadResourcesAsync();
