@@ -4,19 +4,22 @@
 #include "../../Common.hpp"
 
 #include "../../Map/Tiled.h"
+
 #include "../../Video+Audio/HighResVideoPlayer.hpp"
 
 #include "../../Utilities/Camera/Camera.hpp"
 
 #include "../../Animation/Animation/Animator.hpp"
 
-#include "../../Animation/Graphics/SpriteAnimated.hpp"0
+#include "../../Animation/Graphics/SpriteAnimated.hpp"
 
 #include "../../Animation/Graphics/AnimatedObject.hpp"
 
 #include "../../Animation/Graphics/TextureAnimated.hpp"
 
 #include "../../Animation/Graphics/TextureAtlas.hpp"
+
+#include "../../Animation/Graphics/TextPlus.hpp"
 
 #define TIME_WIN_DISPLAY 1.0f
 #define TIME_LBM_DISPLAY 6.0f
@@ -164,7 +167,7 @@ class BaseGame : public SceneBase
 		{
 			SpriteAnimated sprite;
 
-			sf::Text text;
+			TextPlus text;
 
 			std::string name;
 			
@@ -181,8 +184,6 @@ class BaseGame : public SceneBase
 
 		struct SceneData
 		{
-			Tiled tile;
-
 			std::vector<MapObject> posCase;
 
 			Camera camera;
@@ -213,6 +214,7 @@ class BaseGame : public SceneBase
 			LuckBonusMalus HudLBM;
 
 			SpriteAnimated icone;
+			SpriteAnimated iconeAura;
 
 			bool active;
 			

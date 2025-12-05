@@ -1,20 +1,22 @@
 #include "Tiled.h"
 #include <sstream>
 
+
+
 void Tiled::InitTiled(const char* _Map)
 {
-	if (config.LoadFromFile(_Map))
+	if (m_config.LoadFromFile(_Map))
 	{
 		// Lire les propriétés de la carte
-		int compressionLevel = config.GetValue<int>("compressionlevel", -1);
-		int mapHeight = config.GetValue<int>("height", 0);
-		int mapWidth = config.GetValue<int>("width", 0);
-		int tileWidth = config.GetValue<int>("tilewidth", 32);
-		int tileHeight = config.GetValue<int>("tileheight", 32);
-		std::string orientation = config.GetValue<std::string>("orientation", "orthogonal");
-		bool infinite = config.GetValue<bool>("infinite", false);
+		int compressionLevel = m_config.GetValue<int>("compressionlevel", -1);
+		int mapHeight = m_config.GetValue<int>("height", 0);
+		int mapWidth = m_config.GetValue<int>("width", 0);
+		int tileWidth = m_config.GetValue<int>("tilewidth", 32);
+		int tileHeight = m_config.GetValue<int>("tileheight", 32);
+		std::string orientation = m_config.GetValue<std::string>("orientation", "orthogonal");
+		bool infinite = m_config.GetValue<bool>("infinite", false);
 
-		const auto& jsonData = config.GetData();
+		const auto& jsonData = m_config.GetData();
 
 		// Charger les tilesets en premier
 		if (jsonData.contains("tilesets") && jsonData["tilesets"].is_array())

@@ -40,7 +40,19 @@
         {
             "name": "MinigameBackground",
             "type": "Texture",
-            "path": "Assets/shared/MinigameBackground.png"
+            "path": "Assets/Shared/MinigameBackground.png"
+        },
+		{
+            "name" : "IconeAura",
+            "type" : "Texture Animated",
+            "path" : "Assets/Shared/Icone/Icone-PersoAura.anim",
+			"subType" : 1
+        },
+		{
+            "name" : "Icone",
+            "type" : "Texture Animated",
+            "path" : "Assets/Shared/Icone/Icone-Perso.anim",
+			"subType" : 1
         }
     ]
 }

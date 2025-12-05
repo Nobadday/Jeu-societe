@@ -4,6 +4,8 @@
 #include <atomic>
 #include <functional>
 
+#include "../../Map/Tiled.h"
+
 struct LoadingData
 {
     GameData* gameData = nullptr;

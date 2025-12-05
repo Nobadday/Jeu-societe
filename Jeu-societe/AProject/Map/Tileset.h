@@ -1,5 +1,5 @@
-#pragma once
-
+#ifndef _INC_TILESET_H
+#define _INC_TILESET_H
 #include "../Common.hpp"
 
 // Structure pour stocker les informations d'une tuile individuelle
@@ -10,11 +10,12 @@ struct TileInfo
     sf::Vector2i imageSize;     // Taille de l'image (width, height)
     sf::Texture* texture;       // Pointeur vers la texture chargée
 
-    TileInfo() 
+    TileInfo()
         : id(0)
         , imageSize(0, 0)
         , texture(nullptr)
-    {}
+    {
+    }
 };
 
 class Tileset
@@ -45,7 +46,7 @@ public:
     int GetColumns() const { return m_columns; }
     int GetMargin() const { return m_margin; }
     int GetSpacing() const { return m_spacing; }
-    
+
     // Setters
     void SetName(const std::string& _name) { m_name = _name; }
     void SetFirstGid(int _firstGid) { m_firstGid = _firstGid; }
@@ -87,11 +88,11 @@ public:
 
     // Ajouter un tileset
     void AddTileset(const Tileset& _tileset);
-    
+
     // Récupérer un tileset par GID
     Tileset* GetTilesetByGid(int _gid);
     const Tileset* GetTilesetByGid(int _gid) const;
-    
+
     // Récupérer un tileset par nom
     Tileset* GetTilesetByName(const std::string& _name);
     const Tileset* GetTilesetByName(const std::string& _name) const;
@@ -115,3 +116,5 @@ public:
 private:
     void RebuildGidMap();
 };
+#endif // !1
+
