@@ -104,7 +104,7 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<Podium>("Podium");
 
 	// Sélectionner le LoadingScreen metre false pour tout scene au debut 
-	_mainData.scenes.SelectScene("Lo", false);
+	_mainData.scenes.SelectScene("ArmWrestling", false);
 
 	_mainData.clock.restart();
 }
