@@ -15,12 +15,12 @@ m_easing (anim::Easing::LINEAR)
 void TextAnimated::SetEasing(anim::Easing::Type _easing)
 {
 	this->m_easing = _easing;
-	this->FrameChanged();
+	this->OnFrameChange();
 }
 
-void TextAnimated::FrameChanged(void)
+void TextAnimated::OnFrameChange(void)
 {
 	this->SetStringDisplay(anim::Easing::GetCoefficient(this->GetFrameCoefficient(), this->m_easing));
 }
 
-// TextAnimated C++ || v1.0
+// TextAnimated C++ || v1.1
