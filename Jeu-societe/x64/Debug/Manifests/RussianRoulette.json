@@ -11,12 +11,6 @@
             "path" : "Assets/Fonts/BootlegTimBurton-Regular.ttf"
         },
         {
-            "name" : "Damien",
-            "type" : "Texture Animated",
-            "path" : "Assets/Sprites/RussianRoulette/Damien.texanim", 
-            "subType" : 0
-        },
-        {
             "name" : "Gun_Mort",
             "type" : "Texture Animated",
             "path" : "Assets/Sprites/RussianRoulette/gun_mort.anim", 
