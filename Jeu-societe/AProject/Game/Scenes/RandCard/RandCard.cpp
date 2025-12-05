@@ -12,6 +12,7 @@ void RandCard::Load(void)
 
 	m_data->gameData = (GameData*)this->m_keptData;
 	m_data->gameData->m_assetManager->LoadManifest("Manifests/RandCard.json", "RandCard");
+	m_data->audio = (AudioEngine*)m_data->gameData->m_audioEngine;
 
 	m_data->timer.SetTimeTarget(3.f);
 
@@ -21,26 +22,35 @@ void RandCard::Load(void)
 	//Copy players playig from GameData
 	for (int i = 0; i < nbOfPlayers; ++i)
 	{
+		std::cout << "Add player\n";
 		int playerId = (int)m_data->gameData->m_gonnaPlayIndex.at(i);
 		m_data->players.push_back({ (short)playerId });
 	}
 
 	//Font
-	m_data->text.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("RandCardFont"));
-	m_data->text.setCharacterSize(15u);
-	m_data->text.setOrigin({0.5f, 0.5f});
+	m_data->text.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("MenuFont"));
+	m_data->text.setCharacterSize(100u);
+	m_data->text.setOrigin({0.6f, 0.8f});
 	m_data->text.setPosition({ SCREEN_WIDTH / 2.f, 0.8 * SCREEN_HEIGHT });
+	m_data->text.setString("Choose card");
 
 		 	 
 	//Anim Card
 	m_data->cardChosenSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("AnimCard", AssetManager::AssetType::TEXTURE_ANIMATED));
 	m_data->cardUnchosenSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("AnimCard", AssetManager::AssetType::TEXTURE_ANIMATED));
 
-	m_data->cardChosenSprAnim.setScale(0.2f, 0.2f);
+	m_data->cardChosenSprAnim.setScale(0.25f, 0.25f);
+	m_data->cardChosenSprAnim.setOrigin({ 0.5f, 0.5f });
 	m_data->cardUnchosenSprAnim.setScale(0.2f, 0.2f);
+	m_data->cardUnchosenSprAnim.setOrigin({ 0.5f, 0.5f });
 
+	//Background
 	m_data->background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground", AssetManager::AssetType::TEXTURE));
 
+	//Icons
+	m_data->iconsChara.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Icone", AssetManager::AssetType::TEXTURE_ANIMATED));
+	m_data->iconsChara.SetAnimation("Perso1-1");
+	m_data->iconsChara.setOrigin({ 0.5f,0.5f });
 
 	int nbOfNormalCard = 2 * int(m_data->players.size());
 	int nbOfBomb = 1 * int(m_data->players.size());
@@ -92,14 +102,9 @@ void RandCard::Unload(void)
 
 void RandCard::PollEvent(sf::Event& _event)
 {
-	//m_data->menuSystem->PollEvent(_event);
-
 	switch (m_data->gameState)
 	{
 		case CHOOSE_CARD:
-
-			//Restart card, when you comme from the last animation
-			m_data->cardChosenSprAnim.SetAnimation("OFF");
 
 			switch (_event.type)
 			{
@@ -111,17 +116,20 @@ void RandCard::PollEvent(sf::Event& _event)
 						if (m_data->cardChosen != -1)
 						{
 							CardType cardType = m_data->cards[m_data->cardChosen];
+							m_data->audio->PlaySound("cardReturn");								
 							switch (cardType)
 							{
-							case NORMAL:
-								m_data->cardChosenSprAnim.SetAnimation("NORMAL");
-								break;
-							case BOMB:
-								m_data->cardChosenSprAnim.SetAnimation("BOMB");
-								break;
+								case NORMAL:
+									m_data->cardChosenSprAnim.SetAnimation("NORMAL");
+									m_data->text.setString("This card is safe");
+									break;
+
+								case BOMB:
+									m_data->cardChosenSprAnim.SetAnimation("BOMB");
+									m_data->text.setString("Oh no, you picked the bomb");
+									break;
 							}
 							m_data->gameState = ANIMATION;
-							//m_data->cardSprAnim.RestartAnimation();
 							m_data->cardChosenSprAnim.Restart();
 						}
 					}
@@ -134,7 +142,6 @@ void RandCard::PollEvent(sf::Event& _event)
 					//U V joystick droite
 					//Z R pression des gachettes
 					//La croix povX povY
-
 					if (_event.joystickButton.joystickId == m_data->currentPlayer)
 					{
 
@@ -175,16 +182,25 @@ void RandCard::PollEvent(sf::Event& _event)
 }
 void RandCard::Update(float _deltaTime)
 {
-	//m_data->buttonTest->Update(_deltaTime);
-	//m_data->menuSystem->Update(_deltaTime);
-
 	switch (m_data->gameState) 
 	{
 		case WAITING_BETWEEN_PLAYER:
 
 			m_data->timer.Update(_deltaTime);
+
 			if (m_data->timer.IsFinished())
 			{
+				m_data->cards.erase(m_data->cards.begin() + m_data->cardChosen);
+
+
+
+
+
+
+				m_data->cardChosenSprAnim.Update(_deltaTime);
+				m_data->text.setString("Choose card");
+				//Restart card
+				m_data->cardChosenSprAnim.SetAnimation("IDLE");
 				m_data->timer.Restart();
 				NextPlayer();
 			}
@@ -193,7 +209,6 @@ void RandCard::Update(float _deltaTime)
 		case CHOOSE_CARD:
 
 			m_data->inputDelay += _deltaTime;
-
 			break;
 
 		case ANIMATION:
@@ -201,55 +216,17 @@ void RandCard::Update(float _deltaTime)
 			m_data->cardChosenSprAnim.Update(_deltaTime);
 			if (m_data->cardChosenSprAnim.IsFinished())
 			{
-				//std::cout << "Current player : " << m_data->currentPlayer << std::endl;
-				//std::cout << "Player Vector size : " << m_data->players.size() << std::endl;
-
 				if (m_data->cards[m_data->cardChosen] == BOMB)
 				{
 					m_data->deadPlayers.push_back(m_data->players.at(m_data->currentPlayer));
+
 					m_data->players.erase(m_data->players.begin() + m_data->currentPlayer);
-
-					
-					//Check if only one player left
-					if (m_data->players.size() <= 1)
-					{
-						m_data->deadPlayers.push_back(m_data->players.at(0));
-						//Print if you want check
-						//std::cout << "Player " << m_data->players[0].name << " is the winner !" << std::endl;
-						m_data->gameState = END;
-
-
-						//Save data
-						int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size() - 1;
-						for (int i = m_data->deadPlayers.size() - 1; i > 0; i--)
-						{
-							//Print if you want check
-							//std::cout << "END, player rank" << i << " player : " << m_data->deadPlayers.at(i).id << " name :" << m_data->deadPlayers.at(i).name << std::endl;
-							m_data->gameData->AddPlayerWin(m_data->deadPlayers.at(i).id);
-						}
-						SceneBase::ChangeScene("Board", false);
-						return;
-					}					
-					//Wait 3 sec and next player
+					m_data->audio->PlaySound("loose");									
 					m_data->gameState = WAITING_BETWEEN_PLAYER;					
 				}
 				else
 				{
-					//DEBUG
-					//std::cout << "Player " << m_data->players[m_data->currentPlayer].name << " survived !" << std::endl << std::endl;
-					m_data->cards.erase(m_data->cards.begin() + m_data->cardChosen);
-
-
-					if (m_data->currentPlayer + 1 >= m_data->players.size())
-					{
-						m_data->currentPlayer = 0;
-					}
-					else
-					{
-						m_data->currentPlayer++;
-					}
-					m_data->cardChosen = -1;
-					m_data->gameState = CHOOSE_CARD;
+					m_data->gameState = WAITING_BETWEEN_PLAYER;
 				}
 			}
 			break;
@@ -259,30 +236,63 @@ void RandCard::Update(float _deltaTime)
 void RandCard::Draw(sf::RenderWindow& _renderWindow)
 {
 	_renderWindow.draw(m_data->background);
-	_renderWindow.draw(m_data->text);
+	switch (m_data->gameState)
+	{
+	case WAITING_BETWEEN_PLAYER:
+	case CHOOSE_CARD:
+		_renderWindow.draw(m_data->text);
+		break;
+	}
 	PrintCards(_renderWindow);
+	PrintIcons(_renderWindow);
 }
 
 
 void RandCard::PrintCards(sf::RenderWindow& _renderWindow)
 {
-	float cardSpacing = (SCREEN_WIDTH - 2 * BORDER_X) / m_data->cards.size();
+	//For placement 
+	float border = 200.f;
+	float cardSpacing = (float)(SCREEN_WIDTH - 2.f * border) / ((float)m_data->cards.size() - 1);
 
-
-	for (int i = 0; i < m_data->cards.size(); ++i)
+	for (int i = 0; i < m_data->cards.size(); i++)
 	{
+		sf::Vector2f pos = { (float)(border + i * cardSpacing), SCREEN_HEIGHT / 2.f };
+
 		if (i == m_data->cardChosen)
 		{
-			m_data->cardChosenSprAnim.setPosition(BORDER_X + cardSpacing * i, SCREEN_HEIGHT / 4.f);
+			//m_data->cardChosenSprAnim.setPosition(BORDER_X + cardSpacing * i, SCREEN_HEIGHT / 2.f);
+			m_data->cardChosenSprAnim.setPosition(pos);
 			_renderWindow.draw(m_data->cardChosenSprAnim);
 		}
 		else
 		{
-			m_data->cardUnchosenSprAnim.setPosition(BORDER_X + cardSpacing * i, SCREEN_HEIGHT / 4.f);
+			//m_data->cardUnchosenSprAnim.setPosition(BORDER_X + cardSpacing * i, SCREEN_HEIGHT / 2.f);
+			m_data->cardUnchosenSprAnim.setPosition(pos);
 			_renderWindow.draw(m_data->cardUnchosenSprAnim);
 		}
 	}
+}
+void RandCard::PrintIcons(sf::RenderWindow& _renderWindow)
+{
+	//For placement 
+	float border = 200.f;
+	float iconSpacing = (float)(SCREEN_WIDTH - 2.f * border) / ((float)m_data->players.size() - 1);
 
+	for (int i = 0; i < (int)m_data->players.size(); i++)
+	{
+		sf::Vector2f pos = { (float)(border + i * iconSpacing), SCREEN_HEIGHT * 0.07f};
+		
+		m_data->iconsChara.SetAnimation(m_data->gameData->m_playerDataList[m_data->players[i].id].GetJoystickId());
+		m_data->iconsChara.setPosition(pos);
+		if (m_data->currentPlayer == i)
+		{
+			m_data->iconsChara.setScale({ 1.2f,1.2f });
+			m_data->iconsChara.setColor({ 255,255,255,255});
+		}		
+		_renderWindow.draw(m_data->iconsChara);
+		m_data->iconsChara.setScale({ 1.0f,1.0f });
+		m_data->iconsChara.setColor({ 255,255,255,150});
+	}
 }
 
 void RandCard::SetCardChosen(int _card)
@@ -296,7 +306,25 @@ void RandCard::AddCardChosen(int _value)
 
 void RandCard::NextPlayer(void)
 {
-	if (m_data->currentPlayer >= m_data->players.size())
+	std::cout << "current player : " << m_data->currentPlayer << " size = " << m_data->gameData->m_gonnaPlayIndex.size() << std::endl;
+	//Check if only one player left
+	if (m_data->players.size() - 1 < 1)
+	{
+		m_data->deadPlayers.push_back(m_data->players.at(0));
+		//Print if you want check
+		m_data->gameState = END;
+
+		//Save data
+		int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size() - 1;
+		for (int i = m_data->deadPlayers.size() - 1; i > 0; i--)
+		{
+			//Print if you want check
+			m_data->gameData->AddPlayerWin(m_data->deadPlayers.at(i).id);
+		}
+		SceneBase::ChangeScene("Board", false);
+		return;
+	}
+	if (m_data->currentPlayer + 1 > m_data->players.size() - 1)
 	{
 		//Check if the current player was the last in the vector 
 		m_data->currentPlayer = 0;

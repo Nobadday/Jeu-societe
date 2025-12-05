@@ -34,7 +34,8 @@ void RussianRoulette::Load(void)
 
 	m_data->iconsChara.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Icone", AssetManager::AssetType::TEXTURE_ANIMATED));
 	m_data->iconsChara.setOrigin({ 0.5f,0.5f });
-	m_data->iconsChara.setPosition({ 3.f * (SCREEN_WIDTH / 4.f), SCREEN_HEIGHT / 4.f });
+	m_data->iconsChara.setPosition({ SCREEN_WIDTH / 1.2f, SCREEN_HEIGHT / 2.f });
+	m_data->iconsChara.setScale({1.2f, 1.2f});
 	
 	//First head
 	m_data->iconsChara.SetAnimation(PlayerData::GetTextureName((PlayerData::PlayerSkin)m_data->players[0].skin));
@@ -43,7 +44,7 @@ void RussianRoulette::Load(void)
 	m_data->background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground", AssetManager::AssetType::TEXTURE));
 
 	m_data->gunSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Gun_Rien"));
-	m_data->gameState = WAITING;
+	m_data->gameState = WAITING_FOR_INPUT;
 }
 
 void RussianRoulette::Unload(void)
@@ -59,7 +60,7 @@ void RussianRoulette::PollEvent(sf::Event& _event)
 
 	switch (m_data->gameState)
 	{
-		case WAITING:
+		case WAITING_FOR_INPUT:
 
 			switch (_event.type)
 			{
@@ -112,7 +113,7 @@ void RussianRoulette::Update(float _deltaTime)
 {
 	switch (m_data->gameState)
 	{
-		case WAITING:
+		case WAITING_FOR_INPUT:
 
 			//Attendre input
 			m_data->text.setString("PRESS ANY BUTTON TO SPIN THE CHAMBER !");
@@ -162,7 +163,7 @@ void RussianRoulette::Update(float _deltaTime)
 				}
 				else
 				{
-					m_data->gameState = WAITING;
+					m_data->gameState = WAITING_FOR_INPUT;
 
 					m_data->gunSprAnim.Restart();
 
@@ -182,11 +183,12 @@ void RussianRoulette::Update(float _deltaTime)
 
 	case END:
 
+		std::cout << "TIMER\n";
 		m_data->timerEnd.Update(_deltaTime);
 
 		if (m_data->timerEnd.IsFinished())
 		{
-			std::cout << "FINI, CHANGEMENT De SCENE ICI" << std::endl;
+			//std::cout << "FINI, CHANGEMENT De SCENE ICI" << std::endl;
 			SceneBase::ChangeScene("Board", false);
 		}
 		break;
@@ -197,4 +199,5 @@ void RussianRoulette::Draw(sf::RenderWindow& _renderWindow)
 	_renderWindow.draw(m_data->background);
 	_renderWindow.draw(m_data->gunSprAnim);
 	_renderWindow.draw(m_data->text);
+	_renderWindow.draw(m_data->iconsChara);
 }

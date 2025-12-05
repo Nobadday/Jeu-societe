@@ -6,6 +6,7 @@
 #include "../../../Common.hpp"
 #include "../../../Animation/Graphics.hpp"
 #include "../../../Ui/MenuSystem.hpp"
+#include "../../../Utilities/AudioEngine/AudioEngine.hpp"
 
 
 
@@ -20,7 +21,6 @@ class RandCard : public SceneBase
 		};
 		enum GameState
 		{
-			//Wait for input
 			WAITING_BETWEEN_PLAYER,
 			CHOOSE_CARD,
 			//Animation 
@@ -55,9 +55,12 @@ class RandCard : public SceneBase
 			Timer timer;
 
 			int playerCountLeft = 0;
+
+			AudioEngine* audio;
 		};
 		SceneData* m_data;
 		void PrintCards(sf::RenderWindow& _renderWindow);
+		void PrintIcons(sf::RenderWindow& _renderWindow);
 		void SetCardChosen(int _card);
 		void AddCardChosen(int _value);
 

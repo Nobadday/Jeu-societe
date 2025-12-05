@@ -11,6 +11,11 @@
             "path" : "Assets/Sprites/RandomCard/StaticCard.png"
         },
         {
+            "name" : "MenuFont",
+            "type" : "Font",
+            "path" : "Assets/Fonts/BootlegTimBurton-Regular.ttf"
+        },
+        {
             "name" : "AnimCard",
             "type" : "Texture Animated",
             "path" : "Assets/Sprites/RandomCard/CardV2.anim",

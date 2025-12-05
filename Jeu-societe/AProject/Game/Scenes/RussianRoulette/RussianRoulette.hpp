@@ -20,8 +20,9 @@ class RussianRoulette : public SceneBase
 		};
 		enum GameState
 		{
+			WAITING_BETWEEN_PLAYER,
 			//Wait for input
-			WAITING,
+			WAITING_FOR_INPUT,
 			//Animation 
 			SPINNING,
 			END
@@ -32,7 +33,7 @@ class RussianRoulette : public SceneBase
 			SpriteAnimated iconsChara;
 			sf::Sprite background;
 
-			GameState gameState = WAITING;
+			GameState gameState = WAITING_FOR_INPUT;
 			int bullet = -1;
 			int bulletUser = 0;
 			bool killed = false;

@@ -541,7 +541,6 @@ void Menu::PressSelection(int _id)
 			break;
 	}
 }
-
 void Menu::PrintIcons(sf::RenderWindow& _renderWindow)
 {
 	sf::Color tempColor = m_data->ui.iconsChara.getColor();
