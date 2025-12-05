@@ -1,6 +1,5 @@
 #include "HealthBar.hpp"
 
-
 #define DEFAULT_COLOR_BG sf::Color::Red
 #define DEFAULT_COLOR_FILLER sf::Color::Green
 
