@@ -3,11 +3,11 @@
 #define _INC_ROCKPAPERSCISSORS_HPP
 
 
-#include "../../Common.hpp"
-#include "../../Scenes/Scene.hpp"
-#include "../../Animation/Animation/Timer.hpp" 
-#include "../../Animation/Graphics.hpp"
-#include "../../Animation/Animation.hpp"
+#include "../../../Common.hpp"
+#include "../../../Scenes/Scene.hpp"
+#include "../../../Animation/Animation/Timer.hpp" 
+#include "../../../Animation/Graphics.hpp"
+#include "../../../Animation/Animation.hpp"
 
 
 class RockPaperScissors : public SceneBase

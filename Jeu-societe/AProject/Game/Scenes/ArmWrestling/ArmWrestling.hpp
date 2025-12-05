@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../Common.hpp"
-#include "../../Scenes/Scene.hpp"
+#include "../../../Common.hpp"
+#include "../../../Scenes/Scene.hpp"
 
 class ArmWrestlingPlayer
 {
@@ -23,7 +23,7 @@ private:
 	sf::RectangleShape shape;
 	sf::Text nameText;
 
-
+	void PopBar();
 	short GetOtherPlayerID(short _callerID, const std::vector<ArmWrestlingPlayer>& allPlayers) const;
 };
 
@@ -39,6 +39,10 @@ public:
 		float timer = 0.0f;
 		std::vector<ArmWrestlingPlayer> allPlayers;
 		short nextID = 0;
+
+
+		// Ajout du sprite pour le background
+		sf::Sprite backgroundSprite;
 
 		// Ajout�s pour g�rer l'affichage du r�sultat et la communication avec GameData
 		GameData* gameData = nullptr;

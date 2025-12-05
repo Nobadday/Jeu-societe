@@ -21,6 +21,10 @@ void ArmWrestling::Load(void)
 	m_data->titleText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 11);
 	m_data->titleText.setOrigin(m_data->titleText.getLocalBounds().width / 2, m_data->titleText.getLocalBounds().height / 2);
 
+	// Initialize background sprite
+	m_data->backgroundSprite.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground"));
+	m_data->backgroundSprite.setPosition(0, 0);
+
 	// Time text (membre par valeur)
 	m_data->timeText.setFont(*((GameData*)this->m_keptData)->m_assetManager->GetAsset<sf::Font>("ArmWrestlingFont", AssetManager::AssetType::FONT));
 	m_data->timeText.setCharacterSize(15);
@@ -162,6 +166,9 @@ void ArmWrestling::Draw(sf::RenderWindow& _renderWindow)
 {
 	if (!m_data) return;
 
+
+	_renderWindow.draw(m_data->backgroundSprite);
+
 	_renderWindow.draw(m_data->titleText);
 	_renderWindow.draw(m_data->timeText);
 	_renderWindow.draw(m_data->fillBar);
@@ -225,6 +232,10 @@ void ArmWrestlingPlayer::SetForce(short _force)
 void ArmWrestlingPlayer::Update(float _dt, std::vector<ArmWrestlingPlayer>& allPlayers)
 {
 	(void)_dt;
+	if (shape.getSize().y != 1.f)
+	{
+		shape.setScale(shape.getScale().x, Lerp2D(shape.getScale(), sf::Vector2f(shape.getScale().x,1.f),_dt*10.f).y);
+	}
 	if (GetGamePadPressed(GAMEPAD_A, id, true))
 	{
 		// Trouver l'autre joueur dans la liste fournie
@@ -232,6 +243,7 @@ void ArmWrestlingPlayer::Update(float _dt, std::vector<ArmWrestlingPlayer>& allP
 		{
 			if (player.GetID() != id)
 			{
+				PopBar();
 				// Augmenter la taille du bras du joueur courant et diminuer celle de l'autre
 				shape.setSize(sf::Vector2f(shape.getSize().x + force, shape.getSize().y));
 				player.shape.setSize(sf::Vector2f(player.shape.getSize().x - force, player.shape.getSize().y));
@@ -274,4 +286,9 @@ float ArmWrestlingPlayer::GetArmWidth() const
 void ArmWrestlingPlayer::SetFont(sf::Font _font)
 {
 	this->nameText.setFont(_font);
+}
+
+void ArmWrestlingPlayer::PopBar()
+{
+	shape.setScale(shape.getScale().x, 2.f);
 }
