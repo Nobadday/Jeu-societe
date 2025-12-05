@@ -1,4 +1,4 @@
-﻿#ifndef _INC_BOARD_HPP
+#ifndef _INC_BOARD_HPP
 #define _INC_BOARD_HPP
 
 #include "../../Common.hpp"
