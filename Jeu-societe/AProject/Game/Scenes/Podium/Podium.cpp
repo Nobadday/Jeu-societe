@@ -56,8 +56,8 @@ void Podium::Load()
 		m_data->playerSpriteArray[i].setOrigin(sf::Vector2f(0.5f, 1.f));
 		m_data->podiumsSpriteArray[i].setOrigin(sf::Vector2f(0.5f, 1.f));
 
-		m_data->playerSpriteArray[i].setPosition(sf::Vector2f(SCREEN_WIDTH / (m_data->gameData->m_gonnaPlayIndex.size() + 1) * (i + 1), SCREEN_HEIGHT - 450 + 150 * (playerPos - 1)));
-		m_data->podiumsSpriteArray[i].setPosition(sf::Vector2f(SCREEN_WIDTH / (m_data->gameData->m_gonnaPlayIndex.size() + 1) * (i + 1), SCREEN_HEIGHT + 1));
+		m_data->playerSpriteArray[i].setPosition(sf::Vector2f(SCREEN_WIDTH / ((float)m_data->gameData->m_gonnaPlayIndex.size() + 1.f) * (i + 1.f), SCREEN_HEIGHT - 450.f + 150.f * (playerPos - 1.f)));
+		m_data->podiumsSpriteArray[i].setPosition(sf::Vector2f(SCREEN_WIDTH / ((float)m_data->gameData->m_gonnaPlayIndex.size() + 1.f) * (i + 1.f), SCREEN_HEIGHT + 1.f));
 
 
 		m_data->playerTextArray[i].SetOutline(2, sf::Color::Black);

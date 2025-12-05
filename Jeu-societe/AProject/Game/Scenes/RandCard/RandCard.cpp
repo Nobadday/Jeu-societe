@@ -316,7 +316,7 @@ void RandCard::NextPlayer(void)
 
 		//Save data
 		int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size() - 1;
-		for (int i = m_data->deadPlayers.size() - 1; i > 0; i--)
+		for (int i = (int)m_data->deadPlayers.size() - 1; i > 0; i--)
 		{
 			//Print if you want check
 			m_data->gameData->AddPlayerWin(m_data->deadPlayers.at(i).id);

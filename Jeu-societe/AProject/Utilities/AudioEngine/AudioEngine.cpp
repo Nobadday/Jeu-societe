@@ -67,7 +67,7 @@ void AudioEngine::CleanOldSound(void)
 
 
 	//std::cout << "Sounds debug :" << std::endl;
-	for (int sound = this->m_soundVec.size() - 1; sound >= 0 ; sound--)
+	for (int sound = (int)this->m_soundVec.size() - 1; sound >= 0 ; sound--)
 	{
 
 		auto& truesound = this->m_soundVec[sound];

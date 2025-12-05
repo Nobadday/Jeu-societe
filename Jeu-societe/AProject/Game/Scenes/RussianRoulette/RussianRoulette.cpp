@@ -153,7 +153,7 @@ void RussianRoulette::Update(float _deltaTime)
 					std::cout << "nb dead : " << m_data->deadPlayers.size() << std::endl;
 					std::cout << "win nb player : " << m_data->gameData->m_winIndex.size() << std::endl;
 					
-					for (int i = m_data->deadPlayers.size() - 1; i >= 0 ; i--)
+					for (int i = (int)m_data->deadPlayers.size() - 1; i >= 0; i--)
 					{
 						m_data->gameData->AddPlayerWin(m_data->deadPlayers[i].id);
 					}

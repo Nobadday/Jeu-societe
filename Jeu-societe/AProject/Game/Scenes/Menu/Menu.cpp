@@ -450,8 +450,8 @@ void Menu::PressSelection(int _id)
 			m_data->state = OPTIONS;
 			m_data->controlerBtn = MORE;
 
-			m_data->ui.buttonMap["plusBtn"].setScale(0.8,0.8);
-			m_data->ui.buttonMap["moinsBtn"].setScale(0.8,0.8);
+			m_data->ui.buttonMap["plusBtn"].setScale(0.8f,0.8f);
+			m_data->ui.buttonMap["moinsBtn"].setScale(0.8f,0.8f);
 
 			m_data->ui.buttonMap["plusBtn"].setPosition(SCREEN_WIDTH / 1.2f, 2.1f / 4.f * SCREEN_HEIGHT);
 			m_data->ui.buttonMap["moinsBtn"].setPosition(SCREEN_WIDTH / 1.5f, 2.1f / 4.f * SCREEN_HEIGHT);
@@ -682,9 +682,6 @@ void Menu::PrintOptions(sf::RenderWindow& _renderWindow)
 	m_data->ui.playerCount.setPosition(SCREEN_WIDTH / 2.f, 1.f / 4.f * SCREEN_HEIGHT);
 	m_data->ui.playerCount.setString("Settings");
 	_renderWindow.draw(m_data->ui.playerCount);
-
-
-
 
 	_renderWindow.draw(m_data->ui.buttonMap["plusBtn"]);
 	_renderWindow.draw(m_data->ui.buttonMap["moinsBtn"]);
