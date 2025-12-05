@@ -439,7 +439,7 @@ void Menu::PressSelection(int _id)
 					if (result == m_data->gameSettings.playerCount + 1)
 					{
 						std::cout << "All players have their skin, go to game\n";
-						SceneBase::ChangeScene("Board");
+						SceneBase::ChangeScene("Lo");
 					}
 					break;  				
 			}
