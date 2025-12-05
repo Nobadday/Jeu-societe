@@ -74,7 +74,13 @@ bool TextureAtlas::LoadFromFile(std::fstream& _file, const std::string& _dirPath
 
 			textureName = baseNode->first_attribute("imagePath")->value();
 
-			this->m_frames.resize(baseNode->value_size());
+			size_t nodeCount = 0u;
+			for (rapidxml::xml_node<>* child = baseNode->first_node(); child; child = child->next_sibling())
+			{
+				nodeCount++;
+			}
+
+			this->m_frames.resize(nodeCount);
 			int i = 0;
 			for (rapidxml::xml_node<>* child = baseNode->first_node(); child; child = child->next_sibling())
 			{
@@ -265,4 +271,4 @@ TextureAtlas::operator const sf::Texture& () const
 #pragma endregion
 
 
-// Texture Atlases for C++ & SFML v1.1.2
+// Texture Atlases for C++ & SFML v1.1.3

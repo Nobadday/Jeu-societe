@@ -1,126 +1,131 @@
 #include "Button.hpp"
 
-Button::Button():SpriteAnimated()
+Button::Button(void) : SpriteAnimated(),
+m_currentState	(STATE_IDLE),
+m_isClicked		(false)
 {
-	this->m_currentState = STATE_IDLE;
-	this->m_isClicked = false;
+
 }
 
-
-
-void Button::OnFrameChanged(void)
+bool Button::CheckEvent(const sf::Event& _event)
 {
-	this->SpriteAnimated::OnFrameChange();
-}
-
-void Button::PollEvent(sf::Event& _event)
-{
-
-
-	if (!this->m_isClicked)
+	switch (_event.type)
 	{
-		switch (_event.type)
-		{
 		case sf::Event::MouseButtonPressed:
-			if (this->GetState() == STATE_ON)
-			{
-				if (this->IsClicked(_event.mouseButton.x, _event.mouseButton.y))
-				{
-					this->SetState(STATE_PRESSED);
-				}
-			}
-			break;
-
 		case sf::Event::MouseButtonReleased:
-			if (this->GetState() == STATE_PRESSED)
+			if (_event.mouseButton.button == sf::Mouse::Left)
 			{
-				if (_event.mouseButton.button == sf::Mouse::Left && this->IsMouseOn(_event.mouseButton.x, _event.mouseButton.y))
-				{
-					this->m_isClicked = true;
-				}
-				else
-				{
-					this->SetState(STATE_IDLE);
-				}
+				return this->CheckMouseClick(_event.mouseButton.x, _event.mouseButton.y, _event.type == sf::Event::MouseButtonReleased);
 			}
 			break;
 
 		case sf::Event::MouseMoved:
-
-			switch (this->GetState())
-			{
-				case STATE_IDLE:
-					if (this->IsMouseOn(_event.mouseMove.x, _event.mouseMove.y))
-					{
-						this->SetState(STATE_ON);
-					}
-					break;
-				case STATE_ON:
-					if (!this->IsMouseOn(_event.mouseMove.x, _event.mouseMove.y))
-					{
-						this->SetState(STATE_IDLE);
-					}
-					break;
-				default:
-					break;
-			}
+			return this->CheckMouseMove(_event.mouseMove.x, _event.mouseMove.y);
 			break;
 
 		default:
 			break;
-		}
-	}	
-}
 
-bool Button::IsMouseOn(const sf::Vector2f& _mousePos)
-{
-	return this->getGlobalBounds().contains(_mousePos);
-}
-bool Button::IsMouseOn(int _mouseX, int _mouseY)
-{
-	return this->getGlobalBounds().contains((float)_mouseX, (float)_mouseY);
+	}
+	return false;
 }
 
 
-bool Button::IsClicked(const sf::Vector2f& _mousePos)
+bool Button::HasBeenClicked(bool _keepIntact)
 {
-	return (this->IsMouseOn(_mousePos) && sf::Mouse::isButtonPressed(sf::Mouse::Left));
-}
-bool Button::IsClicked(int _mouseX, int _mouseY)
-{
-	return (this->IsMouseOn(_mouseX, _mouseY) && sf::Mouse::isButtonPressed(sf::Mouse::Left));
-}
+	if (_keepIntact)
+	{
+		return this->m_isClicked;
+	}
 
-
-bool Button::HasBeenClicked(void)
-{
 	if (this->m_isClicked)
 	{
 		this->m_isClicked = false;
-		this->SetState(STATE_IDLE);
 		return true;
 	}
+	return false;
+}
+
+bool Button::IsColliding(int _x, int _y)
+{
+	return this->getGlobalBounds().contains((float)_x, (float)_y);
+}
+
+
+bool Button::CheckMouseMove(const sf::Vector2i& _mousePos)
+{
+	return this->CheckMouseMove(_mousePos.x, _mousePos.y);
+}
+bool Button::CheckMouseMove(int _x, int _y)
+{
+	if (this->m_currentState != STATE_PRESSED)
+	{
+		if (this->IsColliding(_x, _y))
+		{
+			this->SetState(STATE_ON);
+			return true;
+		}
+		else
+		{
+			this->SetState(STATE_IDLE);
+		}
+	}
+	return false;
+}
+
+bool Button::CheckMouseClick(int _x, int _y, bool _isReleased)
+{
+	if (_isReleased)
+	{
+		// Confirmation click
+		if (this->m_currentState == STATE_PRESSED)
+		{
+			if (this->IsColliding(_x, _y))
+			{
+				this->SetState(STATE_ON);
+				this->m_isClicked = true;
+				return true;
+			}
+			else
+			{
+				this->SetState(STATE_IDLE);
+			}
+			return false;
+		}
+		// Else : Missclick
+	}
+	else
+	{
+		// Initiation click
+		if ((this->m_currentState != STATE_PRESSED) && this->IsColliding(_x, _y))
+		{
+			this->SetState(STATE_PRESSED);
+			return true;
+		}
+	}
+	
 	return false;
 }
 
 
 void Button::SetState(Button::State _state)
 {
-	this->m_currentState = _state;
-	switch (_state)
+	switch (this->m_currentState = _state)
 	{
-	case Button::STATE_IDLE:
-		this->SetAnimation("IDLE");
-		break;
-	case Button::STATE_ON:
-		this->SetAnimation("ON");
-		break;
-	case Button::STATE_PRESSED:
-		this->SetAnimation("HELD");
-		break;
+		case Button::STATE_IDLE:
+			this->SetAnimation("IDLE", false);
+			break;
 
-	default:
-		break;
+		case Button::STATE_ON:
+			this->SetAnimation("ON", false);
+			break;
+
+		case Button::STATE_PRESSED:
+			this->SetAnimation("HELD", false);
+			break;
+
+		default:
+			break;
 	}
 }
 
@@ -129,19 +134,13 @@ Button::State Button::GetState(void)
 	return this->m_currentState;
 }
 
+void Button::Click(void)
+{
+	this->m_isClicked = true;
+	if (this->m_currentState != STATE_ON)
+	{
+		this->SetState(STATE_IDLE);
+	}
+}
 
-
-//ButtonText::ButtonText():Button()
-//{
-//}
-//
-//void ButtonText::FrameChanged(void)
-//{
-//	this->SpriteAnimated::FrameChanged();
-//}
-//
-//void ButtonText::draw(sf::RenderTarget& target, sf::RenderStates states) const
-//{
-//}
-
-// Button v1.0.1
+// Button || v1.1
