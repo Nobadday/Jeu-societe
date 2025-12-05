@@ -40,6 +40,10 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 
 	m_data->icone.setTexture(*m_gameData->m_assetManager->GetAsset<TextureAnimated>("Icone", AssetManager::AssetType::TEXTURE_ANIMATED));
 	m_data->icone.setOrigin({ 0.5f,1 });
+
+	m_data->iconeState.setTexture(*m_gameData->m_assetManager->GetAsset<TextureAtlas>("Effect", AssetManager::AssetType::TEXTURE_ATLAS));
+	m_data->iconeState.setOrigin({ 0.5f,1 });
+
 	m_data->iconeAura.setTexture(*m_gameData->m_assetManager->GetAsset<TextureAnimated>("IconeAura", AssetManager::AssetType::TEXTURE_ANIMATED));
 	m_data->iconeAura.setOrigin({ 0.5f,1 });
 
@@ -2169,6 +2173,7 @@ void BaseGame::DrawIconePlayer(sf::RenderWindow& _renderWindow, int _i)
 		{
 			m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.40f });
 			m_data->iconeAura.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.41f });
+			m_data->iconeState.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.30f });
 		}
 		else
 		{
@@ -2181,6 +2186,7 @@ void BaseGame::DrawIconePlayer(sf::RenderWindow& _renderWindow, int _i)
 		{
 			m_data->icone.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f , size2.y - SCREEN_HEIGHT / 2 + 305.f * 0.40f });
 			m_data->iconeAura.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f , size2.y - SCREEN_HEIGHT / 2 + 305.f * 0.41f });
+			m_data->iconeState.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.30f });
 		}
 		else
 		{
@@ -2193,6 +2199,7 @@ void BaseGame::DrawIconePlayer(sf::RenderWindow& _renderWindow, int _i)
 		{
 			m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2 + 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 10 });
 			m_data->iconeAura.setPosition({ size2.x - SCREEN_WIDTH / 2 + 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 8 });
+			m_data->iconeAura.setPosition({ size2.x - SCREEN_WIDTH / 2 + 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 15 });
 		}
 		else
 		{
@@ -2205,6 +2212,7 @@ void BaseGame::DrawIconePlayer(sf::RenderWindow& _renderWindow, int _i)
 		{
 			m_data->icone.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 10 });
 			m_data->iconeAura.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 8 });
+			m_data->iconeAura.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 15 });
 		}
 		else
 		{
@@ -2255,11 +2263,29 @@ void BaseGame::DrawIconePlayer(sf::RenderWindow& _renderWindow, int _i)
 	}
 
 
+	switch (m_data->players[m_data->currentPlayerIndex].state)
+	{
+	case INFEC :
+		m_data->iconeState.SetTextureFrame("Infected");
+		break;
+	case IMMUN:
+		m_data->iconeState.SetTextureFrame("Immune");
+		break;
+	case CONFUSED:
+		m_data->iconeState.SetTextureFrame("Confusion");
+		break;
+	
+	default:
+		break;
+	}
+
+
 	if (_i != m_data->currentPlayerIndex)
 	{
 		m_data->icone.setColor({ 255,255,255,155 });
 		m_data->icone.setScale({ 0.5f,0.5f });
 		m_data->iconeAura.setColor({ 255,255,255,0 });
+		m_data->iconeState.setColor({ 255,255,255,0 });
 		m_data->iconeAura.setScale({ 0.55f,0.55f });
 	}
 
@@ -2270,4 +2296,6 @@ void BaseGame::DrawIconePlayer(sf::RenderWindow& _renderWindow, int _i)
 	m_data->icone.setScale({ 0.75f,0.75f });
 	m_data->iconeAura.setColor({ 255,255,255,255 });
 	m_data->iconeAura.setScale({ 0.78f,0.78f });
+	m_data->iconeState.setColor({ 255,255,255,255 });
+	m_data->iconeState.setScale({ 0.5f,0.5f });
 }

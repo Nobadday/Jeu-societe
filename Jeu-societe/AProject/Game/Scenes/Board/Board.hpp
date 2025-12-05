@@ -13,6 +13,8 @@
 
 #include "../../Animation/Graphics/SpriteAnimated.hpp"
 
+#include "../../Animation/Graphics/SpriteAtlas.hpp"
+
 #include "../../Animation/Graphics/AnimatedObject.hpp"
 
 #include "../../Animation/Graphics/TextureAnimated.hpp"
@@ -214,6 +216,7 @@ class BaseGame : public SceneBase
 			LuckBonusMalus HudLBM;
 
 			SpriteAnimated icone;
+			SpriteAtlas iconeState;
 			SpriteAnimated iconeAura;
 
 			bool active;
