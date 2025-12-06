@@ -427,7 +427,7 @@ void BaseGame::Update(float _deltaTime)
 		BoardStateUpdate(_deltaTime);
 
 
-		for (int i = m_data->effectSwap.size() - 1; i >= 0; i--)
+		for (int i = (int)m_data->effectSwap.size() - 1; i >= 0; i--)
 		{
 			auto& effect = m_data->effectSwap[i];
 
@@ -440,7 +440,7 @@ void BaseGame::Update(float _deltaTime)
 			}
 		}
 
-		for (int i = m_data->effectsMap.size() - 1; i >= 0; i--)
+		for (int i = (int)m_data->effectsMap.size() - 1; i >= 0; i--)
 		{
 			auto& effect = m_data->effectsMap[i];
 
@@ -1935,7 +1935,7 @@ void BaseGame::CreateSmokeEffectForSwap(Player& _player)
 
 			posEffect.y -= bit.y * 2 / 6;
 
-			Effect effect(m_data->smoke, posEffect + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
+			Effect effect(m_data->smoke, posEffect + sf::Vector2f(-20.f + randmt::RandomFloat(0, 40), -20.f + randmt::RandomFloat(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
 			m_data->effectSwap.push_back(effect);
 		}
 		else if (i % 2 == 0)
@@ -1946,7 +1946,7 @@ void BaseGame::CreateSmokeEffectForSwap(Player& _player)
 
 			posEffect.y -= bit.y * 1.5 / 6;
 
-			Effect effect(m_data->smoke, posEffect + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
+			Effect effect(m_data->smoke, posEffect + sf::Vector2f(-20.f + randmt::RandomFloat(0.f, 40.f), -20.f + randmt::RandomFloat(0.f, 40.f)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
 			m_data->effectSwap.push_back(effect);
 		}
 		else
@@ -1958,7 +1958,7 @@ void BaseGame::CreateSmokeEffectForSwap(Player& _player)
 
 			posEffect.y -= bit.y * 1 / 6;
 
-			Effect effect(m_data->smoke, posEffect + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
+			Effect effect(m_data->smoke, posEffect + sf::Vector2f(-20.f + randmt::RandomFloat(0, 40), -20.f + randmt::RandomFloat(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
 			m_data->effectSwap.push_back(effect);
 		}
 	}
@@ -1970,11 +1970,11 @@ void BaseGame::CreateSmokeEffectAnotherPart(sf::Vector2f _posMin, sf::Vector2f _
 	{
 		sf::Vector2f posEffect;
 
-		posEffect.x = randmt::RandomFloat(_posMin.x + 512 / 2, _posMax.x);
+		posEffect.x = randmt::RandomFloat(_posMin.x + 512.f / 2.f, _posMax.x);
 
 		posEffect.y = randmt::RandomFloat(0, SCREEN_HEIGHT);
 
-		Effect effect(m_data->smoke, posEffect + sf::Vector2f(-20 + randmt::RandomInt(0, 40), -20 + randmt::RandomInt(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
+		Effect effect(m_data->smoke, posEffect + sf::Vector2f(-20.f + randmt::RandomInt(0, 40), -20.f + randmt::RandomInt(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
 		m_data->effectsMap.push_back(effect);
 	}
 }

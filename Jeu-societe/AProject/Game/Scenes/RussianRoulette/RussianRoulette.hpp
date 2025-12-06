@@ -4,8 +4,8 @@
 
 #include "../../../Scenes/Scene.hpp"
 #include "../../../Common.hpp"
-#include "../../../Animation/Graphics/SpriteAnimated.hpp"
-#include "../../../Animation/Graphics/TextureAnimated.hpp"
+#include "../../../Animation/Graphics.hpp"
+#include "../../../Animation/Animation.hpp"
 
 class RussianRoulette : public SceneBase
 {
@@ -14,14 +14,15 @@ class RussianRoulette : public SceneBase
 		//DEBUG, REMOVE WHEN PLAYER STRUCT FROM GAMEDATA COMME
 		struct Player
 		{
-			std::string name;
 			short id;
+			short skin;
 			bool isAlive = true;
 		};
 		enum GameState
 		{
+			WAITING_BETWEEN_PLAYER,
 			//Wait for input
-			WAITING,
+			WAITING_FOR_INPUT,
 			//Animation 
 			SPINNING,
 			END
@@ -29,9 +30,12 @@ class RussianRoulette : public SceneBase
 		struct SceneData
 		{
 			SpriteAnimated gunSprAnim;
+			SpriteAnimated iconsChara;
+			sf::Sprite background;
 
-			GameState gameState = WAITING;
+			GameState gameState = WAITING_FOR_INPUT;
 			int bullet = -1;
+			int bulletUser = 0;
 			bool killed = false;
 
 			//DEBUG
@@ -42,7 +46,10 @@ class RussianRoulette : public SceneBase
 			int nbOfPlayers = 4;
 			int playerKilled = -1;
 			sf::Font font;
-			sf::Text text;
+			TextPlus text;
+			Timer timerEnd;
+			AudioEngine* audio;
+
 
 		};
 		SceneData* m_data;

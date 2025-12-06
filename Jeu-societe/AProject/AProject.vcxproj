@@ -116,6 +116,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -151,9 +152,9 @@
     <ClCompile Include="Animation\Graphics\AtlasContainer.cpp" />
     <ClCompile Include="Animation\Graphics\GraphicAddons.cpp" />
     <ClCompile Include="Animation\Graphics\SpriteAnimated.cpp" />
-    <ClCompile Include="Animation\Graphics\SpriteAtlas.cpp" />
     <ClCompile Include="Animation\Graphics\TextAnimated.cpp" />
     <ClCompile Include="Animation\Graphics\TextPlus.cpp" />
+    <ClCompile Include="Animation\Graphics\SpriteAtlas.cpp" />
     <ClCompile Include="Animation\Graphics\TextureAnimated.cpp" />
     <ClCompile Include="Animation\Graphics\TextureAtlas.cpp" />
     <ClCompile Include="Animation\Utilities\Bezier.cpp" />
@@ -165,11 +166,11 @@
     <ClCompile Include="Game\Scenes\Board\Board.cpp" />
     <ClCompile Include="Game\Scenes\FlagGame\FlagGame.cpp" />
     <ClCompile Include="Game\Scenes\Loading\LoadingScreen.cpp" />
+    <ClCompile Include="Game\Scenes\Menu\Menu.cpp" />
     <ClCompile Include="Game\Scenes\Podium\Podium.cpp" />
     <ClCompile Include="Game\Scenes\RandCard\RandCard.cpp" />
     <ClCompile Include="Game\Scenes\RockPaperScissors\RockPaperScissors.cpp" />
     <ClCompile Include="Game\Scenes\RussianRoulette\RussianRoulette.cpp" />
-    <ClCompile Include="Graphics\HealthBar.cpp" />
     <ClCompile Include="Map\JsonReader.cpp" />
     <ClCompile Include="Map\MapLayer.cpp" />
     <ClCompile Include="Map\MapObject.cpp" />
@@ -208,9 +209,9 @@
     <ClInclude Include="Animation\Graphics\AtlasContainer.hpp" />
     <ClInclude Include="Animation\Graphics\GraphicAddons.hpp" />
     <ClInclude Include="Animation\Graphics\SpriteAnimated.hpp" />
-    <ClInclude Include="Animation\Graphics\SpriteAtlas.hpp" />
     <ClInclude Include="Animation\Graphics\TextAnimated.hpp" />
     <ClInclude Include="Animation\Graphics\TextPlus.hpp" />
+    <ClInclude Include="Animation\Graphics\SpriteAtlas.hpp" />
     <ClInclude Include="Animation\Graphics\TextureAnimated.hpp" />
     <ClInclude Include="Animation\Graphics\TextureAtlas.hpp" />
     <ClInclude Include="Animation\Utilities\Bezier.hpp" />
@@ -222,11 +223,11 @@
     <ClInclude Include="Game\Scenes\Board\Board.hpp" />
     <ClInclude Include="Game\Scenes\FlagGame\FlagGame.hpp" />
     <ClInclude Include="Game\Scenes\Loading\LoadingScreen.hpp" />
+    <ClInclude Include="Game\Scenes\Menu\Menu.hpp" />
     <ClInclude Include="Game\Scenes\Podium\Podium.hpp" />
     <ClInclude Include="Game\Scenes\RandCard\RandCard.hpp" />
     <ClInclude Include="Game\Scenes\RockPaperScissors\RockPaperScissors.hpp" />
     <ClInclude Include="Game\Scenes\RussianRoulette\RussianRoulette.hpp" />
-    <ClInclude Include="Graphics\HealthBar.hpp" />
     <ClInclude Include="Map\JsonReader.h" />
     <ClInclude Include="Map\MapLayer.h" />
     <ClInclude Include="Map\MapObject.h" />

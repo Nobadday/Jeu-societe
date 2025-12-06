@@ -12,6 +12,7 @@
 #include "./Game/Scenes/RussianRoulette/RussianRoulette.hpp"
 #include "./Game/Scenes/RandCard/RandCard.hpp"
 #include "Game/Scenes/FlagGame/FlagGame.hpp"
+#include "Game/Scenes/Menu/Menu.hpp"
 
 #include "./Game/Scenes/Podium/Podium.hpp"
 
@@ -19,6 +20,7 @@ typedef struct MainData
 {
 	sfMod::RenderWindow renderWindow;
 	AssetManager assetManager;
+	AudioEngine audioEngine;
 
 	sf::Clock clock;
 	SceneHandler scenes;
@@ -48,13 +50,14 @@ int main(void)
 	MainData mainData;
 
 
-	mainData.gameData.m_playerDataList.resize(4);
-	for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
-	{
-		mainData.gameData.m_playerDataList[i].SetJoystickID(i);
-		mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 4));
-	}
 
+	//mainData.gameData.m_playerDataList.resize(2);
+	//for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
+	//{
+	//	mainData.gameData.m_playerDataList[i].SetJoystickID(i);
+	//	mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 8));
+	//	mainData.gameData.AddPlayerPlaying(i);
+	//}
 
 	MainDataLoad(mainData);
 
@@ -89,6 +92,8 @@ void MainDataLoad(MainData& _mainData)
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
 	_mainData.gameData.m_assetManager = &_mainData.assetManager;
+	_mainData.gameData.m_audioEngine = &_mainData.audioEngine;
+	_mainData.audioEngine.SetAssetManager(_mainData.assetManager);
 
 	_mainData.assetManager.LoadManifest("Manifests/Main.json", "main");
 
@@ -96,6 +101,7 @@ void MainDataLoad(MainData& _mainData)
 
 	// Ajouter les scènes
 	_mainData.scenes.AddScene<LoadingScreen>("Lo");
+	_mainData.scenes.AddScene<Menu>("Menu");
 	_mainData.scenes.AddScene<BaseGame>("Board");
 	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
 	_mainData.scenes.AddScene<ArmWrestling>("ArmWrestling");
@@ -105,8 +111,12 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
 	_mainData.scenes.AddScene<Podium>("Podium");
 
-	// Sélectionner le LoadingScreen
-	_mainData.scenes.SelectScene("Lo", true);
+	// Sélectionner le LoadingScreen metre false pour tout scene au debut 
+	//_mainData.scenes.SelectScene("Lo", false);
+	_mainData.scenes.SelectScene("Menu", false);
+	//_mainData.scenes.SelectScene("RandCard", false);
+	//_mainData.scenes.SelectScene("RuRoul", false);
+	//_mainData.scenes.SelectScene("Board", false);
 
 	_mainData.clock.restart();
 }

@@ -3,6 +3,7 @@
 GameData::GameData() :
 m_renderWindow(NULL),
 m_assetManager(NULL),
+m_audioEngine(NULL),
 m_playerDataList(),
 m_gonnaPlayIndex (),
 m_winIndex()
