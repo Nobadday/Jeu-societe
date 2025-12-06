@@ -1,0 +1,24 @@
+{
+    "assetPath":"anim_card.json",
+    "framerate": 1,
+	"animations": [
+        {
+            "name":"Bonus"
+        },
+        {
+            "name":"BonusFace"
+        },
+        {
+            "name":"Malus"
+        },
+        {
+            "name":"MalusFace"
+        },
+        {
+            "name":"Luck"
+        },
+        {
+            "name":"LuckFace"
+        }
+    ]
+}

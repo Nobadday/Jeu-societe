@@ -1,0 +1,15 @@
+{
+    "assetPath":"Right_Hands.texsheet",
+    "framerate": 10,
+	"animations": [
+        {
+            "name":"Rock"
+        },
+        {
+            "name":"Paper"
+        },
+        {
+            "name":"Scissors"
+        }
+    ]
+}
