@@ -60,17 +60,16 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	m_data->diceVideos.resize(6);
 	for (int i = 0; i < 6; i++)
 	{
-		m_data->diceVideos[i] = new HighResVideoPlayer();
+		// Configuration simple sans taille personnalisée
+		HighResConfig config;
+		config.sizeMode = VideoSizeMode::Original; // Garder la résolution originale
+		config.enableLoop = false;
+
+		m_data->diceVideos[i] = new HighResVideoPlayer(config);
 		std::string videoPath = "Assets/Video/De" + std::to_string(i + 1) + ".mov";
 		if (!m_data->diceVideos[i]->loadFromFile(videoPath))
 		{
 			std::cout << "Erreur : Impossible de charger la video du de: " << videoPath << std::endl;
-		}
-		else
-		{
-			HighResConfig config;
-			config.enableLoop = false;
-			m_data->diceVideos[i]->setConfig(config);
 		}
 	}
 
@@ -548,8 +547,8 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 
 	if (m_data->state == DICE_ANIMATION)
 	{
-		// CORRECTION : Positionner la vidéo au centre de la vue (caméra) au lieu de coordonnées écran fixes
-		sf::Vector2f cameraCenter = { SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f, };
+		// Centre de la vue
+		sf::Vector2f cameraCenter = { SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f };
 
 		sf::Sprite videoSprite(m_data->currentDiceVideo->getSprite());
 
@@ -559,8 +558,15 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 		// Centrer l'origine du sprite
 		videoSprite.setOrigin(videoBounds.width / 2.0f, videoBounds.height / 2.0f);
 
-		// Positionner au centre de la caméra (suit les personnages)
+		// Positionner au centre de la caméra
 		videoSprite.setPosition(cameraCenter);
+
+		//// NOUVEAU : Ajuster la taille d'affichage (exemple : 2x plus grand)
+		//float desiredDisplaySize = 600.0f; // Taille souhaitée en pixels à l'écran
+		//float currentSize = videoBounds.width; // Taille actuelle du sprite
+		//float displayScale = desiredDisplaySize / currentSize;
+		//
+		//videoSprite.setScale(displayScale, displayScale);
 
 		// Dessiner avec le shader de chroma key
 		mod->draw(videoSprite, &m_data->chromaKeyShader);

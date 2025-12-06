@@ -271,24 +271,86 @@ bool HighResVideoPlayer::initializeAudioDecoder()
 
 void HighResVideoPlayer::calculateRenderSize()
 {
-	if (m_originalWidth > 1920 || m_originalHeight > 1080)
+	switch (m_config.sizeMode)
 	{
-		m_renderWidth = m_originalWidth / m_config.downscaleFactor;
-		m_renderHeight = m_originalHeight / m_config.downscaleFactor;
-	}
-	else
-	{
-		m_renderWidth = m_originalWidth / m_config.downscaleFactor;
-		m_renderHeight = m_originalHeight / m_config.downscaleFactor;
+	case VideoSizeMode::Original:
+		// Taille originale de la vidéo
+		m_renderWidth = m_originalWidth;
+		m_renderHeight = m_originalHeight;
+		break;
+
+	case VideoSizeMode::Custom:
+		// Taille personnalisée avec conservation du ratio
+		if (m_config.customWidth > 0 && m_config.customHeight > 0)
+		{
+			m_renderWidth = m_config.customWidth;
+			m_renderHeight = m_config.customHeight;
+		}
+		else if (m_config.customWidth > 0)
+		{
+			// Seulement largeur spécifiée, calcule hauteur proportionnelle
+			float ratio = static_cast<float>(m_originalHeight) / m_originalWidth;
+			m_renderWidth = m_config.customWidth;
+			m_renderHeight = static_cast<int>(m_config.customWidth * ratio);
+		}
+		else if (m_config.customHeight > 0)
+		{
+			// Seulement hauteur spécifiée, calcule largeur proportionnelle
+			float ratio = static_cast<float>(m_originalWidth) / m_originalHeight;
+			m_renderWidth = static_cast<int>(m_config.customHeight * ratio);
+			m_renderHeight = m_config.customHeight;
+		}
+		else
+		{
+			// Aucune dimension spécifiée, utilise l'originale
+			m_renderWidth = m_originalWidth;
+			m_renderHeight = m_originalHeight;
+		}
+		break;
+
+	case VideoSizeMode::FitToScreen:
+		// Ajuste à la taille de l'écran en conservant le ratio
+		{
+			float scaleX = static_cast<float>(SCREEN_WIDTH) / m_originalWidth;
+			float scaleY = static_cast<float>(SCREEN_HEIGHT) / m_originalHeight;
+			float scale = std::min(scaleX, scaleY);
+			m_renderWidth = static_cast<int>(m_originalWidth * scale);
+			m_renderHeight = static_cast<int>(m_originalHeight * scale);
+		}
+		break;
+
+	case VideoSizeMode::DownscaleFactor:
+	default:
+		// Comportement original avec facteur de downscale
+		if (m_originalWidth > 1920 || m_originalHeight > 1080)
+		{
+			m_renderWidth = m_originalWidth / m_config.downscaleFactor;
+			m_renderHeight = m_originalHeight / m_config.downscaleFactor;
+		}
+		else
+		{
+			m_renderWidth = m_originalWidth / m_config.downscaleFactor;
+			m_renderHeight = m_originalHeight / m_config.downscaleFactor;
+		}
+		break;
 	}
 
+	// Limite à la taille maximale de texture
 	if (m_renderWidth > m_config.maxTextureSize)
 	{
 		float ratio = static_cast<float>(m_config.maxTextureSize) / m_renderWidth;
 		m_renderWidth = m_config.maxTextureSize;
 		m_renderHeight = static_cast<int>(m_renderHeight * ratio);
 	}
+	
+	if (m_renderHeight > m_config.maxTextureSize)
+	{
+		float ratio = static_cast<float>(m_config.maxTextureSize) / m_renderHeight;
+		m_renderHeight = m_config.maxTextureSize;
+		m_renderWidth = static_cast<int>(m_renderWidth * ratio);
+	}
 
+	// S'assure que les dimensions sont paires (requis pour certains codecs)
 	m_renderWidth = (m_renderWidth / 2) * 2;
 	m_renderHeight = (m_renderHeight / 2) * 2;
 }
@@ -678,4 +740,76 @@ void HighResVideoPlayer::play()
 bool HighResVideoPlayer::isFinish() const
 {
 	return m_videoEnded;
+}
+
+void HighResVideoPlayer::setVideoSize(int width, int height)
+{
+	if (!m_isInitialized)
+	{
+		std::cerr << "Erreur: Video non initialisee" << std::endl;
+		return;
+	}
+
+	// Sauvegarde l'état actuel
+	float currentTime = m_videoClock;
+	bool wasPaused = m_paused;
+
+	// Met à jour la configuration
+	m_config.sizeMode = VideoSizeMode::Custom;
+	m_config.customWidth = width;
+	m_config.customHeight = height;
+
+	// Recalcule et réinitialise
+	int oldWidth = m_renderWidth;
+	int oldHeight = m_renderHeight;
+	
+	calculateRenderSize();
+
+	if (oldWidth != m_renderWidth || oldHeight != m_renderHeight)
+	{
+		// Libère les anciennes ressources
+		if (m_swsContext) sws_freeContext(m_swsContext);
+		if (m_rgbaFrame) av_frame_free(&m_rgbaFrame);
+		if (m_videoBuffer) delete[] m_videoBuffer;
+
+		// Recrée la texture
+		m_texture.clear();
+		if (!m_texture.create(m_renderWidth, m_renderHeight))
+		{
+			std::cerr << "Erreur: impossible de recreer la texture" << std::endl;
+			return;
+		}
+
+		m_texture.setSmooth(false);
+		m_sprite.setTexture(m_texture.getTexture(), true);
+
+		// Recalcule l'échelle et la position
+		float scaleX = static_cast<float>(SCREEN_WIDTH) / m_renderWidth;
+		float scaleY = static_cast<float>(SCREEN_HEIGHT) / m_renderHeight;
+		float scale = std::min(scaleX, scaleY);
+		m_sprite.setScale({ scale, scale });
+
+		float posX = (SCREEN_WIDTH - m_renderWidth * scale) / 2.0f;
+		float posY = (SCREEN_HEIGHT - m_renderHeight * scale) / 2.0f;
+		m_sprite.setPosition({ posX, posY });
+
+		// Recrée le contexte de conversion
+		m_swsContext = sws_getContext(
+			m_originalWidth, m_originalHeight, m_videoContext->pix_fmt,
+			m_renderWidth, m_renderHeight, AV_PIX_FMT_RGBA,
+			SWS_FAST_BILINEAR, nullptr, nullptr, nullptr
+		);
+
+		// Recrée le buffer RGBA
+		m_rgbaFrame = av_frame_alloc();
+		m_videoBuffer = new uint8_t[m_renderWidth * m_renderHeight * 4];
+		av_image_fill_arrays(m_rgbaFrame->data, m_rgbaFrame->linesize, m_videoBuffer,
+			AV_PIX_FMT_RGBA, m_renderWidth, m_renderHeight, 1);
+
+		std::cout << "Taille video modifiee: " << m_renderWidth << "x" << m_renderHeight << std::endl;
+	}
+
+	// Restaure l'état
+	if (!wasPaused)
+		setPaused(false);
 }
