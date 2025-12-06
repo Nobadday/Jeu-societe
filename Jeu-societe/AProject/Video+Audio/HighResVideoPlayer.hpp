@@ -146,5 +146,29 @@ public:
     void play();
 };
 
+// pour changer la taille de la Video il suffit de faire un setScale sur le sprite retourné par getSprite()
+// 
+// // Exemples d'utilisation :
+// HighResVideoPlayer videoPlayer;
+// videoPlayer.loadFromFile("video.mp4");
+// 
+// videoPlayer.play();
+// 
+// 
+// Dans la boucle principale :
+// 
+// float deltaTime = clock.restart().asSeconds();
+// videoPlayer.update(deltaTime);
+// 
+// Dans la boucle de rendu :
+// 
+// sf::sprite videoSprite = videoPlayer.getSprite();
+// 
+// videoSprite.setScale(2.0f, 2.0f); // Exemple : doubler la taille
+// 
+// window.draw(videoSprite);
+// 
+// 
+
 #endif // !_INC_HIGHRESVIDEOPLAYER_HPP
 
