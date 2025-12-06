@@ -150,9 +150,6 @@
     <ClCompile Include="Game\Scenes\Podium\Podium.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\HealthBar.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="Utilities\BetterWindow\BetterWindow.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -169,6 +166,9 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Video+Audio\VideoCommun.hpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\HealthBar\HealthBar.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -336,6 +336,9 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Video+Audio\HighResVideoPlayer.hpp">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\HealthBar\HealthBar.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
