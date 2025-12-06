@@ -31,7 +31,7 @@ void LoadingScreen::Load(void)
     m_data->progressBarFill.setPosition(SCREEN_WIDTH / 2.f - 300.f, SCREEN_HEIGHT / 2.f);
 
     // Configuration du chargement vers Board
-    m_data->nextSceneName = "ArmWrestling";
+    m_data->nextSceneName = "Board";
 
 	m_gameData->m_tile = new Tiled();
     
