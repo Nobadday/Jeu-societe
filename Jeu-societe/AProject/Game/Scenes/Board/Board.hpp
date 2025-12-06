@@ -233,6 +233,8 @@ class BaseGame : public SceneBase
 			std::vector<HighResVideoPlayer*> diceVideos;
 			HighResVideoPlayer* currentDiceVideo;
 			// MODIFICATION : Stocker des pointeurs vers les vidéos
+
+			sf::Sprite arrow;
 			
 		};
 

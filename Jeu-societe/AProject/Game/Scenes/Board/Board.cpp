@@ -191,6 +191,24 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	m_data->animator.End();
 	m_data->animator2.End();
 
+	m_data->arrow.setTexture(*m_gameData->m_assetManager->GetAsset<sf::Texture>("Arrow", AssetManager::AssetType::TEXTURE));
+	
+	m_data->arrow.setOrigin({ 0 , m_data->arrow.getTexture()->getSize().y / 2.f });
+
+	for (int i = 0; i < m_data->posCase.size(); i++)
+	{
+		auto& mapObject = m_data->posCase[i];
+		if (mapObject.GetName() == "6")
+		{
+			m_data->arrow.setPosition(mapObject.GetPosition() + sf::Vector2f(150,0));
+		}
+		
+	}
+
+	m_data->arrow.setScale({ 0.5f,0.5f });
+
+	m_data->arrow.setRotation(315);
+
 	progress.store(1.0f);
 }
 
@@ -307,11 +325,13 @@ void BaseGame::PollEvent(sf::Event& _event)
 					if (_event.joystickMove.position < -50.0f) // Haut
 					{
 						ProcessPathChoice(0);
+						m_data->arrow.setRotation(315);
 						std::cout << "Chemin du haut choisi (joystick)" << std::endl;
 					}
 					else if (_event.joystickMove.position > 50.0f) // Bas
 					{
 						ProcessPathChoice(1);
+						m_data->arrow.setRotation(25);
 						std::cout << "Chemin du bas choisi (joystick)" << std::endl;
 					}
 				}
@@ -336,11 +356,13 @@ void BaseGame::PollEvent(sf::Event& _event)
 			if (_event.key.code == sf::Keyboard::Up || _event.key.code == sf::Keyboard::Z)
 			{
 				ProcessPathChoice(0);
+				m_data->arrow.setRotation(315);
 				std::cout << "Chemin du haut choisi (clavier)" << std::endl;
 			}
 			else if (_event.key.code == sf::Keyboard::Down || _event.key.code == sf::Keyboard::S)
 			{
 				ProcessPathChoice(1);
+				m_data->arrow.setRotation(25);
 				std::cout << "Chemin du bas choisi (clavier)" << std::endl;
 			}
 
@@ -538,6 +560,8 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 
 	DrawLBM(*mod);
 
+	mod->draw(m_data->arrow);
+
 
 	m_gameData->m_renderWindow->ResetView();
 	for (int idx : indices)
@@ -697,6 +721,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
 		m_data->pathChoices.clear();
 		m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
+		m_data->arrow.setRotation(315);
 		break;
 	case WIN:
 		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
@@ -1740,18 +1765,26 @@ void BaseGame::ProcessBridgeRoll()
 		switch (m_gameData->m_playerDataList[m_data->currentPlayerIndex].GetPlayerSkin())
 		{
 		case PlayerData::CHARACTER_1_1:
+			[[fallthrough]];
+		case PlayerData::CHARACTER_1_2:
 			m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_1_2);
 			m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-2", AssetManager::AssetType::TEXTURE_ANIMATED);
 			break;
 		case PlayerData::CHARACTER_2_1:
+			[[fallthrough]];
+		case PlayerData::CHARACTER_2_2:
 			m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_2_2);
 			m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso2-2", AssetManager::AssetType::TEXTURE_ANIMATED);
 			break;
 		case PlayerData::CHARACTER_3_1:
+			[[fallthrough]];
+		case PlayerData::CHARACTER_3_2:
 			m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_3_2);
 			m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso3-2", AssetManager::AssetType::TEXTURE_ANIMATED);
 			break;
 		case PlayerData::CHARACTER_4_1:
+			[[fallthrough]];
+		case PlayerData::CHARACTER_4_2:
 			m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_4_2);
 			m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso4-2", AssetManager::AssetType::TEXTURE_ANIMATED);
 			break;
@@ -2193,30 +2226,30 @@ void BaseGame::DrawIconePlayer(sf::RenderWindow& _renderWindow, int _i)
 	case UP_RIGHT:
 		if (_i != m_data->currentPlayerIndex)
 		{
-			m_data->icone.setPosition({ SCREEN_WIDTH  - 72.5f ,  SCREEN_HEIGHT + 305.f * 0.40f });
-			m_data->iconeAura.setPosition({ SCREEN_WIDTH - 72.5f , SCREEN_HEIGHT + 305.f * 0.41f });
+			m_data->icone.setPosition({ SCREEN_WIDTH  - 72.5f ,  305.f * 0.40f });
+			m_data->iconeAura.setPosition({ SCREEN_WIDTH - 72.5f , 305.f * 0.41f });
 			
 
 		}
 		else
 		{
-			m_data->icone.setPosition({  SCREEN_WIDTH  - 72.5f ,SCREEN_HEIGHT + 305.f * 0.50f });
-			m_data->iconeAura.setPosition({  SCREEN_WIDTH  - 72.5f ,  SCREEN_HEIGHT + 305.f * 0.51f });
-			m_data->iconeState.setPosition({ SCREEN_WIDTH  - 72.5f * 2.f ,SCREEN_HEIGHT  + 305.f * 0.50f });
+			m_data->icone.setPosition({  SCREEN_WIDTH  - 72.5f , 305.f * 0.50f });
+			m_data->iconeAura.setPosition({  SCREEN_WIDTH  - 72.5f ,  305.f * 0.51f });
+			m_data->iconeState.setPosition({ SCREEN_WIDTH  - 72.5f * 2.f , 305.f * 0.50f });
 		}
 		break;
 	case DOWN_LEFT:
 		if (_i != m_data->currentPlayerIndex)
 		{
-			m_data->icone.setPosition({  72.5f  , 0 });
-			m_data->iconeAura.setPosition({ 72.5f  , 0 });
+			m_data->icone.setPosition({  72.5f  , SCREEN_HEIGHT - 10 });
+			m_data->iconeAura.setPosition({ 72.5f  ,  SCREEN_HEIGHT - 8 });
 			
 		}
 		else
 		{
-			m_data->icone.setPosition({ 72.5f  ,  10 });
-			m_data->iconeAura.setPosition({ 72.5f  , 8 });
-			m_data->iconeState.setPosition({  72.5f * 2.f ,  8 });
+			m_data->icone.setPosition({ 72.5f  ,   SCREEN_HEIGHT - 10 });
+			m_data->iconeAura.setPosition({ 72.5f  , SCREEN_HEIGHT - 8 });
+			m_data->iconeState.setPosition({  72.5f * 2.f ,  SCREEN_HEIGHT - 8 });
 		}
 		break;
 	case DONW_RIGHT:
