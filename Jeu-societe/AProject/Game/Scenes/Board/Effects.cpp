@@ -9,7 +9,7 @@ void BaseGame::CreateSmokeEffectForSwap(Player& _player)
 		{
 			sf::Vector2f posEffect = _player.boardPosition;
 			sf::Vector2u bit = _player.texture.GetTexture().getSize();
-			posEffect.y -= bit.y * 2 / 6;
+			posEffect.y -= bit.y * 2.f / 6.f;
 
 			Effect effect(m_data->smoke, posEffect + sf::Vector2f(-20.f + randmt::RandomFloat(0, 40), -20.f + randmt::RandomFloat(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
 			m_data->effectSwap.push_back(effect);
@@ -27,7 +27,7 @@ void BaseGame::CreateSmokeEffectForSwap(Player& _player)
 		{
 			sf::Vector2f posEffect = _player.boardPosition;
 			sf::Vector2u bit = _player.texture.GetTexture().getSize();
-			posEffect.y -= bit.y * 1 / 6;
+			posEffect.y -= bit.y * 1.f / 6.f;
 
 			Effect effect(m_data->smoke, posEffect + sf::Vector2f(-20.f + randmt::RandomFloat(0, 40), -20.f + randmt::RandomFloat(0, 40)), randmt::RandomFloat(0.5f, 1.f), 360 * randmt::RandomFloat(0, 360));
 			m_data->effectSwap.push_back(effect);

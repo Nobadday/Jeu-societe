@@ -227,6 +227,67 @@ void BaseGame::Unload(void)
 	this->m_data = NULL;
 }
 
+// NOUVEAU : Méthode helper pour vérifier les entrées joueur
+bool BaseGame::CheckPlayerInput(sf::Event& _event, bool& shouldRoll)
+{
+	shouldRoll = false;
+
+	// Gestion joystick
+	if (_event.type == sf::Event::JoystickButtonPressed)
+	{
+		if (m_gameData->m_playerDataList[m_data->currentPlayerIndex].m_joystickId == _event.joystickButton.joystickId)
+		{
+			if (_event.joystickButton.button == 0)
+			{
+				shouldRoll = true;
+				return true;
+			}
+		}
+	}
+
+	// Gestion clavier (DEBUG)
+	if (_event.type == sf::Event::KeyPressed)
+	{
+		if (_event.key.code == sf::Keyboard::Space)
+		{
+			shouldRoll = true;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+// NOUVEAU : Méthode helper pour traiter le lancer de dé
+void BaseGame::ProcessDiceRoll(int rando)
+{
+	std::cout << "Roll Dice: " << rando << std::endl;
+
+	if (m_data->state != START)
+	{
+		auto& player = m_data->players[m_data->currentPlayerIndex];
+
+		// Stocker le résultat
+		m_data->diceResult = rando;
+
+		// CORRECTION : Utiliser un pointeur au lieu de copier
+		if (rando >= 1 && rando <= 6)
+		{
+			// Lancer la vidéo correspondante
+			m_data->currentDiceVideo = m_data->diceVideos[rando - 1];
+			m_data->currentDiceVideo->play();
+			m_data->diceAnimationPlaying = true;
+			SetBoardState(DICE_ANIMATION);
+		}
+	}
+	else
+	{
+		m_data->players[m_data->currentPlayerIndex].startRandom = rando;
+		std::cout << "Place: " << rando << std::endl;
+	}
+}
+
 void BaseGame::PollEvent(sf::Event& _event)
 {
 	if (_event.type == sf::Event::KeyPressed)
@@ -243,70 +304,24 @@ void BaseGame::PollEvent(sf::Event& _event)
 		}
 	}
 
+	// Gestion simplifiée des états d'attente de lancer
 	if (m_data->state == WAITING_FIN_ROLL)
 	{
 		bool shouldRoll = false;
-
-		// Gestion joystick
-		if (_event.type == sf::Event::JoystickButtonPressed)
-		{
-			if (m_gameData->m_playerDataList[m_data->currentPlayerIndex].m_joystickId == _event.joystickButton.joystickId)
-			{
-				if (_event.joystickButton.button == 0)
-				{
-					shouldRoll = true;
-				}
-			}
-		}
-
-		// Gestion clavier (DEBUG)
-		if (_event.type == sf::Event::KeyPressed)
-		{
-			if (_event.key.code == sf::Keyboard::Space)
-			{
-				shouldRoll = true;
-			}
-		}
-
-		if (shouldRoll)
+		if (CheckPlayerInput(_event, shouldRoll) && shouldRoll)
 		{
 			ProcessFinRoll();
 		}
-
 		return;
 	}
 
-	// Gestion du lancer de dé pour le pont
 	if (m_data->state == WAITING_BRIDGE_ROLL)
 	{
 		bool shouldRoll = false;
-
-		// Gestion joystick
-		if (_event.type == sf::Event::JoystickButtonPressed)
-		{
-			if (m_gameData->m_playerDataList[m_data->currentPlayerIndex].m_joystickId == _event.joystickButton.joystickId)
-			{
-				if (_event.joystickButton.button == 0)
-				{
-					shouldRoll = true;
-				}
-			}
-		}
-
-		// Gestion clavier (DEBUG)
-		if (_event.type == sf::Event::KeyPressed)
-		{
-			if (_event.key.code == sf::Keyboard::Space)
-			{
-				shouldRoll = true;
-			}
-		}
-
-		if (shouldRoll)
+		if (CheckPlayerInput(_event, shouldRoll) && shouldRoll)
 		{
 			ProcessBridgeRoll();
 		}
-
 		return;
 	}
 
@@ -371,54 +386,21 @@ void BaseGame::PollEvent(sf::Event& _event)
 				m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("");
 				SetBoardState(DEPLACEMENT_SPLIT);
 			}
-
 		}
-
-
 
 		return; // Ne pas traiter d'autres événements pendant le choix
 	}
 
-	// Lambda pour factoriser le comportement du lancer de dé
-	auto processDiceRoll = [this](int rando)
-		{
-			std::cout << "Roll Dice: " << rando << std::endl;
-
-			if (m_data->state != START)
-			{
-				auto& player = m_data->players[m_data->currentPlayerIndex];
-
-				// Stocker le résultat
-				m_data->diceResult = rando;
-
-				// CORRECTION : Utiliser un pointeur au lieu de copier
-				if (rando >= 1 && rando <= 6)
-				{
-					// Lancer la vidéo correspondante
-
-					m_data->currentDiceVideo = m_data->diceVideos[rando - 1];
-
-					m_data->currentDiceVideo->play();
-					m_data->diceAnimationPlaying = true;
-					SetBoardState(DICE_ANIMATION);
-				}
-			}
-			else
-			{
-				m_data->players[m_data->currentPlayerIndex].startRandom = rando;
-				std::cout << "Place: " << rando << std::endl;
-			}
-		};
-
-	// Gestion des entrées joystick
+	// Gestion du lancer de dé principal
 	if (_event.type == sf::Event::JoystickButtonPressed)
 	{
-		if (m_gameData->m_playerDataList[m_data->currentPlayerIndex].m_joystickId == _event.joystickButton.joystickId && m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE && m_data->state != DICE_ANIMATION)
+		if (m_gameData->m_playerDataList[m_data->currentPlayerIndex].m_joystickId == _event.joystickButton.joystickId && 
+			m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE && m_data->state != DICE_ANIMATION)
 		{
 			if (_event.joystickButton.button == 0 && m_data->animator.IsFinished())
 			{
 				int rando = randmt::RandomInt(1, 6);
-				processDiceRoll(rando);
+				ProcessDiceRoll(rando);
 			}
 		}
 	}
@@ -426,13 +408,13 @@ void BaseGame::PollEvent(sf::Event& _event)
 	// Gestion des entrées clavier (DEBUG)
 	if (_event.type == sf::Event::KeyPressed)
 	{
-		if (_event.key.code == sf::Keyboard::Space && m_data->animator.IsFinished() && m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE && m_data->state != DICE_ANIMATION)
+		if (_event.key.code == sf::Keyboard::Space && m_data->animator.IsFinished() && 
+			m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE && m_data->state != DICE_ANIMATION)
 		{
 			int rando = randmt::RandomInt(1, 6);
-			processDiceRoll(rando);
+			ProcessDiceRoll(rando);
 		}
 	}
-
 }
 
 void BaseGame::Update(float _deltaTime)
@@ -503,6 +485,63 @@ void BaseGame::Update(float _deltaTime)
 			m_data->players[m_data->currentPlayerIndex].tourstate = 0;
 			m_data->players[m_data->currentPlayerIndex].state = StatePlayer::NONE;
 			SetBoardState(PLAY, 0);
+		}
+	}
+}
+
+
+// NOUVEAU : Méthode helper pour initier un mouvement
+void BaseGame::InitiateMovement(int nextIndex, bool backwards)
+{
+	auto& player = m_data->players[m_data->currentPlayerIndex];
+
+	sf::Vector2f startPos = player.boardPosition;
+	sf::Vector2f endPos = m_data->posCase[nextIndex].GetPosition() +
+		sf::Vector2f{ randmt::RandomFloat(-10, 10), randmt::RandomFloat(-10, 10) };
+
+	m_data->animator.SetGoTo(startPos, endPos);
+	m_data->animator.Restart();
+
+	player.currentCaseIndex = nextIndex;
+	player.sprite.SetAnimation("Right_Walk");
+
+	if (backwards)
+	{
+		player.sprite.setScale(-1, 1);
+	}
+
+	// Vérifier si on arrive sur une convergence
+	const MapObject& nextCase = m_data->posCase[nextIndex];
+	if (nextCase.GetType() == "merge")
+	{
+		player.currentPathId = -1; // Retour au chemin principal
+	}
+}
+
+// NOUVEAU : Méthode helper pour gérer les états de mouvement
+void BaseGame::HandleMovementState(State state, float _dt)
+{
+	m_data->players[m_data->currentPlayerIndex].sprite.Update(_dt);
+	m_data->players[m_data->currentPlayerIndex].boardPosition = m_data->animator.GetGoTo();
+	
+	if (m_data->animator.IsFinished())
+	{
+		auto& player = m_data->players[m_data->currentPlayerIndex];
+		player.pendingMovement--;
+
+		std::cout << "Mouvement restant : " << player.pendingMovement << std::endl;
+
+		if (player.pendingMovement > 0)
+		{
+			// Continuer le déplacement
+			SetBoardState(state);
+		}
+		else
+		{
+			// Déplacement terminé
+			State nextState = (state == DEPLACEMENT_ACTION || state == DEPLACEMENT_ACTION_BACK || state == DEPLACEMENT_ACTION_2) 
+				? CASE_ACTION_END : CASE_ACTION;
+			SetBoardState(nextState);
 		}
 	}
 }
@@ -716,6 +755,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 	{
 	case START:
 		break;
+		
 	case PLAY:
 		m_data->players[m_data->currentPlayerIndex].sprite.setScale({ 1.f,1.f });
 		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
@@ -743,29 +783,33 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 			return;
 		}
 
-		// Vérifier si on arrive sur un pont
+		// Vérifier si on arrive sur un pont ou ligne d'arrivée
 		const MapObject& currentCase = m_data->posCase[player.currentCaseIndex];
 		std::string caseType = "";
 		if (currentCase.GetPropertyByName("type") != nullptr)
 		{
 			caseType = currentCase.GetPropertyByName("type")->GetStringValue();
 		}
-		if (caseType == "bridge" && player.pendingMovement > 0)
+		
+		if (player.pendingMovement > 0)
 		{
-			player.sprite.SetAnimation("Idle");
-			std::cout << "Pont détecté ! Lancez le dé pour traverser..." << std::endl;
-			player.waitingBridgeRoll = true;
-			SetBoardState(WAITING_BRIDGE_ROLL);
-			return;
-		}
+			if (caseType == "bridge")
+			{
+				player.sprite.SetAnimation("Idle");
+				std::cout << "Pont détecté ! Lancez le dé pour traverser..." << std::endl;
+				player.waitingBridgeRoll = true;
+				SetBoardState(WAITING_BRIDGE_ROLL);
+				return;
+			}
 
-		if (caseType == "end" && player.pendingMovement > 0)
-		{
-			player.sprite.SetAnimation("Idle");
-			std::cout << "Ligne d'arrivée détectée ! Lancez le dé pour franchir..." << std::endl;
-			player.waitingBridgeRoll = true;
-			SetBoardState(WAITING_FIN_ROLL);
-			return;
+			if (caseType == "end")
+			{
+				player.sprite.SetAnimation("Idle");
+				std::cout << "Ligne d'arrivée détectée ! Lancez le dé pour franchir..." << std::endl;
+				player.waitingBridgeRoll = true;
+				SetBoardState(WAITING_FIN_ROLL);
+				return;
+			}
 		}
 
 		// Pas de choix : avancer automatiquement
@@ -777,24 +821,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 			return;
 		}
 
-		int nextIndex = availablePaths[0]; // Un seul chemin disponible
-
-		sf::Vector2f startPos = player.boardPosition;
-		sf::Vector2f endPos = m_data->posCase[nextIndex].GetPosition() +
-			sf::Vector2f{ randmt::RandomFloat(-10, 10), randmt::RandomFloat(-10, 10) };
-
-		m_data->animator.SetGoTo(startPos, endPos);
-		m_data->animator.Restart();
-
-		player.currentCaseIndex = nextIndex;
-		player.sprite.SetAnimation("Right_Walk");
-
-		// Vérifier si on arrive sur une convergence
-		const MapObject& nextCase = m_data->posCase[nextIndex];
-		if (nextCase.GetType() == "merge")
-		{
-			player.currentPathId = -1; // Retour au chemin principal
-		}
+		InitiateMovement(availablePaths[0]);
 	}
 	break;
 
@@ -803,9 +830,8 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 	case DEPLACEMENT_SPLIT:
 	{
 		auto& player = m_data->players[m_data->currentPlayerIndex];
-
-
 		std::vector<int> availablePaths = GetAvailablePaths(player.currentCaseIndex);
+		
 		if (availablePaths.empty())
 		{
 			std::cout << "Erreur : aucun chemin disponible!" << std::endl;
@@ -815,38 +841,22 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 
 		int nextIndex = availablePaths[0];
 
-		if (m_data->players[m_data->currentPlayerIndex].currentPathId != -1 && availablePaths.size() > 1)
+		if (player.currentPathId != -1 && availablePaths.size() > 1)
 		{
-			nextIndex = availablePaths[m_data->players[m_data->currentPlayerIndex].currentPathId - 1];
+			nextIndex = availablePaths[player.currentPathId - 1];
 		}
 
-
-		sf::Vector2f startPos = player.boardPosition;
-		sf::Vector2f endPos = m_data->posCase[nextIndex].GetPosition() +
-			sf::Vector2f{ randmt::RandomFloat(-10, 10), randmt::RandomFloat(-10, 10) };
-
-		m_data->animator.SetGoTo(startPos, endPos);
-		m_data->animator.Restart();
-
-		player.currentCaseIndex = nextIndex;
-		player.sprite.SetAnimation("Right_Walk");
-
-		// Vérifier si on arrive sur une convergence
-		const MapObject& nextCase = m_data->posCase[nextIndex];
-		if (nextCase.GetType() == "merge")
-		{
-			player.currentPathId = -1; // Retour au chemin principal
-		}
+		InitiateMovement(nextIndex);
 	}
 	break;
-	case DEPLACEMENT_BACK:
+
+	case DEPLACEMENT_BACK: 
 		[[fallthrough]];
 	case DEPLACEMENT_ACTION_BACK:
 	{
 		auto& player = m_data->players[m_data->currentPlayerIndex];
-
-
 		std::vector<int> availablePaths = GetAvailablePathsBack(player.currentCaseIndex);
+		
 		if (availablePaths.empty())
 		{
 			std::cout << "Erreur : aucun chemin disponible!" << std::endl;
@@ -854,33 +864,15 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 			return;
 		}
 
-		int nextIndex = availablePaths[0];
-
-		sf::Vector2f startPos = player.boardPosition;
-		sf::Vector2f endPos = m_data->posCase[nextIndex].GetPosition() +
-			sf::Vector2f{ randmt::RandomFloat(-10, 10), randmt::RandomFloat(-10, 10) };
-
-		m_data->animator.SetGoTo(startPos, endPos);
-		m_data->animator.Restart();
-
-		player.currentCaseIndex = nextIndex;
-		player.sprite.SetAnimation("Right_Walk");
-		player.sprite.setScale(-1, 1);
-
-		// Vérifier si on arrive sur une convergence
-		const MapObject& nextCase = m_data->posCase[nextIndex];
-		if (nextCase.GetType() == "merge")
-		{
-			player.currentPathId = -1; // Retour au chemin principal
-		}
+		InitiateMovement(availablePaths[0], true);
 	}
 	break;
+
 	case DEPLACEMENT_ACTION_2:
 	{
 		auto& player = m_data->players[m_data->currentPlayerIndex];
-
-
 		std::vector<int> availablePaths = GetAvailablePaths(player.currentCaseIndex);
+		
 		if (availablePaths.empty())
 		{
 			std::cout << "Erreur : aucun chemin disponible!" << std::endl;
@@ -888,25 +880,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 			return;
 		}
 
-		int nextIndex = availablePaths[0];
-
-		sf::Vector2f startPos = player.boardPosition;
-		sf::Vector2f endPos = m_data->posCase[nextIndex].GetPosition() +
-			sf::Vector2f{ randmt::RandomFloat(-10, 10), randmt::RandomFloat(-10, 10) };
-
-		m_data->animator.SetGoTo(startPos, endPos);
-		m_data->animator.Restart();
-
-		player.currentCaseIndex = nextIndex;
-		player.sprite.SetAnimation("Right_Walk");
-		//player.sprite.setScale(-1, 1);
-
-		// Vérifier si on arrive sur une convergence
-		const MapObject& nextCase = m_data->posCase[nextIndex];
-		if (nextCase.GetType() == "merge")
-		{
-			player.currentPathId = -1; // Retour au chemin principal
-		}
+		InitiateMovement(availablePaths[0]);
 	}
 	break;
 
@@ -920,11 +894,14 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 
 	case CASE_ACTION:
 		break;
+		
 	case CASE_ACTION_END:
 		SetBoardState(PLAY, 0);
 		break;
+		
 	case DICE_ANIMATION:
 		break;
+		
 	default:
 		break;
 	}
@@ -1029,8 +1006,6 @@ void BaseGame::BoardStateUpdate(float _dt)
 				// Initialiser le mouvement restant avec le résultat du dé
 				player.pendingMovement = m_data->diceResult;
 
-				int nextIndex = 0;
-
 				m_data->timeDice = TIME_DIS_DISPLAY;
 
 				if (player.state != NONE)
@@ -1045,136 +1020,42 @@ void BaseGame::BoardStateUpdate(float _dt)
 
 				if (player.state != StatePlayer::CONFUSED)
 				{
-					SetBoardState(DEPLACEMENT, nextIndex);
+					SetBoardState(DEPLACEMENT, 0);
 				}
 				else
 				{
 					player.tourstate = 0;
 					player.state = StatePlayer::NONE;
-					SetBoardState(DEPLACEMENT_BACK, nextIndex);
+					SetBoardState(DEPLACEMENT_BACK, 0);
 				}
 			}
 		}
-
 	}
 	break;
+
+	// États de mouvement simplifiés
 	case DEPLACEMENT_SPLIT:
 		[[fallthrough]];
 	case DEPLACEMENT_BRIGE:
 		[[fallthrough]];
 	case DEPLACEMENT:
-		m_data->players[m_data->currentPlayerIndex].sprite.Update(_dt);
-		m_data->players[m_data->currentPlayerIndex].boardPosition = m_data->animator.GetGoTo();
-		if (m_data->animator.IsFinished())
-		{
-			// CORRECTION : Décrémenter le mouvement après avoir atteint la case
-			auto& player = m_data->players[m_data->currentPlayerIndex];
-			player.pendingMovement--;
-
-			std::cout << "Mouvement restant : " << player.pendingMovement << std::endl;
-
-			if (player.pendingMovement > 0)
-			{
-				// Continuer le déplacement vers la prochaine case
-				SetBoardState(DEPLACEMENT);
-			}
-			else
-			{
-				// Déplacement terminé, exécuter l'action de case
-				SetBoardState(CASE_ACTION);
-			}
-		}
+		HandleMovementState(DEPLACEMENT, _dt);
 		break;
+
 	case DEPLACEMENT_BACK:
-		m_data->players[m_data->currentPlayerIndex].sprite.Update(_dt);
-		m_data->players[m_data->currentPlayerIndex].boardPosition = m_data->animator.GetGoTo();
-		if (m_data->animator.IsFinished())
-		{
-			// CORRECTION : Décrémenter le mouvement après avoir atteint la case
-			auto& player = m_data->players[m_data->currentPlayerIndex];
-			player.pendingMovement--;
-
-			std::cout << "Mouvement restant : " << player.pendingMovement << std::endl;
-
-			if (player.pendingMovement > 0)
-			{
-				// Continuer le déplacement vers la prochaine case
-				SetBoardState(DEPLACEMENT_BACK);
-			}
-			else
-			{
-				// Déplacement terminé, exécuter l'action de case
-				SetBoardState(CASE_ACTION);
-			}
-		}
+		HandleMovementState(DEPLACEMENT_BACK, _dt);
 		break;
 
 	case DEPLACEMENT_ACTION:
-		m_data->players[m_data->currentPlayerIndex].sprite.Update(_dt);
-		m_data->players[m_data->currentPlayerIndex].boardPosition = m_data->animator.GetGoTo();
-		if (m_data->animator.IsFinished())
-		{
-			// CORRECTION : Décrémenter le mouvement après avoir atteint la case
-			auto& player = m_data->players[m_data->currentPlayerIndex];
-			player.pendingMovement--;
-
-			std::cout << "Mouvement restant : " << player.pendingMovement << std::endl;
-
-			if (player.pendingMovement > 0)
-			{
-				//// Continuer le déplacement vers la prochaine case
-				SetBoardState(DEPLACEMENT_ACTION);
-			}
-			else
-			{
-				// Déplacement terminé, exécuter l'action de case
-				SetBoardState(CASE_ACTION_END);
-			}
-		}
+		HandleMovementState(DEPLACEMENT_ACTION, _dt);
 		break;
+
 	case DEPLACEMENT_ACTION_BACK:
-		m_data->players[m_data->currentPlayerIndex].sprite.Update(_dt);
-		m_data->players[m_data->currentPlayerIndex].boardPosition = m_data->animator.GetGoTo();
-		if (m_data->animator.IsFinished())
-		{
-			// CORRECTION : Décrémenter le mouvement après avoir atteint la case
-			auto& player = m_data->players[m_data->currentPlayerIndex];
-			player.pendingMovement--;
-
-			std::cout << "Mouvement restant : " << player.pendingMovement << std::endl;
-
-			if (player.pendingMovement > 0)
-			{
-				SetBoardState(DEPLACEMENT_ACTION_BACK);
-			}
-			else
-			{
-				// Déplacement terminé, exécuter l'action de case
-				SetBoardState(CASE_ACTION_END);
-			}
-		}
+		HandleMovementState(DEPLACEMENT_ACTION_BACK, _dt);
 		break;
+
 	case DEPLACEMENT_ACTION_2:
-		m_data->players[m_data->currentPlayerIndex].sprite.Update(_dt);
-		m_data->players[m_data->currentPlayerIndex].boardPosition = m_data->animator.GetGoTo();
-		if (m_data->animator.IsFinished())
-		{
-			// CORRECTION : Décrémenter le mouvement après avoir atteint la case
-			auto& player = m_data->players[m_data->currentPlayerIndex];
-			player.pendingMovement--;
-
-			std::cout << "Mouvement restant : " << player.pendingMovement << std::endl;
-
-			if (player.pendingMovement > 0)
-			{
-				SetBoardState(DEPLACEMENT_ACTION_2);
-			}
-			else
-			{
-				// Déplacement terminé, exécuter l'action de case
-				SetBoardState(CASE_ACTION_END);
-			}
-		}
+		HandleMovementState(DEPLACEMENT_ACTION_2, _dt);
 		break;
 
 	case CASE_ACTION:
@@ -1187,9 +1068,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 			m_gameData->AddPlayerPlaying(i);
 
 		SetBoardState(WIN);
-		//m_data->camera.Reset(m_gameData->m_renderWindow->getDefaultView());
 		m_gameData->m_renderWindow->ResetView();
-		//m_gameData->m_renderWindow->setView(m_data->camera);
 		ChangeScene(RandomBattle(), true);
 		break;
 
@@ -1199,9 +1078,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 		m_gameData->AddPlayerPlaying(OnSameCase());
 
 		SetBoardState(WIN);
-		//m_data->camera.Reset(m_gameData->m_renderWindow->getDefaultView());
 		m_gameData->m_renderWindow->ResetView();
-		//m_gameData->m_renderWindow->setView(m_data->camera);
 		ChangeScene(RandomDuel(), true);
 		break;
 
@@ -1219,7 +1096,6 @@ void BaseGame::BoardStateUpdate(float _dt)
 
 				playerWin.pendingMovement = 1;
 				playerLose.pendingMovement = 1;
-
 			}
 
 			m_data->timeWin = TIME_WIN_DISPLAY;
@@ -1241,17 +1117,15 @@ void BaseGame::BoardStateUpdate(float _dt)
 
 			m_data->players[winnerIndex].boardPosition = m_data->animator.GetGoTo();
 			m_data->players[loserIndex].boardPosition = m_data->animator2.GetGoTo();
+			
 			if (m_data->animator.IsFinished() && m_data->animator2.IsFinished())
 			{
-				// CORRECTION : Décrémenter le mouvement après avoir atteint la case
 				auto& playerWin = m_data->players[winnerIndex];
 				auto& playerLose = m_data->players[loserIndex];
 				playerWin.pendingMovement--;
 				playerLose.pendingMovement--;
 
-				//std::cout << "Mouvement restant : " << player.pendingMovement << std::endl;
-
-				if (playerWin.pendingMovement > 0 or playerLose.pendingMovement > 0)
+				if (playerWin.pendingMovement > 0 || playerLose.pendingMovement > 0)
 				{
 					SetBoardState(WIN_DEPLACEMENT);
 				}
@@ -1336,7 +1210,6 @@ void BaseGame::SortStart()
 	m_data->currentPlayerIndex = 0;
 
 
-
 	for (const auto& player : m_data->players)
 	{
 		if (player.startRandom != 0)
@@ -1365,7 +1238,7 @@ void BaseGame::SortStart()
 
 		// Réorganiser m_data->players
 		std::vector<Player> sortedPlayers(m_data->players.size());
-		for (size_t i = 0; i < indices.size(); ++i) {
+		for (size_t i = 0; i < indices.size(); i++) {
 			sortedPlayers[i] = m_data->players[indices[i]];
 		}
 		m_data->players = std::move(sortedPlayers);

@@ -25,7 +25,7 @@
 
 #define TIME_WIN_DISPLAY 1.0f
 #define TIME_LBM_DISPLAY 6.0f
-#define TIME_DIS_DISPLAY 0.1f
+#define TIME_DIS_DISPLAY 0.15f
 #define MAX_TOUR_EFFECT 2
 
 class Effect
@@ -259,6 +259,15 @@ class BaseGame : public SceneBase
 		void SortStart();
 
 		std::string RandomBattle();
+
+		// NOUVEAU : Méthodes helper pour simplifier le code
+		bool CheckPlayerInput(sf::Event& _event, bool& shouldRoll);
+
+		void ProcessDiceRoll(int rando);
+
+		void HandleMovementState(State state, float _dt);
+
+		void InitiateMovement(int nextIndex, bool backwards = false);
 
 		// Fonctions de gestion de la caméra
 		void UpdateCameraToShowAllPlayers();
