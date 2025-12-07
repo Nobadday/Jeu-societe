@@ -76,7 +76,7 @@ public:
 		{
 			float factor = pow(m_elapsedTime / m_duration, 1.f);
 			m_sprite.setRotation(m_angle);
-			m_sprite.setColor(sf::Color(255, 255, 255, 255 * factor));
+			m_sprite.setColor(sf::Color(255, 255, 255, (sf::Uint8)(255 * factor)));
 			_renderWindow.draw(m_sprite);
 		}
 	}
