@@ -83,11 +83,13 @@ int main(void)
 
 void MainDataLoad(MainData& _mainData)
 {
-	_mainData.renderWindow.SetAntiAliasing(sfMod::RenderWindow::X16);
-
+	_mainData.renderWindow.SetAntiAliasing(sfMod::RenderWindow::AntiAliasing::X16);
+	_mainData.renderWindow.setIcon("./Assets/Images/icon.png");
 	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Cute & Cursed", sf::Style::Default);
-
+	_mainData.renderWindow.SetFullscreenPrefered(true);
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
+	_mainData.renderWindow.setVerticalSyncEnabled(true);
+
 
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;

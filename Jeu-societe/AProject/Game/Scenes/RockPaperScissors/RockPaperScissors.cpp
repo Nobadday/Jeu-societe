@@ -19,36 +19,15 @@ void RockPaperScissors::Load()
 	m_data->gameData = (GameData*)this->m_keptData;
 	m_data->gameData->m_assetManager->LoadManifest("Manifests/RockPaperScissor.json", "rockpaperScissor");
 
-	for (short i = 0; i < 6; i++)
-	{
-		switch (i)
-		{
-			case 0:
-				m_data->spriteTab[i].setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("Abutton", AssetManager::AssetType::TEXTURE));
-				break;
-			case 1:
-				m_data->spriteTab[i].setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("Bbutton", AssetManager::AssetType::TEXTURE));
-				break;
-			case 2:
-				m_data->spriteTab[i].setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("Xbutton", AssetManager::AssetType::TEXTURE));
-				break;
-			case 3:
-				m_data->spriteTab[i].setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("Ciseaux", AssetManager::AssetType::TEXTURE));
-				break;
-			case 4:
-				m_data->spriteTab[i].setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("Pierre", AssetManager::AssetType::TEXTURE));
-				break;
-			case 5:
-				m_data->spriteTab[i].setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("Feuille", AssetManager::AssetType::TEXTURE));
-				break;
-			default:
-				break;
-		}
-		m_data->spriteTab[i].setPosition({ (float)150 * i, 100.f });
-	}
 
 	m_data->background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground", AssetManager::AssetType::TEXTURE));
+	
 	m_data->timerText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("RPSFont", AssetManager::AssetType::FONT));
+	m_data->timerText.setOrigin(sf::Vector2f(0.6f, 0.8f));
+	m_data->timerText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.1f);
+	m_data->timerText.setCharacterSize(75);
+	m_data->timerText.SetOutline(2, sf::Color::Black);
+
 
 	m_data->playerChoiceSprite[0].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAtlas>("RPSHand", AssetManager::AssetType::TEXTURE_ATLAS));
 	m_data->playerChoiceSprite[1].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAtlas>("RPSHand", AssetManager::AssetType::TEXTURE_ATLAS));
@@ -85,8 +64,6 @@ void RockPaperScissors::Load()
 
 	m_data->playerChoiceSprite[0].setScale(-1.25f, 1.25f);
 	m_data->playerChoiceSprite[1].setScale(1.25f, 1.25f);
-
-
 
 	m_data->playerChoiceSprite[0].setPosition({ -170, SCREEN_HEIGHT * 0.45f });
 	m_data->playerChoiceSprite[1].setPosition({ SCREEN_WIDTH + 170, SCREEN_HEIGHT * 0.45f });
@@ -127,23 +104,23 @@ void RockPaperScissors::PollEvent(sf::Event& _event)
 					switch (_event.joystickButton.button)
 					{
 						case 0:
-							this->m_data->playersChoice[realID] = RPS_SCISSORS;
+							this->m_data->playersChoice[realID] = RPS_PAPER;
 							break;
 
 						case 1:
-							this->m_data->playersChoice[realID] = RPS_ROCK;
+							this->m_data->playersChoice[realID] = RPS_SCISSORS;
 							break;
 
 						case 2:
-							this->m_data->playersChoice[realID] = RPS_PAPER;
+							this->m_data->playersChoice[realID] = RPS_ROCK;
 							break;
+
 					default:
 						break;
 					}
 
 				}
 			}
-			
 		}
 		break;
 
@@ -261,11 +238,6 @@ void RockPaperScissors::Update(float _deltaTime)
 void RockPaperScissors::Draw(sf::RenderWindow& _renderWindow)
 {
 	_renderWindow.draw(m_data->background);
-
-	for (short i = 0; i < 6; i++)
-	{
-		_renderWindow.draw(m_data->spriteTab[i]);
-	}
 
 	for (short i = 0; i < 2; i++)
 	{

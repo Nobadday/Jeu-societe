@@ -36,7 +36,6 @@ bool Button::HasBeenClicked(void)
 	if (this->m_isClicked)
 	{
 		this->m_isClicked = false;
-		this->SetState(STATE_IDLE);
 		return true;
 	}
 	return false;
@@ -44,7 +43,7 @@ bool Button::HasBeenClicked(void)
 
 bool Button::IsColliding(int _x, int _y)
 {
-	return this->getGlobalBounds().contains((int)_x, (int)_y);
+	return this->getGlobalBounds().contains((float)_x, (float)_y);
 }
 
 
@@ -76,11 +75,15 @@ bool Button::CheckMouseClick(int _x, int _y, bool _isReleased)
 		// Confirmation click
 		if (this->m_currentState == STATE_PRESSED)
 		{
-			this->SetState(STATE_IDLE);
 			if (this->IsColliding(_x, _y))
 			{
+				this->SetState(STATE_ON);
 				this->m_isClicked = true;
 				return true;
+			}
+			else
+			{
+				this->SetState(STATE_IDLE);
 			}
 			return false;
 		}
@@ -128,10 +131,11 @@ Button::State Button::GetState(void)
 
 void Button::Click(void)
 {
-	this->SetState(STATE_PRESSED);
 	this->m_isClicked = true;
+	if (this->m_currentState != STATE_ON)
+	{
+		this->SetState(STATE_IDLE);
+	}
 }
-
-
 
 // Button || v1.1
