@@ -68,7 +68,6 @@ void Menu::LoadUI(void)
 	m_data->ui.playerCount.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("MenuFont"));
 	m_data->ui.playerCount.setCharacterSize(200u);
 	m_data->ui.playerCount.setPosition({ SCREEN_WIDTH / 2 , SCREEN_HEIGHT / 2 });
-	sf::FloatRect rect = m_data->ui.playerCount.getGlobalBounds();
 	//This font sucks bro
 	m_data->ui.playerCount.setOrigin({0.6f,0.8f});
 	m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));

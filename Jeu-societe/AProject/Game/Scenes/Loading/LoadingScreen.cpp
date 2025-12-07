@@ -40,6 +40,8 @@ void LoadingScreen::Load(void)
         // Chargement du manifest Board dans le thread de chargement
         m_gameData->m_tile->InitTiled("Assets/Map/map.json");
         m_data->loadingProgress.store(0.5f);
+        std::cout << "coucou\n";
+
         m_gameData->m_assetManager->LoadManifest("Manifests/Board.json", "Board");
         m_data->loadingProgress.store(1.f);
     };

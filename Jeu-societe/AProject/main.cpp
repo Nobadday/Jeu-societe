@@ -13,6 +13,7 @@
 #include "./Game/Scenes/RandCard/RandCard.hpp"
 #include "Game/Scenes/FlagGame/FlagGame.hpp"
 #include "Game/Scenes/Menu/Menu.hpp"
+#include "Game/Scenes/Warmup/Warmup.hpp"
 
 #include "./Game/Scenes/Podium/Podium.hpp"
 
@@ -100,8 +101,8 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 
 	// Ajouter les scènes
-	_mainData.scenes.AddScene<Menu>("Menu");
 	_mainData.scenes.AddScene<LoadingScreen>("Lo");
+	_mainData.scenes.AddScene<Menu>("Menu");
 	_mainData.scenes.AddScene<BaseGame>("Board");
 	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
 	_mainData.scenes.AddScene<ArmWrestling>("ArmWrestling");
@@ -110,9 +111,15 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<RandCard>("RandCard");
 	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
 	_mainData.scenes.AddScene<Podium>("Podium");
+	_mainData.scenes.AddScene<Warmup>("Warmup");
 
 	// Sélectionner le LoadingScreen metre false pour tout scene au debut 
-	_mainData.scenes.SelectScene("Lo", false);
+
+	//YANNOU !!! VERIFIE SI LA SCENE CHARGE EST DEJA CHARGE
+	_mainData.scenes.SelectScene("Lo", true);
+
+
+
 
 	_mainData.clock.restart();
 }

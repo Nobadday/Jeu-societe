@@ -1286,14 +1286,14 @@ std::string BaseGame::RandomDuel()
 	const std::string miniGames[] = {
 		"rockPaperSizor",
 		"ArmWrestling",
-		"Basket",
+		/*"Basket",*/
 		"FlagGame",
 		"RandCard",
 		"RuRoul"
 	};
 
 	// Nombre de mini-jeux disponibles
-	const int miniGameCount = 6;
+	const int miniGameCount = 5;
 
 	// Sélection aléatoire d'un mini-jeu
 	//int randomIndex = 2;
@@ -1301,8 +1301,12 @@ std::string BaseGame::RandomDuel()
 
 	std::cout << "Random minigame selected: " << miniGames[randomIndex] << std::endl;
 
-	return "FlagGame";
-	//return miniGames[randomIndex];
+
+	//return "FlagGame";
+
+	
+	m_gameData->m_nextScene = miniGames[randomIndex];
+	return "Warmup";
 }
 
 void BaseGame::SortStart()
@@ -1373,19 +1377,19 @@ std::string BaseGame::RandomBattle()
 {
 	// Liste des mini-jeux disponibles
 	const std::string miniGames[] = {
-		"Basket",
+		/*"Basket",*/
 		"FlagGame",
 		"RandCard",
 		"RuRoul"
 	};
 
-	const int miniGameCount = 4;
+	const int miniGameCount = 3;
 	int randomIndex = randmt::RandomInt(0, miniGameCount - 1);
 
 	std::cout << "Random minigame selected: " << miniGames[randomIndex] << std::endl;
 
-	return "FlagGame";
-	//return miniGames[randomIndex];
+	m_gameData->m_nextScene = miniGames[randomIndex];
+	return "Warmup";
 }
 
 void BaseGame::UpdateCameraToShowAllPlayers()

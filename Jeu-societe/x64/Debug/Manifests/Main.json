@@ -48,6 +48,11 @@
             "path" : "Assets/Shared/Icone/Icone-PersoAura.anim",
 			"subType" : 1
         },
+        {
+            "name" : "BadFont",
+            "type" : "Font",
+            "path" : "Assets/Fonts/BootlegTimBurton-Regular.ttf"
+        },
 		{
             "name" : "Icone",
             "type" : "Texture Animated",
