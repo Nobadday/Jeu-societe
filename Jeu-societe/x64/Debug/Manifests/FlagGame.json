@@ -1,9 +1,0 @@
-{
-    "assets": [
-        {
-            "name": "FlagFont",
-            "type": "Font",
-            "path": "Assets/Fonts/Font.ttf"
-        }
-    ]
-}
