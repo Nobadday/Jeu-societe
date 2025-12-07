@@ -28,10 +28,22 @@ protected:
     virtual void onSeek(sf::Time timeOffset) override;
 };
 
+// Modes de dimensionnement vidéo
+enum class VideoSizeMode
+{
+    Original,          // Taille originale de la vidéo
+    Custom,            // Taille personnalisée (utilise customWidth/customHeight)
+    DownscaleFactor,   // Utilise le facteur de downscale
+    FitToScreen        // Ajuste à la taille de l'écran en conservant le ratio
+};
+
 // Configuration
 struct HighResConfig
 {
+    VideoSizeMode sizeMode = VideoSizeMode::DownscaleFactor;
     int downscaleFactor = 1;
+    int customWidth = 0;      // Largeur personnalisée (utilisé si sizeMode == Custom)
+    int customHeight = 0;     // Hauteur personnalisée (utilisé si sizeMode == Custom)
     int maxTextureSize = 4096;
     bool enableLoop = false;
 };
@@ -111,6 +123,10 @@ public:
     bool isFinish() const;
     float getCurrentTime() const { return m_videoClock; }
     float getDuration() const { return m_duration; }
+    int getRenderWidth() const { return m_renderWidth; }
+    int getRenderHeight() const { return m_renderHeight; }
+    int getOriginalWidth() const { return m_originalWidth; }
+    int getOriginalHeight() const { return m_originalHeight; }
 
     // Contrôles
     void setPaused(bool paused);
@@ -118,6 +134,7 @@ public:
     void setAudioEnabled(bool enabled);
     void setVolume(float volume);
     void setConfig(const HighResConfig& config);
+    void setVideoSize(int width, int height); // Nouvelle méthode pour changer la taille
     
     float getVolume() const;
     
@@ -128,6 +145,30 @@ public:
     void pollEvent(const sf::Event& event);
     void play();
 };
+
+// pour changer la taille de la Video il suffit de faire un setScale sur le sprite retourné par getSprite()
+// 
+// // Exemples d'utilisation :
+// HighResVideoPlayer videoPlayer;
+// videoPlayer.loadFromFile("video.mp4");
+// 
+// videoPlayer.play();
+// 
+// 
+// Dans la boucle principale :
+// 
+// float deltaTime = clock.restart().asSeconds();
+// videoPlayer.update(deltaTime);
+// 
+// Dans la boucle de rendu :
+// 
+// sf::sprite videoSprite = videoPlayer.getSprite();
+// 
+// videoSprite.setScale(2.0f, 2.0f); // Exemple : doubler la taille
+// 
+// window.draw(videoSprite);
+// 
+// 
 
 #endif // !_INC_HIGHRESVIDEOPLAYER_HPP
 

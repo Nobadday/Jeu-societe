@@ -60,17 +60,16 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	m_data->diceVideos.resize(6);
 	for (int i = 0; i < 6; i++)
 	{
-		m_data->diceVideos[i] = new HighResVideoPlayer();
+		// Configuration simple sans taille personnalisée
+		HighResConfig config;
+		config.sizeMode = VideoSizeMode::Original; // Garder la résolution originale
+		config.enableLoop = false;
+
+		m_data->diceVideos[i] = new HighResVideoPlayer(config);
 		std::string videoPath = "Assets/Video/De" + std::to_string(i + 1) + ".mov";
 		if (!m_data->diceVideos[i]->loadFromFile(videoPath))
 		{
 			std::cout << "Erreur : Impossible de charger la video du de: " << videoPath << std::endl;
-		}
-		else
-		{
-			HighResConfig config;
-			config.enableLoop = false;
-			m_data->diceVideos[i]->setConfig(config);
 		}
 	}
 
@@ -539,6 +538,8 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 
 	DrawLBM(*mod);
 
+
+	m_gameData->m_renderWindow->ResetView();
 	for (int idx : indices)
 	{
 		DrawIconePlayer(*mod, idx);
@@ -546,8 +547,8 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 
 	if (m_data->state == DICE_ANIMATION)
 	{
-		// CORRECTION : Positionner la vidéo au centre de la vue (caméra) au lieu de coordonnées écran fixes
-		sf::Vector2f cameraCenter = referenceView.getCenter();
+		// Centre de la vue
+		sf::Vector2f cameraCenter = { SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f };
 
 		sf::Sprite videoSprite(m_data->currentDiceVideo->getSprite());
 
@@ -557,8 +558,15 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 		// Centrer l'origine du sprite
 		videoSprite.setOrigin(videoBounds.width / 2.0f, videoBounds.height / 2.0f);
 
-		// Positionner au centre de la caméra (suit les personnages)
+		// Positionner au centre de la caméra
 		videoSprite.setPosition(cameraCenter);
+
+		//// NOUVEAU : Ajuster la taille d'affichage (exemple : 2x plus grand)
+		//float desiredDisplaySize = 600.0f; // Taille souhaitée en pixels à l'écran
+		//float currentSize = videoBounds.width; // Taille actuelle du sprite
+		//float displayScale = desiredDisplaySize / currentSize;
+		//
+		//videoSprite.setScale(displayScale, displayScale);
 
 		// Dessiner avec le shader de chroma key
 		mod->draw(videoSprite, &m_data->chromaKeyShader);
@@ -2165,59 +2173,64 @@ void BaseGame::DrawLBM(sf::RenderWindow& _renderWindow)
 
 void BaseGame::DrawIconePlayer(sf::RenderWindow& _renderWindow, int _i)
 {
-	sf::Vector2f size2 = m_gameData->m_renderWindow->getView().getCenter();
+	m_gameData->m_renderWindow->ResetView();
 	switch (m_data->players[_i].posIcone)
 	{
 	case UP_LEFT:
 		if (_i != m_data->currentPlayerIndex)
 		{
-			m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.40f });
-			m_data->iconeAura.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.41f });
-			m_data->iconeState.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.30f });
+			m_data->icone.setPosition({72.5f, 305.f * 0.40f });
+			m_data->iconeAura.setPosition({72.5f ,305.f * 0.41f });
+			
 		}
 		else
 		{
-			m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.50f });
-			m_data->iconeAura.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.51f });
+			m_data->icone.setPosition({ 72.5f ,  305.f * 0.50f });
+			m_data->iconeAura.setPosition({  72.5f ,  305.f * 0.51f });
+			m_data->iconeState.setPosition({  72.5f * 2.f ,  305.f * 0.50f });
 		}
 		break;
 	case UP_RIGHT:
 		if (_i != m_data->currentPlayerIndex)
 		{
-			m_data->icone.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f , size2.y - SCREEN_HEIGHT / 2 + 305.f * 0.40f });
-			m_data->iconeAura.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f , size2.y - SCREEN_HEIGHT / 2 + 305.f * 0.41f });
-			m_data->iconeState.setPosition({ size2.x - SCREEN_WIDTH / 2.f + 72.5f , size2.y - SCREEN_HEIGHT / 2.f + 305.f * 0.30f });
+			m_data->icone.setPosition({ SCREEN_WIDTH  - 72.5f ,  SCREEN_HEIGHT + 305.f * 0.40f });
+			m_data->iconeAura.setPosition({ SCREEN_WIDTH - 72.5f , SCREEN_HEIGHT + 305.f * 0.41f });
+			
+
 		}
 		else
 		{
-			m_data->icone.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f , size2.y - SCREEN_HEIGHT / 2 + 305.f * 0.50f });
-			m_data->iconeAura.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f , size2.y - SCREEN_HEIGHT / 2 + 305.f * 0.51f });
+			m_data->icone.setPosition({  SCREEN_WIDTH  - 72.5f ,SCREEN_HEIGHT + 305.f * 0.50f });
+			m_data->iconeAura.setPosition({  SCREEN_WIDTH  - 72.5f ,  SCREEN_HEIGHT + 305.f * 0.51f });
+			m_data->iconeState.setPosition({ SCREEN_WIDTH  - 72.5f * 2.f ,SCREEN_HEIGHT  + 305.f * 0.50f });
 		}
 		break;
 	case DOWN_LEFT:
 		if (_i != m_data->currentPlayerIndex)
 		{
-			m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2 + 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 10 });
-			m_data->iconeAura.setPosition({ size2.x - SCREEN_WIDTH / 2 + 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 8 });
-			m_data->iconeAura.setPosition({ size2.x - SCREEN_WIDTH / 2 + 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 15 });
+			m_data->icone.setPosition({  72.5f  , 0 });
+			m_data->iconeAura.setPosition({ 72.5f  , 0 });
+			
 		}
 		else
 		{
-			m_data->icone.setPosition({ size2.x - SCREEN_WIDTH / 2 + 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 10 });
-			m_data->iconeAura.setPosition({ size2.x - SCREEN_WIDTH / 2 + 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 8 });
+			m_data->icone.setPosition({ 72.5f  ,  10 });
+			m_data->iconeAura.setPosition({ 72.5f  , 8 });
+			m_data->iconeState.setPosition({  72.5f * 2.f ,  8 });
 		}
 		break;
 	case DONW_RIGHT:
 		if (_i != m_data->currentPlayerIndex)
 		{
-			m_data->icone.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 10 });
-			m_data->iconeAura.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 8 });
-			m_data->iconeAura.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 15 });
+			m_data->icone.setPosition({ SCREEN_WIDTH  - 72.5f  ,  SCREEN_HEIGHT  - 10 });
+			m_data->iconeAura.setPosition({  SCREEN_WIDTH  - 72.5f  , SCREEN_HEIGHT  - 8 });
+			m_data->iconeState.setPosition({ SCREEN_WIDTH  - 72.5f * 2.f , SCREEN_HEIGHT - 8 });
 		}
 		else
 		{
-			m_data->icone.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 10 });
-			m_data->iconeAura.setPosition({ size2.x + SCREEN_WIDTH / 2 - 72.5f  , size2.y + SCREEN_HEIGHT / 2 - 8 });
+			m_data->icone.setPosition({ SCREEN_WIDTH - 72.5f  ,  SCREEN_HEIGHT  - 10 });
+			m_data->iconeAura.setPosition({ SCREEN_WIDTH - 72.5f  , SCREEN_HEIGHT  - 8 });
+			m_data->iconeState.setPosition({ SCREEN_WIDTH - 72.5f * 2.f , SCREEN_HEIGHT - 8 });
 		}
 		break;
 	default:
@@ -2289,13 +2302,21 @@ void BaseGame::DrawIconePlayer(sf::RenderWindow& _renderWindow, int _i)
 		m_data->iconeAura.setScale({ 0.55f,0.55f });
 	}
 
-	_renderWindow.draw(m_data->iconeAura);
-	_renderWindow.draw(m_data->icone);
+	m_gameData->m_renderWindow->draw(m_data->iconeAura);
+	m_gameData->m_renderWindow->draw(m_data->icone);
+	if (_i == m_data->currentPlayerIndex)
+	{
+		if (m_data->players[m_data->currentPlayerIndex].state!= NONE)
+		{
+			m_gameData->m_renderWindow->draw(m_data->iconeState);
+		}
+	}
+	
 
 	m_data->icone.setColor({ 255,255,255,255 });
 	m_data->icone.setScale({ 0.75f,0.75f });
 	m_data->iconeAura.setColor({ 255,255,255,255 });
 	m_data->iconeAura.setScale({ 0.78f,0.78f });
 	m_data->iconeState.setColor({ 255,255,255,255 });
-	m_data->iconeState.setScale({ 0.5f,0.5f });
+	m_data->iconeState.setScale({ 0.2f,0.2f });
 }
