@@ -28,6 +28,8 @@ class GameData
 		std::vector<int> m_gonnaPlayIndex;
 		std::vector<int> m_winIndex;
 
+		std::string m_nextScene;
+
 		Tiled* m_tile;
 
 	public:
