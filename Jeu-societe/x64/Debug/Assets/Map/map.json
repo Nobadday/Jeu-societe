@@ -629,6 +629,11 @@
                  "point":true,
                  "properties":[
                         {
+                         "name":"backPath",
+                         "type":"string",
+                         "value":"6"
+                        }, 
+                        {
                          "name":"nextPath",
                          "type":"string",
                          "value":"12"
