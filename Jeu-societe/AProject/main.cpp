@@ -36,8 +36,6 @@ int main(void)
 	MainData mainData;
 	MainDataLoad(mainData);
 	
-	mainData.renderWindow.setIcon("./Assets/Images/Placeholder.png");
-	mainData.renderWindow.SetFullscreenPrefered(true);
 
 	mainData.sys["Testicule"]["Fuck1"];
 	mainData.sys["Testicule"]["Fuck2"];
@@ -73,9 +71,13 @@ int main(void)
 
 void MainDataLoad(MainData& _mainData)
 {
-	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Cute And Cursed", sf::Style::Default);
+	_mainData.renderWindow.SetAntiAliasing(sfMod::RenderWindow::X16);
+	//_mainData.renderWindow.setIcon("./Assets/Images/icon.png");
+	_mainData.renderWindow.setIcon("./Assets/Images/Placeholder.png");
+	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Cute & Cursed", sf::Style::Default);
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
 	_mainData.renderWindow.SetFullscreenPrefered(true);
+	//_mainData.renderWindow.setVerticalSyncEnabled(true);
 	
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 
