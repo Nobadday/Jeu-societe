@@ -67,5 +67,5 @@ private:
 	void ChangePlayersChoiceTexture(void);
 };
 
-
+// Coucou enzo est passer par là.
 #endif // !_INC_ROCKPAPERSCISSORS_HPP
