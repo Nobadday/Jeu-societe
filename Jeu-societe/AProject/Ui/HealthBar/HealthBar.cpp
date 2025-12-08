@@ -88,6 +88,7 @@ void HealthBar::SetColorFiller(const sf::Color& _color)
 
 sf::FloatRect HealthBar::GetLocalBounds(void)
 {
+	this->m_rectShape.setSize(this->m_size);
 	return this->m_rectShape.getLocalBounds();
 }
 sf::FloatRect HealthBar::GetGlobalBounds(void)
@@ -169,4 +170,4 @@ void HealthBar::draw(sf::RenderTarget& _target, sf::RenderStates _states) const
 	this->DrawFiller(_target, _states);
 }
 
-// HealthBar C++ || v1.1
+// HealthBar C++ || v1.1.2

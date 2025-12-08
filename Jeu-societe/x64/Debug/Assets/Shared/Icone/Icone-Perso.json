@@ -87,7 +87,7 @@
    { "name": "Perso1-2", "from": 4, "to": 4, "direction": "forward", "color": "#000000ff" },
    { "name": "Perso2-2", "from": 5, "to": 5, "direction": "forward", "color": "#000000ff" },
    { "name": "Perso3-2", "from": 6, "to": 6, "direction": "forward", "color": "#000000ff" },
-   { "name": "Perso4_2", "from": 7, "to": 7, "direction": "forward", "color": "#000000ff" }
+   { "name": "Perso4-2", "from": 7, "to": 7, "direction": "forward", "color": "#000000ff" }
   ]
  }
 }

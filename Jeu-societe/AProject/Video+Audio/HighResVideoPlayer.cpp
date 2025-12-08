@@ -617,6 +617,8 @@ void HighResVideoPlayer::setSpeed(float speed)
 	if (speed > 5.0f) speed = 5.0f;
 
 	m_speed = speed;
+
+	m_audioStream.setPitch(m_speed);
 	
 	// SFML 2.6 : setPitch() n'existe pas, on ajuste uniquement la vitesse vidéo
 	// L'audio joue à vitesse normale

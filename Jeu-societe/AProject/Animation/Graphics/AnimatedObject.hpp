@@ -24,7 +24,6 @@ class AnimationFixed : public Animation
 		using Animation::SetFramerate;
 		using Animation::AddFramerate;
 		using Animation::SetShouldUpdate;
-		//using Animation::SetShouldUpdateProtected;
 
 };
 
