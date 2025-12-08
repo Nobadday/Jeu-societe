@@ -64,6 +64,11 @@
             "type" : "Texture Atlas",
             "path" : "Assets/Sprites/Board/Effect/tete.json",
 			"subType" : 3
+        },
+		{
+            "name" : "Arrow",
+            "type" : "Texture",
+            "path" : "Assets/Sprites/Board/arrow.png"
         }
     ]
 }   

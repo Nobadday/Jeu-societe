@@ -3,35 +3,73 @@
 #define _INC_MENUSYSTEM_HPP
 
 
-#include "./Button.hpp"
+#include <SFML/Graphics.hpp>
 #include <map>
+#include <vector>
+#include "./Button.hpp"
+#include "../Utilities/MathPlus.hpp"
 
 
-
-class MenuSystem
+// A container of multiple buttons
+class MenuHolder : public std::map<std::string, Button>, public sf::Drawable
 {
 	private:
-		class MenuHolder : public std::vector<Button>
+		int m_buttonSelected;
+		bool m_selectionLoop;
 
-		{
-			private:
-				int m_buttonSelected;
-				bool m_selectionLoop;
 
-			public:
-				MenuHolder(void);
+	public:
+		MenuHolder(void);
+		void PollEvent(const sf::Event& _event);
+		void Update(float _deltaTime);
 
-		};
 
+		void SetSelection(int _selection, bool _looping);
+		void SetSelection(int _selection);
+		void AddSelection(int _value, bool _looping);
+		void AddSelection(int _value);
+
+		void SetSelectionLoop(bool _condition);
 
 	private:
+		virtual void draw(sf::RenderTarget& _target, sf::RenderStates _states) const;
+};
+
+
+
+// A Map made of multiple containers of buttons
+class MenuSystem : public std::map<std::string, MenuHolder>, public sf::Drawable
+{
+	private:
 		std::map<std::string, MenuHolder> m_menus;
+		std::string m_currentMenu;
 
 
 	public:
 		MenuSystem(void);
 
+		MenuHolder& CreateMenu(const std::string& _name, bool _selectionWrap = false);
 
+		void PollEvent(const sf::Event& _event);
+		void Update(float _deltaTime);
+
+		void SetMenu(const std::string& _menuName);
+
+		// Sets the button selected of the current menu
+		void SetSelection(int _selection);
+		// Iterate through the button selected of the current menu
+		void AddSelection(int _value);
+
+		// Enables or not selection loop for the current menu
+		void SetSelectionLoop(bool _condition);
+
+		MenuHolder& GetCurrentMenu(void);
+		bool HasMenuSelected(void);
+
+	private:
+		virtual void draw(sf::RenderTarget& _target, sf::RenderStates _states) const;
 };
 
+
 #endif
+// MenuSystem || v1.0

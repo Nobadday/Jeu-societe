@@ -38,10 +38,10 @@ void Tiled::InitTiled(const char* _Map)
 				tileset.SetMargin(tilesetJson.value("margin", 0));
 				tileset.SetSpacing(tilesetJson.value("spacing", 0));
 
-				/*std::cout << "Chargement du tileset: " << tileset.GetName() << std::endl;
+				std::cout << "Chargement du tileset: " << tileset.GetName() << std::endl;
 				std::cout << "  First GID: " << tileset.GetFirstGid() << std::endl;
 				std::cout << "  Tile Count: " << tileset.GetTileCount() << std::endl;
-				std::cout << "  Tile Size: " << tileset.GetTileWidth() << "x" << tileset.GetTileHeight() << std::endl;*/
+				std::cout << "  Tile Size: " << tileset.GetTileWidth() << "x" << tileset.GetTileHeight() << std::endl;
 
 
 				// Charger les tuiles individuelles
@@ -68,11 +68,11 @@ void Tiled::InitTiled(const char* _Map)
 		   /* std::cout << "Chargement des textures..." << std::endl;*/
 			if (tilesetManager.LoadAllTextures("Assets/Map/"))
 			{
-				//std::cout << "Toutes les textures ont été chargées avec succès!" << std::endl;
+				std::cout << "Toutes les textures ont été chargées avec succès!" << std::endl;
 			}
 			else
 			{
-				//std::cerr << "Certaines textures n'ont pas pu être chargées." << std::endl;
+				std::cerr << "Certaines textures n'ont pas pu être chargées." << std::endl;
 			}
 			std::cout << std::endl;
 		}
@@ -155,10 +155,10 @@ void Tiled::InitTiled(const char* _Map)
 						const Tileset* tileset = tilesetManager.GetTilesetByGid(gid);
 						std::string tilesetName = tileset ? tileset->GetName() : "Aucun";
 
-						/* std::cout << "    Objet " << j << " : " << mapObject.GetName() << " : GID=" << gid
+						 std::cout << "    Objet " << j << " : " << mapObject.GetName() << " : GID=" << gid
 								   << " (Tileset: " << tilesetName << ")"
 								   << ", Pos=(" << mapObject.GetX() << "," << mapObject.GetY() << ")"
-								   << ", Taille=(" << mapObject.GetWidth() << "x" << mapObject.GetHeight() << ")" << std::endl;*/
+								   << ", Taille=(" << mapObject.GetWidth() << "x" << mapObject.GetHeight() << ")" << std::endl;
 					}
 				}
 
@@ -168,17 +168,17 @@ void Tiled::InitTiled(const char* _Map)
 			}
 		}
 
-		/* std::cout << "\n=== RÉCAPITULATIF ===" << std::endl;
+		 std::cout << "\n=== RÉCAPITULATIF ===" << std::endl;
 		 std::cout << "Nombre total de tilesets: " << tilesetManager.GetTilesetCount() << std::endl;
-		 std::cout << "Nombre total de layers: " << mapLayers.size() << std::endl;*/
-		 /*  for (const auto& layer : mapLayers)
+		 std::cout << "Nombre total de layers: " << mapLayers.size() << std::endl;
+		   for (const auto& layer : mapLayers)
 		   {
 			   std::cout << "  - " << layer.GetName() << ": " << layer.GetObjectCount() << " objets" << std::endl;
-		   }*/
-		   /* std::cout << "\n=== CONTRÔLES ===" << std::endl;
+		   }
+		    std::cout << "\n=== CONTRÔLES ===" << std::endl;
 			std::cout << "Flèches directionnelles : Déplacer la caméra" << std::endl;
 			std::cout << "Échap : Quitter" << std::endl;
-			std::cout << std::endl;*/
+			std::cout << std::endl;
 	}
 }
 

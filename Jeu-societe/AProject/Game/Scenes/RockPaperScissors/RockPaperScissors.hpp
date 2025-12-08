@@ -35,10 +35,8 @@ class RockPaperScissors : public SceneBase
 	};
 
 	struct SceneData
-	{
-		sf::Sprite spriteTab[6];                                                                                                                             
-		sf::Text timerText;
-
+	{            
+		TextPlus timerText;
 		sf::Sprite background;
 
 

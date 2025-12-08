@@ -164,6 +164,12 @@
     <ClCompile Include="Game\Scenes\ArmWrestling\ArmWrestling.cpp" />
     <ClCompile Include="Game\Scenes\Basket\Basket.cpp" />
     <ClCompile Include="Game\Scenes\Board\Board.cpp" />
+    <ClCompile Include="Game\Scenes\Board\Effects.cpp" />
+    <ClCompile Include="Game\Scenes\Board\Icone.cpp" />
+    <ClCompile Include="Game\Scenes\Board\LBM.cpp" />
+    <ClCompile Include="Game\Scenes\Board\PathManagement.cpp" />
+    <ClCompile Include="Game\Scenes\Board\PlayerActions.cpp" />
+    <ClCompile Include="Game\Scenes\Board\PlayerCam.cpp" />
     <ClCompile Include="Game\Scenes\FlagGame\FlagGame.cpp" />
     <ClCompile Include="Game\Scenes\Loading\LoadingScreen.cpp" />
     <ClCompile Include="Game\Scenes\Menu\Menu.cpp" />
@@ -180,6 +186,7 @@
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Scenes\SceneHandler.cpp" />
     <ClCompile Include="Ui\Button.cpp" />
+    <ClCompile Include="Ui\HealthBar\HealthBar.cpp" />
     <ClCompile Include="Ui\MenuSystem.cpp" />
     <ClCompile Include="Utilities\AssetManager.cpp" />
     <ClCompile Include="Utilities\AudioEngine\AudioEngine.cpp" />
@@ -239,6 +246,7 @@
     <ClInclude Include="Scenes\SceneHandler.hpp" />
     <ClInclude Include="Screen.hpp" />
     <ClInclude Include="Ui\Button.hpp" />
+    <ClInclude Include="Ui\HealthBar\HealthBar.hpp" />
     <ClInclude Include="Ui\MenuSystem.hpp" />
     <ClInclude Include="Utilities\AssetManager.hpp" />
     <ClInclude Include="Utilities\AudioEngine\AudioEngine.hpp" />

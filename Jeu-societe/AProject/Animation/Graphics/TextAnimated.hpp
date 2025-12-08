@@ -19,7 +19,7 @@ class TextAnimated : public TextPlus, public Animation
 		void SetEasing(anim::Easing::Type _easing);
 	
 	protected:
-		virtual void FrameChanged(void);
+		virtual void OnFrameChange(void);
 
 };
 
