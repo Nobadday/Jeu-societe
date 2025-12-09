@@ -52,7 +52,7 @@ class RenderWindow : public sf::RenderWindow
 		WindowMode m_windowMode;
 		sf::ContextSettings m_settings;
 		
-		// Remebered data
+		// Remebered window data
 		
 		bool m_keyRepeat;
 		unsigned int m_framerate;
@@ -95,7 +95,9 @@ class RenderWindow : public sf::RenderWindow
 
 		// Opens the window only if it's closed
 		virtual void Open(void);
-
+		
+		// Only Re-Opens the window if it's already opened
+		void ReOpenIfOpen(void);
 
 		void SetWindowMode(WindowMode _mode);
 		
@@ -157,7 +159,6 @@ class RenderWindow : public sf::RenderWindow
 		virtual void onResize(void);
 
 	private:
-		void ReOpenIfOpen(void);
 
 		void ApplyIcon(void);
 		// Also updates the view
@@ -170,9 +171,14 @@ class RenderWindow : public sf::RenderWindow
 
 
 #endif
-// BetterWindow C++ for SFML 2.6.2 || v0.9.4 (beta)
+// BetterWindow C++ for SFML 2.6.2 || v0.9.5 (beta)
 // Made by Yannou :)
 
 
 // GitHub : https://github.com/Yannou-7
 // LinkedIn : https://www.linkedin.com/in/yann-melisse-jf/
+
+// TODO :
+// - Window position with origin
+// - Set Window position relative to screen
+// - Set Window size relative to screen

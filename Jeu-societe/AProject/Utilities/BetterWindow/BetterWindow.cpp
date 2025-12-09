@@ -14,7 +14,7 @@ m_vsync				(false),
 m_preferedBFMode	(false),
 
 m_icon				(),
-m_title				(""),
+m_title				(),
 
 m_windowModeStyle	(sf::Style::Default),
 m_windowModePosition(0, 0),
@@ -45,7 +45,7 @@ void RenderWindow::create(sf::VideoMode _mode, const sf::String& _title, sf::Uin
 	this->m_userView = this->m_defaultView;
 	
 	// Position
-	sf::VideoMode vid = sf::VideoMode::getDesktopMode();
+	const sf::VideoMode& vid = sf::VideoMode::getDesktopMode();
 	this->m_windowModePosition.x = (int)(vid.width / 2) - (int)(this->m_windowModeSize.x / 2);
 	this->m_windowModePosition.y = (int)(vid.height / 2) - (int)(this->m_windowModeSize.y / 2);
 	
@@ -134,6 +134,7 @@ void RenderWindow::Open(void)
 		this->ReOpen();
 	}
 }
+
 void RenderWindow::ReOpenIfOpen(void)
 {
 	if (this->isOpen())
@@ -141,7 +142,6 @@ void RenderWindow::ReOpenIfOpen(void)
 		this->ReOpen();
 	}
 }
-
 
 void RenderWindow::SetWindowMode(WindowMode _mode)
 {
@@ -433,4 +433,4 @@ void RenderWindow::ApplyView(void)
 
 }
 
-// BetterWindow C++ for SFML 2.6.2 || v0.9.4
+// BetterWindow C++ for SFML 2.6.2 || v0.9.5

@@ -3,7 +3,7 @@
 #include "./Ui/Button.hpp"
 #include "./Ui/HealthBar/HealthBar.hpp"
 #include "./Ui/MenuSystem.hpp"
-
+#include <iostream>
 
 typedef struct MainData
 {
@@ -72,15 +72,24 @@ int main(void)
 void MainDataLoad(MainData& _mainData)
 {
 	_mainData.renderWindow.SetAntiAliasing(sfMod::RenderWindow::X16);
-	//_mainData.renderWindow.setIcon("./Assets/Images/icon.png");
-	_mainData.renderWindow.setIcon("./Assets/Images/Placeholder.png");
+	_mainData.renderWindow.setIcon("./Assets/Images/icon.png");
 	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Cute & Cursed", sf::Style::Default);
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
 	_mainData.renderWindow.SetFullscreenPrefered(true);
-	//_mainData.renderWindow.setVerticalSyncEnabled(true);
+	if (DEBUG)
+	{
+
+	}
+	else
+	{
+		_mainData.renderWindow.SetFullscreen(true);
+		_mainData.renderWindow.setVerticalSyncEnabled(true);
+	}
 	
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
+	
 
+	_mainData.renderWindow.setSize(sf::Vector2u(200u, 300u));
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
 	
@@ -143,9 +152,13 @@ void Draw(MainData& _mainData)
 {
 	_mainData.renderWindow.clear(sf::Color::Black);
 	
+	sf::RectangleShape rect(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
+	rect.setFillColor(sf::Color(25,210,50));
+	_mainData.renderWindow.draw(rect);
+
 	_mainData.scenes.Draw(_mainData.renderWindow);
 	
-	_mainData.renderWindow.draw(_mainData.sys);
+	//_mainData.renderWindow.draw(_mainData.sys);
 	_mainData.renderWindow.draw(_mainData.hb);
 
 	_mainData.renderWindow.display();
