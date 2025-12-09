@@ -433,4 +433,4 @@ void RenderWindow::ApplyView(void)
 
 }
 
-// BetterWindow C++ for SFML 2.6.2 || v0.9.5
+// BetterWindow C++ for SFML 2.6.2 || v0.9.5b

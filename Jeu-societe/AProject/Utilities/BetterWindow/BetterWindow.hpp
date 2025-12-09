@@ -12,6 +12,16 @@ namespace sfMod
 class RenderWindow : public sf::RenderWindow
 {
 	public:
+		enum WindowMode
+		{
+			// Windowed mode
+			WINDOWED,
+			// Fullscreen mode
+			FULLSCREEN,
+			// Borderless fullscreen
+			BORDERLESS
+		};
+
 		enum ScaleMode
 		{
 			// Default operation done by the SFML
@@ -21,16 +31,6 @@ class RenderWindow : public sf::RenderWindow
 			LETTERBOX,
 			// The displayed area will fill the entire window without being stretched
 			PAN
-		};
-
-		enum WindowMode
-		{
-			// Windowed mode
-			WINDOWED,
-			// Fullscreen mode
-			FULLSCREEN,
-			// Borderless fullscreen
-			BORDERLESS
 		};
 
 		enum AntiAliasing
@@ -110,6 +110,8 @@ class RenderWindow : public sf::RenderWindow
 		void ToggleFullscreen(bool _borderless);
 		void ToggleFullscreen(void);
 		
+		// Sets the Anti-Aliasing of the window
+		// Warning : If the window is open it will be re-opened so set it BEFORE creating/opening the window
 		void SetAntiAliasing(AntiAliasing _aliasing);
 
 		void setIcon(const sf::Image& _image);
@@ -144,11 +146,11 @@ class RenderWindow : public sf::RenderWindow
 
 		const sf::View& getDefaultView(void) const;
 
-		// Get the upper left corner of the rendered area
+		// Get the upper left corner of the rendered area with the scale mode applied
 		sf::Vector2i GetRenderedOffset(void);
-		// Get the size of the rendered area
+		// Get the size of the rendered area with the scale mode applied
 		sf::Vector2u GetRenderedSize(void);
-		
+		// Get a rect of the rendered area with the scale mode applied
 		sf::IntRect GetRenderedRect(void);
 
 		// Will attempt to get a valid videoMode matching the desktop mode to avoid weird beheaviors
@@ -159,19 +161,17 @@ class RenderWindow : public sf::RenderWindow
 		virtual void onResize(void);
 
 	private:
-
 		void ApplyIcon(void);
 		// Also updates the view
 		void UpdateViewport(void);
 		void ApplyView(void);
 };
 
-
 }
 
 
 #endif
-// BetterWindow C++ for SFML 2.6.2 || v0.9.5 (beta)
+// BetterWindow C++ for SFML 2.6.2 || v0.9.5b (beta)
 // Made by Yannou :)
 
 
