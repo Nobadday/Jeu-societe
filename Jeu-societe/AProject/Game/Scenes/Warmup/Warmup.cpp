@@ -127,7 +127,7 @@ void Warmup::Update(float _deltaTime)
 				//std::string videoPath = "Assets/Video/De1.mp4";
 				std::string videoPath = "Assets/Video/TRANSITION_1.mp4";
 				m_data->videoPlayer.loadFromFile(videoPath);
-				m_data->scaleVid = { 0.8f,0.8f };
+				m_data->scaleVid = { 0.75f,0.75f };
 				m_data->videoPlayer.play();
 			}
 				break;

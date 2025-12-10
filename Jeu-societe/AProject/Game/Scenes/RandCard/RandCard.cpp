@@ -89,6 +89,9 @@ void RandCard::Load(void)
 	{
 		std::cout << "Card n " << i << " : " << m_data->cards[i] << std::endl;
 	}
+
+	m_data->transition.SetTransition(TransitionClass::FADED_IN);
+	m_data->transition.PlayTransition();
 }
 void RandCard::Unload(void)
 {
@@ -191,11 +194,6 @@ void RandCard::Update(float _deltaTime)
 		{
 			m_data->cards.erase(m_data->cards.begin() + m_data->cardChosen);
 
-
-
-
-
-
 			m_data->cardChosenSprAnim.Update(_deltaTime);
 			m_data->text.setString("Choose card");
 			//Restart card
@@ -258,15 +256,16 @@ void RandCard::Draw(sf::RenderWindow& _renderWindow)
 	_renderWindow.draw(m_data->background);
 	switch (m_data->gameState)
 	{
+		case TRANSITION:
+		{
+			std::cout << "Draw transition\n";
+			m_data->transition.Draw(_renderWindow);
+		}
+		break;
 		case WAITING_BETWEEN_PLAYER:
 		case CHOOSE_CARD:
 			_renderWindow.draw(m_data->text);
 			break;
-		case TRANSITION:
-		{
-			m_data->transition.Draw(_renderWindow);
-		}
-		break;
 	}
 	//Cards and icons are printed in all states
 	PrintCards(_renderWindow);

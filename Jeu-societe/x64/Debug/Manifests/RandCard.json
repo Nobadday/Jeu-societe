@@ -6,11 +6,6 @@
             "path": "Assets/Fonts/Platinum Sign.ttf"
         },
         {
-            "name" : "StaticCard",
-            "type" : "Texture",
-            "path" : "Assets/Sprites/RandomCard/StaticCard.png"
-        },
-        {
             "name" : "MenuFont",
             "type" : "Font",
             "path" : "Assets/Fonts/BootlegTimBurton-Regular.ttf"
