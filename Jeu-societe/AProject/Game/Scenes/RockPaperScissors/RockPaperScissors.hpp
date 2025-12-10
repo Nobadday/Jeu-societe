@@ -40,7 +40,7 @@ class RockPaperScissors : public SceneBase
 		sf::Sprite background;
 
 
-		RPS_Choice playersChoice[2];
+		RPS_Choice playersChoice[2] = { RPS_NONE,RPS_NONE };
 		SpriteAtlas playerChoiceSprite[2];
 		Timer timer;
 
@@ -53,6 +53,7 @@ class RockPaperScissors : public SceneBase
 
 		anim::Animator animator[2];
 	};
+
 	SceneData* m_data;
 
 public:

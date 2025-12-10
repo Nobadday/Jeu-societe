@@ -55,7 +55,7 @@ void RockPaperScissors::Load()
 	for (short i = 0; i < 2; i++)
 	{
 		m_data->animator[i].Modify(0.4f, 60.f);
-		m_data->animator[i].SetRotation(0.f, powf(-1, i+1) * 45.f);
+		m_data->animator[i].SetRotation(0.f, powf(-1.f, i+1.f) * 45.f);
 		m_data->animator[i].SetAnimationEasing(anim::Animator::ROTATION, anim::Easing::INSINE);
 	}
 
