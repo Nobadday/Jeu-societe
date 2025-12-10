@@ -26,6 +26,7 @@
 #define TIME_WIN_DISPLAY 0.5f
 #define TIME_LBM_DISPLAY 6.0f
 #define TIME_DIS_DISPLAY 0.2f
+#define TIME_START_DISPLAY 1.0f
 #define MAX_TOUR_EFFECT 2
 #define TRANSITION_1 6 
 #define TRANSITION_2 7 
@@ -95,6 +96,7 @@ class BaseGame : public SceneBase
 		enum State
 		{
 			STATE = -1,
+			INTRO,
 			START,
 			PLAY,
 			DICE_ANIMATION,  // NOUVEAU : État pour l'animation du dé
@@ -158,6 +160,7 @@ class BaseGame : public SceneBase
 
 			sf::Text playeur;
 			sf::Text v;
+			sf::Text diceNumber; // NOUVEAU : Texte pour afficher le numéro du dé
 
 			int tourstate;
 
@@ -189,6 +192,8 @@ class BaseGame : public SceneBase
 
 		struct SceneData
 		{
+			float timeStart;
+
 			std::vector<MapObject> posCase;
 
 			Camera camera;
@@ -261,7 +266,7 @@ class BaseGame : public SceneBase
 
 		std::string RandomDuel();
 
-		void SortStart();
+		void SortStart(float _dt);
 
 		std::string RandomBattle();
 

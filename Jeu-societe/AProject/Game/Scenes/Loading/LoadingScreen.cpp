@@ -12,7 +12,8 @@ void LoadingScreen::Load(void)
         m_data->loadingText.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("MainFont", AssetManager::AssetType::FONT));
         m_data->background.setTexture(*m_gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground", AssetManager::AssetType::TEXTURE));
     }
-    m_data->loadingText.setString("Chargement en cours...");
+    // Ligne 17 : Remplacer le texte de chargement
+    m_data->loadingText.setString("Loading...");
     m_data->loadingText.setCharacterSize(40);
     m_data->loadingText.setFillColor(sf::Color::White);
     

@@ -1,4 +1,4 @@
-﻿#include "Board.hpp"
+﻿ #include "Board.hpp"
 
 constexpr unsigned int hash(const char* str, int h);
 
@@ -36,7 +36,7 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	m_data->posCase = layer.GetObjects();
 
 	m_data->players.resize(m_gameData->m_playerDataList.size());
-	m_data->state = START;
+	m_data->state = INTRO;
 
 	m_data->icone.setTexture(*m_gameData->m_assetManager->GetAsset<TextureAnimated>("Icone", AssetManager::AssetType::TEXTURE_ANIMATED));
 	m_data->icone.setOrigin({ 0.5f,1 });
@@ -50,6 +50,7 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	m_data->timeWin = TIME_WIN_DISPLAY;
 	m_data->timeLBM = TIME_LBM_DISPLAY;
 	m_data->timeDice = TIME_DIS_DISPLAY;
+	m_data->timeStart = TIME_START_DISPLAY;
 
 	// NOUVEAU : Initialisation de la vidéo du dé
 	m_data->diceAnimationPlaying = false;
@@ -158,6 +159,18 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 		m_data->players[i].playeur.setOrigin({ textRect.width / 2, textRect.height / 2 });
 		m_data->players[i].playeur.setPosition(m_data->players[i].boardPosition + sf::Vector2f{ 0.f,-120.f });
 
+		// NOUVEAU : Initialisation du texte pour le numéro du dé
+		m_data->players[i].diceNumber.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
+		m_data->players[i].diceNumber.setString("");
+		m_data->players[i].diceNumber.setCharacterSize(40);
+		m_data->players[i].diceNumber.setFillColor(sf::Color::Yellow);
+		m_data->players[i].diceNumber.setOutlineColor(sf::Color::Black);
+		m_data->players[i].diceNumber.setOutlineThickness(2.0f);
+		
+		textRect = m_data->players[i].diceNumber.getLocalBounds();
+		m_data->players[i].diceNumber.setOrigin({ textRect.width / 2, textRect.height / 2 });
+		m_data->players[i].diceNumber.setPosition(m_data->players[i].boardPosition + sf::Vector2f{ 0.f,-155.f });
+
 		m_data->players[i].currentCaseIndex = 0;
 		m_data->players[i].startRandom = 0;
 		m_data->players[i].state = StatePlayer::NONE;
@@ -219,6 +232,10 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 
 	m_data->arrow.setRotation(315);
 
+
+	m_data->HudLBM.text.SetCharactersPerLine(25);
+
+
 	progress.store(1.0f);
 }
 
@@ -278,22 +295,34 @@ void BaseGame::ProcessDiceRoll(int rando)
 	{
 		auto& player = m_data->players[m_data->currentPlayerIndex];
 
-		// Stocker le résultat
 		m_data->diceResult = rando;
 
-		// CORRECTION : Utiliser un pointeur au lieu de copier
 		if (rando >= 1 && rando <= 6)
 		{
-			// Lancer la vidéo correspondante
 			m_data->currentDiceVideo = m_data->diceVideos[rando - 1];
 			m_data->currentDiceVideo->play();
 			m_data->diceAnimationPlaying = true;
 			SetBoardState(DICE_ANIMATION);
 		}
 	}
-	else
+	else if (m_data->players[m_data->currentPlayerIndex].startRandom == 0)
 	{
-		m_data->players[m_data->currentPlayerIndex].startRandom = rando;
+		// MODIFICATION : Lancer la vidéo du dé pendant START
+		auto& player = m_data->players[m_data->currentPlayerIndex];
+		
+		m_data->diceResult = rando;
+		
+		if (rando >= 1 && rando <= 6)
+		{
+			// Lancer la vidéo du dé
+			m_data->currentDiceVideo = m_data->diceVideos[rando - 1];
+			m_data->currentDiceVideo->play();
+			m_data->diceAnimationPlaying = true;
+			
+			// Le numéro sera affiché après l'animation
+			player.startRandom = rando;
+		}
+		
 		std::cout << "Place: " << rando << std::endl;
 	}
 }
@@ -351,13 +380,13 @@ void BaseGame::PollEvent(sf::Event& _event)
 					{
 						ProcessPathChoice(0);
 						m_data->arrow.setRotation(315);
-						std::cout << "Chemin du haut choisi (joystick)" << std::endl;
+						std::cout << "Top path selected (joystick)" << std::endl;
 					}
 					else if (_event.joystickMove.position > 50.0f) // Bas
 					{
 						ProcessPathChoice(1);
 						m_data->arrow.setRotation(25);
-						std::cout << "Chemin du bas choisi (joystick)" << std::endl;
+						std::cout << "Bottom path selected (joystick)" << std::endl;
 					}
 				}
 			}
@@ -382,13 +411,13 @@ void BaseGame::PollEvent(sf::Event& _event)
 			{
 				ProcessPathChoice(0);
 				m_data->arrow.setRotation(315);
-				std::cout << "Chemin du haut choisi (clavier)" << std::endl;
+				std::cout << "Top path selected (keyboard)" << std::endl;
 			}
 			else if (_event.key.code == sf::Keyboard::Down || _event.key.code == sf::Keyboard::S)
 			{
 				ProcessPathChoice(1);
 				m_data->arrow.setRotation(25);
-				std::cout << "Chemin du bas choisi (clavier)" << std::endl;
+				std::cout << "Bottom path selected (keyboard)" << std::endl;
 			}
 
 			if (_event.key.code == sf::Keyboard::Space)
@@ -405,7 +434,9 @@ void BaseGame::PollEvent(sf::Event& _event)
 	if (_event.type == sf::Event::JoystickButtonPressed)
 	{
 		if (m_gameData->m_playerDataList[m_data->currentPlayerIndex].m_joystickId == _event.joystickButton.joystickId &&
-			m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE && m_data->state != DICE_ANIMATION && m_data->state != DUEL && m_data->state != BATTLE_ACTION)
+			m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE &&
+			m_data->state != DICE_ANIMATION && m_data->state != DUEL && m_data->state != BATTLE_ACTION
+			&& m_data->state != INTRO)
 		{
 			if (_event.joystickButton.button == 0 && m_data->animator.IsFinished())
 			{
@@ -419,7 +450,9 @@ void BaseGame::PollEvent(sf::Event& _event)
 	if (_event.type == sf::Event::KeyPressed)
 	{
 		if (_event.key.code == sf::Keyboard::Space && m_data->animator.IsFinished() &&
-			m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE && m_data->state != DICE_ANIMATION && m_data->state != DUEL && m_data->state != BATTLE_ACTION)
+			m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE &&
+			m_data->state != DICE_ANIMATION && m_data->state != DUEL && m_data->state != BATTLE_ACTION
+			&& m_data->state != INTRO)
 		{
 			int rando = randmt::RandomInt(1, 6);
 			ProcessDiceRoll(rando);
@@ -439,11 +472,9 @@ void BaseGame::Update(float _deltaTime)
 		// Mise à jour de la logique du plateau
 		BoardStateUpdate(_deltaTime);
 
-
 		for (int i = (int)m_data->effectSwap.size() - 1; i >= 0; i--)
 		{
 			auto& effect = m_data->effectSwap[i];
-
 			effect.Update(_deltaTime);
 
 			if (!effect.IsActive())
@@ -471,22 +502,18 @@ void BaseGame::Update(float _deltaTime)
 					m_data->effectsMap.pop_back();
 				}
 			}
-
 		}
 
-
-		// Mise à jour de la caméra pour suivre le joueur actif
+		// MODIFICATION : Mettre à jour aussi la position du texte du dé
 		for (auto& player : m_data->players)
 		{
 			player.v.setPosition(player.boardPosition + sf::Vector2f{ 0.f,-250.f });
 			player.playeur.setPosition(player.boardPosition + sf::Vector2f{ 0.f,-275.f });
+			player.diceNumber.setPosition(player.boardPosition + sf::Vector2f{ 0.f,-300.f }); // NOUVEAU
 		}
 
 
 		UpdateCameraFollowPlayer(_deltaTime);
-
-		//UpdateCameraToShowAllPlayers();
-
 	}
 	else
 	{
@@ -581,6 +608,7 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 
 	DrawLBM(*mod);
 
+
 	mod->draw(m_data->arrow);
 
 
@@ -618,36 +646,42 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 	}
 }
 
+// Modification de SortDrawOrder pour afficher les numéros de dé pendant START
 void BaseGame::SortDrawOrder()
 {
 	sfMod::RenderWindow* mod = m_gameData->m_renderWindow;
-	// Créer un vecteur d'indices pour trier les joueurs par position Y
 	std::vector<int> indices(m_data->players.size());
 	std::iota(indices.begin(), indices.end(), 0);
 
-	// Trier les indices par position Y croissante
 	std::sort(indices.begin(), indices.end(),
 		[this](int a, int b) {
 			return m_data->players[a].boardPosition.y < m_data->players[b].boardPosition.y;
 		});
 
-	// Affichage des joueurs dans l'ordre trié
 	for (int idx : indices)
 	{
 		m_data->players[idx].sprite.setPosition(m_data->players[idx].boardPosition);
 		mod->draw(m_data->players[idx].sprite);
+		
 		if (idx == m_data->currentPlayerIndex)
 		{
 			m_data->players[idx].v.setFillColor(sf::Color::Cyan);
 			m_data->players[idx].playeur.setFillColor(sf::Color::Cyan);
 		}
-		if (idx != m_data->currentPlayerIndex)
+		else
 		{
 			m_data->players[idx].v.setFillColor(sf::Color::White);
 			m_data->players[idx].playeur.setFillColor(sf::Color::White);
 		}
+		
 		mod->draw(m_data->players[idx].v);
 		mod->draw(m_data->players[idx].playeur);
+		
+		// NOUVEAU : Afficher le numéro du dé si on est en phase START et que le joueur a lancé
+		if (m_data->state == START && m_data->players[idx].startRandom > 0)
+		{
+			mod->draw(m_data->players[idx].diceNumber);
+		}
 	}
 }
 
@@ -1004,11 +1038,18 @@ void BaseGame::BoardStateUpdate(float _dt)
 	{
 	case STATE:
 		break;
+	case INTRO:
+		m_data->currentDiceVideo->update(_dt);
+		if (m_data->currentDiceVideo->isFinish())
+		{
+			SetBoardState(START);
+		}
+		break;
 	case START:
 		m_data->currentDiceVideo->update(_dt);
 		if (m_data->currentDiceVideo->isFinish())
 		{
-			SortStart();
+			SortStart(_dt);
 		}
 		break;
 
