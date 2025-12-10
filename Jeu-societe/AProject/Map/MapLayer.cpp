@@ -60,13 +60,9 @@ void MapLayer::Draw(sf::RenderTarget& _target, TilesetManager& _tilesetManager, 
 
 	sf::Vector2f parallax = sf::Vector2f(m_parallaxX - 1.f, m_parallaxY - 1.f);
 
-	// CORRECTION : Arrondir la position de la caméra AVANT les calculs
-	float roundedCameraX = std::round(_camera.x);
-	float roundedCameraY = std::round(_camera.y);
-
-	// Calculer l'offset de parallaxe avec caméra arrondie
-	float parallaxOffsetX = roundedCameraX * parallax.x;
-	float parallaxOffsetY = roundedCameraY * parallax.y;
+	// Calculer l'offset de la caméra avec parallaxe
+	float parallaxOffsetX = _camera.x * parallax.x;
+	float parallaxOffsetY = _camera.y * parallax.y;
 
 	// Obtenir les limites de la caméra
 	sf::Vector2f viewSize = _target.getView().getSize();
@@ -88,6 +84,7 @@ void MapLayer::Draw(sf::RenderTarget& _target, TilesetManager& _tilesetManager, 
 		if (gid == 0)
 			continue;
 
+		// Obtenir la texture correspondante au GID
 		sf::Texture* texture = _tilesetManager.GetTextureByGid(gid);
 		if (!texture)
 			continue;
@@ -115,7 +112,7 @@ void MapLayer::Draw(sf::RenderTarget& _target, TilesetManager& _tilesetManager, 
 		if (!cameraBounds.intersects(objectBounds))
 			continue;
 
-		// Calculer l'intersection entre l'objet et la caméra
+		 // Calculer l'intersection entre l'objet et la caméra
 		sf::FloatRect visibleRect;
 		if (!cameraBounds.intersects(objectBounds, visibleRect))
 			continue;
@@ -144,8 +141,7 @@ void MapLayer::Draw(sf::RenderTarget& _target, TilesetManager& _tilesetManager, 
 		);
 
 		sprite.setTextureRect(textureRect);
-		// CORRECTION : Arrondir la position finale du sprite
-		sprite.setPosition(std::round(visibleRect.left), std::round(visibleRect.top));
+		sprite.setPosition(visibleRect.left, visibleRect.top);
 		sprite.setScale(scaleX, scaleY);
 
 		// Appliquer la rotation
