@@ -4,8 +4,8 @@
 
 #include "../../../Scenes/Scene.hpp"
 #include "../../../Common.hpp"
-#include "../../../Animation/Graphics.hpp"
-#include "../../../Ui/MenuSystem.hpp"
+#include "../../../Ui/Button.hpp"
+#include "../../../Ui/Transition/Transition.hpp"
 #include "../../../Utilities/AudioEngine/AudioEngine.hpp"
 
 
@@ -25,7 +25,8 @@ class RandCard : public SceneBase
 			CHOOSE_CARD,
 			//Animation 
 			ANIMATION,
-			END
+			END,
+			TRANSITION
 		};
 		enum CardType
 		{
@@ -44,7 +45,7 @@ class RandCard : public SceneBase
 			std::vector<Player> deadPlayers;
 			GameData* gameData; 
 
-			GameState gameState = CHOOSE_CARD;
+			GameState gameState = TRANSITION;
 			int cardChosen = 0;
 			//Delay when you change card with joystick
 			float inputDelay = 0.2f;
@@ -57,6 +58,7 @@ class RandCard : public SceneBase
 			int playerCountLeft = 0;
 
 			AudioEngine* audio;
+			TransitionClass transition;
 		};
 		SceneData* m_data;
 		void PrintCards(sf::RenderWindow& _renderWindow);
