@@ -49,8 +49,6 @@ class RussianRoulette : public SceneBase
 			TextPlus text;
 			Timer timerEnd;
 			AudioEngine* audio;
-
-
 		};
 		SceneData* m_data;
 

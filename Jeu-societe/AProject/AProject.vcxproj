@@ -181,6 +181,7 @@
     <ClCompile Include="Scenes\SceneHandler.cpp" />
     <ClCompile Include="Ui\Button.cpp" />
     <ClCompile Include="Ui\MenuSystem.cpp" />
+    <ClCompile Include="Ui\Transition\Transition.cpp" />
     <ClCompile Include="Utilities\AssetManager.cpp" />
     <ClCompile Include="Utilities\AudioEngine\AudioEngine.cpp" />
     <ClCompile Include="Utilities\BetterWindow\BetterWindow.cpp" />
@@ -240,6 +241,7 @@
     <ClInclude Include="Screen.hpp" />
     <ClInclude Include="Ui\Button.hpp" />
     <ClInclude Include="Ui\MenuSystem.hpp" />
+    <ClInclude Include="Ui\Transition\Transition.hpp" />
     <ClInclude Include="Utilities\AssetManager.hpp" />
     <ClInclude Include="Utilities\AudioEngine\AudioEngine.hpp" />
     <ClInclude Include="Utilities\BetterWindow\BetterWindow.hpp" />
