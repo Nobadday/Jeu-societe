@@ -61,6 +61,7 @@ void Warmup::Load(void)
 
 	m_data->videoPlayer.loadFromFile("Assets/Video/TRANSITION_1.mp4");
 	m_data->videoPlayer.play();
+	m_data->videoPlayer.update(1.f);
 }
 
 void Warmup::Unload(void)

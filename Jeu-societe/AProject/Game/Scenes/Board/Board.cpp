@@ -57,14 +57,14 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	m_data->dicePosition = sf::Vector2f(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f);
 
 	// NOUVEAU : Pré-charger toutes les vidéos des dés
-	m_data->diceVideos.resize(6);
+	m_data->diceVideos.resize(8);
+	// Configuration simple sans taille personnalisée
+	HighResConfig config;
+	config.sizeMode = VideoSizeMode::Original; // Garder la résolution originale
+	config.enableLoop = false;
+
 	for (int i = 0; i < 6; i++)
 	{
-		// Configuration simple sans taille personnalisée
-		HighResConfig config;
-		config.sizeMode = VideoSizeMode::Original; // Garder la résolution originale
-		config.enableLoop = false;
-
 		m_data->diceVideos[i] = new HighResVideoPlayer(config);
 		std::string videoPath = "Assets/Video/De" + std::to_string(i + 1) + ".mov";
 		if (!m_data->diceVideos[i]->loadFromFile(videoPath))
@@ -72,6 +72,16 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 			std::cout << "Erreur : Impossible de charger la video du de: " << videoPath << std::endl;
 		}
 	}
+
+	m_data->diceVideos[TRANSITION_1] = new HighResVideoPlayer(config);
+	m_data->diceVideos[TRANSITION_2] = new HighResVideoPlayer(config);
+	m_data->diceVideos[TRANSITION_1]->loadFromFile("Assets/Video/TRANSITION_1.mp4"); // Vidéo finale optionnelle
+	m_data->diceVideos[TRANSITION_2]->loadFromFile("Assets/Video/TRANSITION_2.mp4"); // Vidéo finale optionnelle
+
+
+	m_data->currentDiceVideo = m_data->diceVideos[TRANSITION_1];
+	m_data->currentDiceVideo->play();
+	m_data->currentDiceVideo->update(1);
 
 	progress.store(0.7f);
 
@@ -172,7 +182,7 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 		auto& mapObject = m_data->posCase[i];
 		if (mapObject.GetName() == "19")
 		{
-			posMin = mapObject.GetPosition();
+			posMin = mapObject.GetPosition() + sf::Vector2f(100.f, 0);
 		}
 		if (i == m_data->posCase.size() - 1)
 		{
@@ -192,7 +202,7 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	m_data->animator2.End();
 
 	m_data->arrow.setTexture(*m_gameData->m_assetManager->GetAsset<sf::Texture>("Arrow", AssetManager::AssetType::TEXTURE));
-	
+
 	m_data->arrow.setOrigin({ 0 , m_data->arrow.getTexture()->getSize().y / 2.f });
 
 	for (int i = 0; i < m_data->posCase.size(); i++)
@@ -200,9 +210,9 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 		auto& mapObject = m_data->posCase[i];
 		if (mapObject.GetName() == "6")
 		{
-			m_data->arrow.setPosition(mapObject.GetPosition() + sf::Vector2f(150,0));
+			m_data->arrow.setPosition(mapObject.GetPosition() + sf::Vector2f(150, 0));
 		}
-		
+
 	}
 
 	m_data->arrow.setScale({ 0.5f,0.5f });
@@ -394,8 +404,8 @@ void BaseGame::PollEvent(sf::Event& _event)
 	// Gestion du lancer de dé principal
 	if (_event.type == sf::Event::JoystickButtonPressed)
 	{
-		if (m_gameData->m_playerDataList[m_data->currentPlayerIndex].m_joystickId == _event.joystickButton.joystickId && 
-			m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE && m_data->state != DICE_ANIMATION)
+		if (m_gameData->m_playerDataList[m_data->currentPlayerIndex].m_joystickId == _event.joystickButton.joystickId &&
+			m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE && m_data->state != DICE_ANIMATION && m_data->state != DUEL && m_data->state != BATTLE_ACTION)
 		{
 			if (_event.joystickButton.button == 0 && m_data->animator.IsFinished())
 			{
@@ -408,8 +418,8 @@ void BaseGame::PollEvent(sf::Event& _event)
 	// Gestion des entrées clavier (DEBUG)
 	if (_event.type == sf::Event::KeyPressed)
 	{
-		if (_event.key.code == sf::Keyboard::Space && m_data->animator.IsFinished() && 
-			m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE && m_data->state != DICE_ANIMATION)
+		if (_event.key.code == sf::Keyboard::Space && m_data->animator.IsFinished() &&
+			m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE && m_data->state != DICE_ANIMATION && m_data->state != DUEL && m_data->state != BATTLE_ACTION)
 		{
 			int rando = randmt::RandomInt(1, 6);
 			ProcessDiceRoll(rando);
@@ -489,7 +499,6 @@ void BaseGame::Update(float _deltaTime)
 	}
 }
 
-
 // NOUVEAU : Méthode helper pour initier un mouvement
 void BaseGame::InitiateMovement(int nextIndex, bool backwards)
 {
@@ -523,7 +532,7 @@ void BaseGame::HandleMovementState(State state, float _dt)
 {
 	m_data->players[m_data->currentPlayerIndex].sprite.Update(_dt);
 	m_data->players[m_data->currentPlayerIndex].boardPosition = m_data->animator.GetGoTo();
-	
+
 	if (m_data->animator.IsFinished())
 	{
 		auto& player = m_data->players[m_data->currentPlayerIndex];
@@ -539,7 +548,7 @@ void BaseGame::HandleMovementState(State state, float _dt)
 		else
 		{
 			// Déplacement terminé
-			State nextState = (state == DEPLACEMENT_ACTION || state == DEPLACEMENT_ACTION_BACK || state == DEPLACEMENT_ACTION_2) 
+			State nextState = (state == DEPLACEMENT_ACTION || state == DEPLACEMENT_ACTION_BACK || state == DEPLACEMENT_ACTION_2)
 				? CASE_ACTION_END : CASE_ACTION;
 			SetBoardState(nextState);
 		}
@@ -556,6 +565,62 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 
 	m_gameData->m_tile->DrawMapLayers(*mod, referenceView.getCenter(), layer);
 
+	SortDrawOrder();
+
+	m_gameData->m_tile->DrawMapLayers(*mod, referenceView.getCenter(), "point");
+
+	for (auto& effect : m_data->effectSwap)
+	{
+		effect.Draw(*mod);
+	}
+
+	for (auto& effect : m_data->effectsMap)
+	{
+		effect.Draw(*mod);
+	}
+
+	DrawLBM(*mod);
+
+	mod->draw(m_data->arrow);
+
+
+	m_gameData->m_renderWindow->ResetView();
+	for (int i = 0; i < m_data->players.size(); i++)
+	{
+		DrawIconePlayer(*mod, i);
+	}
+
+	if (!m_data->currentDiceVideo->isFinish())
+	{
+		// Centre de la vue
+		sf::Vector2f cameraCenter = { SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f };
+
+		sf::Sprite videoSprite(m_data->currentDiceVideo->getSprite());
+
+		// Obtenir la taille du sprite vidéo
+		sf::FloatRect videoBounds = videoSprite.getLocalBounds();
+
+		// Centrer l'origine du sprite
+		videoSprite.setOrigin(videoBounds.width / 2.0f, videoBounds.height / 2.0f);
+
+		// Positionner au centre de la caméra
+		videoSprite.setPosition(cameraCenter);
+
+		//// NOUVEAU : Ajuster la taille d'affichage (exemple : 2x plus grand)
+		//float desiredDisplaySize = 600.0f; // Taille souhaitée en pixels à l'écran
+		//float currentSize = videoBounds.width; // Taille actuelle du sprite
+		//float displayScale = desiredDisplaySize / currentSize;
+		//
+		//videoSprite.setScale(displayScale, displayScale);
+
+		// Dessiner avec le shader de chroma key
+		mod->draw(videoSprite, &m_data->chromaKeyShader);
+	}
+}
+
+void BaseGame::SortDrawOrder()
+{
+	sfMod::RenderWindow* mod = m_gameData->m_renderWindow;
 	// Créer un vecteur d'indices pour trier les joueurs par position Y
 	std::vector<int> indices(m_data->players.size());
 	std::iota(indices.begin(), indices.end(), 0);
@@ -583,56 +648,6 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 		}
 		mod->draw(m_data->players[idx].v);
 		mod->draw(m_data->players[idx].playeur);
-	}
-
-	m_gameData->m_tile->DrawMapLayers(*mod, referenceView.getCenter(), "point");
-
-	for (auto& effect : m_data->effectSwap)
-	{
-		effect.Draw(*mod);
-	}
-
-	for (auto& effect : m_data->effectsMap)
-	{
-		effect.Draw(*mod);
-	}
-
-	DrawLBM(*mod);
-
-	mod->draw(m_data->arrow);
-
-
-	m_gameData->m_renderWindow->ResetView();
-	for (int idx : indices)
-	{
-		DrawIconePlayer(*mod, idx);
-	}
-
-	if (m_data->state == DICE_ANIMATION)
-	{
-		// Centre de la vue
-		sf::Vector2f cameraCenter = { SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f };
-
-		sf::Sprite videoSprite(m_data->currentDiceVideo->getSprite());
-
-		// Obtenir la taille du sprite vidéo
-		sf::FloatRect videoBounds = videoSprite.getLocalBounds();
-
-		// Centrer l'origine du sprite
-		videoSprite.setOrigin(videoBounds.width / 2.0f, videoBounds.height / 2.0f);
-
-		// Positionner au centre de la caméra
-		videoSprite.setPosition(cameraCenter);
-
-		//// NOUVEAU : Ajuster la taille d'affichage (exemple : 2x plus grand)
-		//float desiredDisplaySize = 600.0f; // Taille souhaitée en pixels à l'écran
-		//float currentSize = videoBounds.width; // Taille actuelle du sprite
-		//float displayScale = desiredDisplaySize / currentSize;
-		//
-		//videoSprite.setScale(displayScale, displayScale);
-
-		// Dessiner avec le shader de chroma key
-		mod->draw(videoSprite, &m_data->chromaKeyShader);
 	}
 }
 
@@ -755,7 +770,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 	{
 	case START:
 		break;
-		
+
 	case PLAY:
 		m_data->players[m_data->currentPlayerIndex].sprite.setScale({ 1.f,1.f });
 		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
@@ -765,8 +780,16 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 		break;
 	case WIN:
 		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
+		m_data->currentDiceVideo = m_data->diceVideos[TRANSITION_1];
+		m_data->currentDiceVideo->play();
 		break;
-
+	case BATTLE_ACTION:
+		[[fallthrough]];
+	case DUEL:
+		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
+		m_data->currentDiceVideo = m_data->diceVideos[TRANSITION_2];
+		m_data->currentDiceVideo->play();
+		break;
 	case DEPLACEMENT:
 		[[fallthrough]];
 	case DEPLACEMENT_ACTION:
@@ -790,7 +813,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 		{
 			caseType = currentCase.GetPropertyByName("type")->GetStringValue();
 		}
-		
+
 		if (player.pendingMovement > 0)
 		{
 			if (caseType == "bridge")
@@ -831,7 +854,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 	{
 		auto& player = m_data->players[m_data->currentPlayerIndex];
 		std::vector<int> availablePaths = GetAvailablePaths(player.currentCaseIndex);
-		
+
 		if (availablePaths.empty())
 		{
 			std::cout << "Erreur : aucun chemin disponible!" << std::endl;
@@ -850,13 +873,13 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 	}
 	break;
 
-	case DEPLACEMENT_BACK: 
+	case DEPLACEMENT_BACK:
 		[[fallthrough]];
 	case DEPLACEMENT_ACTION_BACK:
 	{
 		auto& player = m_data->players[m_data->currentPlayerIndex];
 		std::vector<int> availablePaths = GetAvailablePathsBack(player.currentCaseIndex);
-		
+
 		if (availablePaths.empty())
 		{
 			std::cout << "Erreur : aucun chemin disponible!" << std::endl;
@@ -872,7 +895,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 	{
 		auto& player = m_data->players[m_data->currentPlayerIndex];
 		std::vector<int> availablePaths = GetAvailablePaths(player.currentCaseIndex);
-		
+
 		if (availablePaths.empty())
 		{
 			std::cout << "Erreur : aucun chemin disponible!" << std::endl;
@@ -894,14 +917,17 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 
 	case CASE_ACTION:
 		break;
-		
+
 	case CASE_ACTION_END:
 		SetBoardState(PLAY, 0);
 		break;
-		
+
 	case DICE_ANIMATION:
 		break;
-		
+	case END:
+		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
+		m_data->currentDiceVideo = m_data->diceVideos[TRANSITION_1];
+		break;
 	default:
 		break;
 	}
@@ -977,19 +1003,13 @@ void BaseGame::BoardStateUpdate(float _dt)
 	switch (m_data->state)
 	{
 	case STATE:
-
-		/*std::cout << m_data->HudLBM.name << std::endl;
-		std::cout << m_data->HudLBM.chosse << std::endl;
-		std::cout << m_data->HudLBM.state << std::endl;
-		std::cout << m_data->HudLBM.active << std::endl;
-		std::cout << m_data->HudLBM.swap << std::endl;
-		std::cout << m_data->HudLBM.rando << std::endl;
-		std::cout << m_data->timeLBM << std::endl;
-
-		std::cout << std::endl;*/
 		break;
 	case START:
-		SortStart();
+		m_data->currentDiceVideo->update(_dt);
+		if (m_data->currentDiceVideo->isFinish())
+		{
+			SortStart();
+		}
 		break;
 
 	case DICE_ANIMATION:
@@ -1063,43 +1083,57 @@ void BaseGame::BoardStateUpdate(float _dt)
 		break;
 
 	case BATTLE_ACTION:
-		m_gameData->InitMiniGamePlayer();
-		for (int i = 0; i < m_data->players.size(); i++)
-			m_gameData->AddPlayerPlaying(i);
+		m_data->currentDiceVideo->update(_dt);
+		if (m_data->currentDiceVideo->isFinish())
+		{
+			m_gameData->InitMiniGamePlayer();
+			for (int i = 0; i < m_data->players.size(); i++)
+				m_gameData->AddPlayerPlaying(i);
 
-		SetBoardState(WIN);
-		m_gameData->m_renderWindow->ResetView();
-		ChangeScene(RandomBattle(), true);
+			SetBoardState(WIN);
+			m_gameData->m_renderWindow->ResetView();
+			ChangeScene(RandomBattle(), true);
+		}
+
 		break;
 
 	case DUEL:
-		m_gameData->InitMiniGamePlayer();
-		m_gameData->AddPlayerPlaying(m_data->currentPlayerIndex);
-		m_gameData->AddPlayerPlaying(OnSameCase());
+		m_data->currentDiceVideo->update(_dt);
+		if (m_data->currentDiceVideo->isFinish())
+		{
+			m_gameData->InitMiniGamePlayer();
+			m_gameData->AddPlayerPlaying(m_data->currentPlayerIndex);
+			m_gameData->AddPlayerPlaying(OnSameCase());
 
-		SetBoardState(WIN);
-		m_gameData->m_renderWindow->ResetView();
-		ChangeScene(RandomDuel(), true);
+			SetBoardState(WIN);
+			m_gameData->m_renderWindow->ResetView();
+			ChangeScene(RandomDuel(), true);
+		}
+
 		break;
 
 	case WIN:
-		m_data->timeWin -= _dt;
-		if (m_data->timeWin <= 0)
+		m_data->currentDiceVideo->update(_dt);
+		if (m_data->currentDiceVideo->isFinish())
 		{
-			if (!m_gameData->m_winIndex.empty())
+			m_data->timeWin -= _dt;
+			if (m_data->timeWin <= 0)
 			{
-				int winnerIndex = m_gameData->m_winIndex[0];
-				int loserIndex = m_gameData->m_winIndex[m_gameData->m_winIndex.size() - 1];
+				if (!m_gameData->m_winIndex.empty())
+				{
+					int winnerIndex = m_gameData->m_winIndex[0];
+					int loserIndex = m_gameData->m_winIndex[m_gameData->m_winIndex.size() - 1];
 
-				auto& playerWin = m_data->players[winnerIndex];
-				auto& playerLose = m_data->players[loserIndex];
+					auto& playerWin = m_data->players[winnerIndex];
+					auto& playerLose = m_data->players[loserIndex];
 
-				playerWin.pendingMovement = 1;
-				playerLose.pendingMovement = 1;
+					playerWin.pendingMovement = 1;
+					playerLose.pendingMovement = 1;
+				}
+
+				m_data->timeWin = TIME_WIN_DISPLAY;
+				SetBoardState(WIN_DEPLACEMENT);
 			}
-
-			m_data->timeWin = TIME_WIN_DISPLAY;
-			SetBoardState(WIN_DEPLACEMENT);
 		}
 		break;
 
@@ -1117,7 +1151,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 
 			m_data->players[winnerIndex].boardPosition = m_data->animator.GetGoTo();
 			m_data->players[loserIndex].boardPosition = m_data->animator2.GetGoTo();
-			
+
 			if (m_data->animator.IsFinished() && m_data->animator2.IsFinished())
 			{
 				auto& playerWin = m_data->players[winnerIndex];
@@ -1152,7 +1186,14 @@ void BaseGame::BoardStateUpdate(float _dt)
 			SetBoardState(PLAY, 0);
 		}
 		break;
-
+	case END:
+		m_data->currentDiceVideo->update(_dt);
+		if (m_data->currentDiceVideo->isFinish())
+		{
+			m_gameData->m_renderWindow->ResetView();
+			ChangeScene("Podium", false);
+		}
+		break;
 	default:
 		break;
 	}
@@ -1203,72 +1244,9 @@ std::string BaseGame::RandomDuel()
 
 	//return "FlagGame";
 
-	
+
 	m_gameData->m_nextScene = miniGames[randomIndex];
 	return "Warmup";
-}
-
-void BaseGame::SortStart()
-{
-	int somme = 1;
-	m_data->currentPlayerIndex = 0;
-
-
-	for (const auto& player : m_data->players)
-	{
-		if (player.startRandom != 0)
-			m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
-
-		somme *= player.startRandom;
-	}
-
-	if (somme != 0)
-	{
-
-		for (size_t i = 0; i < m_data->players.size(); i++)
-		{
-			std::cout << "Player : " << m_data->players[i].startRandom << " ";
-			std::cout << " id manette : " << m_gameData->m_playerDataList[i].m_joystickId << " " << std::endl;
-		}
-
-		// Tri des joueurs par ordre décroissant de jet de dé
-		// Créer un vecteur d'indices
-		std::vector<size_t> indices(m_data->players.size());
-		std::iota(indices.begin(), indices.end(), 0);
-
-		// Trier les indices par ordre décroissant de startRandom
-		std::sort(indices.begin(), indices.end(),
-			[this](size_t a, size_t b) { return m_data->players[a].startRandom > m_data->players[b].startRandom; });
-
-		// Réorganiser m_data->players
-		std::vector<Player> sortedPlayers(m_data->players.size());
-		for (size_t i = 0; i < indices.size(); i++) {
-			sortedPlayers[i] = m_data->players[indices[i]];
-		}
-		m_data->players = std::move(sortedPlayers);
-
-		// CORRECTION : Réassigner les textures aux sprites après le déplacement
-		for (auto& player : m_data->players) {
-			player.sprite.setTexture(player.texture);
-		}
-
-		// Réorganiser m_gameData->m_playerDataList
-		std::vector<PlayerData> sortedPlayerData(m_gameData->m_playerDataList.size());
-		for (size_t i = 0; i < indices.size(); ++i) {
-			sortedPlayerData[i] = m_gameData->m_playerDataList[indices[i]];
-		}
-		m_gameData->m_playerDataList = std::move(sortedPlayerData);
-
-
-		for (size_t i = 0; i < m_data->players.size(); i++)
-		{
-			std::cout << "Player : " << m_data->players[i].startRandom << " ";
-			std::cout << " id manette : " << m_gameData->m_playerDataList[i].m_joystickId << " " << std::endl;
-		}
-
-
-		m_data->state = PLAY;
-	}
 }
 
 std::string BaseGame::RandomBattle()
@@ -1289,3 +1267,4 @@ std::string BaseGame::RandomBattle()
 	m_gameData->m_nextScene = miniGames[randomIndex];
 	return "Warmup";
 }
+

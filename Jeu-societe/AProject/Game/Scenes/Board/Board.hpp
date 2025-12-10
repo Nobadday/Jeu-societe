@@ -23,10 +23,12 @@
 
 #include "../../Animation/Graphics/TextPlus.hpp"
 
-#define TIME_WIN_DISPLAY 1.0f
+#define TIME_WIN_DISPLAY 0.5f
 #define TIME_LBM_DISPLAY 6.0f
-#define TIME_DIS_DISPLAY 0.15f
+#define TIME_DIS_DISPLAY 0.2f
 #define MAX_TOUR_EFFECT 2
+#define TRANSITION_1 6 
+#define TRANSITION_2 7 
 
 class Effect
 {
@@ -111,7 +113,8 @@ class BaseGame : public SceneBase
 			CASE_ACTION_END,
 			WAITING_BRIDGE_ROLL,
 			WAITING_FIN_ROLL,
-			WAITING_PATH_CHOICE
+			WAITING_PATH_CHOICE,
+			END
 		};
 
 		enum StatePlayer
@@ -244,6 +247,8 @@ class BaseGame : public SceneBase
 
 	private:
 		
+		void SortDrawOrder();
+
 		void CaseAction();
 
 		void SetBoardState(State _state, int _newIndex = 0);
