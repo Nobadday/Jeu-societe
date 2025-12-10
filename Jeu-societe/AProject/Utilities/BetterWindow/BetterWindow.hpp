@@ -99,6 +99,12 @@ class RenderWindow : public sf::RenderWindow
 		// Only Re-Opens the window if it's already opened
 		void ReOpenIfOpen(void);
 
+		// Sets the position relative to the monitor
+		void SetPositionRelative(const sf::Vector2f& _coefficient, const sf::VideoMode& _screen = sf::VideoMode::getDesktopMode());
+		// Sets the size relative to the size of the monitor
+		// If _keepRation is True, the size will not be deformed
+		void SetSizeRelative(const sf::Vector2f& _coefficient, bool _keepRatio = false, const sf::VideoMode& _screen = sf::VideoMode::getDesktopMode());
+
 		void SetWindowMode(WindowMode _mode);
 		
 		// Sets the prefered fullscreen mode for the fullscreen toggles
@@ -128,6 +134,9 @@ class RenderWindow : public sf::RenderWindow
 
 		void ResetView(void);
 		void ResetViewVilain(void);
+
+		// Resize the window to remove the borders
+		void RemoveBorders(void);
 
 		// Sets the scale mode of the window
 		// Determines how elements are scaled up and rendered on screen
@@ -171,14 +180,9 @@ class RenderWindow : public sf::RenderWindow
 
 
 #endif
-// BetterWindow C++ for SFML 2.6.2 || v0.9.5b (beta)
+// BetterWindow C++ for SFML 2.6.2 || v0.9.6 (beta)
 // Made by Yannou :)
 
 
 // GitHub : https://github.com/Yannou-7
 // LinkedIn : https://www.linkedin.com/in/yann-melisse-jf/
-
-// TODO :
-// - Window position with origin
-// - Set Window position relative to screen
-// - Set Window size relative to screen

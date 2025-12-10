@@ -143,6 +143,36 @@ void RenderWindow::ReOpenIfOpen(void)
 	}
 }
 
+void RenderWindow::SetPositionRelative(const sf::Vector2f& _coefficient, const sf::VideoMode& _screen)
+{
+	this->setPosition(sf::Vector2i(_screen.width * _coefficient.x, _screen.height * _coefficient.y));
+}
+
+void RenderWindow::SetSizeRelative(const sf::Vector2f& _coefficient, bool _keepRatio, const sf::VideoMode& _screen)
+{
+	sf::Vector2u newSize(_screen.width * _coefficient.x, _screen.height * _coefficient.y);
+	//if (_keepRatio)
+	//{
+	//	// Ratios
+	//	if (this->m_baseVideoMode.width > this->m_baseVideoMode.height)
+	//	{
+	//		// Width oriented, resize height
+	//		float ratio;
+	//	}
+	//	else
+	//	{
+	//		// Height oriented, resize width
+
+	//	}
+	//}
+	this->setSize(newSize);
+	if (_keepRatio)
+	{
+		// TODO : Lazy solution actually do the math
+		this->RemoveBorders();
+	}
+}
+
 void RenderWindow::SetWindowMode(WindowMode _mode)
 {
 	if (this->m_windowMode != _mode)
@@ -248,6 +278,14 @@ void RenderWindow::ResetViewVilain(void)
 									this->m_displayViewport.width + this->m_displayViewport.left, 
 									this->m_displayViewport.height + this->m_displayViewport.top));
 	this->setView(evil);
+}
+
+void RenderWindow::RemoveBorders(void)
+{
+	if (this->m_windowMode == WindowMode::WINDOWED)
+	{
+		this->setSize(this->GetRenderedSize());
+	}
 }
 
 void RenderWindow::SetScaleMode(ScaleMode _mode)
@@ -375,7 +413,7 @@ void RenderWindow::UpdateViewport(void)
 
 	float widthRatio = (float)newSize.x / (float)windowSize.x;
 	float heightRatio = (float)newSize.y / (float)windowSize.y;
-
+	// TODO : Optimise by not calculating both width & height ratios
 
 	switch (this->m_scaleMode)
 	{
@@ -433,4 +471,4 @@ void RenderWindow::ApplyView(void)
 
 }
 
-// BetterWindow C++ for SFML 2.6.2 || v0.9.5b
+// BetterWindow C++ for SFML 2.6.2 || v0.9.6

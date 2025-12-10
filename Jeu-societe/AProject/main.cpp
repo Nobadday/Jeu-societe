@@ -19,7 +19,7 @@ typedef struct MainData
 } MainData;
 
 
-int main(void);
+int main(int _argc, char* _argv[]);
 
 void MainDataLoad(MainData& _mainData);
 
@@ -28,10 +28,18 @@ void Update(MainData& _mainData);
 void Draw(MainData& _mainData);
 
 
-int main(void)
+int main(int _argc, char* _argv[])
 {
 	random::SetSeedPID();
 	randmt::SetSeedPID();
+	
+	for (int i = 0; i < _argc; i++)
+	{
+		if ((strcmp(_argv[i], "-papaya") == 0) || (strcmp(_argv[i], "-papaye") == 0))
+		{
+			system("start \"\" \"https://www.youtube.com/watch?v=rtL5oMyBHPs&t=84s\"");
+		}
+	}
 
 	MainData mainData;
 	MainDataLoad(mainData);
@@ -86,10 +94,13 @@ void MainDataLoad(MainData& _mainData)
 		_mainData.renderWindow.setVerticalSyncEnabled(true);
 	}
 	
-	_mainData.scenes.SetTransferedData(&_mainData.gameData);
-	
 
-	_mainData.renderWindow.setSize(sf::Vector2u(200u, 300u));
+	//_mainData.renderWindow.setSize(sf::Vector2u(200u, 300u));
+	_mainData.renderWindow.SetSizeRelative(sf::Vector2f(0.90f, 0.75f), true);
+	_mainData.renderWindow.SetPositionRelative(sf::Vector2f(0.5f, 0.5f));
+	
+	
+	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
 	
@@ -117,7 +128,15 @@ void PollEvent(MainData& _mainData)
 
 			case sf::Event::KeyPressed:
 				_mainData.sys.AddSelection(1);
-				//_mainData.btn.Click();
+				switch (event.key.code)
+				{
+					case sf::Keyboard::F10:
+						_mainData.renderWindow.Screenshot("./Screenshit.png");
+						break;
+					case sf::Keyboard::K:
+						_mainData.renderWindow.RemoveBorders();
+						break;
+				}
 				break;
 
 			default:
@@ -158,7 +177,7 @@ void Draw(MainData& _mainData)
 
 	_mainData.scenes.Draw(_mainData.renderWindow);
 	
-	//_mainData.renderWindow.draw(_mainData.sys);
+	_mainData.renderWindow.draw(_mainData.sys);
 	_mainData.renderWindow.draw(_mainData.hb);
 
 	_mainData.renderWindow.display();
