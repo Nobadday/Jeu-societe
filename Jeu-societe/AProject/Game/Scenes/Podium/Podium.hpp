@@ -21,6 +21,7 @@
 			std::vector<TextPlus> playerTextArray;
 
 			sf::Sprite background;
+			sf::Sprite congrat;
 		};
 		SceneData* m_data;
 

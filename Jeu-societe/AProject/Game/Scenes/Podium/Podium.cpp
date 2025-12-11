@@ -49,7 +49,7 @@ void Podium::Load()
 		PodiumTextureName += std::to_string(currentPlayer + 1) + "_" + std::to_string(playerPos);
 
 		m_data->playerSpriteArray[i].SetTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAtlas>("CharactersPoses", AssetManager::AssetType::TEXTURE_ATLAS), playerTextureName);
-		m_data->podiumsSpriteArray[i].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAtlas>("Podiums", AssetManager::AssetType::TEXTURE_ATLAS));
+		m_data->podiumsSpriteArray[i].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAtlas>("Podium", AssetManager::AssetType::TEXTURE_ATLAS));
 
 		m_data->podiumsSpriteArray[i].SetTextureFrame(PodiumTextureName);
 
@@ -63,6 +63,12 @@ void Podium::Load()
 		m_data->playerTextArray[i].SetOutline(2, sf::Color::Black);
 		m_data->playerTextArray[i].setString("Player " + std::to_string(i + 1));
 		m_data->playerTextArray[i].setPosition(m_data->playerSpriteArray[currentPlayer].getPosition().x, m_data->playerSpriteArray[currentPlayer].getPosition().y - m_data->playerSpriteArray[currentPlayer].getGlobalBounds().height);
+
+
+		m_data->congrat.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("congratulation", AssetManager::AssetType::TEXTURE));
+		m_data->congrat.setOrigin(m_data->congrat.getLocalBounds().getSize().x / 2, m_data->congrat.getLocalBounds().getSize().y / 2);
+		m_data->congrat.setPosition(sf::Vector2f(SCREEN_WIDTH / 2, m_data->congrat.getLocalBounds().height / 2));
+
 
 		currentPlayer++;
 	}
@@ -96,6 +102,7 @@ void Podium::Update(float _dt)
 void Podium::Draw(sf::RenderWindow& _renderWindow)
 {
 	_renderWindow.draw(m_data->background);
+	_renderWindow.draw(m_data->congrat);
 
 	for (auto& it : m_data->podiumsSpriteArray)
 	{
