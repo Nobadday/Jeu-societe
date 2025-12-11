@@ -170,6 +170,7 @@
     <ClCompile Include="Game\Scenes\Board\PathManagement.cpp" />
     <ClCompile Include="Game\Scenes\Board\PlayerActions.cpp" />
     <ClCompile Include="Game\Scenes\Board\PlayerCam.cpp" />
+    <ClCompile Include="Game\Scenes\Board\StartThrow.cpp" />
     <ClCompile Include="Game\Scenes\FlagGame\FlagGame.cpp" />
     <ClCompile Include="Game\Scenes\Loading\LoadingScreen.cpp" />
     <ClCompile Include="Game\Scenes\Menu\Menu.cpp" />

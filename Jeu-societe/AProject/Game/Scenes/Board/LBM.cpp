@@ -69,18 +69,16 @@ void BaseGame::LBMDisplayUpdate(float _dt)
 		m_data->HudLBM.sprite.setOrigin({ 0.5,0.5 });
 		m_data->HudLBM.sprite.setPosition({ SCREEN_WIDTH / 2  , SCREEN_WIDTH / 10 });
 
-		m_data->HudLBM.text.setOrigin({ 0.5f , 0.5f });
-
 		if (m_data->HudLBM.chosse == "CasePlus")
 		{
 			m_data->HudLBM.rando = randmt::RandomInt(1, 3);
-			m_data->HudLBM.text.setString("Avance de " + std::to_string(m_data->HudLBM.rando) + " Case ");
+			m_data->HudLBM.text.setString("Move Forward " + std::to_string(m_data->HudLBM.rando) + " Space" + (m_data->HudLBM.rando > 1 ? "s" : ""));
 			m_data->HudLBM.text.setPosition({ SCREEN_WIDTH / 2  , SCREEN_WIDTH / 10 });
 			m_data->HudLBM.active = true;
 		}
 		else if (m_data->HudLBM.chosse == "Immunite")
 		{
-			m_data->HudLBM.text.setString("Imuniser au \nMalus Pendant 2 Tour");
+			m_data->HudLBM.text.setString("Immune to\nPenalties for 2 Turns");
 			m_data->HudLBM.text.setPosition({ SCREEN_WIDTH / 2  , SCREEN_WIDTH / 10 });
 			m_data->HudLBM.active = true;
 		}
@@ -91,43 +89,44 @@ void BaseGame::LBMDisplayUpdate(float _dt)
 			{
 				m_data->HudLBM.swap = randmt::RandomInt(0, (int)m_data->players.size() - 1);
 			}
-			m_data->HudLBM.text.setString("Swap de Place \navec le Joueur " + std::to_string(m_data->HudLBM.swap));
+			m_data->HudLBM.text.setString("Swap Position with Player " + std::to_string(m_data->HudLBM.swap + 1));
 			m_data->HudLBM.text.setPosition({ SCREEN_WIDTH / 2  , SCREEN_WIDTH / 10 });
 			m_data->HudLBM.active = true;
 		}
 		else if (m_data->HudLBM.chosse == "CaseMoin")
 		{
 			m_data->HudLBM.rando = randmt::RandomInt(1, 3);
-			m_data->HudLBM.text.setString("Recule de " + std::to_string(m_data->HudLBM.rando) + " Case ");
+			m_data->HudLBM.text.setString("Move Backward " + std::to_string(m_data->HudLBM.rando) + " Space" + (m_data->HudLBM.rando > 1 ? "s" : ""));
 			m_data->HudLBM.text.setPosition({ SCREEN_WIDTH / 2  , SCREEN_WIDTH / 10 });
 			m_data->HudLBM.active = true;
 		}
 		else if (m_data->HudLBM.chosse == "Infection")
 		{
-			m_data->HudLBM.text.setString("Infecte pas de \nBonus pendans 2 Tours ");
+			m_data->HudLBM.text.setString("Infected! No Bonuses for 2 Turns");
 			m_data->HudLBM.text.setPosition({ SCREEN_WIDTH / 2  , SCREEN_WIDTH / 10 });
 			m_data->HudLBM.active = true;
 		}
 		else if (m_data->HudLBM.chosse == "PaseTour")
 		{
-			m_data->HudLBM.text.setString("Passe son Tour\n au prochains Tour");
+			m_data->HudLBM.text.setString("Skip Your Turn Next Round");
 			m_data->HudLBM.text.setPosition({ SCREEN_WIDTH / 2  , SCREEN_WIDTH / 10 });
 			m_data->HudLBM.active = true;
 		}
 		else if (m_data->HudLBM.chosse == "Confus")
 		{
-			m_data->HudLBM.text.setString("Confus le Prochain \n Tour votre lance de Dée vous fait reculer");
+			m_data->HudLBM.text.setString("Confused! Next Turn, Your Dice Roll Makes You Move Backward");
 			m_data->HudLBM.text.setPosition({ SCREEN_WIDTH / 2  , SCREEN_WIDTH / 10 });
 			m_data->HudLBM.active = true;
 		}
 		else if (m_data->HudLBM.chosse == "ConfusSkip")
 		{
-			m_data->HudLBM.text.setString("Confus Evite \n vous avez de la chance");
-			m_data->HudLBM.text.setPosition({ SCREEN_WIDTH / 2  , SCREEN_WIDTH / 10 });
+			m_data->HudLBM.text.setString("Confusion Avoided! You're Lucky");
+		 m_data->HudLBM.text.setPosition({ SCREEN_WIDTH / 2  , SCREEN_WIDTH / 10 });
 			m_data->HudLBM.active = true;
 		}
 
 		m_data->HudLBM.active = true;
+		m_data->HudLBM.text.setOrigin({ 0.5f , 0.5f });
 	}
 }
 

@@ -1,4 +1,4 @@
-﻿#include "Board.hpp"
+ #include "Board.hpp"
 
 constexpr unsigned int hash(const char* str, int h);
 
@@ -36,7 +36,7 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	m_data->posCase = layer.GetObjects();
 
 	m_data->players.resize(m_gameData->m_playerDataList.size());
-	m_data->state = START;
+	m_data->state = INTRO;
 
 	m_data->icone.setTexture(*m_gameData->m_assetManager->GetAsset<TextureAnimated>("Icone", AssetManager::AssetType::TEXTURE_ANIMATED));
 	m_data->icone.setOrigin({ 0.5f,1 });
@@ -50,6 +50,7 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	m_data->timeWin = TIME_WIN_DISPLAY;
 	m_data->timeLBM = TIME_LBM_DISPLAY;
 	m_data->timeDice = TIME_DIS_DISPLAY;
+	m_data->timeStart = TIME_START_DISPLAY;
 
 	// NOUVEAU : Initialisation de la vidéo du dé
 	m_data->diceAnimationPlaying = false;
@@ -57,14 +58,14 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	m_data->dicePosition = sf::Vector2f(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f);
 
 	// NOUVEAU : Pré-charger toutes les vidéos des dés
-	m_data->diceVideos.resize(6);
+	m_data->diceVideos.resize(8);
+	// Configuration simple sans taille personnalisée
+	HighResConfig config;
+	config.sizeMode = VideoSizeMode::Original; // Garder la résolution originale
+	config.enableLoop = false;
+
 	for (int i = 0; i < 6; i++)
 	{
-		// Configuration simple sans taille personnalisée
-		HighResConfig config;
-		config.sizeMode = VideoSizeMode::Original; // Garder la résolution originale
-		config.enableLoop = false;
-
 		m_data->diceVideos[i] = new HighResVideoPlayer(config);
 		std::string videoPath = "Assets/Video/De" + std::to_string(i + 1) + ".mov";
 		if (!m_data->diceVideos[i]->loadFromFile(videoPath))
@@ -72,6 +73,16 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 			std::cout << "Erreur : Impossible de charger la video du de: " << videoPath << std::endl;
 		}
 	}
+
+	m_data->diceVideos[TRANSITION_1] = new HighResVideoPlayer(config);
+	m_data->diceVideos[TRANSITION_2] = new HighResVideoPlayer(config);
+	m_data->diceVideos[TRANSITION_1]->loadFromFile("Assets/Video/TRANSITION_1.mp4"); // Vidéo finale optionnelle
+	m_data->diceVideos[TRANSITION_2]->loadFromFile("Assets/Video/TRANSITION_2.mp4"); // Vidéo finale optionnelle
+
+
+	m_data->currentDiceVideo = m_data->diceVideos[TRANSITION_1];
+	m_data->currentDiceVideo->play();
+	m_data->currentDiceVideo->update(1);
 
 	progress.store(0.7f);
 
@@ -133,20 +144,34 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 		m_data->players[i].sprite.setTexture(m_data->players[i].texture);
 		m_data->players[i].sprite.setOrigin({ 0.5f,1.f });
 		m_data->players[i].v.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
-		m_data->players[i].v.setString(L"⌂");
+		m_data->players[i].v.setString(L"↓");
 		m_data->players[i].boardPosition = m_data->posCase[0].GetPosition() + sf::Vector2f{ -40.f * i + 50 ,0.f };
 		m_data->players[i].posIcone = PosIcone(i);
 
-		sf::FloatRect textRect = m_data->players[i].v.getLocalBounds();
-		m_data->players[i].v.setOrigin({ textRect.width / 2, textRect.height / 2 });
+		sf::FloatRect textBounds = m_data->players[i].v.getLocalBounds();
+		m_data->players[i].v.setOrigin({ textBounds.width / 2.f, textBounds.height / 2.f });
 		m_data->players[i].v.setPosition(m_data->players[i].boardPosition + sf::Vector2f{ 0.f,-100.f });
+		m_data->players[i].v.setOutlineColor(sf::Color::Black);
+		m_data->players[i].v.setOutlineThickness(2.0f);
 
 		m_data->players[i].playeur.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
 		m_data->players[i].playeur.setString("P" + std::to_string(i + 1));
+		m_data->players[i].playeur.setOutlineColor(sf::Color::Black);
+		m_data->players[i].playeur.setOutlineThickness(2.0f);
 
-		textRect = m_data->players[i].playeur.getLocalBounds();
-		m_data->players[i].playeur.setOrigin({ textRect.width / 2, textRect.height / 2 });
+		m_data->players[i].playeur.setOrigin({ 0.5, 0.5 });
 		m_data->players[i].playeur.setPosition(m_data->players[i].boardPosition + sf::Vector2f{ 0.f,-120.f });
+
+		// NOUVEAU : Initialisation du texte pour le numéro du dé
+		m_data->players[i].diceNumber.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
+		m_data->players[i].diceNumber.setString("");
+		m_data->players[i].diceNumber.setCharacterSize(40);
+		m_data->players[i].diceNumber.setFillColor(sf::Color::Yellow);
+		m_data->players[i].diceNumber.setOutlineColor(sf::Color::Black);
+		m_data->players[i].diceNumber.setOutlineThickness(2.0f);
+		
+		m_data->players[i].diceNumber.setOrigin({0.5, 1});
+		m_data->players[i].diceNumber.setPosition(m_data->players[i].boardPosition - sf::Vector2f{ 0.f,700.f });
 
 		m_data->players[i].currentCaseIndex = 0;
 		m_data->players[i].startRandom = 0;
@@ -172,7 +197,7 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 		auto& mapObject = m_data->posCase[i];
 		if (mapObject.GetName() == "19")
 		{
-			posMin = mapObject.GetPosition();
+			posMin = mapObject.GetPosition() + sf::Vector2f(100.f, 0);
 		}
 		if (i == m_data->posCase.size() - 1)
 		{
@@ -192,7 +217,7 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	m_data->animator2.End();
 
 	m_data->arrow.setTexture(*m_gameData->m_assetManager->GetAsset<sf::Texture>("Arrow", AssetManager::AssetType::TEXTURE));
-	
+
 	m_data->arrow.setOrigin({ 0 , m_data->arrow.getTexture()->getSize().y / 2.f });
 
 	for (int i = 0; i < m_data->posCase.size(); i++)
@@ -200,14 +225,18 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 		auto& mapObject = m_data->posCase[i];
 		if (mapObject.GetName() == "6")
 		{
-			m_data->arrow.setPosition(mapObject.GetPosition() + sf::Vector2f(150,0));
+			m_data->arrow.setPosition(mapObject.GetPosition() + sf::Vector2f(150, 0));
 		}
-		
+
 	}
 
 	m_data->arrow.setScale({ 0.5f,0.5f });
 
 	m_data->arrow.setRotation(315);
+
+
+	m_data->HudLBM.text.SetCharactersPerLine(25);
+
 
 	progress.store(1.0f);
 }
@@ -268,22 +297,36 @@ void BaseGame::ProcessDiceRoll(int rando)
 	{
 		auto& player = m_data->players[m_data->currentPlayerIndex];
 
-		// Stocker le résultat
 		m_data->diceResult = rando;
 
-		// CORRECTION : Utiliser un pointeur au lieu de copier
 		if (rando >= 1 && rando <= 6)
 		{
-			// Lancer la vidéo correspondante
 			m_data->currentDiceVideo = m_data->diceVideos[rando - 1];
 			m_data->currentDiceVideo->play();
 			m_data->diceAnimationPlaying = true;
 			SetBoardState(DICE_ANIMATION);
 		}
 	}
-	else
+	else if (m_data->players[m_data->currentPlayerIndex].startRandom == 0)
 	{
-		m_data->players[m_data->currentPlayerIndex].startRandom = rando;
+		// MODIFICATION : Lancer la vidéo du dé pendant START
+		auto& player = m_data->players[m_data->currentPlayerIndex];
+		
+		m_data->diceResult = rando;
+		
+		if (rando >= 1 && rando <= 6)
+		{
+			// Lancer la vidéo du dé
+			m_data->currentDiceVideo = m_data->diceVideos[rando - 1];
+			m_data->currentDiceVideo->play();
+			m_data->currentDiceVideo->update(1);
+			m_data->diceAnimationPlaying = true;
+			
+			// Le numéro sera affiché après l'animation
+			player.startRandom = rando;
+			//player.diceNumber.setString(std::to_string(player.startRandom));
+		}
+		
 		std::cout << "Place: " << rando << std::endl;
 	}
 }
@@ -341,13 +384,13 @@ void BaseGame::PollEvent(sf::Event& _event)
 					{
 						ProcessPathChoice(0);
 						m_data->arrow.setRotation(315);
-						std::cout << "Chemin du haut choisi (joystick)" << std::endl;
+						std::cout << "Top path selected (joystick)" << std::endl;
 					}
 					else if (_event.joystickMove.position > 50.0f) // Bas
 					{
 						ProcessPathChoice(1);
 						m_data->arrow.setRotation(25);
-						std::cout << "Chemin du bas choisi (joystick)" << std::endl;
+						std::cout << "Bottom path selected (joystick)" << std::endl;
 					}
 				}
 			}
@@ -372,13 +415,13 @@ void BaseGame::PollEvent(sf::Event& _event)
 			{
 				ProcessPathChoice(0);
 				m_data->arrow.setRotation(315);
-				std::cout << "Chemin du haut choisi (clavier)" << std::endl;
+				std::cout << "Top path selected (keyboard)" << std::endl;
 			}
 			else if (_event.key.code == sf::Keyboard::Down || _event.key.code == sf::Keyboard::S)
 			{
 				ProcessPathChoice(1);
 				m_data->arrow.setRotation(25);
-				std::cout << "Chemin du bas choisi (clavier)" << std::endl;
+				std::cout << "Bottom path selected (keyboard)" << std::endl;
 			}
 
 			if (_event.key.code == sf::Keyboard::Space)
@@ -394,8 +437,10 @@ void BaseGame::PollEvent(sf::Event& _event)
 	// Gestion du lancer de dé principal
 	if (_event.type == sf::Event::JoystickButtonPressed)
 	{
-		if (m_gameData->m_playerDataList[m_data->currentPlayerIndex].m_joystickId == _event.joystickButton.joystickId && 
-			m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE && m_data->state != DICE_ANIMATION)
+		if (m_gameData->m_playerDataList[m_data->currentPlayerIndex].m_joystickId == _event.joystickButton.joystickId &&
+			m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE &&
+			m_data->state != DICE_ANIMATION && m_data->state != DUEL && m_data->state != BATTLE_ACTION
+			&& m_data->state != INTRO)
 		{
 			if (_event.joystickButton.button == 0 && m_data->animator.IsFinished())
 			{
@@ -408,8 +453,10 @@ void BaseGame::PollEvent(sf::Event& _event)
 	// Gestion des entrées clavier (DEBUG)
 	if (_event.type == sf::Event::KeyPressed)
 	{
-		if (_event.key.code == sf::Keyboard::Space && m_data->animator.IsFinished() && 
-			m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE && m_data->state != DICE_ANIMATION)
+		if (_event.key.code == sf::Keyboard::Space && m_data->animator.IsFinished() &&
+			m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE &&
+			m_data->state != DICE_ANIMATION && m_data->state != DUEL && m_data->state != BATTLE_ACTION
+			&& m_data->state != INTRO)
 		{
 			int rando = randmt::RandomInt(1, 6);
 			ProcessDiceRoll(rando);
@@ -429,11 +476,9 @@ void BaseGame::Update(float _deltaTime)
 		// Mise à jour de la logique du plateau
 		BoardStateUpdate(_deltaTime);
 
-
 		for (int i = (int)m_data->effectSwap.size() - 1; i >= 0; i--)
 		{
 			auto& effect = m_data->effectSwap[i];
-
 			effect.Update(_deltaTime);
 
 			if (!effect.IsActive())
@@ -461,22 +506,18 @@ void BaseGame::Update(float _deltaTime)
 					m_data->effectsMap.pop_back();
 				}
 			}
-
 		}
 
-
-		// Mise à jour de la caméra pour suivre le joueur actif
+		// MODIFICATION : Mettre à jour aussi la position du texte du dé
 		for (auto& player : m_data->players)
 		{
 			player.v.setPosition(player.boardPosition + sf::Vector2f{ 0.f,-250.f });
 			player.playeur.setPosition(player.boardPosition + sf::Vector2f{ 0.f,-275.f });
+			player.diceNumber.setPosition(player.boardPosition + sf::Vector2f{ 0.f,-300.f }); // NOUVEAU
 		}
 
 
 		UpdateCameraFollowPlayer(_deltaTime);
-
-		//UpdateCameraToShowAllPlayers();
-
 	}
 	else
 	{
@@ -488,7 +529,6 @@ void BaseGame::Update(float _deltaTime)
 		}
 	}
 }
-
 
 // NOUVEAU : Méthode helper pour initier un mouvement
 void BaseGame::InitiateMovement(int nextIndex, bool backwards)
@@ -523,7 +563,7 @@ void BaseGame::HandleMovementState(State state, float _dt)
 {
 	m_data->players[m_data->currentPlayerIndex].sprite.Update(_dt);
 	m_data->players[m_data->currentPlayerIndex].boardPosition = m_data->animator.GetGoTo();
-	
+
 	if (m_data->animator.IsFinished())
 	{
 		auto& player = m_data->players[m_data->currentPlayerIndex];
@@ -539,7 +579,7 @@ void BaseGame::HandleMovementState(State state, float _dt)
 		else
 		{
 			// Déplacement terminé
-			State nextState = (state == DEPLACEMENT_ACTION || state == DEPLACEMENT_ACTION_BACK || state == DEPLACEMENT_ACTION_2) 
+			State nextState = (state == DEPLACEMENT_ACTION || state == DEPLACEMENT_ACTION_BACK || state == DEPLACEMENT_ACTION_2)
 				? CASE_ACTION_END : CASE_ACTION;
 			SetBoardState(nextState);
 		}
@@ -556,34 +596,7 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 
 	m_gameData->m_tile->DrawMapLayers(*mod, referenceView.getCenter(), layer);
 
-	// Créer un vecteur d'indices pour trier les joueurs par position Y
-	std::vector<int> indices(m_data->players.size());
-	std::iota(indices.begin(), indices.end(), 0);
-
-	// Trier les indices par position Y croissante
-	std::sort(indices.begin(), indices.end(),
-		[this](int a, int b) {
-			return m_data->players[a].boardPosition.y < m_data->players[b].boardPosition.y;
-		});
-
-	// Affichage des joueurs dans l'ordre trié
-	for (int idx : indices)
-	{
-		m_data->players[idx].sprite.setPosition(m_data->players[idx].boardPosition);
-		mod->draw(m_data->players[idx].sprite);
-		if (idx == m_data->currentPlayerIndex)
-		{
-			m_data->players[idx].v.setFillColor(sf::Color::Cyan);
-			m_data->players[idx].playeur.setFillColor(sf::Color::Cyan);
-		}
-		if (idx != m_data->currentPlayerIndex)
-		{
-			m_data->players[idx].v.setFillColor(sf::Color::White);
-			m_data->players[idx].playeur.setFillColor(sf::Color::White);
-		}
-		mod->draw(m_data->players[idx].v);
-		mod->draw(m_data->players[idx].playeur);
-	}
+	SortDrawOrder();
 
 	m_gameData->m_tile->DrawMapLayers(*mod, referenceView.getCenter(), "point");
 
@@ -599,16 +612,17 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 
 	DrawLBM(*mod);
 
+
 	mod->draw(m_data->arrow);
 
 
 	m_gameData->m_renderWindow->ResetView();
-	for (int idx : indices)
+	for (int i = 0; i < m_data->players.size(); i++)
 	{
-		DrawIconePlayer(*mod, idx);
+		DrawIconePlayer(*mod, i);
 	}
 
-	if (m_data->state == DICE_ANIMATION)
+	if (!m_data->currentDiceVideo->isFinish())
 	{
 		// Centre de la vue
 		sf::Vector2f cameraCenter = { SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f };
@@ -633,6 +647,45 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 
 		// Dessiner avec le shader de chroma key
 		mod->draw(videoSprite, &m_data->chromaKeyShader);
+	}
+}
+
+// Modification de SortDrawOrder pour afficher les numéros de dé pendant START
+void BaseGame::SortDrawOrder()
+{
+	sfMod::RenderWindow* mod = m_gameData->m_renderWindow;
+	std::vector<int> indices(m_data->players.size());
+	std::iota(indices.begin(), indices.end(), 0);
+
+	std::sort(indices.begin(), indices.end(),
+		[this](int a, int b) {
+			return m_data->players[a].boardPosition.y < m_data->players[b].boardPosition.y;
+		});
+
+	for (int idx : indices)
+	{
+		m_data->players[idx].sprite.setPosition(m_data->players[idx].boardPosition);
+		mod->draw(m_data->players[idx].sprite);
+		
+		if (idx == m_data->currentPlayerIndex)
+		{
+			m_data->players[idx].v.setFillColor(sf::Color::Cyan);
+			m_data->players[idx].playeur.setFillColor(sf::Color::Cyan);
+		}
+		else
+		{
+			m_data->players[idx].v.setFillColor(sf::Color::White);
+			m_data->players[idx].playeur.setFillColor(sf::Color::White);
+		}
+		
+		mod->draw(m_data->players[idx].v);
+		mod->draw(m_data->players[idx].playeur);
+		
+		// NOUVEAU : Afficher le numéro du dé si on est en phase START et que le joueur a lancé
+		if (m_data->state == START && m_data->players[idx].diceNumber.getString() != '0')
+		{
+			mod->draw(m_data->players[idx].diceNumber);
+		}
 	}
 }
 
@@ -755,7 +808,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 	{
 	case START:
 		break;
-		
+
 	case PLAY:
 		m_data->players[m_data->currentPlayerIndex].sprite.setScale({ 1.f,1.f });
 		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
@@ -765,8 +818,16 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 		break;
 	case WIN:
 		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
+		m_data->currentDiceVideo = m_data->diceVideos[TRANSITION_1];
+		m_data->currentDiceVideo->play();
 		break;
-
+	case BATTLE_ACTION:
+		[[fallthrough]];
+	case DUEL:
+		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
+		m_data->currentDiceVideo = m_data->diceVideos[TRANSITION_2];
+		m_data->currentDiceVideo->play();
+		break;
 	case DEPLACEMENT:
 		[[fallthrough]];
 	case DEPLACEMENT_ACTION:
@@ -790,7 +851,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 		{
 			caseType = currentCase.GetPropertyByName("type")->GetStringValue();
 		}
-		
+
 		if (player.pendingMovement > 0)
 		{
 			if (caseType == "bridge")
@@ -831,7 +892,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 	{
 		auto& player = m_data->players[m_data->currentPlayerIndex];
 		std::vector<int> availablePaths = GetAvailablePaths(player.currentCaseIndex);
-		
+
 		if (availablePaths.empty())
 		{
 			std::cout << "Erreur : aucun chemin disponible!" << std::endl;
@@ -850,13 +911,13 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 	}
 	break;
 
-	case DEPLACEMENT_BACK: 
+	case DEPLACEMENT_BACK:
 		[[fallthrough]];
 	case DEPLACEMENT_ACTION_BACK:
 	{
 		auto& player = m_data->players[m_data->currentPlayerIndex];
 		std::vector<int> availablePaths = GetAvailablePathsBack(player.currentCaseIndex);
-		
+
 		if (availablePaths.empty())
 		{
 			std::cout << "Erreur : aucun chemin disponible!" << std::endl;
@@ -872,7 +933,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 	{
 		auto& player = m_data->players[m_data->currentPlayerIndex];
 		std::vector<int> availablePaths = GetAvailablePaths(player.currentCaseIndex);
-		
+
 		if (availablePaths.empty())
 		{
 			std::cout << "Erreur : aucun chemin disponible!" << std::endl;
@@ -894,14 +955,17 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 
 	case CASE_ACTION:
 		break;
-		
+
 	case CASE_ACTION_END:
 		SetBoardState(PLAY, 0);
 		break;
-		
+
 	case DICE_ANIMATION:
 		break;
-		
+	case END:
+		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
+		m_data->currentDiceVideo = m_data->diceVideos[TRANSITION_1];
+		break;
 	default:
 		break;
 	}
@@ -977,20 +1041,26 @@ void BaseGame::BoardStateUpdate(float _dt)
 	switch (m_data->state)
 	{
 	case STATE:
-
-		/*std::cout << m_data->HudLBM.name << std::endl;
-		std::cout << m_data->HudLBM.chosse << std::endl;
-		std::cout << m_data->HudLBM.state << std::endl;
-		std::cout << m_data->HudLBM.active << std::endl;
-		std::cout << m_data->HudLBM.swap << std::endl;
-		std::cout << m_data->HudLBM.rando << std::endl;
-		std::cout << m_data->timeLBM << std::endl;
-
-		std::cout << std::endl;*/
+		break;
+	case INTRO:
+		m_data->currentDiceVideo->update(_dt);
+		if (m_data->currentDiceVideo->isFinish())
+		{
+			SetBoardState(START);
+		}
 		break;
 	case START:
-		SortStart();
+	{
+		auto& player = m_data->players[m_data->currentPlayerIndex];
+		m_data->currentDiceVideo->update(_dt);
+		if (m_data->currentDiceVideo->isFinish())
+		{
+			m_data->diceAnimationPlaying = false;
+			player.diceNumber.setString(std::to_string(player.startRandom));
+			SortStart(_dt);
+		}
 		break;
+	}
 
 	case DICE_ANIMATION:
 	{
@@ -1063,43 +1133,57 @@ void BaseGame::BoardStateUpdate(float _dt)
 		break;
 
 	case BATTLE_ACTION:
-		m_gameData->InitMiniGamePlayer();
-		for (int i = 0; i < m_data->players.size(); i++)
-			m_gameData->AddPlayerPlaying(i);
+		m_data->currentDiceVideo->update(_dt);
+		if (m_data->currentDiceVideo->isFinish())
+		{
+			m_gameData->InitMiniGamePlayer();
+			for (int i = 0; i < m_data->players.size(); i++)
+				m_gameData->AddPlayerPlaying(i);
 
-		SetBoardState(WIN);
-		m_gameData->m_renderWindow->ResetView();
-		ChangeScene(RandomBattle(), true);
+			SetBoardState(WIN);
+			m_gameData->m_renderWindow->ResetView();
+			ChangeScene(RandomBattle(), true);
+		}
+
 		break;
 
 	case DUEL:
-		m_gameData->InitMiniGamePlayer();
-		m_gameData->AddPlayerPlaying(m_data->currentPlayerIndex);
-		m_gameData->AddPlayerPlaying(OnSameCase());
+		m_data->currentDiceVideo->update(_dt);
+		if (m_data->currentDiceVideo->isFinish())
+		{
+			m_gameData->InitMiniGamePlayer();
+			m_gameData->AddPlayerPlaying(m_data->currentPlayerIndex);
+			m_gameData->AddPlayerPlaying(OnSameCase());
 
-		SetBoardState(WIN);
-		m_gameData->m_renderWindow->ResetView();
-		ChangeScene(RandomDuel(), true);
+			SetBoardState(WIN);
+			m_gameData->m_renderWindow->ResetView();
+			ChangeScene(RandomDuel(), true);
+		}
+
 		break;
 
 	case WIN:
-		m_data->timeWin -= _dt;
-		if (m_data->timeWin <= 0)
+		m_data->currentDiceVideo->update(_dt);
+		if (m_data->currentDiceVideo->isFinish())
 		{
-			if (!m_gameData->m_winIndex.empty())
+			m_data->timeWin -= _dt;
+			if (m_data->timeWin <= 0)
 			{
-				int winnerIndex = m_gameData->m_winIndex[0];
-				int loserIndex = m_gameData->m_winIndex[m_gameData->m_winIndex.size() - 1];
+				if (!m_gameData->m_winIndex.empty())
+				{
+					int winnerIndex = m_gameData->m_winIndex[0];
+					int loserIndex = m_gameData->m_winIndex[m_gameData->m_winIndex.size() - 1];
 
-				auto& playerWin = m_data->players[winnerIndex];
-				auto& playerLose = m_data->players[loserIndex];
+					auto& playerWin = m_data->players[winnerIndex];
+					auto& playerLose = m_data->players[loserIndex];
 
-				playerWin.pendingMovement = 1;
-				playerLose.pendingMovement = 1;
+					playerWin.pendingMovement = 1;
+					playerLose.pendingMovement = 1;
+				}
+
+				m_data->timeWin = TIME_WIN_DISPLAY;
+				SetBoardState(WIN_DEPLACEMENT);
 			}
-
-			m_data->timeWin = TIME_WIN_DISPLAY;
-			SetBoardState(WIN_DEPLACEMENT);
 		}
 		break;
 
@@ -1117,7 +1201,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 
 			m_data->players[winnerIndex].boardPosition = m_data->animator.GetGoTo();
 			m_data->players[loserIndex].boardPosition = m_data->animator2.GetGoTo();
-			
+
 			if (m_data->animator.IsFinished() && m_data->animator2.IsFinished())
 			{
 				auto& playerWin = m_data->players[winnerIndex];
@@ -1152,7 +1236,14 @@ void BaseGame::BoardStateUpdate(float _dt)
 			SetBoardState(PLAY, 0);
 		}
 		break;
-
+	case END:
+		m_data->currentDiceVideo->update(_dt);
+		if (m_data->currentDiceVideo->isFinish())
+		{
+			m_gameData->m_renderWindow->ResetView();
+			ChangeScene("Podium", false);
+		}
+		break;
 	default:
 		break;
 	}
@@ -1203,73 +1294,9 @@ std::string BaseGame::RandomDuel()
 
 	//return "FlagGame";
 
-	
-	//m_gameData->m_nextScene = miniGames[randomIndex];
-	m_gameData->m_nextScene = "RandCard";
+
+	m_gameData->m_nextScene = miniGames[randomIndex];
 	return "Warmup";
-}
-
-void BaseGame::SortStart()
-{
-	int somme = 1;
-	m_data->currentPlayerIndex = 0;
-
-
-	for (const auto& player : m_data->players)
-	{
-		if (player.startRandom != 0)
-			m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
-
-		somme *= player.startRandom;
-	}
-
-	if (somme != 0)
-	{
-
-		for (size_t i = 0; i < m_data->players.size(); i++)
-		{
-			std::cout << "Player : " << m_data->players[i].startRandom << " ";
-			std::cout << " id manette : " << m_gameData->m_playerDataList[i].m_joystickId << " " << std::endl;
-		}
-
-		// Tri des joueurs par ordre décroissant de jet de dé
-		// Créer un vecteur d'indices
-		std::vector<size_t> indices(m_data->players.size());
-		std::iota(indices.begin(), indices.end(), 0);
-
-		// Trier les indices par ordre décroissant de startRandom
-		std::sort(indices.begin(), indices.end(),
-			[this](size_t a, size_t b) { return m_data->players[a].startRandom > m_data->players[b].startRandom; });
-
-		// Réorganiser m_data->players
-		std::vector<Player> sortedPlayers(m_data->players.size());
-		for (size_t i = 0; i < indices.size(); i++) {
-			sortedPlayers[i] = m_data->players[indices[i]];
-		}
-		m_data->players = std::move(sortedPlayers);
-
-		// CORRECTION : Réassigner les textures aux sprites après le déplacement
-		for (auto& player : m_data->players) {
-			player.sprite.setTexture(player.texture);
-		}
-
-		// Réorganiser m_gameData->m_playerDataList
-		std::vector<PlayerData> sortedPlayerData(m_gameData->m_playerDataList.size());
-		for (size_t i = 0; i < indices.size(); ++i) {
-			sortedPlayerData[i] = m_gameData->m_playerDataList[indices[i]];
-		}
-		m_gameData->m_playerDataList = std::move(sortedPlayerData);
-
-
-		for (size_t i = 0; i < m_data->players.size(); i++)
-		{
-			std::cout << "Player : " << m_data->players[i].startRandom << " ";
-			std::cout << " id manette : " << m_gameData->m_playerDataList[i].m_joystickId << " " << std::endl;
-		}
-
-
-		m_data->state = PLAY;
-	}
 }
 
 std::string BaseGame::RandomBattle()
@@ -1287,8 +1314,9 @@ std::string BaseGame::RandomBattle()
 
 	std::cout << "Random minigame selected: " << miniGames[randomIndex] << std::endl;
 
-	//m_gameData->m_nextScene = miniGames[randomIndex];
-	m_gameData->m_nextScene = "RandCard";
+	m_gameData->m_nextScene = miniGames[randomIndex];
+	//m_gameData->m_nextScene = "RandCard";
 
 	return "Warmup";
 }
+

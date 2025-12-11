@@ -279,6 +279,8 @@ void BaseGame::ProcessFinRoll()
 
 		// Transition vers le podium
 		//ChangeScene("Podium", false);
+
+		SetBoardState(END); // Bloquer le jeu en attendant le changement de scène
 	}
 	else
 	{
