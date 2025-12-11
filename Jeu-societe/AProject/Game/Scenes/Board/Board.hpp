@@ -26,7 +26,7 @@
 #define TIME_WIN_DISPLAY 0.5f
 #define TIME_LBM_DISPLAY 6.0f
 #define TIME_DIS_DISPLAY 0.2f
-#define TIME_START_DISPLAY 1.0f
+#define TIME_START_DISPLAY 1.2f
 #define MAX_TOUR_EFFECT 2
 #define TRANSITION_1 6 
 #define TRANSITION_2 7 
@@ -158,9 +158,9 @@ class BaseGame : public SceneBase
 
 			StatePlayer state;
 
-			sf::Text playeur;
+			TextPlus playeur;
 			sf::Text v;
-			sf::Text diceNumber; // NOUVEAU : Texte pour afficher le numéro du dé
+			TextPlus diceNumber; // NOUVEAU : Texte pour afficher le numéro du dé
 
 			int tourstate;
 

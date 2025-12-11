@@ -144,19 +144,22 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 		m_data->players[i].sprite.setTexture(m_data->players[i].texture);
 		m_data->players[i].sprite.setOrigin({ 0.5f,1.f });
 		m_data->players[i].v.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
-		m_data->players[i].v.setString(L"⌂");
+		m_data->players[i].v.setString(L"↓");
 		m_data->players[i].boardPosition = m_data->posCase[0].GetPosition() + sf::Vector2f{ -40.f * i + 50 ,0.f };
 		m_data->players[i].posIcone = PosIcone(i);
 
-		sf::FloatRect textRect = m_data->players[i].v.getLocalBounds();
-		m_data->players[i].v.setOrigin({ textRect.width / 2, textRect.height / 2 });
+		sf::FloatRect textBounds = m_data->players[i].v.getLocalBounds();
+		m_data->players[i].v.setOrigin({ textBounds.width / 2.f, textBounds.height / 2.f });
 		m_data->players[i].v.setPosition(m_data->players[i].boardPosition + sf::Vector2f{ 0.f,-100.f });
+		m_data->players[i].v.setOutlineColor(sf::Color::Black);
+		m_data->players[i].v.setOutlineThickness(2.0f);
 
 		m_data->players[i].playeur.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
 		m_data->players[i].playeur.setString("P" + std::to_string(i + 1));
+		m_data->players[i].playeur.setOutlineColor(sf::Color::Black);
+		m_data->players[i].playeur.setOutlineThickness(2.0f);
 
-		textRect = m_data->players[i].playeur.getLocalBounds();
-		m_data->players[i].playeur.setOrigin({ textRect.width / 2, textRect.height / 2 });
+		m_data->players[i].playeur.setOrigin({ 0.5, 0.5 });
 		m_data->players[i].playeur.setPosition(m_data->players[i].boardPosition + sf::Vector2f{ 0.f,-120.f });
 
 		// NOUVEAU : Initialisation du texte pour le numéro du dé
@@ -167,9 +170,8 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 		m_data->players[i].diceNumber.setOutlineColor(sf::Color::Black);
 		m_data->players[i].diceNumber.setOutlineThickness(2.0f);
 		
-		textRect = m_data->players[i].diceNumber.getLocalBounds();
-		m_data->players[i].diceNumber.setOrigin({ textRect.width / 2, textRect.height / 2 });
-		m_data->players[i].diceNumber.setPosition(m_data->players[i].boardPosition + sf::Vector2f{ 0.f,-155.f });
+		m_data->players[i].diceNumber.setOrigin({0.5, 1});
+		m_data->players[i].diceNumber.setPosition(m_data->players[i].boardPosition - sf::Vector2f{ 0.f,700.f });
 
 		m_data->players[i].currentCaseIndex = 0;
 		m_data->players[i].startRandom = 0;
@@ -317,10 +319,12 @@ void BaseGame::ProcessDiceRoll(int rando)
 			// Lancer la vidéo du dé
 			m_data->currentDiceVideo = m_data->diceVideos[rando - 1];
 			m_data->currentDiceVideo->play();
+			m_data->currentDiceVideo->update(1);
 			m_data->diceAnimationPlaying = true;
 			
 			// Le numéro sera affiché après l'animation
 			player.startRandom = rando;
+			//player.diceNumber.setString(std::to_string(player.startRandom));
 		}
 		
 		std::cout << "Place: " << rando << std::endl;
@@ -678,7 +682,7 @@ void BaseGame::SortDrawOrder()
 		mod->draw(m_data->players[idx].playeur);
 		
 		// NOUVEAU : Afficher le numéro du dé si on est en phase START et que le joueur a lancé
-		if (m_data->state == START && m_data->players[idx].startRandom > 0)
+		if (m_data->state == START && m_data->players[idx].diceNumber.getString() != '0')
 		{
 			mod->draw(m_data->players[idx].diceNumber);
 		}
@@ -1046,12 +1050,17 @@ void BaseGame::BoardStateUpdate(float _dt)
 		}
 		break;
 	case START:
+	{
+		auto& player = m_data->players[m_data->currentPlayerIndex];
 		m_data->currentDiceVideo->update(_dt);
 		if (m_data->currentDiceVideo->isFinish())
 		{
+			m_data->diceAnimationPlaying = false;
+			player.diceNumber.setString(std::to_string(player.startRandom));
 			SortStart(_dt);
 		}
 		break;
+	}
 
 	case DICE_ANIMATION:
 	{

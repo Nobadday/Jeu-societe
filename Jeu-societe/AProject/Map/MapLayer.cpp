@@ -129,19 +129,19 @@ void MapLayer::Draw(sf::RenderTarget& _target, TilesetManager& _tilesetManager, 
 		// Convertir les coordonnées écran en coordonnées texture
 		float texOffsetX = (visibleRect.left - screenX) / scaleX;
 		float texOffsetY = (visibleRect.top - screenY) / scaleY;
-		float texWidth = visibleRect.width / scaleX;
-		float texHeight = visibleRect.height / scaleY;
+		float texWidth = visibleRect.width +1000 / scaleX;
+		float texHeight = visibleRect.height + 1000 / scaleY;
 
-		// Définir le rectangle de texture à afficher
-		sf::IntRect textureRect(
-			static_cast<int>(texOffsetX),
-			static_cast<int>(texOffsetY),
-			static_cast<int>(texWidth),
-			static_cast<int>(texHeight)
-		);
+		//// Définir le rectangle de texture à afficher
+		//sf::IntRect textureRect(
+		//	static_cast<int>(texOffsetX),
+		//	static_cast<int>(texOffsetY),
+		//	static_cast<int>(texWidth),
+		//	static_cast<int>(texHeight)
+		//);
 
-		sprite.setTextureRect(textureRect);
-		sprite.setPosition(visibleRect.left, visibleRect.top);
+		//sprite.setTextureRect(textureRect);
+		sprite.setPosition(screenX, screenY);
 		sprite.setScale(scaleX, scaleY);
 
 		// Appliquer la rotation
