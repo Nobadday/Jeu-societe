@@ -57,7 +57,7 @@ class RandCard : public SceneBase
 
 			int playerCountLeft = 0;
 
-			AudioEngine* audio;
+			AudioEngine* audio = nullptr;
 			TransitionClass transition;
 		};
 		SceneData* m_data;

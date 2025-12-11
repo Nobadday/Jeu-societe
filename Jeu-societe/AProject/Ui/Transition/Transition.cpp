@@ -44,6 +44,7 @@ TransitionClass::~TransitionClass()
 
 void TransitionClass::PlayTransition()
 {
+    videoPlayer.update(1.f);
     videoPlayer.play();
 }
 void TransitionClass::SetTransition(Transition _transition)
@@ -52,11 +53,11 @@ void TransitionClass::SetTransition(Transition _transition)
     //Upgrade it to switch for next project
     if (_transition == FADED_IN)
     {
-        videoPlayer.loadFromFile("Assets/Video/TRANSITION_1.mp4");
+        videoPlayer.loadFromFile("Assets/Video/TRANSITION_1_LOUIS_VERSION.mp4");
     }
     else
     {
-        videoPlayer.loadFromFile("Assets/Video/TRANSITION_2.mp4");
+        videoPlayer.loadFromFile("Assets/Video/TRANSITION_2_LOUIS_VERSION.mp4");
     }
 }
 void TransitionClass::Update(float _dt)

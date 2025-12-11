@@ -254,6 +254,9 @@ void RandCard::Update(float _deltaTime)
 void RandCard::Draw(sf::RenderWindow& _renderWindow)
 {
 	_renderWindow.draw(m_data->background);
+	//Cards and icons are printed in all states
+	PrintCards(_renderWindow);
+	PrintIcons(_renderWindow);
 	switch (m_data->gameState)
 	{
 		case TRANSITION:
@@ -267,9 +270,6 @@ void RandCard::Draw(sf::RenderWindow& _renderWindow)
 			_renderWindow.draw(m_data->text);
 			break;
 	}
-	//Cards and icons are printed in all states
-	PrintCards(_renderWindow);
-	PrintIcons(_renderWindow);
 }
 
 
