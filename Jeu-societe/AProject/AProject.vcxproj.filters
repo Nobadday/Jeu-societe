@@ -192,13 +192,16 @@
     <ClCompile Include="Game\Scenes\Board\PlayerCam.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Scenes\Warmup\Warmup.cpp">
+    <ClCompile Include="Ui\Transition\Transition.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Ui\HealthBar\HealthBar.cpp">
-      <Filter>Fichiers sources</Filter>
     </ClCompile>
+      <Filter>Fichiers sources</Filter>
     <ClCompile Include="Game\Scenes\Board\StartThrow.cpp">
+    </ClCompile>
+      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="Ui\HealthBar\HealthBar.cpp">
+    <ClCompile Include="Game\Scenes\Warmup\Warmup.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -372,6 +375,9 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Ui\HealthBar\HealthBar.hpp">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Transition\Transition.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

@@ -30,11 +30,11 @@ void RandCard::Load(void)
 	//Font
 	m_data->text.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("MenuFont"));
 	m_data->text.setCharacterSize(100u);
-	m_data->text.setOrigin({0.6f, 0.8f});
+	m_data->text.setOrigin({ 0.6f, 0.8f });
 	m_data->text.setPosition({ SCREEN_WIDTH / 2.f, 0.8 * SCREEN_HEIGHT });
 	m_data->text.setString("Choose card");
 
-		 	 
+
 	//Anim Card
 	m_data->cardChosenSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("AnimCard", AssetManager::AssetType::TEXTURE_ANIMATED));
 	m_data->cardUnchosenSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("AnimCard", AssetManager::AssetType::TEXTURE_ANIMATED));
@@ -89,6 +89,9 @@ void RandCard::Load(void)
 	{
 		std::cout << "Card n " << i << " : " << m_data->cards[i] << std::endl;
 	}
+
+	m_data->transition.SetTransition(TransitionClass::FADED_IN);
+	m_data->transition.PlayTransition();
 }
 void RandCard::Unload(void)
 {
@@ -104,147 +107,168 @@ void RandCard::PollEvent(sf::Event& _event)
 {
 	switch (m_data->gameState)
 	{
-		case CHOOSE_CARD:
+	case CHOOSE_CARD:
 
-			switch (_event.type)
+		switch (_event.type)
+		{
+		case sf::Event::JoystickButtonPressed:
+
+			if (_event.joystickButton.joystickId == m_data->currentPlayer)
 			{
-				case sf::Event::JoystickButtonPressed:
-
-					if (_event.joystickButton.joystickId == m_data->currentPlayer)
+				//Confirm choice
+				if (m_data->cardChosen != -1)
+				{
+					CardType cardType = m_data->cards[m_data->cardChosen];
+					m_data->audio->PlaySound("cardReturn");
+					switch (cardType)
 					{
-						//Confirm choice
-						if (m_data->cardChosen != -1)
-						{
-							CardType cardType = m_data->cards[m_data->cardChosen];
-							m_data->audio->PlaySound("cardReturn");								
-							switch (cardType)
-							{
-								case NORMAL:
-									m_data->cardChosenSprAnim.SetAnimation("NORMAL");
-									m_data->text.setString("This card is safe");
-									break;
+					case NORMAL:
+						m_data->cardChosenSprAnim.SetAnimation("NORMAL");
+						m_data->text.setString("This card is safe");
+						break;
 
-								case BOMB:
-									m_data->cardChosenSprAnim.SetAnimation("BOMB");
-									m_data->text.setString("Oh no, you picked the bomb");
-									break;
-							}
-							m_data->gameState = ANIMATION;
-							m_data->cardChosenSprAnim.Restart();
-						}
+					case BOMB:
+						m_data->cardChosenSprAnim.SetAnimation("BOMB");
+						m_data->text.setString("Oh no, you picked the bomb");
+						break;
 					}
-					break;
-				case sf::Event::KeyPressed:
-					break;
-				case sf::Event::JoystickMoved:
+					m_data->gameState = ANIMATION;
+					m_data->cardChosenSprAnim.Restart();
+				}
+			}
+			break;
+		case sf::Event::KeyPressed:
+			break;
+		case sf::Event::JoystickMoved:
 
-					//X Y joystick gauche
-					//U V joystick droite
-					//Z R pression des gachettes
-					//La croix povX povY
-					if (_event.joystickButton.joystickId == m_data->currentPlayer)
+			//X Y joystick gauche
+			//U V joystick droite
+			//Z R pression des gachettes
+			//La croix povX povY
+			if (_event.joystickButton.joystickId == m_data->currentPlayer)
+			{
+
+				if (m_data->inputDelay > 0.1f)
+				{
+					switch (_event.joystickMove.axis)
 					{
+					case sf::Joystick::Axis::X:
+					case sf::Joystick::Axis::U:
 
-						if (m_data->inputDelay > 0.1f)
-						{
-							switch (_event.joystickMove.axis)
-							{
-								case sf::Joystick::Axis::X:
-								case sf::Joystick::Axis::U:
+						//Move the position of card chosen
+						AddCardChosen((int)roundf(_event.joystickMove.position / 100.f));
+						m_data->inputDelay = 0.f;
+						break;
 
-									//Move the position of card chosen
-									AddCardChosen((int)roundf(_event.joystickMove.position / 100.f));
-									m_data->inputDelay = 0.f;
-									break;
-
-								default:
-									break;
-							}
-						}
+					default:
+						break;
 					}
-					break;
-
-				default:
-					break;
+				}
 			}
 			break;
 
-		case END:
-			if (_event.type == sf::Event::KeyPressed)
-			{
-				if (_event.key.code == sf::Keyboard::Enter)
-				{
-					//Return to main menu
-					ChangeScene("RussianRoulette");
-				}
-			}
+		default:
+			break;
+		}
+		break;
+
+	case END:
+		if (_event.type == sf::Event::KeyPressed ||
+			_event.type == sf::Event::JoystickButtonPressed)
+		{
+			m_data->transition.SetTransition(TransitionClass::FADED_OUT);
+			m_data->gameState = TRANSITION;
+
+		}
 	}
 }
 void RandCard::Update(float _deltaTime)
 {
-	switch (m_data->gameState) 
+	switch (m_data->gameState)
 	{
-		case WAITING_BETWEEN_PLAYER:
+	case WAITING_BETWEEN_PLAYER:
 
-			m_data->timer.Update(_deltaTime);
+		m_data->timer.Update(_deltaTime);
 
-			if (m_data->timer.IsFinished())
-			{
-				m_data->cards.erase(m_data->cards.begin() + m_data->cardChosen);
-
-
-
-
-
-
-				m_data->cardChosenSprAnim.Update(_deltaTime);
-				m_data->text.setString("Choose card");
-				//Restart card
-				m_data->cardChosenSprAnim.SetAnimation("IDLE");
-				m_data->timer.Restart();
-				NextPlayer();
-			}
-			break;
-
-		case CHOOSE_CARD:
-
-			m_data->inputDelay += _deltaTime;
-			break;
-
-		case ANIMATION:
+		if (m_data->timer.IsFinished())
+		{
+			m_data->cards.erase(m_data->cards.begin() + m_data->cardChosen);
 
 			m_data->cardChosenSprAnim.Update(_deltaTime);
-			if (m_data->cardChosenSprAnim.IsFinished())
-			{
-				if (m_data->cards[m_data->cardChosen] == BOMB)
-				{
-					m_data->deadPlayers.push_back(m_data->players.at(m_data->currentPlayer));
+			m_data->text.setString("Choose card");
+			//Restart card
+			m_data->cardChosenSprAnim.SetAnimation("IDLE");
+			m_data->timer.Restart();
+			NextPlayer();
+		}
+		break;
 
-					m_data->players.erase(m_data->players.begin() + m_data->currentPlayer);
-					m_data->audio->PlaySound("loose");									
-					m_data->gameState = WAITING_BETWEEN_PLAYER;					
-				}
-				else
-				{
-					m_data->gameState = WAITING_BETWEEN_PLAYER;
-				}
+	case CHOOSE_CARD:
+
+		m_data->inputDelay += _deltaTime;
+		break;
+
+	case ANIMATION:
+
+		m_data->cardChosenSprAnim.Update(_deltaTime);
+		if (m_data->cardChosenSprAnim.IsFinished())
+		{
+			if (m_data->cards[m_data->cardChosen] == BOMB)
+			{
+				m_data->deadPlayers.push_back(m_data->players.at(m_data->currentPlayer));
+
+				m_data->players.erase(m_data->players.begin() + m_data->currentPlayer);
+				m_data->audio->PlaySound("loose");
+				m_data->gameState = WAITING_BETWEEN_PLAYER;
 			}
-			break;
+			else
+			{
+				m_data->gameState = WAITING_BETWEEN_PLAYER;
+			}
+		}
+		break;
+	case TRANSITION:
+		m_data->transition.Update(_deltaTime);
+
+		if (m_data->transition.IsFinished())
+		{
+			//If this vector is empty, the transition finished is the first
+			if ((int)m_data->deadPlayers.size() == 0)
+			{
+				m_data->gameState = CHOOSE_CARD;
+			}
+			else
+			{
+				//Return to main menu
+				ChangeScene("RussianRoulette");
+			}
+		}
+
+
+
+		break;
+
 	}
 }
 
 void RandCard::Draw(sf::RenderWindow& _renderWindow)
 {
 	_renderWindow.draw(m_data->background);
-	switch (m_data->gameState)
-	{
-	case WAITING_BETWEEN_PLAYER:
-	case CHOOSE_CARD:
-		_renderWindow.draw(m_data->text);
-		break;
-	}
+	//Cards and icons are printed in all states
 	PrintCards(_renderWindow);
 	PrintIcons(_renderWindow);
+	switch (m_data->gameState)
+	{
+		case TRANSITION:
+		{
+			m_data->transition.Draw(_renderWindow);
+		}
+		break;
+		case WAITING_BETWEEN_PLAYER:
+		case CHOOSE_CARD:
+			_renderWindow.draw(m_data->text);
+			break;
+	}
 }
 
 
@@ -280,18 +304,18 @@ void RandCard::PrintIcons(sf::RenderWindow& _renderWindow)
 
 	for (int i = 0; i < (int)m_data->players.size(); i++)
 	{
-		sf::Vector2f pos = { (float)(border + i * iconSpacing), SCREEN_HEIGHT * 0.07f};
-		
+		sf::Vector2f pos = { (float)(border + i * iconSpacing), SCREEN_HEIGHT * 0.07f };
+
 		m_data->iconsChara.SetAnimation(m_data->gameData->m_playerDataList[m_data->players[i].id].GetJoystickId());
 		m_data->iconsChara.setPosition(pos);
 		if (m_data->currentPlayer == i)
 		{
 			m_data->iconsChara.setScale({ 1.2f,1.2f });
-			m_data->iconsChara.setColor({ 255,255,255,255});
-		}		
+			m_data->iconsChara.setColor({ 255,255,255,255 });
+		}
 		_renderWindow.draw(m_data->iconsChara);
 		m_data->iconsChara.setScale({ 1.0f,1.0f });
-		m_data->iconsChara.setColor({ 255,255,255,150});
+		m_data->iconsChara.setColor({ 255,255,255,150 });
 	}
 }
 
@@ -306,17 +330,18 @@ void RandCard::AddCardChosen(int _value)
 
 void RandCard::NextPlayer(void)
 {
-	std::cout << "current player : " << m_data->currentPlayer << " size = " << m_data->gameData->m_gonnaPlayIndex.size() << std::endl;
 	//Check if only one player left
 	if (m_data->players.size() - 1 < 1)
 	{
 		m_data->deadPlayers.push_back(m_data->players.at(0));
 		//Print if you want check
+		m_data->text.setString("Press button to exit");
 		m_data->gameState = END;
 
 		//Save data
 		int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size() - 1;
-		for (int i = (int)m_data->deadPlayers.size() - 1; i > 0; i--)
+
+		for (int i = (int)m_data->deadPlayers.size() - 1; i >= 0; i--)
 		{
 			//Print if you want check
 			m_data->gameData->AddPlayerWin(m_data->deadPlayers.at(i).id);

@@ -1,4 +1,4 @@
-﻿#include "Board.hpp"
+#include "Board.hpp"
 
 constexpr unsigned int hash(const char* str, int h);
 
@@ -1474,6 +1474,8 @@ std::string BaseGame::RandomBattle()
 	std::cout << "Random minigame selected: " << miniGames[randomIndex] << std::endl;
 
 	m_gameData->m_nextScene = miniGames[randomIndex];
+	//m_gameData->m_nextScene = "RandCard";
+
 	return "Warmup";
 }
 

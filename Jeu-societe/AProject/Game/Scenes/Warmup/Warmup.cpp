@@ -59,7 +59,7 @@ void Warmup::Load(void)
 	m_data->text.setOrigin({ 0.6f,0.8f });
 	m_data->text.setString("Press button to be ready");
 
-	m_data->videoPlayer.loadFromFile("Assets/Video/TRANSITION_1.mp4");
+	m_data->videoPlayer.loadFromFile("Assets/Video/TRANSITION_1_LOUIS_VERSION.mp4");
 	m_data->videoPlayer.play();
 	m_data->videoPlayer.update(1.f);
 }
@@ -109,7 +109,7 @@ void Warmup::Update(float _deltaTime)
 	{
 		m_data->state = TRANS_2;
 
-		std::string videoPath = "Assets/Video/TRANSITION_2.mp4";
+		std::string videoPath = "Assets/Video/TRANSITION_2_LOUIS_VERSION.mp4";
 		m_data->videoPlayer.loadFromFile(videoPath);
 		m_data->scaleVid = { 1.f,1.f };
 		m_data->videoPlayer.play();
@@ -128,7 +128,7 @@ void Warmup::Update(float _deltaTime)
 				//std::string videoPath = "Assets/Video/De1.mp4";
 				std::string videoPath = "Assets/Video/TRANSITION_1.mp4";
 				m_data->videoPlayer.loadFromFile(videoPath);
-				m_data->scaleVid = { 0.8f,0.8f };
+				m_data->scaleVid = { 0.75f,0.75f };
 				m_data->videoPlayer.play();
 			}
 				break;

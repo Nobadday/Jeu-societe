@@ -6,6 +6,7 @@
 #include "../../../Common.hpp"
 #include "../../../Animation/Graphics.hpp"
 #include "../../../Animation/Animation.hpp"
+#include "../../../Ui/Transition/Transition.hpp"
 
 class RussianRoulette : public SceneBase
 {
@@ -25,7 +26,8 @@ class RussianRoulette : public SceneBase
 			WAITING_FOR_INPUT,
 			//Animation 
 			SPINNING,
-			END
+			END,
+			TRANSITION
 		};
 		struct SceneData
 		{
@@ -33,10 +35,10 @@ class RussianRoulette : public SceneBase
 			SpriteAnimated iconsChara;
 			sf::Sprite background;
 
-			GameState gameState = WAITING_FOR_INPUT;
+			GameState gameState = TRANSITION;
+			TransitionClass transition;
 			int bullet = -1;
 			int bulletUser = 0;
-			bool killed = false;
 
 			//DEBUG
 			int currentPlayer = 0;
@@ -44,13 +46,10 @@ class RussianRoulette : public SceneBase
 			std::vector<Player> deadPlayers;
 			GameData* gameData;
 			int nbOfPlayers = 4;
-			int playerKilled = -1;
 			sf::Font font;
 			TextPlus text;
 			Timer timerEnd;
 			AudioEngine* audio;
-
-
 		};
 		SceneData* m_data;
 

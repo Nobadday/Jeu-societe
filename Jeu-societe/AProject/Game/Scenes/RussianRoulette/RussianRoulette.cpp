@@ -44,7 +44,9 @@ void RussianRoulette::Load(void)
 	m_data->background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground", AssetManager::AssetType::TEXTURE));
 
 	m_data->gunSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Gun_Rien"));
-	m_data->gameState = WAITING_FOR_INPUT;
+	//m_data->gameState = WAITING_FOR_INPUT;
+
+	m_data->transition.PlayTransition();
 }
 
 void RussianRoulette::Unload(void)
@@ -176,28 +178,51 @@ void RussianRoulette::Update(float _deltaTime)
 					{
 						m_data->currentPlayer = 0;
 					}
-					m_data->iconsChara.SetAnimation(PlayerData::GetTextureName((PlayerData::PlayerSkin)m_data->players[m_data->currentPlayer].skin));
+					std::cout << "Player : " << m_data->currentPlayer << ", his skin : " << PlayerData::GetTextureName((PlayerData::PlayerSkin)m_data->players[m_data->currentPlayer].skin) << std::endl;
+					//m_data->iconsChara.SetAnimation(PlayerData::GetTextureName((PlayerData::PlayerSkin)m_data->players[m_data->currentPlayer].skin));
+					m_data->iconsChara.SetAnimation(m_data->gameData->m_playerDataList[m_data->gameData->m_gonnaPlayIndex[m_data->currentPlayer]].GetJoystickId());
+
 				}
 			}
 		break;
 
 	case END:
 
-		std::cout << "TIMER\n";
 		m_data->timerEnd.Update(_deltaTime);
 
 		if (m_data->timerEnd.IsFinished())
 		{
 			//std::cout << "FINI, CHANGEMENT De SCENE ICI" << std::endl;
-			SceneBase::ChangeScene("Board", false);
+			m_data->gameState = TRANSITION;
+			m_data->transition.SetTransition(TransitionClass::FADED_OUT);
+			m_data->transition.PlayTransition();
+		}
+		break;
+	case TRANSITION:
+
+		m_data->transition.Update(_deltaTime);
+
+		if (m_data->transition.IsFinished())
+		{
+			//Check if it's not the first transition
+			if (m_data->deadPlayers.size() != 0)
+			{
+				SceneBase::ChangeScene("Board", false);
+			}
+			else
+			{
+				m_data->gameState = WAITING_FOR_INPUT;
+			}
 		}
 		break;
 	}
 }
 void RussianRoulette::Draw(sf::RenderWindow& _renderWindow)
 {
+
 	_renderWindow.draw(m_data->background);
 	_renderWindow.draw(m_data->gunSprAnim);
 	_renderWindow.draw(m_data->text);
 	_renderWindow.draw(m_data->iconsChara);
+	m_data->transition.Draw(_renderWindow);
 }
