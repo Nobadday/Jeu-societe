@@ -80,9 +80,10 @@ int main(void)
 
 void MainDataLoad(MainData& _mainData)
 {
-	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "SFML", sf::Style::Default);
+	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "SFML", sf::Style::Fullscreen);
 
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
+	_mainData.renderWindow.setVerticalSyncEnabled(true);
 
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
@@ -130,6 +131,7 @@ void PollEvent(MainData& _mainData)
 		}
 	}
 }
+
 
 void Update(MainData& _mainData)
 {

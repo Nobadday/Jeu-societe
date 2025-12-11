@@ -56,22 +56,26 @@ void Podium::Load()
 		m_data->playerSpriteArray[i].setOrigin(sf::Vector2f(0.5f, 1.f));
 		m_data->podiumsSpriteArray[i].setOrigin(sf::Vector2f(0.5f, 1.f));
 
-		m_data->playerSpriteArray[i].setPosition(sf::Vector2f(SCREEN_WIDTH / (m_data->gameData->m_gonnaPlayIndex.size() + 1) * (i + 1), SCREEN_HEIGHT - 450 + 150 * (playerPos - 1)));
-		m_data->podiumsSpriteArray[i].setPosition(sf::Vector2f(SCREEN_WIDTH / (m_data->gameData->m_gonnaPlayIndex.size() + 1) * (i + 1), SCREEN_HEIGHT + 1));
+		m_data->playerSpriteArray[i].setPosition(sf::Vector2f(SCREEN_WIDTH / (m_data->gameData->m_gonnaPlayIndex.size() + 1) * (i + 1), SCREEN_HEIGHT));
+		m_data->podiumsSpriteArray[i].setPosition(sf::Vector2f(SCREEN_WIDTH / (m_data->gameData->m_gonnaPlayIndex.size() + 1) * (i + 1), SCREEN_HEIGHT + 2056 / 4));
 
 
 		m_data->playerTextArray[i].SetOutline(2, sf::Color::Black);
 		m_data->playerTextArray[i].setString("Player " + std::to_string(i + 1));
 		m_data->playerTextArray[i].setPosition(m_data->playerSpriteArray[currentPlayer].getPosition().x, m_data->playerSpriteArray[currentPlayer].getPosition().y - m_data->playerSpriteArray[currentPlayer].getGlobalBounds().height);
 
-
-		m_data->congrat.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("congratulation", AssetManager::AssetType::TEXTURE));
-		m_data->congrat.setOrigin(m_data->congrat.getLocalBounds().getSize().x / 2, m_data->congrat.getLocalBounds().getSize().y / 2);
-		m_data->congrat.setPosition(sf::Vector2f(SCREEN_WIDTH / 2, m_data->congrat.getLocalBounds().height / 2));
-
+		m_data->animatorArray[i].Modify(3.f, 60.f, false);
+		m_data->animatorArray[i].SetGoTo(m_data->podiumsSpriteArray[i], sf::Vector2f(m_data->podiumsSpriteArray[i].getPosition().x, SCREEN_HEIGHT + 1));
+		m_data->animatorArray[i].SetAnimationEasing(anim::Animator::GOTO, anim::Easing::INOUTELASTIC);
 
 		currentPlayer++;
 	}
+
+	m_data->congrat.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("congratulation", AssetManager::AssetType::TEXTURE));
+	m_data->congrat.setOrigin(m_data->congrat.getLocalBounds().getSize().x / 2, m_data->congrat.getLocalBounds().getSize().y / 2);
+	m_data->congrat.setPosition(sf::Vector2f(SCREEN_WIDTH / 2, m_data->congrat.getLocalBounds().height / 2));
+
+
 }
 
 
@@ -88,6 +92,9 @@ void Podium::PollEvent(sf::Event& _event)
 	{
 	case sf::Event::JoystickButtonPressed:
 		break;
+	case sf::Event::KeyPressed:
+		this->m_data->animatorArray[0].Restart();
+		break;
 
 	default:
 		break;
@@ -96,7 +103,52 @@ void Podium::PollEvent(sf::Event& _event)
 
 void Podium::Update(float _dt)
 {
+	//Anmiation
+	for (short i = 0; i < m_data->podiumsSpriteArray.size(); i++)
+	{
+		m_data->animatorArray[i].Update(_dt);
+		m_data->animatorArray[i].AnimateObject(m_data->podiumsSpriteArray[i]);
 
+		int playerPos = 0;
+		for (short j = 0; j < m_data->gameData->m_gonnaPlayIndex.size(); j++)
+		{
+			if (m_data->gameData->m_gonnaPlayIndex[j] == i)
+			{
+				playerPos = j + 1;
+			}
+		}
+
+		const sf::Vector2f& podiumPos = m_data->podiumsSpriteArray[i].getPosition();
+		sf::Vector2f playerPosition = m_data->playerSpriteArray[i].getPosition();
+
+		switch (playerPos)
+		{
+			case 1:
+				playerPosition.y -= 450;
+				break;
+
+			case 2:
+				playerPosition.y -= 300;
+				break;
+
+			case 3:
+				playerPosition.y -= 150;
+				break;
+
+			default:
+				break;
+		}
+
+
+		if (playerPosition.y > SCREEN_HEIGHT)
+		{
+			playerPosition.y = SCREEN_HEIGHT;
+		}
+
+		m_data->playerSpriteArray[i].setPosition(playerPosition);
+		m_data->playerTextArray[i].setPosition(playerPosition - sf::Vector2f(0, m_data->playerSpriteArray[i].getLocalBounds().getSize().y));
+
+	}
 }
 
 void Podium::Draw(sf::RenderWindow& _renderWindow)

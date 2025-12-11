@@ -5,12 +5,18 @@
 #include "../../../Common.hpp"
 #include "../../../Scenes/Scene.hpp"
 #include "../../../Ui/MenuSystem.hpp"
-
-
+#include "../../../Animation/Animation.hpp"
 
  class Podium : public SceneBase
 {
 	private:
+
+		enum State
+		{
+			UPDATING,
+			DONE,
+		};
+
 		struct SceneData
 		{
 			GameData* gameData;
@@ -22,6 +28,8 @@
 
 			sf::Sprite background;
 			sf::Sprite congrat;
+
+			anim::Animator animatorArray[4];
 		};
 		SceneData* m_data;
 
