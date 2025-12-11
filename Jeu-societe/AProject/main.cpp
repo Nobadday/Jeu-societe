@@ -1,4 +1,4 @@
-#include "Common.hpp"
+﻿#include "Common.hpp"
 #include "./Animation/Graphics.hpp"
 #include "./Ui/Button.hpp"
 #include "./Ui/HealthBar/HealthBar.hpp"
@@ -13,8 +13,9 @@ typedef struct MainData
 
 	TextureAnimated ta;
 	MenuSystem sys;
-
+	
 	HealthBar hb;
+
 	GameData gameData;
 } MainData;
 
@@ -43,7 +44,6 @@ int main(int _argc, char* _argv[])
 
 	MainData mainData;
 	MainDataLoad(mainData);
-	
 
 	mainData.sys["Testicule"]["Fuck1"];
 	mainData.sys["Testicule"]["Fuck2"];
@@ -152,7 +152,6 @@ void Update(MainData& _mainData)
 	float deltaTime = _mainData.clock.restart().asSeconds();
 	float dtFixed = deltaTime / (1.0f / 60.0f);
 
-
 	_mainData.scenes.Update(deltaTime);
 
 
@@ -179,6 +178,7 @@ void Draw(MainData& _mainData)
 	
 	_mainData.renderWindow.draw(_mainData.sys);
 	_mainData.renderWindow.draw(_mainData.hb);
+
 
 	_mainData.renderWindow.display();
 }

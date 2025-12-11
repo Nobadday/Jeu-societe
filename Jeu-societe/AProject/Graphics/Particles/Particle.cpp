@@ -6,6 +6,7 @@ ParticleBase::~ParticleBase(void)
 
 }
 
+
 ParticleTimed::ParticleTimed(void) : Timer()
 {
 
@@ -24,6 +25,24 @@ bool ParticleTimed::HasExpired(void)
 }
 
 
+ParticleAnimated::ParticleAnimated(void) : 
+m_sprite ()
+{
 
+}
+ParticleAnimated::ParticleAnimated(TextureAnimated& _texture) :
+m_sprite ()
+{
+	this->m_sprite.setTexture(_texture, true);
+}
+
+void ParticleAnimated::Update(float _deltaTime)
+{
+
+}
+bool ParticleAnimated::HasExpired(void)
+{
+	return this->m_sprite.IsFinished();
+}
 
 // Particles || v0.0

@@ -12,13 +12,13 @@ class ParticleEmitterBase
 	private:
 		std::vector<ParticleBase> m_particles;
 		ParticleEmitterBase* m_parent;
-	
+
 
 	public:
 		ParticleEmitterBase(void);
+		virtual ~ParticleEmitterBase(void);
 
-
-
+		
 };
 
 

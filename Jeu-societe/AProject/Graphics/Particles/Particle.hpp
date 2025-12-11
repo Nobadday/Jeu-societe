@@ -7,7 +7,7 @@
 #include "../../Animation/Graphics.hpp"
 
 
-class ParticleBase : public sf::Drawable
+class ParticleBase : public sf::Drawable, public sf::Transformable
 {
 	public:
 		virtual ~ParticleBase(void);
@@ -35,11 +35,11 @@ class ParticleAnimated : public ParticleBase
 
 	public:
 		ParticleAnimated(void);
-		ParticleAnimated(const TextureAnimated& _texture);
+		ParticleAnimated(TextureAnimated& _texture);
 
 
-
-
+		virtual void Update(float _deltaTime);
+		virtual bool HasExpired(void);
 };
 
 
