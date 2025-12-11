@@ -22,8 +22,6 @@ class Controller
 	public:
 		static bool LoadMap(const std::string& _filePath);
 		static bool LoadMap(const std::fstream& _file);
-
-
 };
 
 

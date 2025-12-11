@@ -120,8 +120,8 @@ void Animator::SetRotation(float _start, float _end)
 sf::Vector2f Animator::GetGoTo(const sf::Vector2f& _startPos, const sf::Vector2f& _endPos, float _coefficient, Easing::Type _easing)
 {
 	float frameCoef = Easing::GetCoefficient(_coefficient, _easing);
-	return sf::Vector2f(AniMath::Interpolate(_startPos.x, _endPos.x, frameCoef),
-						AniMath::Interpolate(_startPos.y, _endPos.y, frameCoef));
+	return sf::Vector2f(AniMath::Interpolate(_startPos.x, _endPos.x, _coefficient),
+						AniMath::Interpolate(_startPos.y, _endPos.y, _coefficient));
 }
 sf::Vector2f Animator::GetGoTo(Easing::Type _easing)
 {
@@ -136,6 +136,7 @@ sf::Vector2f Animator::GetGoTo(void)
 sf::Color Animator::GetColor(const sf::Color& _startColor, const sf::Color& _endColor, float _coefficient, Easing::Type _easing)
 {
 	float frameCoef = Easing::GetCoefficient(_coefficient, _easing);
+	
 	return sf::Color(	AniMath::InterpolateI(_startColor.r, _endColor.r, frameCoef),
 						AniMath::InterpolateI(_startColor.g, _endColor.g, frameCoef),
 						AniMath::InterpolateI(_startColor.b, _endColor.b, frameCoef),
@@ -156,17 +157,18 @@ float Animator::GetRotation(float _start, float _end, float _coefficient, Easing
 {
 	return AniMath::Interpolate(_start, _end, Easing::GetCoefficient(_coefficient, _easing));
 }
+
 float Animator::GetRotation(Easing::Type _easing)
 {
 	return GetRotation(	this->m_data.rotation[0]	, this->m_data.rotation[1],
 						this->GetFrameCoefficient()	, _easing);
 }
+
 float Animator::GetRotation(void)
 {
 	return GetRotation(this->m_animEasings[ROTATION]);
 }
 
-
 }
 
-// Animator v1.2.3
+// Animator v1.2.2

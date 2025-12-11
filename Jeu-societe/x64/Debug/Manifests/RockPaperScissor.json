@@ -1,0 +1,31 @@
+{
+    "assets": [
+        {
+            "name": "Pierre",
+            "type": "Texture",
+            "path":  "./Assets/Sprites/RockPaperScissor/caillou.png"
+        },
+        {
+            "name": "Feuille",
+            "type": "Texture",
+            "path":  "./Assets/Sprites/RockPaperScissor/papier.png"
+        },
+        {
+            "name": "Ciseaux",
+            "type": "Texture",
+            "path":  "./Assets/Sprites/RockPaperScissor/ciseaux.png"
+        },
+        {
+            "name": "RPSFont",
+            "type": "Font",
+            "path": "./Assets/Fonts/pointfree.ttf"
+        },
+        {
+            "name" : "RPSHand",
+            "type" : "Texture Atlas",
+            "path" : "./Assets/Sprites/RockPaperScissor/RPS_hands.json",
+            "subType" : 3
+        }
+
+    ]
+}

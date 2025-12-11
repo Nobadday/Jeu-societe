@@ -19,7 +19,6 @@ class GameData
 	private:
 		
 	public:
-
 		sfMod::RenderWindow* m_renderWindow;
 		AssetManager* m_assetManager;
 		void* m_audioEngine;
@@ -53,5 +52,4 @@ class GameData
 
 };
 
-
-#endif
+#endif 

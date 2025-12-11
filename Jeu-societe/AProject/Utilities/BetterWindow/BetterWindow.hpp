@@ -12,16 +12,6 @@ namespace sfMod
 class RenderWindow : public sf::RenderWindow
 {
 	public:
-		enum WindowMode
-		{
-			// Windowed mode
-			WINDOWED,
-			// Fullscreen mode
-			FULLSCREEN,
-			// Borderless fullscreen
-			BORDERLESS
-		};
-
 		enum ScaleMode
 		{
 			// Default operation done by the SFML
@@ -31,6 +21,16 @@ class RenderWindow : public sf::RenderWindow
 			LETTERBOX,
 			// The displayed area will fill the entire window without being stretched
 			PAN
+		};
+
+		enum WindowMode
+		{
+			// Windowed mode
+			WINDOWED,
+			// Fullscreen mode
+			FULLSCREEN,
+			// Borderless fullscreen
+			BORDERLESS
 		};
 
 		enum AntiAliasing
@@ -52,7 +52,7 @@ class RenderWindow : public sf::RenderWindow
 		WindowMode m_windowMode;
 		sf::ContextSettings m_settings;
 		
-		// Remebered window data
+		// Remebered data
 		
 		bool m_keyRepeat;
 		unsigned int m_framerate;
@@ -95,15 +95,7 @@ class RenderWindow : public sf::RenderWindow
 
 		// Opens the window only if it's closed
 		virtual void Open(void);
-		
-		// Only Re-Opens the window if it's already opened
-		void ReOpenIfOpen(void);
 
-		// Sets the position relative to the monitor
-		void SetPositionRelative(const sf::Vector2f& _coefficient, const sf::VideoMode& _screen = sf::VideoMode::getDesktopMode());
-		// Sets the size relative to the size of the monitor
-		// If _keepRation is True, the size will not be deformed
-		void SetSizeRelative(const sf::Vector2f& _coefficient, bool _keepRatio = false, const sf::VideoMode& _screen = sf::VideoMode::getDesktopMode());
 
 		void SetWindowMode(WindowMode _mode);
 		
@@ -116,8 +108,6 @@ class RenderWindow : public sf::RenderWindow
 		void ToggleFullscreen(bool _borderless);
 		void ToggleFullscreen(void);
 		
-		// Sets the Anti-Aliasing of the window
-		// Warning : If the window is open it will be re-opened so set it BEFORE creating/opening the window
 		void SetAntiAliasing(AntiAliasing _aliasing);
 
 		void setIcon(const sf::Image& _image);
@@ -134,9 +124,6 @@ class RenderWindow : public sf::RenderWindow
 
 		void ResetView(void);
 		void ResetViewVilain(void);
-
-		// Resize the window to remove the borders
-		void RemoveBorders(void);
 
 		// Sets the scale mode of the window
 		// Determines how elements are scaled up and rendered on screen
@@ -155,11 +142,11 @@ class RenderWindow : public sf::RenderWindow
 
 		const sf::View& getDefaultView(void) const;
 
-		// Get the upper left corner of the rendered area with the scale mode applied
+		// Get the upper left corner of the rendered area
 		sf::Vector2i GetRenderedOffset(void);
-		// Get the size of the rendered area with the scale mode applied
+		// Get the size of the rendered area
 		sf::Vector2u GetRenderedSize(void);
-		// Get a rect of the rendered area with the scale mode applied
+		
 		sf::IntRect GetRenderedRect(void);
 
 		// Will attempt to get a valid videoMode matching the desktop mode to avoid weird beheaviors
@@ -170,17 +157,20 @@ class RenderWindow : public sf::RenderWindow
 		virtual void onResize(void);
 
 	private:
+		void ReOpenIfOpen(void);
+
 		void ApplyIcon(void);
 		// Also updates the view
 		void UpdateViewport(void);
 		void ApplyView(void);
 };
 
+
 }
 
 
 #endif
-// BetterWindow C++ for SFML 2.6.2 || v0.9.6 (beta)
+// BetterWindow C++ for SFML 2.6.2 || v0.9.4 (beta)
 // Made by Yannou :)
 
 
