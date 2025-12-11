@@ -157,11 +157,11 @@
                  "type":"",
                  "visible":true,
                  "width":6576,
-                 "x":314,
+                 "x":263,
                  "y":1080
                 }],
          "opacity":1,
-         "parallaxx":1.1,
+         "parallaxx":1.01,
          "type":"objectgroup",
          "visible":true,
          "x":0,
@@ -864,11 +864,11 @@
                  "type":"",
                  "visible":true,
                  "width":6576,
-                 "x":1018,
+                 "x":431,
                  "y":1088
                 }],
          "opacity":1,
-         "parallaxx":1.2,
+         "parallaxx":1.02,
          "type":"objectgroup",
          "visible":true,
          "x":0,
@@ -878,7 +878,7 @@
  "nextobjectid":89,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.10.1",
+ "tiledversion":"1.11.2",
  "tileheight":32,
  "tilesets":[
         {

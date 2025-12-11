@@ -140,7 +140,7 @@ void PollEvent(MainData& _mainData)
 				return;
 				break;
 
-				break;
+				//break;
 			default:
 				_mainData.scenes.PollEvent(event);
 				break;

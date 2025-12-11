@@ -378,7 +378,7 @@ void Menu::ChangeSelection(int _value, int _joystick)
 				}
 				else if ((m_data->controlerBtn + _value) < 0)
 				{
-					m_data->currentCharaSelected[_joystick] = m_data->ui.charaAvaible.size() - 1;
+					m_data->currentCharaSelected[_joystick] = (int)m_data->ui.charaAvaible.size() - 1;
 					//mouseNewPos = m_data->ui.buttonMap["plusBtn"].getPosition();
 				}
 				else
