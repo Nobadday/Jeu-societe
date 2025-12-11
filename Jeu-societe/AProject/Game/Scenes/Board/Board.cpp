@@ -58,56 +58,31 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	m_data->dicePosition = sf::Vector2f(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f);
 
 	// NOUVEAU : Pré-charger toutes les vidéos des dés
-	m_data->diceVideos.clear(); // S'assurer que le vecteur est vide
-	m_data->diceVideos.resize(8, nullptr); // Initialiser avec des nullptr
-	
+	m_data->diceVideos.resize(8);
 	// Configuration simple sans taille personnalisée
 	HighResConfig config;
-	config.sizeMode = VideoSizeMode::Original;
+	config.sizeMode = VideoSizeMode::Original; // Garder la résolution originale
 	config.enableLoop = false;
 
 	for (int i = 0; i < 6; i++)
 	{
-		try
+		m_data->diceVideos[i] = new HighResVideoPlayer(config);
+		std::string videoPath = "Assets/Video/De" + std::to_string(i + 1) + ".mov";
+		if (!m_data->diceVideos[i]->loadFromFile(videoPath))
 		{
-			m_data->diceVideos[i] = new HighResVideoPlayer(config);
-			std::string videoPath = "Assets/Video/De" + std::to_string(i + 1) + ".mov";
-			if (!m_data->diceVideos[i]->loadFromFile(videoPath))
-			{
-				std::cout << "Erreur : Impossible de charger la video du de: " << videoPath << std::endl;
-				delete m_data->diceVideos[i];
-				m_data->diceVideos[i] = nullptr;
-			}
-		}
-		catch (const std::exception& e)
-		{
-			std::cout << "Exception lors du chargement vidéo : " << e.what() << std::endl;
-			if (m_data->diceVideos[i] != nullptr)
-			{
-				delete m_data->diceVideos[i];
-				m_data->diceVideos[i] = nullptr;
-			}
+			std::cout << "Erreur : Impossible de charger la video du de: " << videoPath << std::endl;
 		}
 	}
 
-	try
-	{
-		m_data->diceVideos[TRANSITION_1] = new HighResVideoPlayer(config);
-		m_data->diceVideos[TRANSITION_2] = new HighResVideoPlayer(config);
-		m_data->diceVideos[TRANSITION_1]->loadFromFile("Assets/Video/TRANSITION_1.mp4");
-		m_data->diceVideos[TRANSITION_2]->loadFromFile("Assets/Video/TRANSITION_2.mp4");
-	}
-	catch (const std::exception& e)
-	{
-		std::cout << "Exception lors du chargement des transitions : " << e.what() << std::endl;
-	}
+	m_data->diceVideos[TRANSITION_1] = new HighResVideoPlayer(config);
+	m_data->diceVideos[TRANSITION_2] = new HighResVideoPlayer(config);
+	m_data->diceVideos[TRANSITION_1]->loadFromFile("Assets/Video/TRANSITION_1.mp4"); // Vidéo finale optionnelle
+	m_data->diceVideos[TRANSITION_2]->loadFromFile("Assets/Video/TRANSITION_2.mp4"); // Vidéo finale optionnelle
+
 
 	m_data->currentDiceVideo = m_data->diceVideos[TRANSITION_1];
-	if (m_data->currentDiceVideo != nullptr)
-	{
-		m_data->currentDiceVideo->play();
-		m_data->currentDiceVideo->update(1);
-	}
+	m_data->currentDiceVideo->play();
+	m_data->currentDiceVideo->update(1);
 
 	progress.store(0.7f);
 
@@ -275,43 +250,10 @@ void BaseGame::Load(void)
 
 void BaseGame::Unload(void)
 {
-    if (m_data != nullptr)
-    {
-        // 1. Arrêter l'audio stream AVANT de libérer les vidéos
-        if (m_data->currentDiceVideo != nullptr)
-        {
-            m_data->currentDiceVideo->setPaused(true);
-        }
-
-        // 2. Nullifier currentDiceVideo pour éviter un double appel à close()
-        m_data->currentDiceVideo = nullptr;
-
-        // 3. Libérer TOUTES les vidéos du vecteur
-        for (auto* video : m_data->diceVideos)
-        {
-            if (video != nullptr)
-            {
-                video->close();  // Ferme proprement les ressources FFmpeg
-                delete video;    // Libère l'objet C++
-            }
-        }
-        m_data->diceVideos.clear();
-
-        // 4. Libérer les effets qui contiennent des sprites/textures
-        m_data->effectSwap.clear();
-        m_data->effectsMap.clear();
-    }
-
-    // 5. Supprimer le conteneur d'assets AVANT m_data
-    if (m_gameData != nullptr && m_gameData->m_assetManager != nullptr)
-    {
-        m_gameData->m_assetManager->DeleteContainer("Board");
-    }
-
-    // 6. Libérer m_data en dernier (destructeur de SceneData sera appelé)
-    delete this->m_data;
-    this->m_data = nullptr;
-    this->m_gameData = nullptr;
+	m_gameData->m_assetManager->DeleteContainer("Board");
+	this->m_gameData = NULL;
+	delete this->m_data;
+	this->m_data = NULL;
 }
 
 // NOUVEAU : Méthode helper pour vérifier les entrées joueur

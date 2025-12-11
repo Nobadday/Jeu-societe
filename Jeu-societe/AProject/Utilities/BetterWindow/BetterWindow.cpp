@@ -39,42 +39,32 @@ void RenderWindow::create(sf::VideoMode _mode, const sf::String& _title, sf::Uin
 	this->m_baseVideoMode = _mode;
 	this->m_windowModeSize.x = _mode.width;
 	this->m_windowModeSize.y = _mode.height;
-	this->m_defaultView.reset(sf::FloatRect(0.0f, 0.0f,
-											(float)this->m_windowModeSize.x, (float)this->m_windowModeSize.y));
+	this->m_defaultView.reset(sf::FloatRect(	0.0f						,	  0.0f,
+											(float)this->m_windowModeSize.x	, (float)this->m_windowModeSize.y));
 	
 	this->m_userView = this->m_defaultView;
 	
-	// Position - Vérification des dimensions de l'écran
+	// Position
 	sf::VideoMode vid = sf::VideoMode::getDesktopMode();
-	
-	// S'assurer que la fenêtre n'est pas plus grande que l'écran
-	if (_mode.width > vid.width) {
-		this->m_windowModeSize.x = vid.width;
-	}
-	if (_mode.height > vid.height) {
-		this->m_windowModeSize.y = vid.height;
-	}
-	
 	this->m_windowModePosition.x = (int)(vid.width / 2) - (int)(this->m_windowModeSize.x / 2);
 	this->m_windowModePosition.y = (int)(vid.height / 2) - (int)(this->m_windowModeSize.y / 2);
 	
-	// Vérifier que la position est valide
-	if (this->m_windowModePosition.x < 0) this->m_windowModePosition.x = 0;
-	if (this->m_windowModePosition.y < 0) this->m_windowModePosition.y = 0;
-	
 	if (_style == sf::Style::Fullscreen)
 	{
+		// User wants it to be directly fullscreen
 		this->m_windowModeStyle = sf::Style::Default;
 		this->m_windowMode = WindowMode::FULLSCREEN;
 	}
 	else if ((_style == sf::Style::None) && (_mode == vid))
 	{
+		// User wants it to be directly borderless fullscreen
 		this->m_windowModeStyle = sf::Style::Default;
 		this->m_windowMode = WindowMode::BORDERLESS;
 		this->m_preferedBFMode = true;
 	}
 	else
 	{
+		// User wants it to be windowed
 		this->m_windowModeStyle = _style;
 		this->m_windowMode = WindowMode::WINDOWED;
 	}

@@ -113,7 +113,7 @@ void LoadingScreen::Update(float _deltaTime)
     // Mise à jour de la barre avec la valeur interpolée
     m_data->progressBarFill.setSize(sf::Vector2f(600.f * newProgress, 40.f));
 
-	//std::cout << "Progression : " << newProgress << std::endl;
+	std::cout << "Progression : " << newProgress << std::endl;
     // Vérifier si le chargement est terminé ET que la barre a rattrapé
     if (m_data->loadingComplete.load() && newProgress >= 0.999f && !m_data->nextSceneName.empty())
     {

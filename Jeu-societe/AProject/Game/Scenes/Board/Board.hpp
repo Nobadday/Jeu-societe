@@ -1,27 +1,27 @@
 #ifndef _INC_BOARD_HPP
 #define _INC_BOARD_HPP
 
-#include "../../../Common.hpp"
+#include "../../Common.hpp"
 
-#include "../../../Map/Tiled.h"
+#include "../../Map/Tiled.h"
 
-#include "../../../Video+Audio/HighResVideoPlayer.hpp"
+#include "../../Video+Audio/HighResVideoPlayer.hpp"
 
-#include "../../../Utilities/Camera/Camera.hpp"
+#include "../../Utilities/Camera/Camera.hpp"
 
-#include "../../../Animation/Animation/Animator.hpp"
+#include "../../Animation/Animation/Animator.hpp"
 
-#include "../../../Animation/Graphics/SpriteAnimated.hpp"
+#include "../../Animation/Graphics/SpriteAnimated.hpp"
 
-#include "../../../Animation/Graphics/SpriteAtlas.hpp"
+#include "../../Animation/Graphics/SpriteAtlas.hpp"
 
-#include "../../../Animation/Graphics/AnimatedObject.hpp"
+#include "../../Animation/Graphics/AnimatedObject.hpp"
 
-#include "../../../Animation/Graphics/TextureAnimated.hpp"
+#include "../../Animation/Graphics/TextureAnimated.hpp"
 
-#include "../../../Animation/Graphics/TextureAtlas.hpp"
+#include "../../Animation/Graphics/TextureAtlas.hpp"
 
-#include "../../../Animation/Graphics/TextPlus.hpp"
+#include "../../Animation/Graphics/TextPlus.hpp"
 
 #define TIME_WIN_DISPLAY 0.5f
 #define TIME_LBM_DISPLAY 6.0f
