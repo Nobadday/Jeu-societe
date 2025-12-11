@@ -1,5 +1,10 @@
 ﻿#include "Common.hpp"
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
+
 #include "Game/Scenes/Board/Board.hpp"
 #include "Game/Scenes/Loading/LoadingScreen.hpp"
 
@@ -41,8 +46,13 @@ void Update(MainData& _mainData);
 void Draw(MainData& _mainData);
 
 
-int main(void)
+int main()
 {
+    // Supprime l'exception WinRT bénigne
+    #ifdef _WIN32
+    SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX);
+    #endif
+
 	random::SetSeedPID();
 	randmt::SetSeedPID();
 
