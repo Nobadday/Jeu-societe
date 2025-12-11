@@ -99,7 +99,9 @@ class BaseGame : public SceneBase
 			INTRO,
 			START,
 			PLAY,
-			DICE_ANIMATION,  // NOUVEAU : État pour l'animation du dé
+			DICE_ANIMATION,
+			DICE_ANIMATION_BRIDGE,  // NOUVEAU
+			DICE_ANIMATION_END,      // NOUVEAU
 			DEPLACEMENT,
 			DEPLACEMENT_BACK,
 			DEPLACEMENT_SPLIT,
@@ -169,6 +171,7 @@ class BaseGame : public SceneBase
 			int pendingMovement;  // Nouveau : mouvement restant
 			int currentPathId;    // Nouveau : ID du chemin actuel (-1 = chemin principal)
 			bool waitingBridgeRoll;  // Nouveau : en attente du lancer pour le pont
+			bool firstTime = false;
 		};
 
 		struct LuckBonusMalus

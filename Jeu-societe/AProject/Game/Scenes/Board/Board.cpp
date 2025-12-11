@@ -1,4 +1,4 @@
-﻿ #include "Board.hpp"
+﻿#include "Board.hpp"
 
 constexpr unsigned int hash(const char* str, int h);
 
@@ -197,7 +197,7 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 		auto& mapObject = m_data->posCase[i];
 		if (mapObject.GetName() == "19")
 		{
-			posMin = mapObject.GetPosition() + sf::Vector2f(100.f, 0);
+			posMin = (mapObject.GetPosition() + sf::Vector2f(2000, 0));
 		}
 		if (i == m_data->posCase.size() - 1)
 		{
@@ -693,12 +693,12 @@ void BaseGame::CaseAction()
 {
 	const std::string& caseType = m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType();
 
-	int sameCase = OnSameCase();
+	/*int sameCase = OnSameCase();
 	if (sameCase != -1)
 	{
 		SetBoardState(DUEL, 0);
 		return;
-	}
+	}*/
 
 	if (caseType == "Bonus" and m_data->players[m_data->currentPlayerIndex].state == StatePlayer::INFEC)
 	{
@@ -784,10 +784,10 @@ void BaseGame::CaseAction()
 
 	}
 	break;
-	case hash("Battle"):
-		std::cout << "Landed on a Battle case!" << std::endl;
-		SetBoardState(BATTLE_ACTION);
-		break;
+	//case hash("Battle"):
+	//	std::cout << "Landed on a Battle case!" << std::endl;
+	//	SetBoardState(BATTLE_ACTION);
+	//	break;
 
 	default:
 	{
@@ -1073,9 +1073,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 				m_data->diceAnimationPlaying = false;
 				auto& player = m_data->players[m_data->currentPlayerIndex];
 
-				// Initialiser le mouvement restant avec le résultat du dé
 				player.pendingMovement = m_data->diceResult;
-
 				m_data->timeDice = TIME_DIS_DISPLAY;
 
 				if (player.state != NONE)
@@ -1098,6 +1096,167 @@ void BaseGame::BoardStateUpdate(float _dt)
 					player.state = StatePlayer::NONE;
 					SetBoardState(DEPLACEMENT_BACK, 0);
 				}
+			}
+		}
+	}
+	break;
+
+	// NOUVEAU : Animation du dé sur le pont avec logique du PathManagement
+	case DICE_ANIMATION_BRIDGE:
+	{
+		m_data->currentDiceVideo->update(_dt);
+		if (m_data->currentDiceVideo->isFinish())
+		{
+			m_data->timeDice -= _dt;
+			if (m_data->timeDice <= 0)
+			{
+				m_data->diceAnimationPlaying = false;
+				auto& player = m_data->players[m_data->currentPlayerIndex];
+
+				 // UTILISE LA MÊME LOGIQUE QUE PathManagement.cpp
+				// Le joueur peut continuer si le dé est > 3 (comme dans ProcessBridgeRoll original)
+				if (m_data->diceResult > 3)
+				{
+					std::cout << "Traversée réussie !" << std::endl;
+					
+					// Active le smokeOff comme dans la version originale
+					m_data->smokeOff = true;
+
+					// Change le skin du personnage (transformation)
+					switch (m_gameData->m_playerDataList[m_data->currentPlayerIndex].GetPlayerSkin())
+					{
+					case PlayerData::CHARACTER_1_1:
+						[[fallthrough]];
+					case PlayerData::CHARACTER_1_2:
+						m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_1_2);
+						m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+						break;
+					case PlayerData::CHARACTER_2_1:
+						[[fallthrough]];
+					case PlayerData::CHARACTER_2_2:
+						m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_2_2);
+						m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso2-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+						break;
+					case PlayerData::CHARACTER_3_1:
+						[[fallthrough]];
+					case PlayerData::CHARACTER_3_2:
+						m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_3_2);
+						m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso3-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+						break;
+					case PlayerData::CHARACTER_4_1:
+						[[fallthrough]];
+					case PlayerData::CHARACTER_4_2:
+						m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_4_2);
+						m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso4-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+						break;
+					default:
+						m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_1_2);
+						m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-1", AssetManager::AssetType::TEXTURE_ANIMATED);
+						break;
+					}
+
+					// Applique la nouvelle texture au sprite
+					m_data->players[m_data->currentPlayerIndex].sprite.setTexture(m_data->players[m_data->currentPlayerIndex].texture);
+
+					// Continue le déplacement si le joueur a encore du mouvement
+					if (player.pendingMovement > 0)
+					{
+						SetBoardState(DEPLACEMENT_BRIGE);
+					}
+					else
+					{
+						SetBoardState(CASE_ACTION);
+					}
+				}
+				else
+				{
+					std::cout << "Échec ! Vous ne pouvez pas traverser le pont." << std::endl;
+					if (!player.firstTime)
+					{
+						player.pendingMovement = 0;
+						player.firstTime = true;
+						SetBoardState(CASE_ACTION);
+					}
+					else
+					{
+						player.pendingMovement = 0;
+						SetBoardState(CASE_ACTION_END);
+					}
+				}
+
+				m_data->timeDice = TIME_DIS_DISPLAY;
+			}
+		}
+	}
+	break;
+
+	// NOUVEAU : Animation du dé sur la ligne d'arrivée avec logique du PathManagement
+	case DICE_ANIMATION_END:
+	{
+		m_data->currentDiceVideo->update(_dt);
+		if (m_data->currentDiceVideo->isFinish())
+		{
+			m_data->timeDice -= _dt;
+			if (m_data->timeDice <= 0)
+			{
+				m_data->diceAnimationPlaying = false;
+				auto& player = m_data->players[m_data->currentPlayerIndex];
+
+				 // UTILISE LA MÊME LOGIQUE QUE PathManagement.cpp
+				// Le joueur gagne si le dé est > 4 (comme dans ProcessFinRoll original)
+				if (m_data->diceResult > 4)
+				{
+					std::cout << "VICTOIRE ! Le joueur " << m_data->currentPlayerIndex << " a gagné !" << std::endl;
+					
+					// Ajoute le joueur à la liste des gagnants
+					m_gameData->m_gonnaPlayIndex.push_back(m_data->currentPlayerIndex);
+
+					// Prépare la liste des joueurs triés par position X décroissante
+					std::vector<std::pair<int, float>> playerPositions;
+					for (int i = 0; i < m_data->players.size(); i++)
+					{
+						playerPositions.push_back({ i, m_data->players[i].boardPosition.x });
+					}
+
+					// Trier par position X décroissante (les plus avancés en premier)
+					std::sort(playerPositions.begin(), playerPositions.end(),
+						[](const std::pair<int, float>& a, const std::pair<int, float>& b) {
+							return a.second > b.second;
+						});
+
+					// Remplir m_winIndex avec le gagnant en premier, puis les autres
+					m_gameData->m_winIndex.clear();
+					m_gameData->m_winIndex.push_back(m_data->currentPlayerIndex);
+
+					for (const auto& playerPos : playerPositions)
+					{
+						if (playerPos.first != m_data->currentPlayerIndex)
+						{
+							m_gameData->m_winIndex.push_back(playerPos.first);
+						}
+					}
+
+					// Vérifier s'il reste des joueurs
+					// Tous les joueurs sauf un ont fini
+						SetBoardState(END);
+				}
+				else
+				{
+					std::cout << "Échec ! Vous ne pouvez pas franchir la ligne d'arrivée." << std::endl;
+					if (!player.firstTime)
+					{
+						player.pendingMovement = 0;
+						player.firstTime = true;
+						SetBoardState(CASE_ACTION);
+					}
+					else
+					{
+						player.pendingMovement = 0;
+						SetBoardState(CASE_ACTION_END);
+					}
+				}
+
+				m_data->timeDice = TIME_DIS_DISPLAY;
 			}
 		}
 	}
