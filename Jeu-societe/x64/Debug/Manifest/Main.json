@@ -1,0 +1,33 @@
+{
+    "assets": 
+    [
+        {
+            "name": "SYSTEM:WINDOW:Icon",
+            "type": 2,
+            "path": "./Assets/Images/icon.png"
+        },
+        {
+            "name": "SYSTEM:Placeholder",
+            "type": 1,
+            "path": "./Assets/Images/Placeholder.png"
+        },
+        {
+            "name":"SYSTEM:Placeholder:Animated",
+            "type": 6,
+            "path": "./Assets/Sprites/Placeholder.texanim"
+        }
+    ],
+    "byType":
+    [
+        {
+            "type":"Test",
+            "assets":
+            [
+                {
+                    "name":"Test",
+                    "path":"./Assets/Images/Placeholder.png"
+                }
+            ]
+        }
+    ]
+}

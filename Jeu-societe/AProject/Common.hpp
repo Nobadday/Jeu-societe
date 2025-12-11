@@ -1,5 +1,10 @@
-#ifndef COMMON_HPP
-#define COMMON_HPP
+#ifndef _INC_COMMON_H
+#define _INC_COMMON_H
+
+
+#define DEBUG true
+
+
 
 #include <SFML/System.hpp>
 #include <SFML/Audio.hpp>
@@ -8,21 +13,11 @@
 #include "./Utilities/BetterWindow/BetterWindow.hpp"
 
 #include "Screen.hpp"
-
 #include "./Game/GameData.hpp"
 
 #include "Utilities/Random.hpp"
-
 #include "Scenes/SceneHandler.hpp"
 
-#include "Utilities/NewMath.hpp"
-#include "Utilities/MathPlus.hpp"
-#include "Utilities/StringFormat.hpp"
-#include "Utilities/Binds.hpp"
-
-#include <vector>
-#include <string>
-#include <numeric>
 
 #include <memory>
 #include <cstdint>

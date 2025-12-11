@@ -82,4 +82,4 @@ class HealthBar : public sf::Drawable, public sf::Transformable
 
 #endif
 
-// HealthBar C++ || v1.1.2
+// HealthBar C++ || v1.1

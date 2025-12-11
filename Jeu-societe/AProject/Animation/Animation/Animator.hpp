@@ -90,4 +90,4 @@ class Animator : public Animation
 }
 
 #endif
-// Animator v1.2.2
+// Animator v1.2.3
