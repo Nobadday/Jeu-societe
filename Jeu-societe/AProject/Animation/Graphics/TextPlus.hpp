@@ -83,7 +83,7 @@ class TextPlus : public sf::Text
 		void SetAlignement(Alignement _alignement);
 
 		void setString(const sf::String& _string);
-		void setString(const std::string& _string, bool _resetRange);
+		void setString(const sf::String& _string, bool _resetRange);
 
 		// Gets the unedited string
 		const sf::String& getString(void);
@@ -106,6 +106,4 @@ class TextPlus : public sf::Text
 
 #endif
 
-// TextPlus C++ || v1.0
-// TODO :
-// Getters that calls UpdateGeo
+// TextPlus C++ || v1.1
