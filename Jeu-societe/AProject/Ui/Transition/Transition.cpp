@@ -44,8 +44,8 @@ TransitionClass::~TransitionClass()
 
 void TransitionClass::PlayTransition()
 {
-    videoPlayer.update(1.f);
     videoPlayer.play();
+    videoPlayer.update(1.f);
 }
 void TransitionClass::SetTransition(Transition _transition)
 {

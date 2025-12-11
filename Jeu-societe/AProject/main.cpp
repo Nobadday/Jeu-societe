@@ -85,7 +85,6 @@ int main(void)
 void MainDataLoad(MainData& _mainData)
 {
 	//Cursor
-	_mainData.renderWindow.setMouseCursorVisible(false);
 
 	_mainData.renderWindow.SetAntiAliasing(sfMod::RenderWindow::AntiAliasing::X16);
 	_mainData.renderWindow.setIcon("./Assets/Images/icon.png");
@@ -93,6 +92,7 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.renderWindow.SetFullscreenPrefered(true);
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
 	_mainData.renderWindow.setVerticalSyncEnabled(true);
+	_mainData.renderWindow.setMouseCursorVisible(false);
 
 
 	// GAME DATA
