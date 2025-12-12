@@ -19,6 +19,12 @@
             "subType" : 0
         },
         {
+            "name" : "creditsBtn",
+            "type" : "Texture Animated",
+            "path" : "Assets/Sprites/Menu/Buttons/credits.anim",
+            "subType" : 1
+        },
+        {
             "name" : "moinsBtn",
             "type" : "Texture Animated",
             "path" : "Assets/Sprites/Menu/Buttons/moinsButton.texanim",

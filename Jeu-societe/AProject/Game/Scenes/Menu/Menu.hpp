@@ -14,7 +14,7 @@ private:
 	{
 		MAIN_MENU,
 		OPTIONS,
-		CREDITS,
+		CREDITSCREDITS,
 		PLAYER_NB_SELECTION,
 		PLAYER_SELECTION,
 	};
@@ -23,6 +23,7 @@ private:
 		PLAY,
 		SETTINGS,
 		LEAVE,
+		CREDITS_BTN,
 		LESS,
 		//2 play here is bad, but idk how to change easely
 		PLAY_SELECTION,

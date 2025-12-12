@@ -18,13 +18,13 @@ void Menu::Load(void)
 	m_data->audio = (AudioEngine*)m_data->gameData->m_audioEngine;	
 	LoadUI();
 	m_data->audio->PlayMusic("Music1", true);
-
 }
 void Menu::LoadUI(void)
 {
 	m_data->ui.buttonMap["playBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("playBtn"));
 	m_data->ui.buttonMap["settingsBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("settingsBtn"));
 	m_data->ui.buttonMap["leaveBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("leaveBtn"));
+	m_data->ui.buttonMap["creditsBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("creditsBtn"));
 	m_data->ui.buttonMap["moinsBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("moinsBtn"));
 	m_data->ui.buttonMap["plusBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("plusBtn"));
 	//Background
@@ -39,7 +39,7 @@ void Menu::LoadUI(void)
 	m_data->ui.logoCrea.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoCrea"));
 	logoGameSize = m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoCrea")->getSize();
 	m_data->ui.logoCrea.setOrigin(sf::Vector2f( 1.f, logoGameSize.y / 2.f ));
-	m_data->ui.logoCrea.setPosition({ 10, SCREEN_HEIGHT / 1.5 });
+	m_data->ui.logoCrea.setPosition({ 10, SCREEN_HEIGHT / 1.3 });
 	m_data->ui.logoCrea.setScale({ 0.3f,0.3f });
 
 	//Icons chara
@@ -52,18 +52,21 @@ void Menu::LoadUI(void)
 	m_data->ui.iconsChara.SetAnimation("Perso1-1");
 	m_data->ui.iconsChara.setOrigin({ 0.5f,0.5f });
 
-	sf::FloatRect buttonRect = m_data->ui.buttonMap["playBtn"].getLocalBounds();
+	sf::FloatRect buttonRect = m_data->ui.buttonMap["playBtn"].getGlobalBounds();
 	m_data->ui.buttonMap["playBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 });
 	m_data->ui.buttonMap["settingsBtn"]. setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + buttonRect.height});
 	m_data->ui.buttonMap["leaveBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 2 * buttonRect.height });
+	m_data->ui.buttonMap["creditsBtn"].setPosition({ SCREEN_WIDTH - buttonRect.width / 2, SCREEN_HEIGHT / 2 + 2 * buttonRect.height });
 
 	
 	m_data->ui.buttonMap["playBtn"].setOrigin({ 0.5f,0.5f });
 	m_data->ui.buttonMap["settingsBtn"].setOrigin({ 0.5f,0.5f });
+	m_data->ui.buttonMap["creditsBtn"].setOrigin({ 0.5f,0.5f });
 	m_data->ui.buttonMap["leaveBtn"].setOrigin({ 0.5f,0.5f });
 	m_data->ui.buttonMap["moinsBtn"].setOrigin({ 0.5f,0.5f });
 	m_data->ui.buttonMap["plusBtn"].setOrigin({ 0.5f,0.5f });
 
+	m_data->ui.buttonMap["creditsBtn"].setScale({ 0.8f,0.8f });
 
 	m_data->ui.playerCount.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("MenuFont"));
 	m_data->ui.playerCount.setCharacterSize(200u);
@@ -136,12 +139,12 @@ void Menu::PollEvent(sf::Event& _event)
 
 						//std::cout << "jostick : " << _event.joystickMove.position << "btn : " << m_data->controlerBtn << std::endl;
 
-						if (_event.joystickMove.position > 0)
+						if (_event.joystickMove.position > 20)
 						{
 							ChangeSelection(1, _event.joystickMove.joystickId);
 							m_data->inputDelay = 0.f;
 						}
-						else if (_event.joystickMove.position < 0)
+						else if (_event.joystickMove.position < -20)
 						{
 							ChangeSelection(-1, _event.joystickMove.joystickId);
 							m_data->inputDelay = 0.f;
@@ -166,6 +169,7 @@ void Menu::ButtonsPollEvent(sf::Event& _event)
 			m_data->ui.buttonMap["playBtn"].CheckEvent(_event);
 			m_data->ui.buttonMap["settingsBtn"].CheckEvent(_event);
 			m_data->ui.buttonMap["leaveBtn"].CheckEvent(_event);
+			m_data->ui.buttonMap["creditsBtn"].CheckEvent(_event);
 			break;
 
 		case OPTIONS:
@@ -200,6 +204,7 @@ void Menu::ButtonsUpdate(float _dt)
 			m_data->ui.buttonMap["playBtn"].Update(_dt);
 			m_data->ui.buttonMap["settingsBtn"].Update(_dt);
 			m_data->ui.buttonMap["leaveBtn"].Update(_dt);
+			m_data->ui.buttonMap["creditsBtn"].Update(_dt);
 			break;
 
 		case OPTIONS:
@@ -230,8 +235,10 @@ void Menu::DrawUI(sf::RenderWindow& _renderWindow)
 			_renderWindow.draw(m_data->ui.buttonMap["playBtn"]);
 			_renderWindow.draw(m_data->ui.buttonMap["settingsBtn"]);
 			_renderWindow.draw(m_data->ui.buttonMap["leaveBtn"]);
+			_renderWindow.draw(m_data->ui.buttonMap["creditsBtn"]);
 			_renderWindow.draw(m_data->ui.logoGame);
-			_renderWindow.draw(m_data->ui.logoCrea);
+			//Bandage fix
+			//_renderWindow.draw(m_data->ui.logoCrea);
 
 			if (m_data->ui.buttonMap["leaveBtn"].HasBeenClicked())
 			{

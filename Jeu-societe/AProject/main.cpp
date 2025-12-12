@@ -14,6 +14,7 @@
 #include "Game/Scenes/FlagGame/FlagGame.hpp"
 #include "Game/Scenes/Menu/Menu.hpp"
 #include "Game/Scenes/Warmup/Warmup.hpp"
+#include "Game/Scenes/Credits/Credits.hpp"
 
 #include "./Game/Scenes/Podium/Podium.hpp"
 
@@ -56,7 +57,8 @@ int main(void)
 	for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
 	{
 		mainData.gameData.m_playerDataList[i].SetJoystickID(i);
-		mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 4));
+		//mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 4));
+		mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(rand() % 8));
 		mainData.gameData.AddPlayerPlaying(i);
 	}
 
@@ -84,8 +86,6 @@ int main(void)
 
 void MainDataLoad(MainData& _mainData)
 {
-	//Cursor
-
 	_mainData.renderWindow.SetAntiAliasing(sfMod::RenderWindow::AntiAliasing::X16);
 	_mainData.renderWindow.setIcon("./Assets/Images/icon.png");
 	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Cute & Cursed", sf::Style::Default);
@@ -116,12 +116,14 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<RandCard>("RandCard");
 	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
 	_mainData.scenes.AddScene<Podium>("Podium");
+	_mainData.scenes.AddScene<Credits>("Credits");
 	_mainData.scenes.AddScene<Warmup>("Warmup");
 
 	// Sélectionner le LoadingScreen metre false pour tout scene au debut 
 
 	//YANNOU !!! VERIFIE SI LA SCENE CHARGE EST DEJA CHARGE
 	_mainData.scenes.SelectScene("Lo", true);
+	//_mainData.scenes.SelectScene("Menu", true);
 
 
 

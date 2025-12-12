@@ -1,0 +1,15 @@
+{
+    "assetPath":"CreditsButton.texsheet",
+    "framerate": 1,
+	"animations": [
+        {
+            "name":"IDLE"
+        },
+        {
+            "name":"ON"
+        },
+        {
+            "name":"HELD"
+        }
+    ]
+}
