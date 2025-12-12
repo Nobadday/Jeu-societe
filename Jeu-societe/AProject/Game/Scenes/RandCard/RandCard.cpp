@@ -49,7 +49,7 @@ void RandCard::Load(void)
 
 	//Icons
 	m_data->iconsChara.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Icone", AssetManager::AssetType::TEXTURE_ANIMATED));
-	m_data->iconsChara.SetAnimation("Perso1-1");
+	//m_data->iconsChara.SetAnimation("Perso1-1");
 	m_data->iconsChara.setOrigin({ 0.5f,0.5f });
 
 	int nbOfNormalCard = 2 * int(m_data->players.size());
@@ -89,6 +89,19 @@ void RandCard::Load(void)
 	{
 		std::cout << "Card n " << i << " : " << m_data->cards[i] << std::endl;
 	}
+
+	//Icons chara
+	m_data->charaAvaible.push_back("Perso1-1");
+	m_data->charaAvaible.push_back("Perso2-1");
+	m_data->charaAvaible.push_back("Perso3-1");
+	m_data->charaAvaible.push_back("Perso4-1");
+
+	m_data->charaAvaible.push_back("Perso1-2");
+	m_data->charaAvaible.push_back("Perso2-2");
+	m_data->charaAvaible.push_back("Perso3-2");
+	m_data->charaAvaible.push_back("Perso4-2");
+
+
 
 	m_data->transition.SetTransition(TransitionClass::FADED_IN);
 	m_data->transition.PlayTransition();
@@ -306,7 +319,13 @@ void RandCard::PrintIcons(sf::RenderWindow& _renderWindow)
 	{
 		sf::Vector2f pos = { (float)(border + i * iconSpacing), SCREEN_HEIGHT * 0.07f };
 
-		m_data->iconsChara.SetAnimation(m_data->gameData->m_playerDataList[m_data->players[i].id].GetJoystickId());
+
+		PlayerData::PlayerSkin skin = (PlayerData::PlayerSkin)m_data->gameData->m_playerDataList[m_data->players[i].id].GetPlayerSkin();
+		m_data->iconsChara.SetAnimation(skin);
+
+		std::cout << "Player i = " << i;
+		std::cout << " skin = " << m_data->gameData->m_playerDataList[m_data->players[i].id].GetPlayerSkin() << std::endl;
+
 		m_data->iconsChara.setPosition(pos);
 		if (m_data->currentPlayer == i)
 		{

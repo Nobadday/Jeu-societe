@@ -23,6 +23,7 @@ private:
 		PLAY,
 		SETTINGS,
 		LEAVE,
+		CREDITS_BTN,
 		LESS,
 		//2 play here is bad, but idk how to change easely
 		PLAY_SELECTION,
@@ -73,10 +74,14 @@ private:
 	void ButtonsUpdate(float _dt);
 	void ButtonsPollEvent(sf::Event& _event);
 	void DrawUI(sf::RenderWindow& _renderWindow);
+
 	void ChangeSelection(int _value, int _joystick);
 	void PressSelection(int _id);
+
 	void PrintIcons(sf::RenderWindow& _renderWindow);
 	void PrintOptions(sf::RenderWindow& _renderWindow);
+
+	void ReturnPressed(void);
 
 public:
 	virtual void Load(void);

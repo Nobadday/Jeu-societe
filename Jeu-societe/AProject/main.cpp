@@ -1,4 +1,4 @@
-﻿#include "Common.hpp"
+#include "Common.hpp"
 
 #include "Game/Scenes/Board/Board.hpp"
 #include "Game/Scenes/Loading/LoadingScreen.hpp"
@@ -14,6 +14,7 @@
 #include "Game/Scenes/FlagGame/FlagGame.hpp"
 #include "Game/Scenes/Menu/Menu.hpp"
 #include "Game/Scenes/Warmup/Warmup.hpp"
+#include "Game/Scenes/Credits/Credits.hpp"
 
 #include "./Game/Scenes/Podium/Podium.hpp"
 
@@ -53,13 +54,13 @@ int main()
 
 
 
-	mainData.gameData.m_playerDataList.resize(2);
-	for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
-	{
-		mainData.gameData.m_playerDataList[i].SetJoystickID(i);
-		mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 4));
-		mainData.gameData.AddPlayerPlaying(i);
-	}
+	//mainData.gameData.m_playerDataList.resize(2);
+	//for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
+	//{
+	//	mainData.gameData.m_playerDataList[i].SetJoystickID(i);
+	//	mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 4));
+	//	mainData.gameData.AddPlayerPlaying(i);
+	//}
 
 	MainDataLoad(mainData);
 
@@ -85,8 +86,6 @@ int main()
 
 void MainDataLoad(MainData& _mainData)
 {
-	//Cursor
-
 	_mainData.renderWindow.SetAntiAliasing(sfMod::RenderWindow::AntiAliasing::X16);
 	_mainData.renderWindow.setIcon("./Assets/Images/icon.png");
 	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Cute & Cursed", sf::Style::Default);
@@ -107,22 +106,24 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 
 	// Ajouter les scènes
+	_mainData.scenes.AddScene<Basket>("Basket");
 	_mainData.scenes.AddScene<Menu>("Menu");
 	_mainData.scenes.AddScene<LoadingScreen>("Lo");
 	_mainData.scenes.AddScene<BaseGame>("Board");
 	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
 	_mainData.scenes.AddScene<ArmWrestling>("ArmWrestling");
-	_mainData.scenes.AddScene<Basket>("Basket");
 	_mainData.scenes.AddScene<FlagGame>("FlagGame");
 	_mainData.scenes.AddScene<RandCard>("RandCard");
 	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
 	_mainData.scenes.AddScene<Podium>("Podium");
+	_mainData.scenes.AddScene<Credits>("Credits");
 	_mainData.scenes.AddScene<Warmup>("Warmup");
 
 	// Sélectionner le LoadingScreen metre false pour tout scene au debut 
 
 	//YANNOU !!! VERIFIE SI LA SCENE CHARGE EST DEJA CHARGE
-	_mainData.scenes.SelectScene("ArmWrestling", false);
+	_mainData.scenes.SelectScene("Menu", false);
+	//_mainData.scenes.SelectScene("Lo", false);
 
 
 
@@ -167,4 +168,3 @@ void Draw(MainData& _mainData)
 
 	_mainData.renderWindow.display();
 }
-

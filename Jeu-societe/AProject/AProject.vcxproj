@@ -173,6 +173,7 @@
     <ClCompile Include="Game\Scenes\Board\PlayerActions.cpp" />
     <ClCompile Include="Game\Scenes\Board\PlayerCam.cpp" />
     <ClCompile Include="Game\Scenes\Board\StartThrow.cpp" />
+    <ClCompile Include="Game\Scenes\Credits\Credits.cpp" />
     <ClCompile Include="Game\Scenes\FlagGame\FlagGame.cpp" />
     <ClCompile Include="Game\Scenes\Loading\LoadingScreen.cpp" />
     <ClCompile Include="Game\Scenes\Menu\Menu.cpp" />
@@ -233,6 +234,7 @@
     <ClInclude Include="Game\Scenes\ArmWrestling\ArmWrestling.hpp" />
     <ClInclude Include="Game\Scenes\Basket\Basket.hpp" />
     <ClInclude Include="Game\Scenes\Board\Board.hpp" />
+    <ClInclude Include="Game\Scenes\Credits\Credits.hpp" />
     <ClInclude Include="Game\Scenes\FlagGame\FlagGame.hpp" />
     <ClInclude Include="Game\Scenes\Loading\LoadingScreen.hpp" />
     <ClInclude Include="Game\Scenes\Menu\Menu.hpp" />

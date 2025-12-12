@@ -33,7 +33,6 @@ TransitionClass::TransitionClass(Transition _transition)
         chromaKeyShader.setUniform("threshold", 0.7f); // Ajuster selon vos besoins
     }
 
-
     SetTransition(_transition);
 }
 
