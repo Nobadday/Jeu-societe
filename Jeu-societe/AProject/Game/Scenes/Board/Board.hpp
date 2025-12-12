@@ -246,6 +246,9 @@ class BaseGame : public SceneBase
 			// MODIFICATION : Stocker des pointeurs vers les vidéos
 
 			sf::Sprite arrow;
+
+			TextPlus bridge;
+			TextPlus end;
 			
 		};
 

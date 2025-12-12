@@ -30,7 +30,7 @@ typedef struct MainData
 } MainData;
 
 
-Binds* binds = nullptr;
+//Binds* binds = nullptr;
 
 int main(void);
 
@@ -43,23 +43,20 @@ void Draw(MainData& _mainData);
 
 int main()
 {
-    // Supprime l'exception WinRT bénigne
 	random::SetSeedPID();
 	randmt::SetSeedPID();
 
-	binds = new Binds();
+	//binds = new Binds();
 
 	MainData mainData;
 
-
-
-	//mainData.gameData.m_playerDataList.resize(2);
-	//for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
-	//{
-	//	mainData.gameData.m_playerDataList[i].SetJoystickID(i);
-	//	mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 4));
-	//	mainData.gameData.AddPlayerPlaying(i);
-	//}
+	mainData.gameData.m_playerDataList.resize(2);
+	for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
+	{
+		mainData.gameData.m_playerDataList[i].SetJoystickID(i);
+		mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 4));
+		mainData.gameData.AddPlayerPlaying(i);
+	}
 
 	MainDataLoad(mainData);
 
@@ -77,8 +74,8 @@ int main()
 		}
 	}
 
-	delete binds;
-	binds = nullptr;
+	//delete binds;
+	//binds = nullptr;
 	
 	return EXIT_SUCCESS;
 }
@@ -94,6 +91,7 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
 	_mainData.renderWindow.setVerticalSyncEnabled(true);
 	_mainData.renderWindow.setMouseCursorVisible(false);
+	_mainData.renderWindow.SetFullscreen(true);
 
 
 	// GAME DATA
@@ -122,7 +120,7 @@ void MainDataLoad(MainData& _mainData)
 	// Sélectionner le LoadingScreen metre false pour tout scene au debut 
 
 	//YANNOU !!! VERIFIE SI LA SCENE CHARGE EST DEJA CHARGE
-	_mainData.scenes.SelectScene("Menu", false);
+	_mainData.scenes.SelectScene("Lo", false);
 
 	_mainData.clock.restart();
 }
