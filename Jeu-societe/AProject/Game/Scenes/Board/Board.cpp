@@ -59,7 +59,7 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 
 	// NOUVEAU : Pré-charger toutes les vidéos des dés
 	m_data->diceVideos.clear(); // S'assurer que le vecteur est vide
-	m_data->diceVideos.resize(8, nullptr); // Initialiser avec des nullptr
+	m_data->diceVideos.resize(8); // Initialiser avec des nullptr
 	
 	// Configuration simple sans taille personnalisée
 	HighResConfig config;
@@ -785,12 +785,12 @@ void BaseGame::CaseAction()
 {
 	const std::string& caseType = m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType();
 
-	int sameCase = OnSameCase();
-	if (sameCase != -1)
-	{
-		SetBoardState(DUEL, 0);
-		return;
-	}
+	//int sameCase = OnSameCase();
+	//if (sameCase != -1)
+	//{
+	//	SetBoardState(DUEL, 0);
+	//	return;
+	//}
 
 	if (caseType == "Bonus" and m_data->players[m_data->currentPlayerIndex].state == StatePlayer::INFEC)
 	{
@@ -876,10 +876,10 @@ void BaseGame::CaseAction()
 
 	}
 	break;
-	case hash("Battle"):
+	/*case hash("Battle"):
 		std::cout << "Landed on a Battle case!" << std::endl;
 		SetBoardState(BATTLE_ACTION);
-		break;
+		break;*/
 
 	default:
 	{
@@ -1301,7 +1301,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 					std::cout << "VICTOIRE ! Le joueur " << m_data->currentPlayerIndex << " a gagné !" << std::endl;
 					
 					// Ajoute le joueur à la liste des gagnants
-					m_gameData->m_gonnaPlayIndex.push_back(m_data->currentPlayerIndex);
+ 					m_gameData->m_gonnaPlayIndex.push_back(m_data->currentPlayerIndex);
 
 					// Prépare la liste des joueurs triés par position X décroissante
 					std::vector<std::pair<int, float>> playerPositions;
@@ -1316,21 +1316,21 @@ void BaseGame::BoardStateUpdate(float _dt)
 							return a.second > b.second;
 						});
 
-					// Remplir m_winIndex avec le gagnant en premier, puis les autres
-					m_gameData->m_winIndex.clear();
-					m_gameData->m_winIndex.push_back(m_data->currentPlayerIndex);
+					// Remplir avec le gagnant en premier, puis les autres
+					m_gameData->m_gonnaPlayIndex.clear();
+					m_gameData->m_gonnaPlayIndex.push_back(m_data->currentPlayerIndex);
 
 					for (const auto& playerPos : playerPositions)
 					{
 						if (playerPos.first != m_data->currentPlayerIndex)
 						{
-							m_gameData->m_winIndex.push_back(playerPos.first);
+							m_gameData->m_gonnaPlayIndex.push_back(playerPos.first);
 						}
 					}
 
 					// Vérifier s'il reste des joueurs
 					// Tous les joueurs sauf un ont fini
-						SetBoardState(END);
+					SetBoardState(END);
 				}
 				else
 				{
@@ -1540,7 +1540,7 @@ std::string BaseGame::RandomDuel()
 	//int randomIndex = 2;
 	int randomIndex = randmt::RandomInt(0, miniGameCount - 1);
 
-	std::cout << "Random minigame selected: " << miniGames[randomIndex] << std::endl;
+	//std::cout << "Random minigame selected: " << miniGames[randomIndex] << std::endl;
 
 
 	//return "FlagGame";

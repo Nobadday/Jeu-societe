@@ -115,11 +115,11 @@ bool Tileset::ContainsGid(int gid) const
 
 void Tileset::Print() const
 {
-  /*  std::cout << "Tileset: " << m_name << std::endl;
+    std::cout << "Tileset: " << m_name << std::endl;
     std::cout << "  First GID: " << m_firstGid << std::endl;
     std::cout << "  Tile Count: " << m_tileCount << std::endl;
     std::cout << "  Tile Size: " << m_tileWidth << "x" << m_tileHeight << std::endl;
-    std::cout << "  Tiles: " << m_tiles.size() << std::endl;*/
+    std::cout << "  Tiles: " << m_tiles.size() << std::endl;
     
     for (const auto& pair : m_tiles)
     {
@@ -234,9 +234,9 @@ void TilesetManager::Clear()
 
 void TilesetManager::Print() const
 {
-   /* std::cout << "=== TILESET MANAGER ===" << std::endl;
+   std::cout << "=== TILESET MANAGER ===" << std::endl;
     std::cout << "Nombre de tilesets: " << m_tilesets.size() << std::endl;
-    std::cout << "Nombre de mappings GID: " << m_gidToTileset.size() << std::endl;*/
+    std::cout << "Nombre de mappings GID: " << m_gidToTileset.size() << std::endl;
     std::cout << std::endl;
     
     for (const auto& tileset : m_tilesets)
