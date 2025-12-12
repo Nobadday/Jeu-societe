@@ -27,8 +27,8 @@ void ArmWrestling::Load(void)
 	m_bar.SetAvoidOverflow(true);
 	
 	
-	m_bar.SetTextureBG(m_gameData->m_assetManager->GetAsset<sf::Texture>("BackgroundBar", AssetManager::AssetType::TEXTURE), false);
-	//m_bar.SetTexture(m_gameData->m_assetManager->GetAsset<sf::Texture>("ForegroundBar", AssetManager::AssetType::TEXTURE), true);
+	m_bar.SetTextureBG(m_gameData->m_assetManager->GetAsset<sf::Texture>("BackgroundBar", AssetManager::AssetType::TEXTURE), true);
+	m_bar.SetTextureFiller(m_gameData->m_assetManager->GetAsset<sf::Texture>("ForegroundBar", AssetManager::AssetType::TEXTURE), true);
 
 
 	m_currentValue = MAX / 2;
@@ -157,7 +157,7 @@ void ArmWrestling::Update(float _deltaTime)
 
 			case ArmWrestling::END:
 
-				ChangeScene("Board");
+				//ChangeScene("Board");
 				break;
 
 		default:
