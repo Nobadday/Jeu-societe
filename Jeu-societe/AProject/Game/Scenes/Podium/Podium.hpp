@@ -13,8 +13,12 @@
 
 		enum State
 		{
-			UPDATING,
-			DONE,
+			NONE = -1,
+
+			PODIUM,
+			PLAYERS,
+			CONGRATS,
+			DONE
 		};
 
 		struct SceneData
@@ -30,8 +34,10 @@
 			sf::Sprite congrat;
 
 			anim::Animator animatorArray[4];
+
+			State state = NONE;
 		};
-		SceneData* m_data;
+		SceneData* m_data = NULL;
 
 	public:
 		virtual void Load(void);
@@ -40,6 +46,8 @@
 		virtual void PollEvent(sf::Event& _event);
 		virtual void Update(float _deltaTime);
 		virtual void Draw(sf::RenderWindow& _renderWindow);
+
+		int GetPlayerClassement(int _i);
 };
 
 #endif // !_INC_PODIUM_HPP
