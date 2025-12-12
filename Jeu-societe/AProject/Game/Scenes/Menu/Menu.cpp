@@ -137,12 +137,12 @@ void Menu::PollEvent(sf::Event& _event)
 
 						//std::cout << "jostick : " << _event.joystickMove.position << "btn : " << m_data->controlerBtn << std::endl;
 
-						if (_event.joystickMove.position > 0)
+						if (_event.joystickMove.position > 20)
 						{
 							ChangeSelection(1, _event.joystickMove.joystickId);
 							m_data->inputDelay = 0.f;
 						}
-						else if (_event.joystickMove.position < 0)
+						else if (_event.joystickMove.position < -20)
 						{
 							ChangeSelection(-1, _event.joystickMove.joystickId);
 							m_data->inputDelay = 0.f;
@@ -370,25 +370,28 @@ void Menu::ChangeSelection(int _value, int _joystick)
 
 		case PLAYER_SELECTION:
 			
+			// CORRECTION : Ne changer la sélection que si le joueur n'a pas encore validé son choix
 			if (m_data->charaSelected[_joystick] == false)
 			{
-				if ((m_data->currentCharaSelected[_joystick] + _value) > m_data->ui.charaAvaible.size()-1)
+				int totalCharacters = (int)m_data->ui.charaAvaible.size();
+				int newSelection = m_data->currentCharaSelected[_joystick] + _value;
+				
+				// Wrap circulaire : si on dépasse à droite, revenir au début
+				if (newSelection >= totalCharacters)
 				{
 					m_data->currentCharaSelected[_joystick] = 0;
-					//mouseNewPos = m_data->ui.buttonMap["moinsBtn"].getPosition();
 				}
-				else if ((m_data->controlerBtn + _value) < 0)
+				// Wrap circulaire : si on dépasse à gauche, aller à la fin
+				else if (newSelection < 0)
 				{
-					m_data->currentCharaSelected[_joystick] = (int)m_data->ui.charaAvaible.size() - 1;
-					//mouseNewPos = m_data->ui.buttonMap["plusBtn"].getPosition();
+					m_data->currentCharaSelected[_joystick] = totalCharacters - 1;
 				}
+				// Sinon, changer normalement
 				else
 				{
-					m_data->currentCharaSelected[_joystick] += _value;
+					m_data->currentCharaSelected[_joystick] = newSelection;
 				}
 			}
-
-
 			break;
 	}
 	//Set ON new button
@@ -423,11 +426,41 @@ void Menu::PressSelection(int _id)
 					break;
 	
 				case PLAYER_SELECTION:
-
-					std::cout << "id = " << _id << " size of datalist = " << m_data->gameData->m_playerDataList.size();
-					m_data->gameData->m_playerDataList[_id].SetPlayerSkin((PlayerData::PlayerSkin)m_data->currentCharaSelected[_id]);
+				{
+					std::cout << "id = " << _id << " size of datalist = " << m_data->gameData->m_playerDataList.size() << std::endl;
+					
+					// CORRECTION : Convertir l'index de sélection en PlayerSkin
+					// m_currentCharaSelected[_id] contient l'index dans charaAvaible (0-3)
+					// Correspondance :
+					// 0 -> "Perso1-1" -> CHARACTER_1_1
+					// 1 -> "Perso2-1" -> CHARACTER_2_1
+					// 2 -> "Perso3-1" -> CHARACTER_3_1
+					// 3 -> "Perso4-1" -> CHARACTER_4_1
+					
+					PlayerData::PlayerSkin selectedSkin;
+					switch (m_data->currentCharaSelected[_id])
+					{
+						case 0:
+							selectedSkin = PlayerData::CHARACTER_1_1;
+							break;
+						case 1:
+							selectedSkin = PlayerData::CHARACTER_2_1;
+							break;
+						case 2:
+							selectedSkin = PlayerData::CHARACTER_3_1;
+							break;
+						case 3:
+							selectedSkin = PlayerData::CHARACTER_4_1;
+							break;
+						default:
+							selectedSkin = PlayerData::CHARACTER_1_1; // Valeur par défaut
+							break;
+					}
+					
+					m_data->gameData->m_playerDataList[_id].SetPlayerSkin(selectedSkin);
 					m_data->charaSelected[_id] = true;
 
+					// Vérifier si tous les joueurs ont sélectionné leur personnage
 					int result = 0;
 					for (auto selected : m_data->charaSelected)
 					{
@@ -436,12 +469,14 @@ void Menu::PressSelection(int _id)
 							result++;
 						}
 					}
+					
 					if (result == m_data->gameSettings.playerCount + 1)
 					{
 						std::cout << "All players have their skin, go to game\n";
 						SceneBase::ChangeScene("Lo");
 					}
-					break;  				
+					break;
+				}
 			}
 			break;
 
@@ -541,22 +576,27 @@ void Menu::PressSelection(int _id)
 			break;
 	}
 }
+
 void Menu::PrintIcons(sf::RenderWindow& _renderWindow)
 {
+	// Sauvegarder la couleur temporaire pour la restaurer après
 	sf::Color tempColor = m_data->ui.iconsChara.getColor();
 
-	//For placement 
+	// Calcul du placement des icônes
 	float border = 200.f;
 	float iconSpacing = (SCREEN_WIDTH - 2 * border) / m_data->gameSettings.playerCount;
 
 	for (int i = 0; i < m_data->gameSettings.playerCount + 1; i++)
 	{
+		// Positions des 3 icônes (gauche, centre, droite)
 		sf::Vector2f iconPos[] =
 		{
 			{(float)(border + i * iconSpacing), SCREEN_HEIGHT / 2.f - SCREEN_HEIGHT / 4.f},
 			{(float)(border + i * iconSpacing), SCREEN_HEIGHT / 2.f },
 			{(float)(border + i * iconSpacing), SCREEN_HEIGHT / 2.f + SCREEN_HEIGHT / 4.f}
 		};
+
+		// Afficher le texte "Player : X"
 		sf::Vector2f pos = { iconPos[0].x, iconPos[0].y - 70.f };
 		m_data->ui.playerCount.setPosition(pos);
 
@@ -566,104 +606,48 @@ void Menu::PrintIcons(sf::RenderWindow& _renderWindow)
 		m_data->ui.playerCount.setCharacterSize(60u);
 		_renderWindow.draw(m_data->ui.playerCount);
 
-		//First chara
-		if (m_data->currentCharaSelected[i] == 0)
-		{
-			//Left
-			tempColor.a = 100;
-			m_data->ui.iconsChara.setColor(tempColor);
-			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->ui.charaAvaible.size() - 1]);
-			m_data->ui.iconsChara.setPosition(iconPos[0]);
-			_renderWindow.draw(m_data->ui.iconsChara);
-			//Center
-			tempColor.a = 255;
-			if (m_data->charaSelected[i] == true)
-			{
-				//m_data->ui.iconsChara.setColor(sf::Color(20, 20, 20, tempColor.a));
-				m_data->ui.iconsChara.setColor(sf::Color(0, 0, 0, 255));
+		// Index de l'animation sélectionnée pour ce joueur
+		int currentSelection = m_data->currentCharaSelected[i];
+		int totalCharacters = (int)m_data->ui.charaAvaible.size();
 
-			}
-			else
-			{
-				m_data->ui.iconsChara.setColor(tempColor);
-			}
-			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected[i]]);
-			m_data->ui.iconsChara.setPosition(iconPos[1]);
-			_renderWindow.draw(m_data->ui.iconsChara);
-			//Right
-			tempColor.a = 100;
-			m_data->ui.iconsChara.setColor(tempColor);
-			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected[i] + 1]);
-			m_data->ui.iconsChara.setPosition(iconPos[2]);
-			_renderWindow.draw(m_data->ui.iconsChara);
-		}
-		//End chara
-		else if (m_data->currentCharaSelected[i] == m_data->ui.charaAvaible.size() - 1)
+		// Calculer les index des 3 icônes (avec wrap)
+		int leftIndex = (currentSelection - 1 + totalCharacters) % totalCharacters;
+		int centerIndex = currentSelection;
+		int rightIndex = (currentSelection + 1) % totalCharacters;
+
+		// Icône de gauche (semi-transparente)
+		tempColor.a = 100;
+		m_data->ui.iconsChara.setColor(tempColor);
+		m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[leftIndex]);
+		m_data->ui.iconsChara.setPosition(iconPos[0]);
+		_renderWindow.draw(m_data->ui.iconsChara);
+
+		// Icône du centre (opaque ou sombre si sélectionnée)
+		tempColor.a = 255;
+		if (m_data->charaSelected[i] == true)
 		{
-			//Left
-			tempColor.a = 100;
-			m_data->ui.iconsChara.setColor(tempColor);
-			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected[i] - 1]);
-			m_data->ui.iconsChara.setPosition(iconPos[0]);
-			_renderWindow.draw(m_data->ui.iconsChara);
-			//Center
-			tempColor.a = 255;
-			if (m_data->charaSelected[i] == true)
-			{
-				//m_data->ui.iconsChara.setColor(sf::Color(20, 20, 20, tempColor.a));
-				m_data->ui.iconsChara.setColor(sf::Color(0, 0, 0, 255));
-			}
-			else
-			{
-				m_data->ui.iconsChara.setColor(tempColor);
-			}
-			m_data->ui.iconsChara.setColor(tempColor);
-			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected[i]]);
-			m_data->ui.iconsChara.setPosition(iconPos[1]);
-			_renderWindow.draw(m_data->ui.iconsChara);
-			//Right
-			tempColor.a = 100;
-			m_data->ui.iconsChara.setColor(tempColor);
-			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[0]);
-			m_data->ui.iconsChara.setPosition(iconPos[2]);
-			_renderWindow.draw(m_data->ui.iconsChara);
+			// Si le joueur a validé son choix, afficher en noir
+			m_data->ui.iconsChara.setColor(sf::Color(200, 200, 200, 255));
 		}
-		//Normal (3 chara print)
 		else
 		{
-			//Left
-			tempColor.a = 100;
+			// Sinon afficher normalement
 			m_data->ui.iconsChara.setColor(tempColor);
-			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected[i] - 1]);
-			m_data->ui.iconsChara.setPosition(iconPos[0]);
-			_renderWindow.draw(m_data->ui.iconsChara);
-			//Center
-			tempColor.a = 255;
-			if (m_data->charaSelected[i] == true)
-			{
-				//m_data->ui.iconsChara.setColor(sf::Color(20, 20, 20, tempColor.a));
-				m_data->ui.iconsChara.setColor(sf::Color(0, 0, 0, 255));
-
-			}
-			else
-			{
-				m_data->ui.iconsChara.setColor(tempColor);
-			}
-			m_data->ui.iconsChara.setColor(tempColor);
-			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected[i]]);
-			m_data->ui.iconsChara.setPosition(iconPos[1]);
-			_renderWindow.draw(m_data->ui.iconsChara);
-			//Right
-			tempColor.a = 100;
-			m_data->ui.iconsChara.setColor(tempColor);
-			m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[m_data->currentCharaSelected[i] + 1]);
-			m_data->ui.iconsChara.setPosition(iconPos[2]);
-			_renderWindow.draw(m_data->ui.iconsChara);
 		}
+		m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[centerIndex]);
+		m_data->ui.iconsChara.setPosition(iconPos[1]);
+		_renderWindow.draw(m_data->ui.iconsChara);
+
+		// Icône de droite (semi-transparente)
+		tempColor.a = 100;
+		m_data->ui.iconsChara.setColor(tempColor);
+		m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[rightIndex]);
+		m_data->ui.iconsChara.setPosition(iconPos[2]);
+		_renderWindow.draw(m_data->ui.iconsChara);
 	}
 
-	//Reset
-	m_data->ui.iconsChara.setColor(sf::Color(255,255,255,255));
+	// Réinitialiser la couleur à blanc opaque
+	m_data->ui.iconsChara.setColor(sf::Color(255, 255, 255, 255));
 }
 
 void Menu::PrintOptions(sf::RenderWindow& _renderWindow)
