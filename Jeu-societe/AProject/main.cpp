@@ -53,18 +53,14 @@ int main()
 	MainData mainData;
 
 
-	rand();
-	rand();
-	rand();
 
-	mainData.gameData.m_playerDataList.resize(2);
-	for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
-	{
-		mainData.gameData.m_playerDataList[i].SetJoystickID(i);
-		mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(rand() % 8));
-		//mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 4));
-		mainData.gameData.AddPlayerPlaying(i);
-	}
+	//mainData.gameData.m_playerDataList.resize(2);
+	//for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
+	//{
+	//	mainData.gameData.m_playerDataList[i].SetJoystickID(i);
+	//	mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 4));
+	//	mainData.gameData.AddPlayerPlaying(i);
+	//}
 
 	MainDataLoad(mainData);
 
@@ -110,12 +106,12 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 
 	// Ajouter les scènes
-	_mainData.scenes.AddScene<LoadingScreen>("Lo");
+	_mainData.scenes.AddScene<Basket>("Basket");
 	_mainData.scenes.AddScene<Menu>("Menu");
+	_mainData.scenes.AddScene<LoadingScreen>("Lo");
 	_mainData.scenes.AddScene<BaseGame>("Board");
 	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
 	_mainData.scenes.AddScene<ArmWrestling>("ArmWrestling");
-	_mainData.scenes.AddScene<Basket>("Basket");
 	_mainData.scenes.AddScene<FlagGame>("FlagGame");
 	_mainData.scenes.AddScene<RandCard>("RandCard");
 	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
@@ -126,8 +122,8 @@ void MainDataLoad(MainData& _mainData)
 	// Sélectionner le LoadingScreen metre false pour tout scene au debut 
 
 	//YANNOU !!! VERIFIE SI LA SCENE CHARGE EST DEJA CHARGE
-	//_mainData.scenes.SelectScene("Menu", false);
-	_mainData.scenes.SelectScene("lo", false);
+	_mainData.scenes.SelectScene("Menu", false);
+	//_mainData.scenes.SelectScene("Lo", false);
 
 
 
@@ -172,4 +168,3 @@ void Draw(MainData& _mainData)
 
 	_mainData.renderWindow.display();
 }
-

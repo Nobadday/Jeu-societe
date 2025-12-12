@@ -15,7 +15,6 @@ private:
 	{
 		CREDITS_TRANSITION_1,
 		ANIMATION,
-		CREDITS_TRANSITION_2
 	};
 
 	struct SceneData
@@ -24,6 +23,10 @@ private:
 
 
 		HighResVideoPlayer videoPlayer;
+
+		sf::Sprite background;
+		GameData* gameData;
+
 
 		AudioEngine* audio = nullptr;
 		TransitionClass transition;

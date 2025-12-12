@@ -55,7 +55,7 @@ void Menu::LoadUI(void)
 
 	sf::FloatRect buttonRect = m_data->ui.buttonMap["playBtn"].getGlobalBounds();
 	m_data->ui.buttonMap["playBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 });
-	m_data->ui.buttonMap["settingsBtn"]. setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + buttonRect.height});
+	m_data->ui.buttonMap["settingsBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + buttonRect.height});
 	m_data->ui.buttonMap["leaveBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 2 * buttonRect.height });
 	m_data->ui.buttonMap["creditsBtn"].setPosition({ SCREEN_WIDTH - buttonRect.width / 2, SCREEN_HEIGHT / 2 + 2 * buttonRect.height });
 
@@ -94,28 +94,19 @@ void Menu::PollEvent(sf::Event& _event)
 		case sf::Event::KeyPressed:
 			if (_event.key.code == sf::Keyboard::Escape)
 			{
-				switch (m_data->state)
-				{
-					case MAIN_MENU:
-
-						m_data->gameData->m_renderWindow->close();
-						break;
-					case OPTIONS:
-					case PLAYER_NB_SELECTION:
-
-						m_data->state = MAIN_MENU;
-						break;
-					case PLAYER_SELECTION:
-
-						m_data->state = PLAYER_NB_SELECTION;
-						break;
-				}
+				ReturnPressed();
 			}
 			else if (_event.key.code != sf::Keyboard::Enter)
 			{
 				break;
 			}
 		case sf::Event::JoystickButtonPressed:
+
+			if (_event.joystickButton.button == 1)
+			{
+				ReturnPressed();
+				return;
+			}
 
 			m_data->audio->PlaySound("uiSoundClick");
 			PressSelection(_event.joystickButton.joystickId);
@@ -277,10 +268,10 @@ void Menu::ChangeSelection(int _value, int _joystick)
 			
 			if ((m_data->controlerBtn + _value) < PLAY)
 			{
-				m_data->controlerBtn = LEAVE;
-				mouseNewPos = m_data->ui.buttonMap["leaveBtn"].getPosition();
+				m_data->controlerBtn = CREDITS_BTN;
+				mouseNewPos = m_data->ui.buttonMap["creditsBtn"].getPosition();
 			}
-			else if ((m_data->controlerBtn + _value) > LEAVE)
+			else if ((m_data->controlerBtn + _value) > CREDITS_BTN)
 			{
 				m_data->controlerBtn = PLAY;
 				mouseNewPos = m_data->ui.buttonMap["playBtn"].getPosition();
@@ -296,13 +287,17 @@ void Menu::ChangeSelection(int _value, int _joystick)
 						mouseNewPos = m_data->ui.buttonMap["playBtn"].getPosition();
 						break;
 
-					case LEAVE:
-						mouseNewPos = m_data->ui.buttonMap["leaveBtn"].getPosition();
-						break;
-				
 					case SETTINGS:
 						mouseNewPos = m_data->ui.buttonMap["settingsBtn"].getPosition();
 						break;
+
+					case LEAVE:
+						mouseNewPos = m_data->ui.buttonMap["leaveBtn"].getPosition();
+						break;
+
+					case CREDITS_BTN:
+						mouseNewPos = m_data->ui.buttonMap["creditsBtn"].getPosition();
+						break;				
 				}				
 			}
 			break;
@@ -405,7 +400,6 @@ void Menu::ChangeSelection(int _value, int _joystick)
 	//std::cout << "mouse x = " << mouseNewPos.x << " y = " << mouseNewPos.y << std::endl;
 	sf::Mouse::setPosition(sf::Vector2i(mouseNewPos), *m_data->gameData->m_renderWindow);
 }
-
 void Menu::PressSelection(int _id)
 {
 	m_data->audio->PlaySound("uiSoundClick");
@@ -416,8 +410,6 @@ void Menu::PressSelection(int _id)
 			switch (m_data->state)
 			{
 				case MAIN_MENU:
-
-					m_data->audio->PlayMusicTransition("Music2", true, false, 5.f, TransitionType::FADED_MIX);
 
 					m_data->state = PLAYER_NB_SELECTION;
 					m_data->controlerBtn = PLAY_SELECTION;
@@ -499,6 +491,10 @@ void Menu::PressSelection(int _id)
 			m_data->ui.buttonMap["moinsBtn"].setPosition(SCREEN_WIDTH / 1.5f, 2.1f / 4.f * SCREEN_HEIGHT);
 			m_data->ui.buttonMap["playBtn"].setPosition(SCREEN_WIDTH / 2.f, 3.f / 4.f * SCREEN_HEIGHT);
 			m_data->controlerBtn = PLAY_SELECTION;
+			break;
+
+		case CREDITS_BTN:
+			SceneBase::ChangeScene("Credits");
 			break;
 
 		case LEAVE:
@@ -656,7 +652,6 @@ void Menu::PrintIcons(sf::RenderWindow& _renderWindow)
 	// R�initialiser la couleur � blanc opaque
 	m_data->ui.iconsChara.setColor(sf::Color(255, 255, 255, 255));
 }
-
 void Menu::PrintOptions(sf::RenderWindow& _renderWindow)
 {
 	m_data->ui.playerCount.setCharacterSize(50u);
@@ -677,4 +672,38 @@ void Menu::PrintOptions(sf::RenderWindow& _renderWindow)
 	_renderWindow.draw(m_data->ui.buttonMap["plusBtn"]);
 	_renderWindow.draw(m_data->ui.buttonMap["moinsBtn"]);
 	_renderWindow.draw(m_data->ui.buttonMap["playBtn"]);
+}
+
+void Menu::ReturnPressed(void)
+{
+	m_data->audio->PlaySound("uiSoundClick");
+	switch (m_data->state)
+	{
+		case OPTIONS:
+		case PLAYER_NB_SELECTION:
+		{
+			m_data->state = MAIN_MENU;
+			sf::FloatRect buttonRect = m_data->ui.buttonMap["playBtn"].getGlobalBounds();
+			m_data->ui.buttonMap["playBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 });
+			m_data->ui.buttonMap["settingsBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + buttonRect.height });
+			m_data->ui.buttonMap["leaveBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 2 * buttonRect.height });
+			m_data->ui.buttonMap["creditsBtn"].setPosition({ SCREEN_WIDTH - buttonRect.width / 2, SCREEN_HEIGHT / 2 + 2 * buttonRect.height });
+		}
+		break;
+
+		case PLAYER_SELECTION:
+
+			m_data->state = PLAYER_NB_SELECTION;
+			m_data->controlerBtn = PLAY_SELECTION;
+			m_data->ui.buttonMap["plusBtn"].setScale(1, 1);
+			m_data->ui.buttonMap["moinsBtn"].setScale(1, 1);
+			m_data->ui.buttonMap["playBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.5 });
+			m_data->ui.buttonMap["moinsBtn"].setPosition({ SCREEN_WIDTH / 2 - 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2 });
+			m_data->ui.buttonMap["plusBtn"].setPosition({ SCREEN_WIDTH / 2 + 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2 });
+			m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
+			m_data->ui.playerCount.setCharacterSize(200u);
+			m_data->ui.playerCount.setOrigin({ 0.6f,0.8f });
+			m_data->ui.playerCount.setPosition({ SCREEN_WIDTH / 2 , SCREEN_HEIGHT / 2 });
+			break;
+	}
 }
