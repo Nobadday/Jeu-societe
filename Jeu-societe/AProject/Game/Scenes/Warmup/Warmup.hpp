@@ -25,6 +25,7 @@ private:
 		sf::Vector2f scaleVid = { 1.f,1.f };
 		bool playersReady = false;
 		std::vector<bool> playersReadyVec;
+		std::vector<std::string> charaAvaible;
 
 		sf::Shader chromaKeyShader;
 		HighResVideoPlayer videoPlayer;

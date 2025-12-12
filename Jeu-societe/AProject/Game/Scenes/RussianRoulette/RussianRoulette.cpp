@@ -21,6 +21,10 @@ void RussianRoulette::Load(void)
 			(short)m_data->gameData->m_playerDataList[playerId].GetPlayerSkin(),
 			true 
 		});
+
+		std::cout << "player skin = " << m_data->players[i].skin << std::endl;
+
+
 	}
 
 	m_data->currentPlayer = 0;
@@ -37,14 +41,34 @@ void RussianRoulette::Load(void)
 	m_data->iconsChara.setPosition({ SCREEN_WIDTH / 1.2f, SCREEN_HEIGHT / 2.f });
 	m_data->iconsChara.setScale({1.2f, 1.2f});
 	
-	//First head
-	m_data->iconsChara.SetAnimation(PlayerData::GetTextureName((PlayerData::PlayerSkin)m_data->players[0].skin));
+
+
+
+	PlayerData::PlayerSkin skin = (PlayerData::PlayerSkin)m_data->players[0].skin;
+	m_data->iconsChara.SetAnimation(skin);
+
+	//m_data->iconsChara.SetAnimation(PlayerData::GetTextureName((PlayerData::PlayerSkin)m_data->players[0].skin));
 		
 
 	m_data->background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground", AssetManager::AssetType::TEXTURE));
 
 	m_data->gunSprAnim.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Gun_Rien"));
 	//m_data->gameState = WAITING_FOR_INPUT;
+
+
+
+	//Icons chara
+	m_data->charaAvaible.push_back("Perso1-1");
+	m_data->charaAvaible.push_back("Perso2-1");
+	m_data->charaAvaible.push_back("Perso3-1");
+	m_data->charaAvaible.push_back("Perso4-1");
+
+	m_data->charaAvaible.push_back("Perso1-2");
+	m_data->charaAvaible.push_back("Perso2-2");
+	m_data->charaAvaible.push_back("Perso3-2");
+	m_data->charaAvaible.push_back("Perso4-2");
+
+
 
 	m_data->transition.PlayTransition();
 }
@@ -179,8 +203,15 @@ void RussianRoulette::Update(float _deltaTime)
 						m_data->currentPlayer = 0;
 					}
 					std::cout << "Player : " << m_data->currentPlayer << ", his skin : " << PlayerData::GetTextureName((PlayerData::PlayerSkin)m_data->players[m_data->currentPlayer].skin) << std::endl;
+					
+					PlayerData::PlayerSkin skin = m_data->gameData->m_playerDataList[m_data->players[m_data->currentPlayer].id].GetPlayerSkin();
+					m_data->iconsChara.SetAnimation(skin);
+					
+					
+					
+					
 					//m_data->iconsChara.SetAnimation(PlayerData::GetTextureName((PlayerData::PlayerSkin)m_data->players[m_data->currentPlayer].skin));
-					m_data->iconsChara.SetAnimation(m_data->gameData->m_playerDataList[m_data->gameData->m_gonnaPlayIndex[m_data->currentPlayer]].GetJoystickId());
+					//m_data->iconsChara.SetAnimation(m_data->iconsChara[m_data->players[m_data->currentPlayer].skin]);
 
 				}
 			}

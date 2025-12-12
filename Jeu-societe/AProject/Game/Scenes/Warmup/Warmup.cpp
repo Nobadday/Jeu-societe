@@ -1,4 +1,4 @@
-#include "Warmup.hpp"
+ï»¿#include "Warmup.hpp"
 
 
 void Warmup::Load(void)
@@ -19,8 +19,8 @@ void Warmup::Load(void)
 	if (!m_data->chromaKeyShader.loadFromMemory(
 		R"(
         uniform sampler2D texture;
-        uniform vec3 keyColor; // Couleur à rendre transparente (ex: vert)
-        uniform float threshold; // Seuil de tolérance
+        uniform vec3 keyColor; // Couleur Ã  rendre transparente (ex: vert)
+        uniform float threshold; // Seuil de tolÃ©rance
 
         void main()
         {
@@ -41,7 +41,7 @@ void Warmup::Load(void)
 	}
 	else
 	{
-		// Définir la couleur à rendre transparente (vert dans cet exemple)
+		// DÃ©finir la couleur Ã  rendre transparente (vert dans cet exemple)
 		m_data->chromaKeyShader.setUniform("keyColor", sf::Glsl::Vec3(0.0f, 1.0f, 0.0f)); // RGB vert
 		m_data->chromaKeyShader.setUniform("threshold", 0.7f); // Ajuster selon vos besoins
 	}
@@ -62,6 +62,22 @@ void Warmup::Load(void)
 	m_data->videoPlayer.loadFromFile("Assets/Video/TRANSITION_1_LOUIS_VERSION.mp4");
 	m_data->videoPlayer.play();
 	m_data->videoPlayer.update(1.f);
+
+
+
+
+
+
+	//Icons chara
+	m_data->charaAvaible.push_back("Perso1-1");
+	m_data->charaAvaible.push_back("Perso2-1");
+	m_data->charaAvaible.push_back("Perso3-1");
+	m_data->charaAvaible.push_back("Perso4-1");
+
+	m_data->charaAvaible.push_back("Perso1-2");
+	m_data->charaAvaible.push_back("Perso2-2");
+	m_data->charaAvaible.push_back("Perso3-2");
+	m_data->charaAvaible.push_back("Perso4-2");
 }
 
 void Warmup::Unload(void)
@@ -173,7 +189,9 @@ void Warmup::PrintIcons(sf::RenderWindow& _renderWindow)
 	{
 		sf::Vector2f pos = { (float)(border + i * iconSpacing), SCREEN_HEIGHT - iconBounds.height};
 
-		m_data->iconsChara.SetAnimation(m_data->gameData->m_playerDataList[m_data->gameData->m_gonnaPlayIndex[i]].GetJoystickId());
+		PlayerData::PlayerSkin skin = m_data->gameData->m_playerDataList[i].GetPlayerSkin();
+		m_data->iconsChara.SetAnimation(skin);
+
 		m_data->iconsChara.setPosition(pos);
 		if (m_data->playersReadyVec[i])
 		{

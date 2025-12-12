@@ -43,6 +43,7 @@ class RandCard : public SceneBase
 			std::vector<CardType> cards;
 			std::vector<Player> players;
 			std::vector<Player> deadPlayers;
+			std::vector<std::string> charaAvaible;
 			GameData* gameData; 
 
 			GameState gameState = TRANSITION;
