@@ -107,12 +107,12 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 
 	// Ajouter les scènes
+	_mainData.scenes.AddScene<Basket>("Basket");
 	_mainData.scenes.AddScene<Menu>("Menu");
 	_mainData.scenes.AddScene<LoadingScreen>("Lo");
 	_mainData.scenes.AddScene<BaseGame>("Board");
 	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
 	_mainData.scenes.AddScene<ArmWrestling>("ArmWrestling");
-	_mainData.scenes.AddScene<Basket>("Basket");
 	_mainData.scenes.AddScene<FlagGame>("FlagGame");
 	_mainData.scenes.AddScene<RandCard>("RandCard");
 	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
@@ -123,9 +123,6 @@ void MainDataLoad(MainData& _mainData)
 
 	//YANNOU !!! VERIFIE SI LA SCENE CHARGE EST DEJA CHARGE
 	_mainData.scenes.SelectScene("Menu", false);
-
-
-
 
 	_mainData.clock.restart();
 }
