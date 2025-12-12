@@ -3,7 +3,6 @@
 
 #include "../../../Common.hpp"
 #include "../../../Scenes/Scene.hpp"
-#include "../../../Utilities/StringFormat.hpp"
 #include "../../../Animation/Animation/Timer.hpp" 
 #include "../../../Animation/Graphics/SpriteAtlas.hpp" 
 #include "../../../Animation/Graphics/TextureAtlas.hpp" 

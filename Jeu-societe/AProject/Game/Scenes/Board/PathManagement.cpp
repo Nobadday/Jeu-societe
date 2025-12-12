@@ -157,138 +157,49 @@ void BaseGame::ProcessPathChoice(int choiceIndex)
 	m_data->pathChoices.clear();
 }
 
+
+// Méthode pour traiter le lancer de dé sur le pont
 void BaseGame::ProcessBridgeRoll()
 {
-	int diceRoll = randmt::RandomInt(1, 6);
 	auto& player = m_data->players[m_data->currentPlayerIndex];
 
-	std::cout << "Lancer de dé pour le pont : " << diceRoll << std::endl;
+	int rando = randmt::RandomInt(1, 6);
+	std::cout << "Bridge Roll: " << rando << std::endl;
 
-	if (diceRoll > 3)
+	m_data->diceResult = rando;
+	player.waitingBridgeRoll = false;
+
+	// Lancer l'animation vidéo du dé
+	if (rando >= 1 && rando <= 6)
 	{
-		// Réussite : le joueur peut traverser le pont
-		std::cout << "Traversée réussie !" << std::endl;
-		player.waitingBridgeRoll = false;
+		m_data->currentDiceVideo = m_data->diceVideos[rando - 1];
+		m_data->currentDiceVideo->play();
+		m_data->diceAnimationPlaying = true;
 
-		m_data->smokeOff = true;
-
-		switch (m_gameData->m_playerDataList[m_data->currentPlayerIndex].GetPlayerSkin())
-		{
-		case PlayerData::CHARACTER_1_1:
-			[[fallthrough]];
-		case PlayerData::CHARACTER_1_2:
-			m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_1_2);
-			m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-2", AssetManager::AssetType::TEXTURE_ANIMATED);
-			break;
-		case PlayerData::CHARACTER_2_1:
-			[[fallthrough]];
-		case PlayerData::CHARACTER_2_2:
-			m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_2_2);
-			m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso2-2", AssetManager::AssetType::TEXTURE_ANIMATED);
-			break;
-		case PlayerData::CHARACTER_3_1:
-			[[fallthrough]];
-		case PlayerData::CHARACTER_3_2:
-			m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_3_2);
-			m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso3-2", AssetManager::AssetType::TEXTURE_ANIMATED);
-			break;
-		case PlayerData::CHARACTER_4_1:
-			[[fallthrough]];
-		case PlayerData::CHARACTER_4_2:
-			m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_4_2);
-			m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso4-2", AssetManager::AssetType::TEXTURE_ANIMATED);
-			break;
-		default:
-			m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_1_2);
-			m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-1", AssetManager::AssetType::TEXTURE_ANIMATED);
-			break;
-		}
-
-		std::cout << "Mouvement restant après traversée : " << player.pendingMovement << std::endl;
-
-		// Si le joueur a encore du mouvement, continuer
-		if (player.pendingMovement > 0)
-		{
-			SetBoardState(DEPLACEMENT_BRIGE);
-		}
-		else
-		{
-			// Plus de mouvement : terminer sur la case du pont
-			SetBoardState(CASE_ACTION);
-		}
-	}
-	else
-	{
-		// Échec : le joueur reste bloqué et perd son tour
-		std::cout << "Échec ! Vous ne pouvez pas traverser le pont." << std::endl;
-		player.waitingBridgeRoll = false;
-		player.pendingMovement = 0;  // Annuler le mouvement restant
-
-		SetBoardState(CASE_ACTION);
+		// Nouveau état pour l'animation du dé sur le pont
+		m_data->state = DICE_ANIMATION_BRIDGE;
 	}
 }
 
+// Méthode pour traiter le lancer de dé sur la ligne d'arrivée
 void BaseGame::ProcessFinRoll()
 {
-	int diceRoll = randmt::RandomInt(1, 6);
 	auto& player = m_data->players[m_data->currentPlayerIndex];
 
-	std::cout << "Lancer de dé pour la ligne d'arrivée : " << diceRoll << std::endl;
+	int rando = randmt::RandomInt(1, 6);
+	std::cout << "Fin Roll: " << rando << std::endl;
 
-	if (diceRoll > 4)
+	m_data->diceResult = rando;
+	player.waitingBridgeRoll = false;
+
+	// Lancer l'animation vidéo du dé
+	if (rando >= 1 && rando <= 6)
 	{
-		// Réussite : le joueur a gagné !
-		std::cout << "VICTOIRE ! Le joueur " << m_data->currentPlayerIndex << " a gagné !" << std::endl;
-		player.waitingBridgeRoll = false;
+		m_data->currentDiceVideo = m_data->diceVideos[rando - 1];
+		m_data->currentDiceVideo->play();
+		m_data->diceAnimationPlaying = true;
 
-		// Préparer la liste des joueurs triés par position X décroissante
-		std::vector<std::pair<int, float>> playerPositions;
-		for (int i = 0; i < m_data->players.size(); i++)
-		{
-			playerPositions.push_back({ i, m_data->players[i].boardPosition.x });
-		}
-
-		// Trier par position X décroissante (les plus avancés en premier)
-		std::sort(playerPositions.begin(), playerPositions.end(),
-			[](const std::pair<int, float>& a, const std::pair<int, float>& b) {
-				return a.second > b.second;
-			});
-
-		// Remplir m_winIndex avec le gagnant en premier, puis les autres
-		m_gameData->m_winIndex.clear();
-
-		// Le gagnant actuel en premier
-		m_gameData->m_winIndex.push_back(m_data->currentPlayerIndex);
-
-		// Ajouter les autres joueurs triés par position X
-		for (const auto& playerPos : playerPositions)
-		{
-			if (playerPos.first != m_data->currentPlayerIndex)
-			{
-				m_gameData->m_winIndex.push_back(playerPos.first);
-			}
-		}
-
-		// Afficher l'ordre final (debug)
-		std::cout << "Ordre final pour le podium : ";
-		for (int idx : m_gameData->m_winIndex)
-		{
-			std::cout << "P" << idx << " ";
-		}
-		std::cout << std::endl;
-
-		// Transition vers le podium
-		//ChangeScene("Podium", false);
-
-		SetBoardState(END); // Bloquer le jeu en attendant le changement de scène
-	}
-	else
-	{
-		// Échec : le joueur reste bloqué et perd son tour
-		std::cout << "Échec ! Vous ne pouvez pas franchir la ligne d'arrivée." << std::endl;
-		player.waitingBridgeRoll = false;
-		player.pendingMovement = 0;
-
-		SetBoardState(CASE_ACTION);
+		// Nouveau état pour l'animation du dé sur la ligne d'arrivée
+		m_data->state = DICE_ANIMATION_END;
 	}
 }

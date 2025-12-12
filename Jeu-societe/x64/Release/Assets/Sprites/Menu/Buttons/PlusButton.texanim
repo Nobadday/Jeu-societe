@@ -1,0 +1,24 @@
+{
+    "filePath":"PlusButton.texsheet",
+    "fileType":0,
+	"animations": [
+        {
+            "animationName":"IDLE",
+            "texName":"IDLE",
+            "loop": true,
+            "fps": 10
+        },
+        {
+            "animationName":"ON",
+            "texName":"ON",
+            "loop": true,
+            "fps": 10
+        },
+        {
+            "animationName":"HELD",
+            "texName":"HELD",
+            "loop": true,
+            "fps": 10
+        }
+    ]
+}

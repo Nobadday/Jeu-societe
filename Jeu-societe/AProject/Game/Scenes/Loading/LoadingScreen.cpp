@@ -39,9 +39,9 @@ void LoadingScreen::Load(void)
         // Chargement du manifest Board dans le thread de chargement
         m_gameData->m_tile->InitTiled("Assets/Map/map.json");
         m_data->loadingProgress.store(0.3f);
-        std::cout << "coucou\n";
+        //std::cout << "coucou\n";
 
-        m_data->loadingVideo.loadFromFile("Assets/Video/TRANSITION_2.mp4");
+        m_data->loadingVideo.loadFromFile("Assets/Video/TRANSITION_2_LOUIS_VERSION.mp4");
 		m_data->loadingProgress.store(0.6f);
 
         m_gameData->m_assetManager->LoadManifest("Manifests/Board.json", "Board");
@@ -113,7 +113,7 @@ void LoadingScreen::Update(float _deltaTime)
     // Mise à jour de la barre avec la valeur interpolée
     m_data->progressBarFill.setSize(sf::Vector2f(600.f * newProgress, 40.f));
 
-	std::cout << "Progression : " << newProgress << std::endl;
+	//std::cout << "Progression : " << newProgress << std::endl;
     // Vérifier si le chargement est terminé ET que la barre a rattrapé
     if (m_data->loadingComplete.load() && newProgress >= 0.999f && !m_data->nextSceneName.empty())
     {

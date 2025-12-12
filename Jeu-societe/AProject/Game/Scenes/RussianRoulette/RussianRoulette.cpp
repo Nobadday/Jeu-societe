@@ -47,8 +47,6 @@ void RussianRoulette::Load(void)
 	//m_data->gameState = WAITING_FOR_INPUT;
 
 	m_data->transition.PlayTransition();
-	//Bandage fix
-	m_data->transition.Draw(*m_data->gameData->m_renderWindow);
 }
 
 void RussianRoulette::Unload(void)

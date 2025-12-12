@@ -3,7 +3,13 @@
         {
             "name": "ArmWrestlingFont",
             "type": "Font",
-            "path": "./Assets/Fonts/Font.ttf"
+            "path": "./Assets/Fonts/pointfree.ttf"
+        },
+        {
+            "name": "playerArms",
+            "type": "Texture Atlas",
+            "path": "./Assets/Sprites/ArmWrestling/ArmWrestling hands.json",
+            "subType": 3
         }
     ]
 }

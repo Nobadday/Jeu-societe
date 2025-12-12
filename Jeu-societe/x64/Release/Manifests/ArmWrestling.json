@@ -1,0 +1,9 @@
+{
+    "assets": [
+        {
+            "name": "ArmWrestlingFont",
+            "type": "Font",
+            "path": "./Assets/Fonts/Font.ttf"
+        }
+    ]
+}

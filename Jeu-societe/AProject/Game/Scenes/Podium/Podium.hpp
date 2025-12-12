@@ -5,12 +5,22 @@
 #include "../../../Common.hpp"
 #include "../../../Scenes/Scene.hpp"
 #include "../../../Ui/MenuSystem.hpp"
-
-
+#include "../../../Animation/Animation.hpp"
 
  class Podium : public SceneBase
 {
 	private:
+
+		enum State
+		{
+			NONE = -1,
+
+			PODIUM,
+			PLAYERS,
+			CONGRATS,
+			DONE
+		};
+
 		struct SceneData
 		{
 			GameData* gameData;
@@ -21,8 +31,13 @@
 			std::vector<TextPlus> playerTextArray;
 
 			sf::Sprite background;
+			sf::Sprite congrat;
+
+			anim::Animator animatorArray[4];
+
+			State state = NONE;
 		};
-		SceneData* m_data;
+		SceneData* m_data = NULL;
 
 	public:
 		virtual void Load(void);
@@ -31,6 +46,8 @@
 		virtual void PollEvent(sf::Event& _event);
 		virtual void Update(float _deltaTime);
 		virtual void Draw(sf::RenderWindow& _renderWindow);
+
+		int GetPlayerClassement(int _i);
 };
 
 #endif // !_INC_PODIUM_HPP

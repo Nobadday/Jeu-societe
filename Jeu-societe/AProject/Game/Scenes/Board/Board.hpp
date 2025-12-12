@@ -1,27 +1,27 @@
 #ifndef _INC_BOARD_HPP
 #define _INC_BOARD_HPP
 
-#include "../../Common.hpp"
+#include "../../../Common.hpp"
 
-#include "../../Map/Tiled.h"
+#include "../../../Map/Tiled.h"
 
-#include "../../Video+Audio/HighResVideoPlayer.hpp"
+#include "../../../Video+Audio/HighResVideoPlayer.hpp"
 
-#include "../../Utilities/Camera/Camera.hpp"
+#include "../../../Utilities/Camera/Camera.hpp"
 
-#include "../../Animation/Animation/Animator.hpp"
+#include "../../../Animation/Animation/Animator.hpp"
 
-#include "../../Animation/Graphics/SpriteAnimated.hpp"
+#include "../../../Animation/Graphics/SpriteAnimated.hpp"
 
-#include "../../Animation/Graphics/SpriteAtlas.hpp"
+#include "../../../Animation/Graphics/SpriteAtlas.hpp"
 
-#include "../../Animation/Graphics/AnimatedObject.hpp"
+#include "../../../Animation/Graphics/AnimatedObject.hpp"
 
-#include "../../Animation/Graphics/TextureAnimated.hpp"
+#include "../../../Animation/Graphics/TextureAnimated.hpp"
 
-#include "../../Animation/Graphics/TextureAtlas.hpp"
+#include "../../../Animation/Graphics/TextureAtlas.hpp"
 
-#include "../../Animation/Graphics/TextPlus.hpp"
+#include "../../../Animation/Graphics/TextPlus.hpp"
 
 #define TIME_WIN_DISPLAY 0.5f
 #define TIME_LBM_DISPLAY 6.0f
@@ -99,7 +99,9 @@ class BaseGame : public SceneBase
 			INTRO,
 			START,
 			PLAY,
-			DICE_ANIMATION,  // NOUVEAU : État pour l'animation du dé
+			DICE_ANIMATION,
+			DICE_ANIMATION_BRIDGE,  // NOUVEAU
+			DICE_ANIMATION_END,      // NOUVEAU
 			DEPLACEMENT,
 			DEPLACEMENT_BACK,
 			DEPLACEMENT_SPLIT,
@@ -159,7 +161,7 @@ class BaseGame : public SceneBase
 			StatePlayer state;
 
 			TextPlus playeur;
-			sf::Text v;
+			TextPlus v;
 			TextPlus diceNumber; // NOUVEAU : Texte pour afficher le numéro du dé
 
 			int tourstate;
@@ -169,6 +171,7 @@ class BaseGame : public SceneBase
 			int pendingMovement;  // Nouveau : mouvement restant
 			int currentPathId;    // Nouveau : ID du chemin actuel (-1 = chemin principal)
 			bool waitingBridgeRoll;  // Nouveau : en attente du lancer pour le pont
+			bool firstTime = false;
 		};
 
 		struct LuckBonusMalus
