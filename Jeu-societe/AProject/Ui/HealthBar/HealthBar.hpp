@@ -22,6 +22,7 @@ class HealthBar : public sf::Drawable, public sf::Transformable
 		float m_fillCoefficient;
 
 		bool m_avoidOverflow;
+		bool m_avoidStretch;
 
 		bool m_isVertical;
 
@@ -43,7 +44,11 @@ class HealthBar : public sf::Drawable, public sf::Transformable
 		// If set to True, the bar will not overflow
 		void SetAvoidOverflow(bool _avoidOverflow);
 
+		// Set to true to avoid the texture being stretched
+		void SetAvoidStretch(bool _avoidTextureStretch);
+
 		void SetVertical(bool _vertical);
+
 
 		// False for BG
 		// True for Filler
@@ -82,4 +87,4 @@ class HealthBar : public sf::Drawable, public sf::Transformable
 
 #endif
 
-// HealthBar C++ || v1.1
+// HealthBar C++ || v1.2

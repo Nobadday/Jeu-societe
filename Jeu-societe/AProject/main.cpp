@@ -59,7 +59,17 @@ int main(int _argc, char* _argv[])
 
 	mainData.hb.SetSize(sf::Vector2f(200.0f,50.0f ));
 	mainData.hb.setPosition(sf::Vector2f(200.0f, 50.0f));
-	mainData.hb.SetAvoidOverflow(false);
+	
+	//mainData.hb.SetAvoidOverflow(true);
+	
+	
+	sf::Texture tex[2];
+	tex[0].loadFromFile("./bg.png");
+	tex[1].loadFromFile("./fg.png");
+	
+	
+	mainData.hb.SetTexture(&tex[0], false);
+	mainData.hb.SetTexture(&tex[1], true);
 
 	while (mainData.renderWindow.isOpen())
 	{

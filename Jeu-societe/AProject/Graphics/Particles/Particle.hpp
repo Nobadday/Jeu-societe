@@ -16,6 +16,15 @@ class ParticleBase : public sf::Drawable, public sf::Transformable
 		virtual bool HasExpired(void) = 0;
 };
 
+
+class ParticleTimerExtension : protected Timer
+{
+	ParticleTimerExtension(void);
+
+	virtual void Update(float _deltaTime);
+	virtual bool HasExpired(void);
+};
+
 class ParticleTimed : public ParticleBase, protected Timer
 {
 	public:
@@ -31,7 +40,7 @@ class ParticleTimed : public ParticleBase, protected Timer
 class ParticleAnimated : public ParticleBase
 {
 	protected:
-		SpriteAnimated m_sprite;
+		mutable SpriteAnimated m_sprite;
 
 	public:
 		ParticleAnimated(void);

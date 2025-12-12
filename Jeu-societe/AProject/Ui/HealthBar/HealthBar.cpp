@@ -15,7 +15,9 @@ HealthBar::HealthBar(void) :
 	m_size			  (0,0),
 	m_fillCoefficient (1.0f),
 
-	m_avoidOverflow   (false),
+	m_avoidOverflow   (true),
+	m_avoidStretch	  (true),
+
 	m_isVertical	  (false)
 {
 
@@ -47,6 +49,11 @@ void HealthBar::SetSize(const sf::Vector2f& _size, bool _autoVertical)
 void HealthBar::SetAvoidOverflow(bool _avoidOverflow)
 {
 	this->m_avoidOverflow = _avoidOverflow;
+}
+
+void HealthBar::SetAvoidStretch(bool _avoidTextureStretch)
+{
+	this->m_avoidStretch = _avoidTextureStretch;
 }
 
 void HealthBar::SetVertical(bool _vertical)
@@ -120,31 +127,24 @@ void HealthBar::SetRect(const sf::Color& _color, const sf::Texture* _texture, fl
 	}
 
 	this->m_rectShape.setFillColor(_color);
-	this->m_rectShape.setTexture(_texture, false);
+	this->m_rectShape.setTexture(_texture, true);
 
-	sf::Vector2f sizeCoeffed;
+
+	sf::Vector2f coefficients(1.0f, 1.0f);
 	if (this->m_isVertical)
 	{
-		sizeCoeffed.x = this->m_size.x;
-		sizeCoeffed.y = this->m_size.y * _fillCoef;
+		coefficients.y = _fillCoef;
 	}
 	else
 	{
-		sizeCoeffed.x = this->m_size.x * _fillCoef;
-		sizeCoeffed.y = this->m_size.y;
+		coefficients.x = _fillCoef;
 	}
 
-	if (_texture != NULL)
+	this->m_rectShape.setSize(sf::Vector2f(this->m_size.x * coefficients.x, this->m_size.y * coefficients.y));
+	if ((_texture != NULL) && this->m_avoidStretch)
 	{
-		// I have texture
-		this->m_rectShape.setSize(this->m_size);
-		this->m_rectShape.setTextureRect(sf::IntRect(0, 0, (int)sizeCoeffed.x, (int)sizeCoeffed.y));
-	}
-	else
-	{
-		// No texture
-		this->m_rectShape.setSize(sizeCoeffed);
-		this->m_rectShape.setTextureRect(sf::IntRect(0, 0, (int)this->m_size.x, (int)this->m_size.y));
+		sf::Vector2u texSize = _texture->getSize();
+		this->m_rectShape.setTextureRect(sf::IntRect(0, 0, (int)((float)texSize.x * coefficients.x), (int)((float)texSize.y * coefficients.y)));
 	}
 }
 
@@ -169,4 +169,4 @@ void HealthBar::draw(sf::RenderTarget& _target, sf::RenderStates _states) const
 	this->DrawFiller(_target, _states);
 }
 
-// HealthBar C++ || v1.1
+// HealthBar C++ || v1.2

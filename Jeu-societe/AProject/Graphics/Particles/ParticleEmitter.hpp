@@ -7,7 +7,7 @@
 #include <vector>
 
 
-class ParticleEmitterBase
+class ParticleEmitterBase : public sf::Drawable
 {
 	private:
 		std::vector<ParticleBase> m_particles;
@@ -19,6 +19,8 @@ class ParticleEmitterBase
 		virtual ~ParticleEmitterBase(void);
 
 		
+		virtual void Update(float _deltaTime) = 0;
+
 };
 
 
