@@ -122,7 +122,7 @@ void MainDataLoad(MainData& _mainData)
 	// Sélectionner le LoadingScreen metre false pour tout scene au debut 
 
 	//YANNOU !!! VERIFIE SI LA SCENE CHARGE EST DEJA CHARGE
-	_mainData.scenes.SelectScene("Lo", false);
+	_mainData.scenes.SelectScene("Menu", false);
 
 
 
