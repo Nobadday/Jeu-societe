@@ -49,7 +49,7 @@ void RockPaperScissors::Load()
 		m_data->playersChoice[i] = RPS_NONE;
 	}
 
-	m_data->state = STATE_PLAY;
+	m_data->state = STATE_WARMUP;
 	m_data->roundNB = 0;
 
 	for (short i = 0; i < 2; i++)
@@ -69,6 +69,7 @@ void RockPaperScissors::Load()
 	m_data->playerChoiceSprite[1].setPosition({ SCREEN_WIDTH + 170, SCREEN_HEIGHT * 0.45f });
 
 	ChangePlayersChoiceTexture();
+	m_data->transition.PlayTransition();
 }                               
 
 void RockPaperScissors::Unload()
@@ -129,16 +130,23 @@ void RockPaperScissors::PollEvent(sf::Event& _event)
 }
 
 void RockPaperScissors::Update(float _deltaTime)
-{   
-	m_data->timer.Update(_deltaTime);
-	char buffer[20];
-	std::snprintf(buffer, 20, "%02.2f", m_data->timer.GetRemainingTime());
-	m_data->timerText.setString(buffer);
-	
+{   	
+
 	switch (m_data->state)
 	{
+		case STATE_WARMUP:
+
+			m_data->transition.Update(_deltaTime);
+			
+			if (m_data->transition.IsFinished())
+			{
+				m_data->state = STATE_PLAY;
+			}
+			break;
+
 		case STATE_PLAY:
 
+			UpdateTimer(_deltaTime);
 			//Animation gestion for hands
 			for (short i = 0; i < 2; i++)
 			{
@@ -183,6 +191,8 @@ void RockPaperScissors::Update(float _deltaTime)
 					else
 					{
 						this->m_data->state = STATE_ENDGAME;
+						m_data->transition.SetTransition(TransitionClass::FADED_OUT);
+						m_data->transition.PlayTransition();
 					}
 				}
 				else if (this->m_data->playersChoice[0] > this->m_data->playersChoice[1]
@@ -192,6 +202,8 @@ void RockPaperScissors::Update(float _deltaTime)
 					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[0]);
 					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[1]);
 					this->m_data->state = STATE_ENDGAME;
+					m_data->transition.SetTransition(TransitionClass::FADED_OUT);
+					m_data->transition.PlayTransition();
 				}
 				else
 				{
@@ -199,6 +211,8 @@ void RockPaperScissors::Update(float _deltaTime)
 					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[1]);
 					this->m_data->gameData->AddPlayerWin(this->m_data->gameData->m_gonnaPlayIndex[0]);
 					this->m_data->state = STATE_ENDGAME;
+					m_data->transition.SetTransition(TransitionClass::FADED_OUT);
+					m_data->transition.PlayTransition();
 				}
 				ChangePlayersChoiceTexture();
 			}
@@ -206,6 +220,7 @@ void RockPaperScissors::Update(float _deltaTime)
 			break;
 		case STATE_PAUSE:
 
+			UpdateTimer(_deltaTime);
 			if (m_data->timer.IsFinished())
 			{
 				this->m_data->timer.SetTimeTarget(PLAY_TIME, true);
@@ -223,10 +238,18 @@ void RockPaperScissors::Update(float _deltaTime)
 
 			break;
 		case STATE_ENDGAME:
+
+			UpdateTimer(_deltaTime);
 			if (m_data->timer.IsFinished())
 			{
-				ChangeScene("Board");	
+				m_data->transition.Update(_deltaTime);
+
+				if (m_data->transition.IsFinished())
+				{
+					ChangeScene("Board");
+				}
 			}
+
 			break;
 
 	default:
@@ -243,6 +266,14 @@ void RockPaperScissors::Draw(sf::RenderWindow& _renderWindow)
 		_renderWindow.draw(this->m_data->playerChoiceSprite[i]);
 	}
 	_renderWindow.draw(m_data->timerText);
+
+	switch (m_data->state)
+	{
+		case STATE_WARMUP:
+		case STATE_ENDGAME:
+			m_data->transition.Draw(_renderWindow);
+			break;
+	}
 }
 
 void RockPaperScissors::ChangePlayersChoiceTexture()
@@ -260,4 +291,12 @@ void RockPaperScissors::ChangePlayersChoiceTexture()
 			m_data->playerChoiceSprite[i].SetTextureFrame(string + choiceString[m_data->playersChoice[i]]);
 		}
 	}
+}
+
+void RockPaperScissors::UpdateTimer(float _dt)
+{
+	m_data->timer.Update(_dt);
+	char buffer[20];
+	std::snprintf(buffer, 20, "%02.2f", m_data->timer.GetRemainingTime());
+	m_data->timerText.setString(buffer);
 }

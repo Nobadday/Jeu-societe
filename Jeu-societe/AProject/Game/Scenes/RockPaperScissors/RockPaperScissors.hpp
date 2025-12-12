@@ -8,6 +8,7 @@
 #include "../../Animation/Animation/Timer.hpp" 
 #include "../../Animation/Graphics.hpp"
 #include "../../Animation/Animation.hpp"
+#include "../../Ui/Transition/Transition.hpp"
 
 
 class RockPaperScissors : public SceneBase
@@ -52,6 +53,7 @@ class RockPaperScissors : public SceneBase
 		int roundNB = 0;
 
 		anim::Animator animator[2];
+		TransitionClass transition;
 	};
 
 	SceneData* m_data;
@@ -66,7 +68,7 @@ public:
 
 private:
 	void ChangePlayersChoiceTexture(void);
+	void UpdateTimer(float _dt);
 };
 
-// Coucou enzo est passer par là.
 #endif // !_INC_ROCKPAPERSCISSORS_HPP
