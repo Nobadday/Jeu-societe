@@ -1,0 +1,173 @@
+{ "frames": [
+   {
+    "filename": "PODIUM_2_1",
+    "frame": { "x": 0, "y": 0, "w": 204, "h": 514 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 204, "h": 514 },
+    "sourceSize": { "w": 204, "h": 514 },
+    "duration": 100
+   },
+   {
+    "filename": "PODIUM_2_2",
+    "frame": { "x": 204, "y": 0, "w": 204, "h": 514 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 204, "h": 514 },
+    "sourceSize": { "w": 204, "h": 514 },
+    "duration": 100
+   },
+   {
+    "filename": "PODIUM_2_3",
+    "frame": { "x": 408, "y": 0, "w": 204, "h": 514 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 204, "h": 514 },
+    "sourceSize": { "w": 204, "h": 514 },
+    "duration": 100
+   },
+   {
+    "filename": "PODIUM_2_4",
+    "frame": { "x": 612, "y": 0, "w": 204, "h": 514 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 204, "h": 514 },
+    "sourceSize": { "w": 204, "h": 514 },
+    "duration": 100
+   },
+   {
+    "filename": "PODIUM_3_1",
+    "frame": { "x": 0, "y": 514, "w": 204, "h": 514 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 204, "h": 514 },
+    "sourceSize": { "w": 204, "h": 514 },
+    "duration": 100
+   },
+   {
+    "filename": "PODIUM_3_2",
+    "frame": { "x": 204, "y": 514, "w": 204, "h": 514 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 204, "h": 514 },
+    "sourceSize": { "w": 204, "h": 514 },
+    "duration": 100
+   },
+   {
+    "filename": "PODIUM_3_3",
+    "frame": { "x": 408, "y": 514, "w": 204, "h": 514 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 204, "h": 514 },
+    "sourceSize": { "w": 204, "h": 514 },
+    "duration": 100
+   },
+   {
+    "filename": "PODIUM_3_4",
+    "frame": { "x": 612, "y": 0, "w": 204, "h": 514 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 204, "h": 514 },
+    "sourceSize": { "w": 204, "h": 514 },
+    "duration": 100
+   },
+   {
+    "filename": "PODIUM_4_1",
+    "frame": { "x": 612, "y": 514, "w": 204, "h": 514 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 204, "h": 514 },
+    "sourceSize": { "w": 204, "h": 514 },
+    "duration": 100
+   },
+   {
+    "filename": "PODIUM_4_2",
+    "frame": { "x": 0, "y": 1028, "w": 204, "h": 514 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 204, "h": 514 },
+    "sourceSize": { "w": 204, "h": 514 },
+    "duration": 100
+   },
+   {
+    "filename": "PODIUM_4_3",
+    "frame": { "x": 204, "y": 1028, "w": 204, "h": 514 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 204, "h": 514 },
+    "sourceSize": { "w": 204, "h": 514 },
+    "duration": 100
+   },
+   {
+    "filename": "PODIUM_4_4",
+    "frame": { "x": 612, "y": 0, "w": 204, "h": 514 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 204, "h": 514 },
+    "sourceSize": { "w": 204, "h": 514 },
+    "duration": 100
+   },
+   {
+    "filename": "PODIUM_1_1",
+    "frame": { "x": 408, "y": 1028, "w": 204, "h": 514 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 204, "h": 514 },
+    "sourceSize": { "w": 204, "h": 514 },
+    "duration": 100
+   },
+   {
+    "filename": "PODIUM_1_2",
+    "frame": { "x": 612, "y": 1028, "w": 204, "h": 514 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 204, "h": 514 },
+    "sourceSize": { "w": 204, "h": 514 },
+    "duration": 100
+   },
+   {
+    "filename": "PODIUM_1_3",
+    "frame": { "x": 0, "y": 1542, "w": 204, "h": 514 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 204, "h": 514 },
+    "sourceSize": { "w": 204, "h": 514 },
+    "duration": 100
+   },
+   {
+    "filename": "PODIUM_1_4",
+    "frame": { "x": 612, "y": 0, "w": 204, "h": 514 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 204, "h": 514 },
+    "sourceSize": { "w": 204, "h": 514 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.4-x64",
+  "image": "Podium.png",
+  "format": "RGBA8888",
+  "size": { "w": 816, "h": 2056 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "PODIUM_2_1", "from": 0, "to": 0, "direction": "forward", "color": "#000000ff" },
+   { "name": "PODIUM_2_2", "from": 1, "to": 1, "direction": "forward", "color": "#000000ff" },
+   { "name": "PODIUM_2_3", "from": 2, "to": 2, "direction": "forward", "color": "#000000ff" },
+   { "name": "PODIUM_2_4", "from": 3, "to": 3, "direction": "forward", "color": "#000000ff" },
+   { "name": "PODIUM_3_1", "from": 4, "to": 4, "direction": "forward", "color": "#000000ff" },
+   { "name": "PODIUM_3_2", "from": 5, "to": 5, "direction": "forward", "color": "#000000ff" },
+   { "name": "PODIUM_3_3", "from": 6, "to": 6, "direction": "forward", "color": "#000000ff" },
+   { "name": "PODIUM_3_4", "from": 7, "to": 7, "direction": "forward", "color": "#000000ff" },
+   { "name": "PODIUM_4_1", "from": 8, "to": 8, "direction": "forward", "color": "#000000ff" },
+   { "name": "PODIUM_4_2", "from": 9, "to": 9, "direction": "forward", "color": "#000000ff" },
+   { "name": "PODIUM_4_3", "from": 10, "to": 10, "direction": "forward", "color": "#000000ff" },
+   { "name": "PODIUM_4_4", "from": 11, "to": 11, "direction": "forward", "color": "#000000ff" },
+   { "name": "PODIUM_1_1", "from": 12, "to": 12, "direction": "forward", "color": "#000000ff" },
+   { "name": "PODIUM_1_2", "from": 13, "to": 13, "direction": "forward", "color": "#000000ff" },
+   { "name": "PODIUM_1_3", "from": 14, "to": 14, "direction": "forward", "color": "#000000ff" },
+   { "name": "PODIUM_1_4", "from": 15, "to": 15, "direction": "forward", "color": "#000000ff" }
+  ]
+ }
+}

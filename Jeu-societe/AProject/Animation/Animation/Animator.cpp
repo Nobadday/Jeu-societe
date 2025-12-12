@@ -120,8 +120,8 @@ void Animator::SetRotation(float _start, float _end)
 sf::Vector2f Animator::GetGoTo(const sf::Vector2f& _startPos, const sf::Vector2f& _endPos, float _coefficient, Easing::Type _easing)
 {
 	float frameCoef = Easing::GetCoefficient(_coefficient, _easing);
-	return sf::Vector2f(AniMath::Interpolate(_startPos.x, _endPos.x, _coefficient),
-						AniMath::Interpolate(_startPos.y, _endPos.y, _coefficient));
+	return sf::Vector2f(AniMath::Interpolate(_startPos.x, _endPos.x, frameCoef),
+						AniMath::Interpolate(_startPos.y, _endPos.y, frameCoef));
 }
 sf::Vector2f Animator::GetGoTo(Easing::Type _easing)
 {
