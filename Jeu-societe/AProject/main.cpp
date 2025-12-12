@@ -41,8 +41,9 @@ void Update(MainData& _mainData);
 void Draw(MainData& _mainData);
 
 
-int main(void)
+int main()
 {
+    // Supprime l'exception WinRT bénigne
 	random::SetSeedPID();
 	randmt::SetSeedPID();
 
@@ -106,8 +107,8 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 
 	// Ajouter les scènes
-	_mainData.scenes.AddScene<LoadingScreen>("Lo");
 	_mainData.scenes.AddScene<Menu>("Menu");
+	_mainData.scenes.AddScene<LoadingScreen>("Lo");
 	_mainData.scenes.AddScene<BaseGame>("Board");
 	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
 	_mainData.scenes.AddScene<ArmWrestling>("ArmWrestling");
@@ -121,7 +122,7 @@ void MainDataLoad(MainData& _mainData)
 	// Sélectionner le LoadingScreen metre false pour tout scene au debut 
 
 	//YANNOU !!! VERIFIE SI LA SCENE CHARGE EST DEJA CHARGE
-	_mainData.scenes.SelectScene("Lo", true);
+	_mainData.scenes.SelectScene("Lo", false);
 
 
 

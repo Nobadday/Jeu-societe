@@ -169,12 +169,12 @@ bool HighResVideoPlayer::loadFromFile(const std::string& filename)
 
 	m_isInitialized = true;
 
-	std::cout << "=== VIDEO CHARGEE ===" << std::endl;
+	/*std::cout << "=== VIDEO CHARGEE ===" << std::endl;
 	std::cout << "Resolution: " << m_originalWidth << "x" << m_originalHeight
 		<< " -> " << m_renderWidth << "x" << m_renderHeight << std::endl;
 	std::cout << "FPS: " << (1.0f / m_timePerFrame) << std::endl;
 	std::cout << "Duree: " << m_duration << " secondes" << std::endl;
-	std::cout << "=====================" << std::endl;
+	std::cout << "=====================" << std::endl;*/
 
 	return true;
 }
@@ -571,35 +571,63 @@ float HighResVideoPlayer::getVolume() const
 
 void HighResVideoPlayer::close()
 {
-	if (!m_isInitialized && !m_format)
-		return;
+    // Protection contre les doubles appels
+    if (!m_isInitialized && m_format == nullptr)
+        return;
 
-	m_audioStream.stop();
+    m_audioStream.stop();
 
-	if (m_videoFrame) av_frame_free(&m_videoFrame);
-	if (m_rgbaFrame) av_frame_free(&m_rgbaFrame);
-	if (m_audioFrame) av_frame_free(&m_audioFrame);
-	if (m_videoBuffer) delete[] m_videoBuffer;
-	if (m_swsContext) sws_freeContext(m_swsContext);
-	if (m_swrContext) swr_free(&m_swrContext);
-	if (m_videoContext) avcodec_free_context(&m_videoContext);
-	if (m_audioContext) avcodec_free_context(&m_audioContext);
-	if (m_format) avformat_close_input(&m_format);
+    // Libération sécurisée avec vérification
+    if (m_videoFrame) 
+    {
+        av_frame_free(&m_videoFrame);
+        m_videoFrame = nullptr;
+    }
+    if (m_rgbaFrame) 
+    {
+        av_frame_free(&m_rgbaFrame);
+        m_rgbaFrame = nullptr;
+    }
+    if (m_audioFrame) 
+    {
+        av_frame_free(&m_audioFrame);
+        m_audioFrame = nullptr;
+    }
+    if (m_videoBuffer) 
+    {
+        delete[] m_videoBuffer;
+        m_videoBuffer = nullptr;
+    }
+    if (m_swsContext) 
+    {
+        sws_freeContext(m_swsContext);
+        m_swsContext = nullptr;
+    }
+    if (m_swrContext) 
+    {
+        swr_free(&m_swrContext);
+        m_swrContext = nullptr;
+    }
+    if (m_videoContext) 
+    {
+        avcodec_free_context(&m_videoContext);
+        m_videoContext = nullptr;
+    }
+    if (m_audioContext) 
+    {
+        avcodec_free_context(&m_audioContext);
+        m_audioContext = nullptr;
+    }
+    if (m_format) 
+    {
+        avformat_close_input(&m_format);
+        m_format = nullptr;
+    }
 
-	m_videoFrame = nullptr;
-	m_rgbaFrame = nullptr;
-	m_audioFrame = nullptr;
-	m_videoBuffer = nullptr;
-	m_swsContext = nullptr;
-	m_swrContext = nullptr;
-	m_videoContext = nullptr;
-	m_audioContext = nullptr;
-	m_format = nullptr;
-
-	m_isInitialized = false;
-	m_frameReady = false;
-	m_audioStarted = false;
-	m_videoEnded = false;
+    m_isInitialized = false;
+    m_frameReady = false;
+    m_audioStarted = false;
+    m_videoEnded = false;
 }
 
 void HighResVideoPlayer::setPaused(bool paused)

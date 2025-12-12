@@ -1,4 +1,4 @@
- #include "Board.hpp"
+#include "Board.hpp"
 
 constexpr unsigned int hash(const char* str, int h);
 
@@ -58,31 +58,56 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	m_data->dicePosition = sf::Vector2f(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f);
 
 	// NOUVEAU : Pré-charger toutes les vidéos des dés
-	m_data->diceVideos.resize(8);
+	m_data->diceVideos.clear(); // S'assurer que le vecteur est vide
+	m_data->diceVideos.resize(8, nullptr); // Initialiser avec des nullptr
+	
 	// Configuration simple sans taille personnalisée
 	HighResConfig config;
-	config.sizeMode = VideoSizeMode::Original; // Garder la résolution originale
+	config.sizeMode = VideoSizeMode::Original;
 	config.enableLoop = false;
 
 	for (int i = 0; i < 6; i++)
 	{
-		m_data->diceVideos[i] = new HighResVideoPlayer(config);
-		std::string videoPath = "Assets/Video/De" + std::to_string(i + 1) + ".mov";
-		if (!m_data->diceVideos[i]->loadFromFile(videoPath))
+		try
 		{
-			std::cout << "Erreur : Impossible de charger la video du de: " << videoPath << std::endl;
+			m_data->diceVideos[i] = new HighResVideoPlayer(config);
+			std::string videoPath = "Assets/Video/De" + std::to_string(i + 1) + ".mov";
+			if (!m_data->diceVideos[i]->loadFromFile(videoPath))
+			{
+				std::cout << "Erreur : Impossible de charger la video du de: " << videoPath << std::endl;
+				delete m_data->diceVideos[i];
+				m_data->diceVideos[i] = nullptr;
+			}
+		}
+		catch (const std::exception& e)
+		{
+			std::cout << "Exception lors du chargement vidéo : " << e.what() << std::endl;
+			if (m_data->diceVideos[i] != nullptr)
+			{
+				delete m_data->diceVideos[i];
+				m_data->diceVideos[i] = nullptr;
+			}
 		}
 	}
 
-	m_data->diceVideos[TRANSITION_1] = new HighResVideoPlayer(config);
-	m_data->diceVideos[TRANSITION_2] = new HighResVideoPlayer(config);
-	m_data->diceVideos[TRANSITION_1]->loadFromFile("Assets/Video/TRANSITION_1.mp4"); // Vidéo finale optionnelle
-	m_data->diceVideos[TRANSITION_2]->loadFromFile("Assets/Video/TRANSITION_2.mp4"); // Vidéo finale optionnelle
-
+	try
+	{
+		m_data->diceVideos[TRANSITION_1] = new HighResVideoPlayer(config);
+		m_data->diceVideos[TRANSITION_2] = new HighResVideoPlayer(config);
+		m_data->diceVideos[TRANSITION_1]->loadFromFile("Assets/Video/TRANSITION_1_LOUIS_VERSION.mp4");
+		m_data->diceVideos[TRANSITION_2]->loadFromFile("Assets/Video/TRANSITION_2_LOUIS_VERSION.mp4");
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << "Exception lors du chargement des transitions : " << e.what() << std::endl;
+	}
 
 	m_data->currentDiceVideo = m_data->diceVideos[TRANSITION_1];
-	m_data->currentDiceVideo->play();
-	m_data->currentDiceVideo->update(1);
+	if (m_data->currentDiceVideo != nullptr)
+	{
+		m_data->currentDiceVideo->play();
+		m_data->currentDiceVideo->update(1);
+	}
 
 	progress.store(0.7f);
 
@@ -144,12 +169,12 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 		m_data->players[i].sprite.setTexture(m_data->players[i].texture);
 		m_data->players[i].sprite.setOrigin({ 0.5f,1.f });
 		m_data->players[i].v.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
-		m_data->players[i].v.setString(L"↓");
+		m_data->players[i].v.setString(sf::String(L"\u2193"));
 		m_data->players[i].boardPosition = m_data->posCase[0].GetPosition() + sf::Vector2f{ -40.f * i + 50 ,0.f };
 		m_data->players[i].posIcone = PosIcone(i);
 
 		sf::FloatRect textBounds = m_data->players[i].v.getLocalBounds();
-		m_data->players[i].v.setOrigin({ textBounds.width / 2.f, textBounds.height / 2.f });
+		m_data->players[i].v.setOrigin({0.5f,0.5f});
 		m_data->players[i].v.setPosition(m_data->players[i].boardPosition + sf::Vector2f{ 0.f,-100.f });
 		m_data->players[i].v.setOutlineColor(sf::Color::Black);
 		m_data->players[i].v.setOutlineThickness(2.0f);
@@ -197,7 +222,7 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 		auto& mapObject = m_data->posCase[i];
 		if (mapObject.GetName() == "19")
 		{
-			posMin = mapObject.GetPosition() + sf::Vector2f(100.f, 0);
+			posMin = (mapObject.GetPosition() + sf::Vector2f(2000, 0));
 		}
 		if (i == m_data->posCase.size() - 1)
 		{
@@ -250,10 +275,43 @@ void BaseGame::Load(void)
 
 void BaseGame::Unload(void)
 {
-	m_gameData->m_assetManager->DeleteContainer("Board");
-	this->m_gameData = NULL;
-	delete this->m_data;
-	this->m_data = NULL;
+    if (m_data != nullptr)
+    {
+        // 1. Arrêter l'audio stream AVANT de libérer les vidéos
+        if (m_data->currentDiceVideo != nullptr)
+        {
+            m_data->currentDiceVideo->setPaused(true);
+        }
+
+        // 2. Nullifier currentDiceVideo pour éviter un double appel à close()
+        m_data->currentDiceVideo = nullptr;
+
+        // 3. Libérer TOUTES les vidéos du vecteur
+        for (auto* video : m_data->diceVideos)
+        {
+            if (video != nullptr)
+            {
+                video->close();  // Ferme proprement les ressources FFmpeg
+                delete video;    // Libère l'objet C++
+            }
+        }
+        m_data->diceVideos.clear();
+
+        // 4. Libérer les effets qui contiennent des sprites/textures
+        m_data->effectSwap.clear();
+        m_data->effectsMap.clear();
+    }
+
+    // 5. Supprimer le conteneur d'assets AVANT m_data
+    if (m_gameData != nullptr && m_gameData->m_assetManager != nullptr)
+    {
+        m_gameData->m_assetManager->DeleteContainer("Board");
+    }
+
+    // 6. Libérer m_data en dernier (destructeur de SceneData sera appelé)
+    delete this->m_data;
+    this->m_data = nullptr;
+    this->m_gameData = nullptr;
 }
 
 // NOUVEAU : Méthode helper pour vérifier les entrées joueur
@@ -693,12 +751,12 @@ void BaseGame::CaseAction()
 {
 	const std::string& caseType = m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType();
 
-	int sameCase = OnSameCase();
+	/*int sameCase = OnSameCase();
 	if (sameCase != -1)
 	{
 		SetBoardState(DUEL, 0);
 		return;
-	}
+	}*/
 
 	if (caseType == "Bonus" and m_data->players[m_data->currentPlayerIndex].state == StatePlayer::INFEC)
 	{
@@ -784,10 +842,10 @@ void BaseGame::CaseAction()
 
 	}
 	break;
-	case hash("Battle"):
-		std::cout << "Landed on a Battle case!" << std::endl;
-		SetBoardState(BATTLE_ACTION);
-		break;
+	//case hash("Battle"):
+	//	std::cout << "Landed on a Battle case!" << std::endl;
+	//	SetBoardState(BATTLE_ACTION);
+	//	break;
 
 	default:
 	{
@@ -1073,9 +1131,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 				m_data->diceAnimationPlaying = false;
 				auto& player = m_data->players[m_data->currentPlayerIndex];
 
-				// Initialiser le mouvement restant avec le résultat du dé
 				player.pendingMovement = m_data->diceResult;
-
 				m_data->timeDice = TIME_DIS_DISPLAY;
 
 				if (player.state != NONE)
@@ -1098,6 +1154,167 @@ void BaseGame::BoardStateUpdate(float _dt)
 					player.state = StatePlayer::NONE;
 					SetBoardState(DEPLACEMENT_BACK, 0);
 				}
+			}
+		}
+	}
+	break;
+
+	// NOUVEAU : Animation du dé sur le pont avec logique du PathManagement
+	case DICE_ANIMATION_BRIDGE:
+	{
+		m_data->currentDiceVideo->update(_dt);
+		if (m_data->currentDiceVideo->isFinish())
+		{
+			m_data->timeDice -= _dt;
+			if (m_data->timeDice <= 0)
+			{
+				m_data->diceAnimationPlaying = false;
+				auto& player = m_data->players[m_data->currentPlayerIndex];
+
+				 // UTILISE LA MÊME LOGIQUE QUE PathManagement.cpp
+				// Le joueur peut continuer si le dé est > 3 (comme dans ProcessBridgeRoll original)
+				if (m_data->diceResult > 3)
+				{
+					std::cout << "Traversée réussie !" << std::endl;
+					
+					// Active le smokeOff comme dans la version originale
+					m_data->smokeOff = true;
+
+					// Change le skin du personnage (transformation)
+					switch (m_gameData->m_playerDataList[m_data->currentPlayerIndex].GetPlayerSkin())
+					{
+					case PlayerData::CHARACTER_1_1:
+						[[fallthrough]];
+					case PlayerData::CHARACTER_1_2:
+						m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_1_2);
+						m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+						break;
+					case PlayerData::CHARACTER_2_1:
+						[[fallthrough]];
+					case PlayerData::CHARACTER_2_2:
+						m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_2_2);
+						m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso2-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+						break;
+					case PlayerData::CHARACTER_3_1:
+						[[fallthrough]];
+					case PlayerData::CHARACTER_3_2:
+						m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_3_2);
+						m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso3-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+						break;
+					case PlayerData::CHARACTER_4_1:
+						[[fallthrough]];
+					case PlayerData::CHARACTER_4_2:
+						m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_4_2);
+						m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso4-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+						break;
+					default:
+						m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_1_2);
+						m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-1", AssetManager::AssetType::TEXTURE_ANIMATED);
+						break;
+					}
+
+					// Applique la nouvelle texture au sprite
+					m_data->players[m_data->currentPlayerIndex].sprite.setTexture(m_data->players[m_data->currentPlayerIndex].texture);
+
+					// Continue le déplacement si le joueur a encore du mouvement
+					if (player.pendingMovement > 0)
+					{
+						SetBoardState(DEPLACEMENT_BRIGE);
+					}
+					else
+					{
+						SetBoardState(CASE_ACTION);
+					}
+				}
+				else
+				{
+					std::cout << "Échec ! Vous ne pouvez pas traverser le pont." << std::endl;
+					if (!player.firstTime)
+					{
+						player.pendingMovement = 0;
+						player.firstTime = true;
+						SetBoardState(CASE_ACTION);
+					}
+					else
+					{
+						player.pendingMovement = 0;
+						SetBoardState(CASE_ACTION_END);
+					}
+				}
+
+				m_data->timeDice = TIME_DIS_DISPLAY;
+			}
+		}
+	}
+	break;
+
+	// NOUVEAU : Animation du dé sur la ligne d'arrivée avec logique du PathManagement
+	case DICE_ANIMATION_END:
+	{
+		m_data->currentDiceVideo->update(_dt);
+		if (m_data->currentDiceVideo->isFinish())
+		{
+			m_data->timeDice -= _dt;
+			if (m_data->timeDice <= 0)
+			{
+				m_data->diceAnimationPlaying = false;
+				auto& player = m_data->players[m_data->currentPlayerIndex];
+
+				 // UTILISE LA MÊME LOGIQUE QUE PathManagement.cpp
+				// Le joueur gagne si le dé est > 4 (comme dans ProcessFinRoll original)
+				if (m_data->diceResult > 4)
+				{
+					std::cout << "VICTOIRE ! Le joueur " << m_data->currentPlayerIndex << " a gagné !" << std::endl;
+					
+					// Ajoute le joueur à la liste des gagnants
+					m_gameData->m_gonnaPlayIndex.push_back(m_data->currentPlayerIndex);
+
+					// Prépare la liste des joueurs triés par position X décroissante
+					std::vector<std::pair<int, float>> playerPositions;
+					for (int i = 0; i < m_data->players.size(); i++)
+					{
+						playerPositions.push_back({ i, m_data->players[i].boardPosition.x });
+					}
+
+					// Trier par position X décroissante (les plus avancés en premier)
+					std::sort(playerPositions.begin(), playerPositions.end(),
+						[](const std::pair<int, float>& a, const std::pair<int, float>& b) {
+							return a.second > b.second;
+						});
+
+					// Remplir m_winIndex avec le gagnant en premier, puis les autres
+					m_gameData->m_winIndex.clear();
+					m_gameData->m_winIndex.push_back(m_data->currentPlayerIndex);
+
+					for (const auto& playerPos : playerPositions)
+					{
+						if (playerPos.first != m_data->currentPlayerIndex)
+						{
+							m_gameData->m_winIndex.push_back(playerPos.first);
+						}
+					}
+
+					// Vérifier s'il reste des joueurs
+					// Tous les joueurs sauf un ont fini
+						SetBoardState(END);
+				}
+				else
+				{
+					std::cout << "Échec ! Vous ne pouvez pas franchir la ligne d'arrivée." << std::endl;
+					if (!player.firstTime)
+					{
+						player.pendingMovement = 0;
+						player.firstTime = true;
+						SetBoardState(CASE_ACTION);
+					}
+					else
+					{
+						player.pendingMovement = 0;
+						SetBoardState(CASE_ACTION_END);
+					}
+				}
+
+				m_data->timeDice = TIME_DIS_DISPLAY;
 			}
 		}
 	}

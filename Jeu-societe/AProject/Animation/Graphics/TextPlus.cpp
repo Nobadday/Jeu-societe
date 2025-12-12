@@ -105,7 +105,7 @@ void TextPlus::SetAlignement(Alignement _alignement)
 	this->m_shouldUpdate = true;
 }
 
-void TextPlus::setString(const std::string& _string, bool _resetRange)
+void TextPlus::setString(const sf::String& _string, bool _resetRange)
 {
 	this->m_string = _string;
 	if (_resetRange)
@@ -156,9 +156,9 @@ void TextPlus::UpdateGeometry(void) const
 
 
 		// New string
-		std::string newString = this->m_string.substring(this->m_stringDisplay[0], this->m_stringDisplay[1]);
+		sf::String newString = this->m_string.substring(this->m_stringDisplay[0], this->m_stringDisplay[1]);
 
-		if (newString.empty())
+		if (newString.isEmpty())
 		{
 			// String is empty, no need to do all of this stuff
 			this->m_thisText->setString("");
@@ -171,7 +171,7 @@ void TextPlus::UpdateGeometry(void) const
 		{
 			int lastSpace = -1;
 			int lineLen = 0;
-			for (int i = 0; i < newString.size(); i++)
+			for (int i = 0; i < newString.getSize(); i++)
 			{
 				switch (newString[i])
 				{
@@ -191,12 +191,12 @@ void TextPlus::UpdateGeometry(void) const
 				{
 					if (lastSpace == -1)
 					{
-						newString.insert(i, 1, '\n');
+						newString.insert(i, "\n");
 						lineLen = 0;
 					}
 					else
 					{
-						newString.replace(lastSpace, 1, 1, '\n');
+						newString.replace(lastSpace, 1u, "\n");
 						lineLen = i - lastSpace;
 						lastSpace = -1;
 					}
@@ -215,9 +215,9 @@ void TextPlus::UpdateGeometry(void) const
 				// Must iterate through string to get the max char/line
 				lineLenMax = 0;
 				int tempCharCounter = 0;
-				for (int i = 0; i < newString.size(); i++)
+				for (int i = 0; i < newString.getSize(); i++)
 				{
-					if ((newString[i] == '\n') || (i + 1 >= newString.size()))
+					if ((newString[i] == '\n') || (i + 1 >= newString.getSize()))
 					{
 						if (tempCharCounter > lineLenMax)
 						{
@@ -240,9 +240,9 @@ void TextPlus::UpdateGeometry(void) const
 			int paraLineLen = 0;
 
 			int tempCharCounter = 0;
-			for (int i = 0; i < newString.size(); i++)
+			for (int i = 0; i < newString.getSize(); i++)
 			{
-				if ((newString[i] == '\n') || (i + 1 >= newString.size()))
+				if ((newString[i] == '\n') || (i + 1 >= newString.getSize()))
 				{
 					int missingSpace = (lineLenMax - tempCharCounter);
 
@@ -265,7 +265,7 @@ void TextPlus::UpdateGeometry(void) const
 						}
 						if (shift > 0)
 						{
-							newString.insert(i - tempCharCounter, shift, ' ');
+							newString.insert(i - tempCharCounter, std::string(shift, ' '));
 							i += shift;
 						}
 					}
@@ -304,4 +304,4 @@ void TextPlus::draw(sf::RenderTarget& target, sf::RenderStates states) const
 }
 
 
-// TextPlus C++ || v1.0
+// TextPlus C++ || v1.1

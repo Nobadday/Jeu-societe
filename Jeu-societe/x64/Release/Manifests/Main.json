@@ -1,0 +1,63 @@
+{
+    "assets": 
+    [
+        {
+            "name" : "PLACEHOLDER:Font",
+            "type" : "Font",
+            "path" : "Assets/Fonts/Font.ttf"
+        },
+        {
+            "name" : "PLACEHOLDER:Texture",
+            "type" : "Texture",
+            "path" : "Assets/Images/PlaceHolder.png"
+        },
+        {
+            "name" : "PLACEHOLDER:Image",
+            "type" : "Image",
+            "path" : "Assets/Shared/Images/PlaceHolder.png"
+        },
+        {
+            "name" : "PLACEHOLDER:Sound Buffer",
+            "type" : "Sound Buffer",
+            "path" : "Assets/Audio/Sounds/PlaceHolder.mp3"
+        },
+        {
+            "name" : "PLACEHOLDER:Music",
+            "type" : "Music",
+            "path" : "Assets/Audio/Musics/PlaceHolder.mp3"
+        },
+        {
+            "name" : "PLACEHOLDER:Texture Animated",
+            "type" : "Texture Animated",
+            "path" : "Assets/Shared/PlaceHolder.anim", 
+            "subType" : 1
+        },{
+            "name" : "Input",
+            "type" : "Texture Atlas",
+            "path" : "Assets/Shared/Images/Input.json", 
+            "subType" : 3
+        },
+        {
+            "name": "MinigameBackground",
+            "type": "Texture",
+            "path": "Assets/Shared/MinigameBackground.png"
+        },
+		{
+            "name" : "IconeAura",
+            "type" : "Texture Animated",
+            "path" : "Assets/Shared/Icone/Icone-PersoAura.anim",
+			"subType" : 1
+        },
+        {
+            "name" : "BadFont",
+            "type" : "Font",
+            "path" : "Assets/Fonts/BootlegTimBurton-Regular.ttf"
+        },
+		{
+            "name" : "Icone",
+            "type" : "Texture Animated",
+            "path" : "Assets/Shared/Icone/Icone-Perso.anim",
+			"subType" : 1
+        }
+    ]
+}
