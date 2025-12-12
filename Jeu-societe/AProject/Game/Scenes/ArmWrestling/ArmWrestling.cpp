@@ -18,18 +18,20 @@ void ArmWrestling::Load(void)
 	m_playerArms.setScale(1.2f, 1.2f);
 
 
-	m_bar.SetColorFiller(sf::Color(5, 215, 223));
-	m_bar.SetColorBG(sf::Color(94, 6, 113));
 	m_bar.SetSize(sf::Vector2f(SCREEN_WIDTH / 7, SCREEN_HEIGHT / 18));
 	m_bar.setOrigin(m_bar.GetLocalBounds().getSize().x / 2, m_bar.GetLocalBounds().getSize().y / 2);
 	m_bar.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.1f);
 
+
 	m_bar.SetBarCompletion(m_currentValue, MAX, 0);
 	m_bar.SetAvoidOverflow(true);
+	
+	
+	m_bar.SetTextureBG(m_gameData->m_assetManager->GetAsset<sf::Texture>("BackgroundBar", AssetManager::AssetType::TEXTURE), false);
+	//m_bar.SetTexture(m_gameData->m_assetManager->GetAsset<sf::Texture>("ForegroundBar", AssetManager::AssetType::TEXTURE), true);
 
 
 	m_currentValue = MAX / 2;
-
 
 	m_timerText.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("ArmWrestlingFont", AssetManager::AssetType::FONT));
 	m_timerText.SetOutline(2, sf::Color::Black);
@@ -38,8 +40,6 @@ void ArmWrestling::Load(void)
 	m_timerText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.05f);
 
 	m_timerText.setOrigin(sf::Vector2f(0.5f, 0.5f));
-
-
 
 	m_timer.SetTimeTarget(PLAY_TIME, true);
 
@@ -68,6 +68,8 @@ void ArmWrestling::PollEvent(sf::Event& _event)
 				if (!m_timer.IsFinished() && m_state == GAME)
 				{
 					int playerID = this->m_gameData->GetPlayerIDFromJoystick(_event.joystickButton.joystickId);
+
+					std::cout << playerID << std::endl;
 					if (this->m_gameData->IsPlayerParticipating(playerID))
 					{
 						switch (_event.joystickButton.button)
@@ -104,6 +106,9 @@ void ArmWrestling::Update(float _deltaTime)
 			char buffer[50];
 			std::snprintf(buffer, 50, "%02.2f", m_timer.GetRemainingTime());
 			m_timerText.setString(buffer);
+
+
+			m_bar.SetBarCompletion(m_currentValue, MAX);	
 			break;
 
 		case ArmWrestling::END:
@@ -115,7 +120,6 @@ void ArmWrestling::Update(float _deltaTime)
 
 
 
-	m_bar.SetBarCompletion(m_currentValue, MAX);
 
 	if (m_timer.IsFinished())
 	{

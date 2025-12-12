@@ -53,13 +53,13 @@ int main()
 
 
 
-	//mainData.gameData.m_playerDataList.resize(2);
-	//for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
-	//{
-	//	mainData.gameData.m_playerDataList[i].SetJoystickID(i);
-	//	mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 4));
-	//	mainData.gameData.AddPlayerPlaying(i);
-	//}
+	mainData.gameData.m_playerDataList.resize(2);
+	for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
+	{
+		mainData.gameData.m_playerDataList[i].SetJoystickID(i);
+		mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 4));
+		mainData.gameData.AddPlayerPlaying(i);
+	}
 
 	MainDataLoad(mainData);
 
@@ -122,7 +122,7 @@ void MainDataLoad(MainData& _mainData)
 	// Sélectionner le LoadingScreen metre false pour tout scene au debut 
 
 	//YANNOU !!! VERIFIE SI LA SCENE CHARGE EST DEJA CHARGE
-	_mainData.scenes.SelectScene("Menu", false);
+	_mainData.scenes.SelectScene("ArmWrestling", false);
 
 
 
