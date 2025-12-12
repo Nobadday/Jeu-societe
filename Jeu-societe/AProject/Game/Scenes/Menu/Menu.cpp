@@ -29,7 +29,7 @@ void Menu::LoadUI(void)
 	m_data->ui.buttonMap["moinsBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("moinsBtn"));
 	m_data->ui.buttonMap["plusBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("plusBtn"));
 	//Background
-	m_data->ui.background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("background"));
+	m_data->ui.background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground"));
 	//Game logo
 	m_data->ui.logoGame.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoGame"));
 	sf::Vector2u logoGameSize = m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoGame")->getSize();
@@ -627,7 +627,7 @@ void Menu::PrintIcons(sf::RenderWindow& _renderWindow)
 		if (m_data->charaSelected[i] == true)
 		{
 			// Si le joueur a validé son choix, afficher en noir
-			m_data->ui.iconsChara.setColor(sf::Color(200, 200, 200, 255));
+			m_data->ui.iconsChara.setColor(sf::Color(50, 50, 50, 255));
 		}
 		else
 		{

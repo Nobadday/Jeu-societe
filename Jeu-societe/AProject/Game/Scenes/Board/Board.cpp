@@ -29,7 +29,7 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	// Chargement de la carte
 	//m_gameData->m_tile.InitTiled("Assets/Map/map.json");
 	m_gameData->m_renderWindow->ResetView();
-	m_data->camera.Reset(m_gameData->m_renderWindow->getView());
+	m_data->camera.Reset(m_gameData->m_renderWindow->getDefaultView());
 	progress.store(0.5f);
 
 	MapLayer layer = m_gameData->m_tile->GetMapLayer("point");
@@ -377,7 +377,7 @@ void BaseGame::ProcessDiceRoll(int rando)
 			// Lancer la vidéo du dé
 			m_data->currentDiceVideo = m_data->diceVideos[rando - 1];
 			m_data->currentDiceVideo->play();
-			m_data->currentDiceVideo->update(1);
+			//m_data->currentDiceVideo->update(1);
 			m_data->diceAnimationPlaying = true;
 			
 			// Le numéro sera affiché après l'animation
@@ -751,12 +751,12 @@ void BaseGame::CaseAction()
 {
 	const std::string& caseType = m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType();
 
-	/*int sameCase = OnSameCase();
+	int sameCase = OnSameCase();
 	if (sameCase != -1)
 	{
 		SetBoardState(DUEL, 0);
 		return;
-	}*/
+	}
 
 	if (caseType == "Bonus" and m_data->players[m_data->currentPlayerIndex].state == StatePlayer::INFEC)
 	{
@@ -842,10 +842,10 @@ void BaseGame::CaseAction()
 
 	}
 	break;
-	//case hash("Battle"):
-	//	std::cout << "Landed on a Battle case!" << std::endl;
-	//	SetBoardState(BATTLE_ACTION);
-	//	break;
+	case hash("Battle"):
+		std::cout << "Landed on a Battle case!" << std::endl;
+		SetBoardState(BATTLE_ACTION);
+		break;
 
 	default:
 	{
