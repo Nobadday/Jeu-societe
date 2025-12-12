@@ -29,7 +29,10 @@ bool Animator::AnimateObject(sf::Transformable& _object)
 		{
 			_object.setPosition(this->GetGoTo());
 		}
-
+		if (this->m_usedAnims[SCALE])
+		{
+			_object.setScale(this->GetScale());
+		}
 		
 		return true;
 	}
@@ -43,6 +46,10 @@ bool Animator::AnimateObject(sf::Sprite& _object)
 		{
 			_object.setPosition(this->GetGoTo());
 		}
+		if (this->m_usedAnims[SCALE])
+		{
+			_object.setScale(this->GetScale());
+		}
 		if (this->m_usedAnims[COLOR_TRANSITION])
 		{
 			_object.setColor(this->GetColor());
@@ -51,7 +58,6 @@ bool Animator::AnimateObject(sf::Sprite& _object)
 		{
 			_object.setRotation(this->GetRotation());
 		}
-
 		return true;
 	}
 	return false;
@@ -72,6 +78,7 @@ void Animator::SetAnimationEasing(Animations _animation, Easing::Type _easing)
 	m_animEasings[_animation] = _easing;
 	this->SetShouldUpdate();
 }
+
 
 void Animator::SetGoTo(const sf::Vector2f& _startPos, const sf::Vector2f& _endPos)
 {
@@ -108,12 +115,49 @@ void Animator::SetColorTransition(const sf::Color& _newColor)
 }
 
 
+void Animator::SetScale(const sf::Vector2f& _startScale, const sf::Vector2f _endScale)
+{
+	this->m_data.scale[0] = _startScale;
+	this->m_data.scale[1] = _endScale;
+	this->m_usedAnims[SCALE] = true;
+	this->SetShouldUpdate();
+}
+void Animator::SetScale(const sf::Vector2f& _startOrEnd, bool _start)
+{
+	this->m_data.scale[_start] = _startOrEnd;
+	this->m_usedAnims[SCALE] = true;
+	this->SetShouldUpdate();
+}
+void Animator::SetScale(const sf::Vector2f& _newScale)
+{
+	this->SetScale(this->m_data.scale[1], _newScale);
+}
+void Animator::SetScale(const sf::Transformable& _object, const sf::Vector2f& _newScale)
+{
+	this->SetScale(_object.getScale(), _newScale);
+}
+
+
 void Animator::SetRotation(float _start, float _end)
 {
 	this->m_data.rotation[0] = _start;
 	this->m_data.rotation[1] = _end;
 	this->m_usedAnims[ROTATION] = true;
 	this->SetShouldUpdate();
+}
+void Animator::SetRotation(float _startOrEnd, bool _start)
+{
+	this->m_data.rotation[_start] = _startOrEnd;
+	this->m_usedAnims[ROTATION] = true;
+	this->SetShouldUpdate();
+}
+void Animator::SetRotation(float _newRotation)
+{
+	this->SetRotation(this->m_data.rotation[1], _newRotation);
+}
+void Animator::SetRotation(const sf::Transformable& _object, float _newRotation)
+{
+	this->SetRotation(_object.getRotation(), _newRotation);
 }
 
 
@@ -152,6 +196,22 @@ sf::Color Animator::GetColor(void)
 }
 
 
+sf::Vector2f Animator::GetScale(const sf::Vector2f& _startScale, const sf::Vector2f& _endScale, float _coefficient, Easing::Type _easing)
+{
+	float frameCoef = Easing::GetCoefficient(_coefficient, _easing);
+	return sf::Vector2f(AniMath::Interpolate(_startScale.x, _endScale.x, frameCoef),
+						AniMath::Interpolate(_startScale.y, _endScale.y, frameCoef));
+}
+sf::Vector2f Animator::GetScale(Easing::Type _easing)
+{
+	return GetScale(this->m_data.scale[0], this->m_data.scale[1], this->GetFrameCoefficient(), _easing);
+}
+sf::Vector2f Animator::GetScale(void)
+{
+	return this->GetScale(this->m_animEasings[SCALE]);
+}
+
+
 float Animator::GetRotation(float _start, float _end, float _coefficient, Easing::Type _easing)
 {
 	return AniMath::Interpolate(_start, _end, Easing::GetCoefficient(_coefficient, _easing));
@@ -169,4 +229,4 @@ float Animator::GetRotation(void)
 
 }
 
-// Animator v1.2.3
+// Animator SFML 2.6.2 || v1.3

@@ -2,12 +2,14 @@
 #ifndef _INC_ANIMATION_ANIMATOR_HPP
 #define _INC_ANIMATION_ANIMATOR_HPP
 
+
 #include "../Common.hpp"
 #include "AnimationHandler.hpp"
 #include "AnimationEasing.hpp"
 #include "../Utilities/Math.hpp"
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
+
 
 
 namespace ANIMATION_NAMESPACE
@@ -20,7 +22,7 @@ class Animator : public Animation
 			// [0] Start position, [1] End position
 			sf::Vector2f goTo[2];
 			sf::Color colorTransition[2];
-			//sf::Vector2f scale[2];
+			sf::Vector2f scale[2];
 			// Rotation in degrees
 			float rotation[2] = { 0 };
 		};
@@ -30,7 +32,7 @@ class Animator : public Animation
 		{
 			GOTO,
 			COLOR_TRANSITION,
-			//SCALE,
+			SCALE,
 
 			ROTATION,
 
@@ -69,7 +71,17 @@ class Animator : public Animation
 		void SetColorTransition(const sf::Color& _newColor);
 
 
+		void SetScale(const sf::Vector2f& _startScale, const sf::Vector2f _endScale);
+		void SetScale(const sf::Vector2f& _startOrEnd, bool _start);
+		void SetScale(const sf::Vector2f& _newScale);
+		void SetScale(const sf::Transformable& _object, const sf::Vector2f& _newScale);
+
+
 		void SetRotation(float _start, float _end);
+		void SetRotation(float _startOrEnd, bool _start);
+		void SetRotation(float _newRotation);
+		void SetRotation(const sf::Transformable& _object, float _newRotation);
+
 
 
 		static sf::Vector2f GetGoTo(const sf::Vector2f& _startPos, const sf::Vector2f& _endPos, float _coefficient, Easing::Type _easing = Easing::Type::LINEAR);
@@ -81,13 +93,19 @@ class Animator : public Animation
 		sf::Color GetColor(Easing::Type _easing);
 		sf::Color GetColor(void);
 		
+
+		static sf::Vector2f GetScale(const sf::Vector2f& _startScale, const sf::Vector2f& _endScale, float _coefficient, Easing::Type _easing = Easing::Type::LINEAR);
+		sf::Vector2f GetScale(Easing::Type _easing);
+		sf::Vector2f GetScale(void);
 		
+
 		static float GetRotation(float _start, float _end, float _coefficient, Easing::Type _easing = Easing::Type::LINEAR);
 		float GetRotation(Easing::Type _easing);
 		float GetRotation(void);
+
 };
 
 }
 
 #endif
-// Animator v1.2.3
+// Animator SFML 2.6.2 || v1.3
