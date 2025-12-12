@@ -70,16 +70,11 @@ inline void SceneHandler::AddScene(const std::string& _name)
 
 	scene.object = std::make_shared<SceneType>();
 	scene.object.get()->SetKeptData(this->m_transferedData);
-
-	if (this->m_activeScene == -1)
-	{
-		this->SelectScene(0, false);
-	}
 }
 
 
 #endif
-// SceneHandler v1.2
+// SceneHandler v1.2.2
 
 // TODO :
 // Param pour afficher les scênes déja chargés
