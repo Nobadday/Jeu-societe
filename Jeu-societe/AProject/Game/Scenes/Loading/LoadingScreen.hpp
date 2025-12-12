@@ -4,10 +4,13 @@
 #include <atomic>
 #include <functional>
 
+#include "../../Map/Tiled.h"
+#include "../../Video+Audio/HighResVideoPlayer.hpp"
+
 struct LoadingData
 {
     GameData* gameData = nullptr;
-    sf::RectangleShape background;
+    sf::Sprite background;
     sf::Text loadingText;
     sf::RectangleShape progressBarBackground;
     sf::RectangleShape progressBarFill;
@@ -16,6 +19,12 @@ struct LoadingData
     std::atomic<bool> loadingComplete{false};
     std::thread loadingThread;
     
+	HighResVideoPlayer loadingVideo;
+
+	bool videoLoaded = false;
+
+    sf::Shader chromaKeyShader;
+
     std::string nextSceneName;
     std::function<void()> loadFunction;
 };

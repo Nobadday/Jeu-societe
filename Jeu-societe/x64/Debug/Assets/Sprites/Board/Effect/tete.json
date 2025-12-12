@@ -1,0 +1,43 @@
+{ "frames": [
+   {
+    "filename": "Infected",
+    "frame": { "x": 0, "y": 0, "w": 218, "h": 180 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 218, "h": 180 },
+    "sourceSize": { "w": 218, "h": 180 },
+    "duration": 100
+   },
+   {
+    "filename": "Confusion",
+    "frame": { "x": 218, "y": 0, "w": 218, "h": 180 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 218, "h": 180 },
+    "sourceSize": { "w": 218, "h": 180 },
+    "duration": 100
+   },
+   {
+    "filename": "Immune",
+    "frame": { "x": 0, "y": 180, "w": 218, "h": 180 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 218, "h": 180 },
+    "sourceSize": { "w": 218, "h": 180 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.7-x64",
+  "image": "tete-sheet.png",
+  "format": "RGBA8888",
+  "size": { "w": 436, "h": 360 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "Infected", "from": 0, "to": 0, "direction": "forward", "color": "#000000ff" },
+   { "name": "Confusion", "from": 1, "to": 1, "direction": "forward", "color": "#000000ff" },
+   { "name": "Immune", "from": 2, "to": 2, "direction": "forward", "color": "#000000ff" }
+  ]
+ }
+}

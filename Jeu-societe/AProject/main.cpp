@@ -12,6 +12,8 @@
 #include "./Game/Scenes/RussianRoulette/RussianRoulette.hpp"
 #include "./Game/Scenes/RandCard/RandCard.hpp"
 #include "Game/Scenes/FlagGame/FlagGame.hpp"
+#include "Game/Scenes/Menu/Menu.hpp"
+#include "Game/Scenes/Warmup/Warmup.hpp"
 
 #include "./Game/Scenes/Podium/Podium.hpp"
 
@@ -19,6 +21,7 @@ typedef struct MainData
 {
 	sfMod::RenderWindow renderWindow;
 	AssetManager assetManager;
+	AudioEngine audioEngine;
 
 	sf::Clock clock;
 	SceneHandler scenes;
@@ -48,13 +51,14 @@ int main(void)
 	MainData mainData;
 
 
-	mainData.gameData.m_playerDataList.resize(4);
+
+	mainData.gameData.m_playerDataList.resize(2);
 	for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
 	{
 		mainData.gameData.m_playerDataList[i].SetJoystickID(i);
-		mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 8));
+		mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 4));
+		mainData.gameData.AddPlayerPlaying(i);
 	}
-
 
 	MainDataLoad(mainData);
 
@@ -80,14 +84,22 @@ int main(void)
 
 void MainDataLoad(MainData& _mainData)
 {
-	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "SFML", sf::Style::Fullscreen);
+	//Cursor
 
+	_mainData.renderWindow.SetAntiAliasing(sfMod::RenderWindow::AntiAliasing::X16);
+	_mainData.renderWindow.setIcon("./Assets/Images/icon.png");
+	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Cute & Cursed", sf::Style::Default);
+	_mainData.renderWindow.SetFullscreenPrefered(true);
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
 	_mainData.renderWindow.setVerticalSyncEnabled(true);
+	_mainData.renderWindow.setMouseCursorVisible(false);
+
 
 	// GAME DATA
 	_mainData.gameData.m_renderWindow = &_mainData.renderWindow;
 	_mainData.gameData.m_assetManager = &_mainData.assetManager;
+	_mainData.gameData.m_audioEngine = &_mainData.audioEngine;
+	_mainData.audioEngine.SetAssetManager(_mainData.assetManager);
 
 	_mainData.assetManager.LoadManifest("Manifests/Main.json", "main");
 
@@ -95,6 +107,7 @@ void MainDataLoad(MainData& _mainData)
 
 	// Ajouter les scènes
 	_mainData.scenes.AddScene<LoadingScreen>("Lo");
+	_mainData.scenes.AddScene<Menu>("Menu");
 	_mainData.scenes.AddScene<BaseGame>("Board");
 	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
 	_mainData.scenes.AddScene<ArmWrestling>("ArmWrestling");
@@ -103,9 +116,15 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<RandCard>("RandCard");
 	_mainData.scenes.AddScene<RussianRoulette>("RuRoul");
 	_mainData.scenes.AddScene<Podium>("Podium");
+	_mainData.scenes.AddScene<Warmup>("Warmup");
 
 	// Sélectionner le LoadingScreen metre false pour tout scene au debut 
-	_mainData.scenes.SelectScene("Podium", false);
+
+	//YANNOU !!! VERIFIE SI LA SCENE CHARGE EST DEJA CHARGE
+	_mainData.scenes.SelectScene("Lo", true);
+
+
+
 
 	_mainData.clock.restart();
 }
@@ -124,14 +143,13 @@ void PollEvent(MainData& _mainData)
 				return;
 				break;
 
-				break;
+				//break;
 			default:
 				_mainData.scenes.PollEvent(event);
 				break;
 		}
 	}
 }
-
 
 void Update(MainData& _mainData)
 {

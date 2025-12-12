@@ -245,7 +245,7 @@ void FlagGame::Update(float _deltaTime)
 			if (m_data->gameData)
 			{
 				// Check if it's a tie (all players eliminated simultaneously)
-				int totalPlayers = m_data->gameData->m_gonnaPlayIndex.size();
+				int totalPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size();
 				int eliminatedPlayers = 0;
 				int maxEliminationOrder = 0;
 				int playersWithMaxOrder = 0;

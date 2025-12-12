@@ -43,7 +43,7 @@ class Button : public SpriteAnimated
 		void Click(void);
 
 		// Returns true if the button has been clicked and sets the value back to false
-		bool HasBeenClicked(bool _keepIntact = false);
+		bool HasBeenClicked(void);
 		
 
 	private:

@@ -31,13 +31,8 @@ bool Button::CheckEvent(const sf::Event& _event)
 }
 
 
-bool Button::HasBeenClicked(bool _keepIntact)
+bool Button::HasBeenClicked(void)
 {
-	if (_keepIntact)
-	{
-		return this->m_isClicked;
-	}
-
 	if (this->m_isClicked)
 	{
 		this->m_isClicked = false;

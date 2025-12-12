@@ -116,11 +116,12 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>sfml-audio-d.lib;sfml-graphics-d.lib;sfml-main-d.lib;sfml-network-d.lib;sfml-system-d.lib;sfml-window-d.lib;avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;sfeMovie-d.lib;sfeMovieDemo.lib;sfeMovieMinimalistDemo.lib;swresample.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-audio-d.lib;sfml-graphics-d.lib;sfml-main-d.lib;sfml-network-d.lib;sfml-system-d.lib;sfml-window-d.lib;avcodec.lib;avformat.lib;avutil.lib;swscale.lib;swresample.lib;avfilter.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -139,7 +140,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>sfml-audio.lib;sfml-graphics.lib;sfml-main.lib;sfml-network.lib;sfml-system.lib;sfml-window.lib;avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;sfeMovie.lib;sfeMovieDemo.lib;sfeMovieMinimalistDemo.lib;swresample.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-audio.lib;sfml-graphics.lib;sfml-main.lib;sfml-network.lib;sfml-system.lib;sfml-window.lib;avcodec.lib;avformat.lib;avutil.lib;swscale.lib;swresample.lib;avfilter.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -163,12 +164,21 @@
     <ClCompile Include="Game\Scenes\ArmWrestling\ArmWrestling.cpp" />
     <ClCompile Include="Game\Scenes\Basket\Basket.cpp" />
     <ClCompile Include="Game\Scenes\Board\Board.cpp" />
+    <ClCompile Include="Game\Scenes\Board\Effects.cpp" />
+    <ClCompile Include="Game\Scenes\Board\Icone.cpp" />
+    <ClCompile Include="Game\Scenes\Board\LBM.cpp" />
+    <ClCompile Include="Game\Scenes\Board\PathManagement.cpp" />
+    <ClCompile Include="Game\Scenes\Board\PlayerActions.cpp" />
+    <ClCompile Include="Game\Scenes\Board\PlayerCam.cpp" />
+    <ClCompile Include="Game\Scenes\Board\StartThrow.cpp" />
     <ClCompile Include="Game\Scenes\FlagGame\FlagGame.cpp" />
     <ClCompile Include="Game\Scenes\Loading\LoadingScreen.cpp" />
+    <ClCompile Include="Game\Scenes\Menu\Menu.cpp" />
     <ClCompile Include="Game\Scenes\Podium\Podium.cpp" />
     <ClCompile Include="Game\Scenes\RandCard\RandCard.cpp" />
     <ClCompile Include="Game\Scenes\RockPaperScissors\RockPaperScissors.cpp" />
     <ClCompile Include="Game\Scenes\RussianRoulette\RussianRoulette.cpp" />
+    <ClCompile Include="Game\Scenes\Warmup\Warmup.cpp" />
     <ClCompile Include="Map\JsonReader.cpp" />
     <ClCompile Include="Map\MapLayer.cpp" />
     <ClCompile Include="Map\MapObject.cpp" />
@@ -179,6 +189,7 @@
     <ClCompile Include="Ui\Button.cpp" />
     <ClCompile Include="Ui\HealthBar\HealthBar.cpp" />
     <ClCompile Include="Ui\MenuSystem.cpp" />
+    <ClCompile Include="Ui\Transition\Transition.cpp" />
     <ClCompile Include="Utilities\AssetManager.cpp" />
     <ClCompile Include="Utilities\AudioEngine\AudioEngine.cpp" />
     <ClCompile Include="Utilities\BetterWindow\BetterWindow.cpp" />
@@ -193,6 +204,8 @@
     <ClCompile Include="Utilities\MathPlus.cpp" />
     <ClCompile Include="Utilities\NewMath.cpp" />
     <ClCompile Include="Utilities\Random.cpp" />
+    <ClCompile Include="Video+Audio\HighResVideoPlayer.cpp" />
+    <ClCompile Include="Video+Audio\VideoCommun.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation\Animation.hpp" />
@@ -220,10 +233,12 @@
     <ClInclude Include="Game\Scenes\Board\Board.hpp" />
     <ClInclude Include="Game\Scenes\FlagGame\FlagGame.hpp" />
     <ClInclude Include="Game\Scenes\Loading\LoadingScreen.hpp" />
+    <ClInclude Include="Game\Scenes\Menu\Menu.hpp" />
     <ClInclude Include="Game\Scenes\Podium\Podium.hpp" />
     <ClInclude Include="Game\Scenes\RandCard\RandCard.hpp" />
     <ClInclude Include="Game\Scenes\RockPaperScissors\RockPaperScissors.hpp" />
     <ClInclude Include="Game\Scenes\RussianRoulette\RussianRoulette.hpp" />
+    <ClInclude Include="Game\Scenes\Warmup\Warmup.hpp" />
     <ClInclude Include="Map\JsonReader.h" />
     <ClInclude Include="Map\MapLayer.h" />
     <ClInclude Include="Map\MapObject.h" />
@@ -235,6 +250,7 @@
     <ClInclude Include="Ui\Button.hpp" />
     <ClInclude Include="Ui\HealthBar\HealthBar.hpp" />
     <ClInclude Include="Ui\MenuSystem.hpp" />
+    <ClInclude Include="Ui\Transition\Transition.hpp" />
     <ClInclude Include="Utilities\AssetManager.hpp" />
     <ClInclude Include="Utilities\AudioEngine\AudioEngine.hpp" />
     <ClInclude Include="Utilities\BetterWindow\BetterWindow.hpp" />
@@ -249,6 +265,7 @@
     <ClInclude Include="Utilities\MathPlus.hpp" />
     <ClInclude Include="Utilities\NewMath.hpp" />
     <ClInclude Include="Utilities\Random.hpp" />
+    <ClInclude Include="Video+Audio\HighResVideoPlayer.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

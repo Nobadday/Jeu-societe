@@ -1,15 +1,19 @@
-﻿#ifndef _INC_BOARD_HPP
+#ifndef _INC_BOARD_HPP
 #define _INC_BOARD_HPP
 
 #include "../../Common.hpp"
 
 #include "../../Map/Tiled.h"
 
+#include "../../Video+Audio/HighResVideoPlayer.hpp"
+
 #include "../../Utilities/Camera/Camera.hpp"
 
 #include "../../Animation/Animation/Animator.hpp"
 
-#include "../../Animation/Graphics/SpriteAnimated.hpp"0
+#include "../../Animation/Graphics/SpriteAnimated.hpp"
+
+#include "../../Animation/Graphics/SpriteAtlas.hpp"
 
 #include "../../Animation/Graphics/AnimatedObject.hpp"
 
@@ -17,10 +21,15 @@
 
 #include "../../Animation/Graphics/TextureAtlas.hpp"
 
-#define TIME_WIN_DISPLAY 1.0f
+#include "../../Animation/Graphics/TextPlus.hpp"
+
+#define TIME_WIN_DISPLAY 0.5f
 #define TIME_LBM_DISPLAY 6.0f
-#define TIME_DIS_DISPLAY 0.001f
+#define TIME_DIS_DISPLAY 0.2f
+#define TIME_START_DISPLAY 1.2f
 #define MAX_TOUR_EFFECT 2
+#define TRANSITION_1 6 
+#define TRANSITION_2 7 
 
 class Effect
 {
@@ -70,7 +79,7 @@ public:
 		{
 			float factor = pow(m_elapsedTime / m_duration, 1.f);
 			m_sprite.setRotation(m_angle);
-			m_sprite.setColor(sf::Color(255, 255, 255, 255 * factor));
+			m_sprite.setColor(sf::Color(255, 255, 255, (sf::Uint8)(255 * factor)));
 			_renderWindow.draw(m_sprite);
 		}
 	}
@@ -87,6 +96,7 @@ class BaseGame : public SceneBase
 		enum State
 		{
 			STATE = -1,
+			INTRO,
 			START,
 			PLAY,
 			DICE_ANIMATION,  // NOUVEAU : État pour l'animation du dé
@@ -105,7 +115,8 @@ class BaseGame : public SceneBase
 			CASE_ACTION_END,
 			WAITING_BRIDGE_ROLL,
 			WAITING_FIN_ROLL,
-			WAITING_PATH_CHOICE
+			WAITING_PATH_CHOICE,
+			END
 		};
 
 		enum StatePlayer
@@ -147,8 +158,9 @@ class BaseGame : public SceneBase
 
 			StatePlayer state;
 
-			sf::Text playeur;
+			TextPlus playeur;
 			sf::Text v;
+			TextPlus diceNumber; // NOUVEAU : Texte pour afficher le numéro du dé
 
 			int tourstate;
 
@@ -163,7 +175,7 @@ class BaseGame : public SceneBase
 		{
 			SpriteAnimated sprite;
 
-			sf::Text text;
+			TextPlus text;
 
 			std::string name;
 			
@@ -180,7 +192,7 @@ class BaseGame : public SceneBase
 
 		struct SceneData
 		{
-			Tiled tile;
+			float timeStart;
 
 			std::vector<MapObject> posCase;
 
@@ -212,8 +224,8 @@ class BaseGame : public SceneBase
 			LuckBonusMalus HudLBM;
 
 			SpriteAnimated icone;
-
-			//sfe::Movie movieDe;
+			SpriteAtlas iconeState;
+			SpriteAnimated iconeAura;
 
 			bool active;
 			
@@ -226,10 +238,12 @@ class BaseGame : public SceneBase
 
 			// NOUVEAU : Shader pour le chroma key
 			sf::Shader chromaKeyShader;
+			std::vector<HighResVideoPlayer*> diceVideos;
+			HighResVideoPlayer* currentDiceVideo;
+			// MODIFICATION : Stocker des pointeurs vers les vidéos
 
-			 // MODIFICATION : Stocker des pointeurs vers les vidéos
-			std::vector<sfe::Movie> diceVideos;
-			sfe::Movie* currentDiceVideo;  // NOUVEAU : Pointeur vers la vidéo courante
+			sf::Sprite arrow;
+			
 		};
 
 		GameData* m_gameData;
@@ -238,6 +252,8 @@ class BaseGame : public SceneBase
 
 	private:
 		
+		void SortDrawOrder();
+
 		void CaseAction();
 
 		void SetBoardState(State _state, int _newIndex = 0);
@@ -250,9 +266,18 @@ class BaseGame : public SceneBase
 
 		std::string RandomDuel();
 
-		void SortStart();
+		void SortStart(float _dt);
 
 		std::string RandomBattle();
+
+		// NOUVEAU : Méthodes helper pour simplifier le code
+		bool CheckPlayerInput(sf::Event& _event, bool& shouldRoll);
+
+		void ProcessDiceRoll(int rando);
+
+		void HandleMovementState(State state, float _dt);
+
+		void InitiateMovement(int nextIndex, bool backwards = false);
 
 		// Fonctions de gestion de la caméra
 		void UpdateCameraToShowAllPlayers();
