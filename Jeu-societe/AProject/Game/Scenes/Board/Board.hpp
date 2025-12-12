@@ -161,7 +161,7 @@ class BaseGame : public SceneBase
 			StatePlayer state;
 
 			TextPlus playeur;
-			sf::Text v;
+			TextPlus v;
 			TextPlus diceNumber; // NOUVEAU : Texte pour afficher le numéro du dé
 
 			int tourstate;

@@ -1,10 +1,5 @@
 ﻿#include "Common.hpp"
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
-
 #include "Game/Scenes/Board/Board.hpp"
 #include "Game/Scenes/Loading/LoadingScreen.hpp"
 
@@ -49,10 +44,6 @@ void Draw(MainData& _mainData);
 int main()
 {
     // Supprime l'exception WinRT bénigne
-    #ifdef _WIN32
-    SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX);
-    #endif
-
 	random::SetSeedPID();
 	randmt::SetSeedPID();
 
@@ -116,8 +107,8 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.SetTransferedData(&_mainData.gameData);
 
 	// Ajouter les scènes
-	_mainData.scenes.AddScene<LoadingScreen>("Lo");
 	_mainData.scenes.AddScene<Menu>("Menu");
+	_mainData.scenes.AddScene<LoadingScreen>("Lo");
 	_mainData.scenes.AddScene<BaseGame>("Board");
 	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
 	_mainData.scenes.AddScene<ArmWrestling>("ArmWrestling");
@@ -131,7 +122,7 @@ void MainDataLoad(MainData& _mainData)
 	// Sélectionner le LoadingScreen metre false pour tout scene au debut 
 
 	//YANNOU !!! VERIFIE SI LA SCENE CHARGE EST DEJA CHARGE
-	_mainData.scenes.SelectScene("Lo", true);
+	_mainData.scenes.SelectScene("Lo", false);
 
 
 

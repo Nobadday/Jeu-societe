@@ -83,7 +83,7 @@
         {
             "name" : "Music1",
             "type" : "Music",
-            "path" :"Assets/Audio/Musics/02 - The Emptiness Machine.flac"
+            "path" :"Assets/Audio/Musics/Spacestation.ogg"
         },
         {
             "name" : "Music2",

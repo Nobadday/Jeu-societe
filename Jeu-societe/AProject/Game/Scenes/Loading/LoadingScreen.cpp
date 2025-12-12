@@ -39,9 +39,9 @@ void LoadingScreen::Load(void)
         // Chargement du manifest Board dans le thread de chargement
         m_gameData->m_tile->InitTiled("Assets/Map/map.json");
         m_data->loadingProgress.store(0.3f);
-        std::cout << "coucou\n";
+        //std::cout << "coucou\n";
 
-        m_data->loadingVideo.loadFromFile("Assets/Video/TRANSITION_2.mp4");
+        m_data->loadingVideo.loadFromFile("Assets/Video/TRANSITION_2_LOUIS_VERSION.mp4");
 		m_data->loadingProgress.store(0.6f);
 
         m_gameData->m_assetManager->LoadManifest("Manifests/Board.json", "Board");

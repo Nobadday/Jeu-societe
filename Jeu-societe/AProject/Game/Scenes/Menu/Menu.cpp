@@ -18,6 +18,7 @@ void Menu::Load(void)
 	m_data->audio = (AudioEngine*)m_data->gameData->m_audioEngine;	
 	LoadUI();
 	m_data->audio->PlayMusic("Music1", true);
+	m_data->audio->SetMusicVolume(25.f);
 
 }
 void Menu::LoadUI(void)

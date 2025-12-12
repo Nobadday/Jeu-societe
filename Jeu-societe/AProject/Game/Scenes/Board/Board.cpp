@@ -94,8 +94,8 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	{
 		m_data->diceVideos[TRANSITION_1] = new HighResVideoPlayer(config);
 		m_data->diceVideos[TRANSITION_2] = new HighResVideoPlayer(config);
-		m_data->diceVideos[TRANSITION_1]->loadFromFile("Assets/Video/TRANSITION_1.mp4");
-		m_data->diceVideos[TRANSITION_2]->loadFromFile("Assets/Video/TRANSITION_2.mp4");
+		m_data->diceVideos[TRANSITION_1]->loadFromFile("Assets/Video/TRANSITION_1_LOUIS_VERSION.mp4");
+		m_data->diceVideos[TRANSITION_2]->loadFromFile("Assets/Video/TRANSITION_2_LOUIS_VERSION.mp4");
 	}
 	catch (const std::exception& e)
 	{
@@ -169,12 +169,12 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 		m_data->players[i].sprite.setTexture(m_data->players[i].texture);
 		m_data->players[i].sprite.setOrigin({ 0.5f,1.f });
 		m_data->players[i].v.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
-		m_data->players[i].v.setString(L"↓");
+		m_data->players[i].v.setString(sf::String(L"\u2193"));
 		m_data->players[i].boardPosition = m_data->posCase[0].GetPosition() + sf::Vector2f{ -40.f * i + 50 ,0.f };
 		m_data->players[i].posIcone = PosIcone(i);
 
 		sf::FloatRect textBounds = m_data->players[i].v.getLocalBounds();
-		m_data->players[i].v.setOrigin({ textBounds.width / 2.f, textBounds.height / 2.f });
+		m_data->players[i].v.setOrigin({0.5f,0.5f});
 		m_data->players[i].v.setPosition(m_data->players[i].boardPosition + sf::Vector2f{ 0.f,-100.f });
 		m_data->players[i].v.setOutlineColor(sf::Color::Black);
 		m_data->players[i].v.setOutlineThickness(2.0f);
