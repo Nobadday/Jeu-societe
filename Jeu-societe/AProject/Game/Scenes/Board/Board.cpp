@@ -60,7 +60,7 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	// NOUVEAU : Pré-charger toutes les vidéos des dés
 	m_data->diceVideos.clear(); // S'assurer que le vecteur est vide
 	m_data->diceVideos.resize(8); // Initialiser avec des nullptr
-	
+
 	// Configuration simple sans taille personnalisée
 	HighResConfig config;
 	config.sizeMode = VideoSizeMode::Original;
@@ -174,7 +174,7 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 		m_data->players[i].posIcone = PosIcone(i);
 
 		sf::FloatRect textBounds = m_data->players[i].v.getLocalBounds();
-		m_data->players[i].v.setOrigin({0.5f,0.5f});
+		m_data->players[i].v.setOrigin({ 0.5f,0.5f });
 		m_data->players[i].v.setPosition(m_data->players[i].boardPosition + sf::Vector2f{ 0.f,-100.f });
 		m_data->players[i].v.setOutlineColor(sf::Color::Black);
 		m_data->players[i].v.setOutlineThickness(2.0f);
@@ -194,8 +194,8 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 		m_data->players[i].diceNumber.setFillColor(sf::Color::Yellow);
 		m_data->players[i].diceNumber.setOutlineColor(sf::Color::Black);
 		m_data->players[i].diceNumber.setOutlineThickness(2.0f);
-		
-		m_data->players[i].diceNumber.setOrigin({0.5, 1});
+
+		m_data->players[i].diceNumber.setOrigin({ 0.5, 1 });
 		m_data->players[i].diceNumber.setPosition(m_data->players[i].boardPosition - sf::Vector2f{ 0.f,700.f });
 
 		m_data->players[i].currentCaseIndex = 0;
@@ -222,7 +222,7 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 		auto& mapObject = m_data->posCase[i];
 		if (mapObject.GetName() == "19")
 		{
-			posMin = (mapObject.GetPosition() + sf::Vector2f(2000, 0));
+			posMin = (mapObject.GetPosition() + sf::Vector2f(50, 0));
 		}
 		if (i == m_data->posCase.size() - 1)
 		{
@@ -266,8 +266,8 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	m_data->bridge.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
 	m_data->end.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
 
-	m_data->bridge.setCharacterSize(30);
-	m_data->end.setCharacterSize(30);
+	m_data->bridge.setCharacterSize(50);
+	m_data->end.setCharacterSize(50);
 
 	m_data->bridge.setFillColor(sf::Color::White);
 	m_data->end.setFillColor(sf::Color::White);
@@ -280,11 +280,32 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	m_data->bridge.setString("3");
 	m_data->end.setString("4");
 
-	m_data->bridge.setOrigin({ 0.5f , 0.5f});
+	m_data->bridge.setOrigin({ 0.5f , 0.5f });
 	m_data->end.setOrigin({ 0.5f , 0.5f });
 
-	m_data->bridge.setPosition(m_data->posCase[19].GetPosition() + sf::Vector2f(0.f, -100.f));
-	m_data->end.setPosition(m_data->posCase.back().GetPosition() + sf::Vector2f(0.f, -100.f));
+	m_data->bridge.setPosition(m_data->posCase[19].GetPosition() + sf::Vector2f(0.f, -500.f));
+	m_data->end.setPosition(m_data->posCase.back().GetPosition() + sf::Vector2f(0.f, -500.f));
+
+
+	m_data->texteDisplay.texte.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
+	m_data->texteDisplay.texte.setCharacterSize(110);
+	m_data->texteDisplay.texte.setFillColor(sf::Color::White);
+	m_data->texteDisplay.texte.setOutlineColor(sf::Color::Black);
+	m_data->texteDisplay.texte.setOutlineThickness(3.f);
+	m_data->texteDisplay.texte.setOrigin({ 0.5f, 0.5f });
+	m_data->texteDisplay.texte.setPosition(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f - 100);
+	m_data->texteDisplay.texte.SetAlignement(TextPlus::Alignement::CENTER);
+	m_data->texteDisplay.texte.SetCharactersPerLine(40);
+	m_data->texteDisplay.displayTime = 3.0f;
+	m_data->texteDisplay.currentTime = 0.0f;
+	m_data->texteDisplay.isActive = false;
+	m_data->texteDisplay.type = TexteState::NoneTexte;
+
+	// NOUVEAU : Initialisation du fade
+	m_data->texteDisplay.fadeState = TexteDisplay::FADE_NONE;
+	m_data->texteDisplay.fadeInDuration = 0.5f;   // 0.5 seconde pour apparaître
+	m_data->texteDisplay.fadeOutDuration = 0.5f;  // 0.5 seconde pour disparaître
+	m_data->texteDisplay.fadeTimer = 0.0f;
 
 	progress.store(1.0f);
 }
@@ -298,43 +319,43 @@ void BaseGame::Load(void)
 
 void BaseGame::Unload(void)
 {
-    if (m_data != nullptr)
-    {
-        // 1. Arrêter l'audio stream AVANT de libérer les vidéos
-        if (m_data->currentDiceVideo != nullptr)
-        {
-            m_data->currentDiceVideo->setPaused(true);
-        }
+	if (m_data != nullptr)
+	{
+		// 1. Arrêter l'audio stream AVANT de libérer les vidéos
+		if (m_data->currentDiceVideo != nullptr)
+		{
+			m_data->currentDiceVideo->setPaused(true);
+		}
 
-        // 2. Nullifier currentDiceVideo pour éviter un double appel à close()
-        m_data->currentDiceVideo = nullptr;
+		// 2. Nullifier currentDiceVideo pour éviter un double appel à close()
+		m_data->currentDiceVideo = nullptr;
 
-        // 3. Libérer TOUTES les vidéos du vecteur
-        for (auto* video : m_data->diceVideos)
-        {
-            if (video != nullptr)
-            {
-                video->close();  // Ferme proprement les ressources FFmpeg
-                delete video;    // Libère l'objet C++
-            }
-        }
-        m_data->diceVideos.clear();
+		// 3. Libérer TOUTES les vidéos du vecteur
+		for (auto* video : m_data->diceVideos)
+		{
+			if (video != nullptr)
+			{
+				video->close();  // Ferme proprement les ressources FFmpeg
+				delete video;    // Libère l'objet C++
+			}
+		}
+		m_data->diceVideos.clear();
 
-        // 4. Libérer les effets qui contiennent des sprites/textures
-        m_data->effectSwap.clear();
-        m_data->effectsMap.clear();
-    }
+		// 4. Libérer les effets qui contiennent des sprites/textures
+		m_data->effectSwap.clear();
+		m_data->effectsMap.clear();
+	}
 
-    // 5. Supprimer le conteneur d'assets AVANT m_data
-    if (m_gameData != nullptr && m_gameData->m_assetManager != nullptr)
-    {
-        m_gameData->m_assetManager->DeleteContainer("Board");
-    }
+	// 5. Supprimer le conteneur d'assets AVANT m_data
+	if (m_gameData != nullptr && m_gameData->m_assetManager != nullptr)
+	{
+		m_gameData->m_assetManager->DeleteContainer("Board");
+	}
 
-    // 6. Libérer m_data en dernier (destructeur de SceneData sera appelé)
-    delete this->m_data;
-    this->m_data = nullptr;
-    this->m_gameData = nullptr;
+	// 6. Libérer m_data en dernier (destructeur de SceneData sera appelé)
+	delete this->m_data;
+	this->m_data = nullptr;
+	this->m_gameData = nullptr;
 }
 
 // NOUVEAU : Méthode helper pour vérifier les entrées joueur
@@ -368,7 +389,6 @@ bool BaseGame::CheckPlayerInput(sf::Event& _event, bool& shouldRoll)
 	return false;
 }
 
-
 // NOUVEAU : Méthode helper pour traiter le lancer de dé
 void BaseGame::ProcessDiceRoll(int rando)
 {
@@ -392,9 +412,9 @@ void BaseGame::ProcessDiceRoll(int rando)
 	{
 		// MODIFICATION : Lancer la vidéo du dé pendant START
 		auto& player = m_data->players[m_data->currentPlayerIndex];
-		
+
 		m_data->diceResult = rando;
-		
+
 		if (rando >= 1 && rando <= 6)
 		{
 			// Lancer la vidéo du dé
@@ -402,14 +422,37 @@ void BaseGame::ProcessDiceRoll(int rando)
 			m_data->currentDiceVideo->play();
 			//m_data->currentDiceVideo->update(1);
 			m_data->diceAnimationPlaying = true;
-			
+
 			// Le numéro sera affiché après l'animation
 			player.startRandom = rando;
 			//player.diceNumber.setString(std::to_string(player.startRandom));
 		}
-		
+
 		std::cout << "Place: " << rando << std::endl;
 	}
+}
+
+// NOUVEAU : Méthode pour afficher un message à l'écran
+void BaseGame::ShowTextDisplay(const std::string& message, float duration)
+{
+    m_data->texteDisplay.texte.setString(message);
+    m_data->texteDisplay.displayTime = duration;
+    m_data->texteDisplay.currentTime = 0.0f;
+    m_data->texteDisplay.isActive = true;
+    m_data->texteDisplay.texte.setPosition(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f);
+    
+    // NOUVEAU : Démarrer avec fade in
+    m_data->texteDisplay.fadeState = TexteDisplay::FADE_IN;
+    m_data->texteDisplay.fadeTimer = 0.0f;
+    
+    // Commencer avec alpha à 0 (invisible)
+    sf::Color fillColor = m_data->texteDisplay.texte.getFillColor();
+    fillColor.a = 0;
+    m_data->texteDisplay.texte.setFillColor(fillColor);
+    
+    sf::Color outlineColor = m_data->texteDisplay.texte.getOutlineColor();
+    outlineColor.a = 0;
+    m_data->texteDisplay.texte.setOutlineColor(outlineColor);
 }
 
 void BaseGame::PollEvent(sf::Event& _event)
@@ -547,68 +590,144 @@ void BaseGame::PollEvent(sf::Event& _event)
 
 void BaseGame::Update(float _deltaTime)
 {
-	// Mise à jour des animations
-	UpdateLBM(_deltaTime);
-	if (m_data->players[m_data->currentPlayerIndex].state != CANT_PLAY)
-	{
-		m_data->animator.Update(_deltaTime);
-		m_data->animator2.Update(_deltaTime);
+    // Mise à jour des animations
+    UpdateLBM(_deltaTime);
 
-		// Mise à jour de la logique du plateau
-		BoardStateUpdate(_deltaTime);
+    // NOUVEAU : Mise à jour du texte d'affichage avec fade
+    if (m_data->texteDisplay.isActive)
+    {
+        m_data->texteDisplay.fadeTimer += _deltaTime;
+        
+        switch (m_data->texteDisplay.fadeState)
+        {
+        case TexteDisplay::FADE_IN:
+        {
+            // Calculer l'alpha basé sur le temps écoulé
+            float alpha = std::min(1.0f, m_data->texteDisplay.fadeTimer / m_data->texteDisplay.fadeInDuration);
+            
+            // Appliquer l'alpha au texte
+            sf::Color fillColor = m_data->texteDisplay.texte.getFillColor();
+            fillColor.a = static_cast<sf::Uint8>(255 * alpha);
+            m_data->texteDisplay.texte.setFillColor(fillColor);
+            
+            sf::Color outlineColor = m_data->texteDisplay.texte.getOutlineColor();
+            outlineColor.a = static_cast<sf::Uint8>(255 * alpha);
+            m_data->texteDisplay.texte.setOutlineColor(outlineColor);
+            
+            // Passer à l'état FADE_DISPLAY quand le fade in est terminé
+            if (m_data->texteDisplay.fadeTimer >= m_data->texteDisplay.fadeInDuration)
+            {
+                m_data->texteDisplay.fadeState = TexteDisplay::FADE_DISPLAY;
+                m_data->texteDisplay.currentTime = 0.0f;
+            }
+            break;
+        }
+        
+        case TexteDisplay::FADE_DISPLAY:
+        {
+            // Affichage complet (alpha = 255)
+            m_data->texteDisplay.currentTime += _deltaTime;
+            
+            // Démarrer le fade out quand le temps d'affichage est presque écoulé
+            if (m_data->texteDisplay.currentTime >= m_data->texteDisplay.displayTime - m_data->texteDisplay.fadeOutDuration)
+            {
+                m_data->texteDisplay.fadeState = TexteDisplay::FADE_OUT;
+                m_data->texteDisplay.fadeTimer = 0.0f;
+            }
+            break;
+        }
+        
+        case TexteDisplay::FADE_OUT:
+        {
+            // Calculer l'alpha inversé (de 1.0 à 0.0)
+            float alpha = 1.0f - std::min(1.0f, m_data->texteDisplay.fadeTimer / m_data->texteDisplay.fadeOutDuration);
+            
+            // Appliquer l'alpha au texte
+            sf::Color fillColor = m_data->texteDisplay.texte.getFillColor();
+            fillColor.a = static_cast<sf::Uint8>(255 * alpha);
+            m_data->texteDisplay.texte.setFillColor(fillColor);
+            
+            sf::Color outlineColor = m_data->texteDisplay.texte.getOutlineColor();
+            outlineColor.a = static_cast<sf::Uint8>(255 * alpha);
+            m_data->texteDisplay.texte.setOutlineColor(outlineColor);
+            
+            // Désactiver quand le fade out est terminé
+            if (m_data->texteDisplay.fadeTimer >= m_data->texteDisplay.fadeOutDuration)
+            {
+                m_data->texteDisplay.isActive = false;
+                m_data->texteDisplay.fadeState = TexteDisplay::FADE_NONE;
+                m_data->texteDisplay.currentTime = 0.0f;
+                m_data->texteDisplay.fadeTimer = 0.0f;
+            }
+            break;
+        }
+        
+        case TexteDisplay::FADE_NONE:
+        default:
+            break;
+        }
+    }
 
-		for (int i = (int)m_data->effectSwap.size() - 1; i >= 0; i--)
-		{
-			auto& effect = m_data->effectSwap[i];
-			effect.Update(_deltaTime);
+    if (m_data->players[m_data->currentPlayerIndex].state != CANT_PLAY)
+    {
+        m_data->animator.Update(_deltaTime);
+        m_data->animator2.Update(_deltaTime);
 
-			if (!effect.IsActive())
-			{
-				effect = m_data->effectSwap.back();
-				m_data->effectSwap.pop_back();
-			}
-		}
+        // Mise à jour de la logique du plateau
+        BoardStateUpdate(_deltaTime);
 
-		for (int i = (int)m_data->effectsMap.size() - 1; i >= 0; i--)
-		{
-			auto& effect = m_data->effectsMap[i];
+        for (int i = (int)m_data->effectSwap.size() - 1; i >= 0; i--)
+        {
+            auto& effect = m_data->effectSwap[i];
+            effect.Update(_deltaTime);
 
-			if (!m_data->smokeOff)
-			{
-				effect.UpdateSpecial(_deltaTime);
-			}
-			else
-			{
-				effect.Update(_deltaTime);
+            if (!effect.IsActive())
+            {
+                effect = m_data->effectSwap.back();
+                m_data->effectSwap.pop_back();
+            }
+        }
 
-				if (!effect.IsActive())
-				{
-					effect = m_data->effectsMap.back();
-					m_data->effectsMap.pop_back();
-				}
-			}
-		}
+        for (int i = (int)m_data->effectsMap.size() - 1; i >= 0; i--)
+        {
+            auto& effect = m_data->effectsMap[i];
 
-		// MODIFICATION : Mettre à jour aussi la position du texte du dé
-		for (auto& player : m_data->players)
-		{
-			player.v.setPosition(player.boardPosition + sf::Vector2f{ 0.f,-250.f });
-			player.playeur.setPosition(player.boardPosition + sf::Vector2f{ 0.f,-275.f });
-			player.diceNumber.setPosition(player.boardPosition + sf::Vector2f{ 0.f,-300.f }); // NOUVEAU
-		}
+            if (!m_data->smokeOff)
+            {
+                effect.UpdateSpecial(_deltaTime);
+            }
+            else
+            {
+                effect.Update(_deltaTime);
+
+                if (!effect.IsActive())
+                {
+                    effect = m_data->effectsMap.back();
+                    m_data->effectsMap.pop_back();
+                }
+            }
+        }
+
+        // MODIFICATION : Mettre à jour aussi la position du texte du dé
+        for (auto& player : m_data->players)
+        {
+            player.v.setPosition(player.boardPosition + sf::Vector2f{ 0.f,-250.f });
+            player.playeur.setPosition(player.boardPosition + sf::Vector2f{ 0.f,-275.f });
+            player.diceNumber.setPosition(player.boardPosition + sf::Vector2f{ 0.f,-300.f }); // NOUVEAU
+        }
 
 
-		UpdateCameraFollowPlayer(_deltaTime);
-	}
-	else
-	{
-		if (m_data->HudLBM.state == NONELBM)
-		{
-			m_data->players[m_data->currentPlayerIndex].tourstate = 0;
-			m_data->players[m_data->currentPlayerIndex].state = StatePlayer::NONE;
-			SetBoardState(PLAY, 0);
-		}
-	}
+        UpdateCameraFollowPlayer(_deltaTime);
+    }
+    else
+    {
+        if (m_data->HudLBM.state == NONELBM)
+        {
+            m_data->players[m_data->currentPlayerIndex].tourstate = 0;
+            m_data->players[m_data->currentPlayerIndex].state = StatePlayer::NONE;
+            SetBoardState(PLAY, 0);
+        }
+    }
 }
 
 // NOUVEAU : Méthode helper pour initier un mouvement
@@ -654,8 +773,77 @@ void BaseGame::HandleMovementState(State state, float _dt)
 
 		if (player.pendingMovement > 0)
 		{
-			// Continuer le déplacement
-			SetBoardState(state);
+			// CORRECTION : Ne pas vérifier les conditions immédiatement
+			// Initier directement le prochain mouvement
+			std::vector<int> availablePaths;
+			
+			// Déterminer les chemins selon l'état
+			if (state == DEPLACEMENT_BACK || state == DEPLACEMENT_ACTION_BACK)
+			{
+				availablePaths = GetAvailablePathsBack(player.currentCaseIndex);
+			}
+			else
+			{
+				availablePaths = GetAvailablePaths(player.currentCaseIndex);
+			}
+
+			if (availablePaths.empty())
+			{
+				std::cout << "Erreur : aucun chemin disponible!" << std::endl;
+				SetBoardState(CASE_ACTION_END);
+				return;
+			}
+
+			// Vérifier s'il y a un choix de chemin SEULEMENT si le personnage s'arrête
+			const MapObject& currentCase = m_data->posCase[player.currentCaseIndex];
+			
+			// Vérifier le type de case
+			std::string caseType = "";
+			if (currentCase.GetPropertyByName("type") != nullptr)
+			{
+				caseType = currentCase.GetPropertyByName("type")->GetStringValue();
+			}
+
+			// Vérifier pont ou ligne d'arrivée
+			if (caseType == "bridge")
+			{
+				player.sprite.SetAnimation("Idle");
+				std::cout << "Pont détecté ! Lancez le dé pour traverser..." << std::endl;
+				player.waitingBridgeRoll = true;
+				SetBoardState(WAITING_BRIDGE_ROLL);
+				return;
+			}
+
+			if (caseType == "end")
+			{
+				player.sprite.SetAnimation("Idle");
+				std::cout << "Ligne d'arrivée détectée ! Lancez le dé pour franchir..." << std::endl;
+				player.waitingBridgeRoll = true;
+				SetBoardState(WAITING_FIN_ROLL);
+				return;
+			}
+
+			// Vérifier choix de chemin
+			if (HasPathChoice(player.currentCaseIndex))
+			{
+				m_data->pathChoices = availablePaths;
+				SetBoardState(WAITING_PATH_CHOICE);
+				std::cout << "Choix de chemin requis : " << m_data->pathChoices.size() << " options" << std::endl;
+				player.sprite.SetAnimation("Idle");
+				return;
+			}
+
+			// Sinon continuer le mouvement automatiquement
+			int nextIndex = availablePaths[0];
+			
+			// Si un chemin spécifique est sélectionné
+			if (player.currentPathId != -1 && availablePaths.size() > 1)
+			{
+				nextIndex = availablePaths[player.currentPathId - 1];
+			}
+
+			bool backwards = (state == DEPLACEMENT_BACK || state == DEPLACEMENT_ACTION_BACK);
+			InitiateMovement(nextIndex, backwards);
 		}
 		else
 		{
@@ -712,6 +900,12 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 		DrawIconePlayer(*mod, i);
 	}
 
+	// NOUVEAU : Afficher le texte d'information
+	if (m_data->texteDisplay.isActive)
+	{
+		mod->draw(m_data->texteDisplay.texte);
+	}
+
 	if (!m_data->currentDiceVideo->isFinish())
 	{
 		// Centre de la vue
@@ -758,7 +952,7 @@ void BaseGame::SortDrawOrder()
 	{
 		m_data->players[idx].sprite.setPosition(m_data->players[idx].boardPosition);
 		mod->draw(m_data->players[idx].sprite);
-		
+
 		if (idx == m_data->currentPlayerIndex)
 		{
 			m_data->players[idx].v.setFillColor(sf::Color::Cyan);
@@ -769,10 +963,10 @@ void BaseGame::SortDrawOrder()
 			m_data->players[idx].v.setFillColor(sf::Color::White);
 			m_data->players[idx].playeur.setFillColor(sf::Color::White);
 		}
-		
+
 		mod->draw(m_data->players[idx].v);
 		mod->draw(m_data->players[idx].playeur);
-		
+
 		// NOUVEAU : Afficher le numéro du dé si on est en phase START et que le joueur a lancé
 		if (m_data->state == START && m_data->players[idx].diceNumber.getString() != '0')
 		{
@@ -899,6 +1093,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 	switch (m_data->state)
 	{
 	case START:
+		ShowTextDisplay("Roll the dice to determine turn order!\nPress A to roll it", 5.0f);
 		break;
 
 	case PLAY:
@@ -907,6 +1102,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 		m_data->pathChoices.clear();
 		m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
 		m_data->arrow.setRotation(315);
+		ShowTextDisplay(m_data->players[m_data->currentPlayerIndex].playeur.getString() + " turn!\nPress A to roll the dice", 3.0f);
 		break;
 	case WIN:
 		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
@@ -930,7 +1126,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 		if (HasPathChoice(player.currentCaseIndex) && player.pendingMovement > 0)
 		{
 			m_data->pathChoices = GetAvailablePaths(player.currentCaseIndex);
-			m_data->state = WAITING_PATH_CHOICE;
+			SetBoardState( WAITING_PATH_CHOICE);
 			std::cout << "Choix de chemin requis : " << m_data->pathChoices.size() << " options" << std::endl;
 			player.sprite.SetAnimation("Idle");
 			return;
@@ -1039,6 +1235,15 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 
 	case WAITING_PATH_CHOICE:
 		// Attente de l'entrée du joueur
+		ShowTextDisplay("Choose your path!\nMove joystick Up or Down", 3.5f);
+		break;
+
+	case WAITING_BRIDGE_ROLL:
+		ShowTextDisplay("Bridge ahead!\nRoll the dice to cross\n(Need 4 or more)", 4.f);
+		break;
+
+	case WAITING_FIN_ROLL:
+		ShowTextDisplay("Finish line!\nRoll the dice to win\n(Need 5 or 6)", 4.f);
 		break;
 
 	case WIN_DEPLACEMENT:
@@ -1205,13 +1410,12 @@ void BaseGame::BoardStateUpdate(float _dt)
 				m_data->diceAnimationPlaying = false;
 				auto& player = m_data->players[m_data->currentPlayerIndex];
 
-				 // UTILISE LA MÊME LOGIQUE QUE PathManagement.cpp
-				// Le joueur peut continuer si le dé est > 3 (comme dans ProcessBridgeRoll original)
+				// UTILISE LA MÊME LOGIQUE QUE PathManagement.cpp
+			   // Le joueur peut continuer si le dé est > 3 (comme dans ProcessBridgeRoll original)
 				if (m_data->diceResult > 3)
 				{
 					std::cout << "Traversée réussie !" << std::endl;
-					
-					// Active le smokeOff comme dans la version originale
+					ShowTextDisplay("Bridge crossed successfully!\nTransformation...", 2.0f);
 					m_data->smokeOff = true;
 
 					// Change le skin du personnage (transformation)
@@ -1263,6 +1467,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 				else
 				{
 					std::cout << "Échec ! Vous ne pouvez pas traverser le pont." << std::endl;
+					ShowTextDisplay("Failed to cross the bridge!\nTry again next turn", 2.5f);
 					if (!player.firstTime)
 					{
 						player.pendingMovement = 0;
@@ -1294,14 +1499,15 @@ void BaseGame::BoardStateUpdate(float _dt)
 				m_data->diceAnimationPlaying = false;
 				auto& player = m_data->players[m_data->currentPlayerIndex];
 
-				 // UTILISE LA MÊME LOGIQUE QUE PathManagement.cpp
-				// Le joueur gagne si le dé est > 4 (comme dans ProcessFinRoll original)
+				// UTILISE LA MÊME LOGIQUE QUE PathManagement.cpp
+			   // Le joueur gagne si le dé est > 4 (comme dans ProcessFinRoll original)
 				if (m_data->diceResult > 4)
 				{
-					std::cout << "VICTOIRE ! Le joueur " << m_data->currentPlayerIndex << " a gagné !" << std::endl;
-					
+					std::cout << "VICTOIRE !" << std::endl;
+					ShowTextDisplay("Crossed the finish line!\nPlayer " + std::to_string(m_data->currentPlayerIndex + 1) + " advances!", 3.0f);
+
 					// Ajoute le joueur à la liste des gagnants
- 					m_gameData->m_gonnaPlayIndex.push_back(m_data->currentPlayerIndex);
+					m_gameData->m_gonnaPlayIndex.push_back(m_data->currentPlayerIndex);
 
 					// Prépare la liste des joueurs triés par position X décroissante
 					std::vector<std::pair<int, float>> playerPositions;
@@ -1334,7 +1540,8 @@ void BaseGame::BoardStateUpdate(float _dt)
 				}
 				else
 				{
-					std::cout << "Échec ! Vous ne pouvez pas franchir la ligne d'arrivée." << std::endl;
+					std::cout << "Échec !" << std::endl;
+					ShowTextDisplay("Not enough to finish!\nTry again", 2.5f);
 					if (!player.firstTime)
 					{
 						player.pendingMovement = 0;
@@ -1348,7 +1555,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 					}
 				}
 
-				m_data->timeDice = TIME_DIS_DISPLAY;
+				m_data->timeDice = TIME_WIN_DISPLAY;
 			}
 		}
 	}

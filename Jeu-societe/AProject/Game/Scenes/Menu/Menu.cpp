@@ -21,6 +21,7 @@ void Menu::Load(void)
 	m_data->audio->SetMusicVolume(25.f);
 
 }
+
 void Menu::LoadUI(void)
 {
 	m_data->ui.buttonMap["playBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("playBtn"));

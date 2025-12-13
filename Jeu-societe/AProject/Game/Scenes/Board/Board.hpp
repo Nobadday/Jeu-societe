@@ -146,6 +146,15 @@ class BaseGame : public SceneBase
 			DONW_RIGHT
 		};
 
+		enum TexteState
+		{
+			NoneTexte = -1,
+			IntroTexte,
+			TourTexte,
+			BridgeTexte,
+			EndTexte
+		};
+
 		struct Player
 		{
 			SpriteAnimated sprite;
@@ -191,6 +200,29 @@ class BaseGame : public SceneBase
 			int swap;
 
 			bool active;
+		};
+
+		struct TexteDisplay
+		{
+			TextPlus texte;
+			TexteState type;
+			float displayTime;
+			float currentTime;
+			bool isActive;
+			
+			// NOUVEAU : Gestion du fade
+			enum FadeState
+			{
+				FADE_IN,
+				FADE_DISPLAY,
+				FADE_OUT,
+				FADE_NONE
+			};
+			
+			FadeState fadeState;
+			float fadeInDuration;
+			float fadeOutDuration;
+			float fadeTimer;
 		};
 
 		struct SceneData
@@ -249,6 +281,8 @@ class BaseGame : public SceneBase
 
 			TextPlus bridge;
 			TextPlus end;
+
+			TexteDisplay texteDisplay;
 			
 		};
 
@@ -334,13 +368,15 @@ class BaseGame : public SceneBase
 
 		void DrawIconePlayer(sf::RenderWindow& _renderWindow, int _i);
 
+		void ShowTextDisplay(const std::string& message, float duration);
+
 	public:
 		void LoadAsync(std::atomic<float>& progress);
 
 		virtual void Load(void);
 		
 		virtual void Unload(void);
-		
+
 		virtual void PollEvent(sf::Event& _event);
 		
 		virtual void Update(float _deltaTime);
