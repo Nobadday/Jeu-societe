@@ -138,8 +138,9 @@ void HealthBar::SetRect(const sf::Color& _color, const sf::Texture* _texture, fl
 	if (_texture != NULL)
 	{
 		// I have texture
+		sf::Vector2u tSize = _texture->getSize();
 		this->m_rectShape.setSize(this->m_size);
-		this->m_rectShape.setTextureRect(sf::IntRect(0, 0, (int)sizeCoeffed.x, (int)sizeCoeffed.y));
+		this->m_rectShape.setTextureRect(sf::IntRect(0, 0, (int)tSize.x * _fillCoef, (int)tSize.y));
 	}
 	else
 	{
