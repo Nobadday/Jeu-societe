@@ -534,6 +534,7 @@ void Menu::PressSelection(int _id)
 					{
 						PlayerData newPlayer;
 						newPlayer.m_joystickId = i;
+						std::cout << " zigounette : " << std::endl;
 						m_data->gameData->m_playerDataList.push_back(newPlayer);
 						m_data->charaSelected.push_back(false);
 						m_data->currentCharaSelected.push_back(0);

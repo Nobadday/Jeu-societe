@@ -8,44 +8,13 @@ void Warmup::Load(void)
 	m_data->gameData->m_assetManager->LoadManifest("Manifests/Warmup.json", "Warmup");
 	m_data->audio = (AudioEngine*)m_data->gameData->m_audioEngine;
 
-
 	m_data->playersReadyVec.resize(m_data->gameData->m_gonnaPlayIndex.size());
 	for (size_t i = 0; i < m_data->playersReadyVec.size(); i++)
 	{
 		m_data->playersReadyVec[i] = false;
 	}
 
-	//Shader
-	if (!m_data->chromaKeyShader.loadFromMemory(
-		R"(
-        uniform sampler2D texture;
-        uniform vec3 keyColor; // Couleur à rendre transparente (ex: vert)
-        uniform float threshold; // Seuil de tolérance
-
-        void main()
-        {
-            vec4 pixel = texture2D(texture, gl_TexCoord[0].xy);
-            float dist = distance(pixel.rgb, keyColor);
-            
-            // Si la couleur est proche de keyColor, rendre transparent
-            if (dist < threshold)
-            {
-                pixel.a = 0.0;
-            }
-            
-            gl_FragColor = pixel * gl_Color;
-        }
-        )", sf::Shader::Fragment))
-	{
-		std::cout << "Erreur : Impossible de charger le shader chroma key" << std::endl;
-	}
-	else
-	{
-		// Définir la couleur à rendre transparente (vert dans cet exemple)
-		m_data->chromaKeyShader.setUniform("keyColor", sf::Glsl::Vec3(0.0f, 1.0f, 0.0f)); // RGB vert
-		m_data->chromaKeyShader.setUniform("threshold", 0.7f); // Ajuster selon vos besoins
-	}
-
+	#pragma region Icons
 	m_data->background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground", AssetManager::AssetType::TEXTURE));
 
 	//Icons
@@ -58,16 +27,6 @@ void Warmup::Load(void)
 	m_data->text.setPosition({ SCREEN_WIDTH / 2 , SCREEN_HEIGHT * 0.8 });
 	m_data->text.setOrigin({ 0.6f,0.8f });
 	m_data->text.setString("Press button to be ready");
-
-	m_data->videoPlayer.loadFromFile("Assets/Video/TRANSITION_1_LOUIS_VERSION.mp4");
-	m_data->videoPlayer.play();
-	m_data->videoPlayer.update(1.f);
-
-
-
-
-
-
 	//Icons chara
 	m_data->charaAvaible.push_back("Perso1-1");
 	m_data->charaAvaible.push_back("Perso2-1");
@@ -78,6 +37,60 @@ void Warmup::Load(void)
 	m_data->charaAvaible.push_back("Perso2-2");
 	m_data->charaAvaible.push_back("Perso3-2");
 	m_data->charaAvaible.push_back("Perso4-2");
+	#pragma endregion
+	m_data->scaleVid = { 0.75f,0.75f };
+
+	//m_data->videoPlayer.loadFromFile("Assets/Video/TRANSITION_1_LOUIS_VERSION.mp4");
+	//m_data->videoPlayer.play();
+	//m_data->videoPlayer.update(1.f);
+
+	if (m_data->gameData->m_nextScene == "rockPaperSizor")
+	{
+		m_data->videoPlayer.loadFromFile("Assets/Video/rockPaperSizor.mp4");
+
+
+		m_data->buttonName.push_back("X");
+		m_data->buttonName.push_back("A");
+		m_data->buttonName.push_back("B");
+
+
+		m_data->stringOfButton.push_back("Rock");
+		m_data->stringOfButton.push_back("Paper");
+		m_data->stringOfButton.push_back("Scissors");
+	}
+	else if (m_data->gameData->m_nextScene == "ArmWrestling")
+	{
+		m_data->videoPlayer.loadFromFile("Assets/Video/ArmWrestling.mp4");
+
+		m_data->buttonName.push_back("A");
+
+		m_data->buttonName.push_back("Press to force");
+	}
+	else if (m_data->gameData->m_nextScene == "FlagGame")
+	{
+		m_data->videoPlayer.loadFromFile("Assets/Video/FlagGame.mp4");
+	
+		m_data->buttonName.push_back("A");
+
+		m_data->buttonName.push_back("Press to force");	
+	
+	
+	}
+	else if (m_data->gameData->m_nextScene == "RandCard")
+	{
+		m_data->videoPlayer.loadFromFile("Assets/Video/RandCard.mp4");
+	}
+	else if (m_data->gameData->m_nextScene == "RuRoul")
+	{
+		m_data->videoPlayer.loadFromFile("Assets/Video/RuRoul.mp4");
+	}
+	else
+	{
+		std::cout << "Va bien te faire enculer, appelle benoit pour faire la modif" << std::endl;
+		std::cout << "Tu veut load le warmup d'un jeu ou la video est pas implemente" << std::endl;
+	}
+
+	m_data->transition.PlayTransition();
 }
 
 void Warmup::Unload(void)
@@ -121,45 +134,44 @@ void Warmup::Update(float _deltaTime)
 {
 	m_data->videoPlayer.update(_deltaTime);
 
-	if (m_data->state == VIDEO && m_data->playersReady)
+	switch (m_data->state)
 	{
-		m_data->state = TRANS_2;
+		case TRANS_1:
+		
+			m_data->transition.Update(_deltaTime);
 
-		std::string videoPath = "Assets/Video/TRANSITION_2_LOUIS_VERSION.mp4";
-		m_data->videoPlayer.loadFromFile(videoPath);
-		m_data->scaleVid = { 1.f,1.f };
-		m_data->videoPlayer.play();
-	}
-
-	if (m_data->videoPlayer.isFinish())
-	{
-		switch (m_data->state)
-		{
-			case TRANS_1:
+			if (m_data->transition.IsFinished())
 			{
 				m_data->state = VIDEO;
-
-				//Debug
-				//std::string videoPath = "Assets/Videos/" + m_data->gameData->m_nextScene + ".mp4";
-				//std::string videoPath = "Assets/Video/De1.mp4";
-				std::string videoPath = "Assets/Video/TRANSITION_1.mp4";
-				m_data->videoPlayer.loadFromFile(videoPath);
-				m_data->scaleVid = { 0.75f,0.75f };
 				m_data->videoPlayer.play();
 			}
-				break;
+			break;
+		case VIDEO:
 
-			case VIDEO:
+			m_data->transition.Update(_deltaTime);
+
+			if (m_data->playersReady)
+			{
+				m_data->state = TRANS_2;
+
+				m_data->transition.SetTransition(TransitionClass::FADED_OUT);
+				m_data->transition.PlayTransition();
+			}
+			else if (m_data->transition.IsFinished())
 			{
 				m_data->videoPlayer.play();
 			}
 			break;
 
-			case TRANS_2:
+		case TRANS_2:
+			
+			m_data->transition.Update(_deltaTime);
 
+			if (m_data->transition.IsFinished())
+			{
 				ChangeScene(m_data->gameData->m_nextScene);
-				break;
-		}
+			}			
+			break;
 	}
 }
 void Warmup::Draw(sf::RenderWindow& _renderWindow)
@@ -172,10 +184,26 @@ void Warmup::Draw(sf::RenderWindow& _renderWindow)
 	}
 	PrintIcons(_renderWindow);
 
+	switch (m_data->state)
+	{
+		case TRANS_1:
 
-	sf::Sprite vid = m_data->videoPlayer.getSprite();
-	vid.setScale(m_data->scaleVid.x, m_data->scaleVid.y);
-	_renderWindow.draw(vid, &m_data->chromaKeyShader);
+			m_data->transition.Draw(_renderWindow);
+			break;
+
+		case VIDEO:
+		{
+			sf::Sprite vid = m_data->videoPlayer.getSprite();
+			vid.setScale(m_data->scaleVid.x, m_data->scaleVid.y);
+			_renderWindow.draw(vid);
+		}
+		break;
+
+		case TRANS_2:
+
+			m_data->transition.Draw(_renderWindow);
+			break;
+	}
 }
 
 void Warmup::PrintIcons(sf::RenderWindow& _renderWindow)

@@ -5,6 +5,7 @@
 #include "../../../Common.hpp"
 #include "../../../Video+Audio/HighResVideoPlayer.hpp"
 #include "../../../Animation/Graphics.hpp"
+#include "../../../UI/Transition/Transition.hpp"
 
 
 class Warmup : public SceneBase
@@ -26,13 +27,15 @@ private:
 		bool playersReady = false;
 		std::vector<bool> playersReadyVec;
 		std::vector<std::string> charaAvaible;
+		std::vector<std::string> buttonName;
+		std::vector<std::string> stringOfButton;
 
-		sf::Shader chromaKeyShader;
 		HighResVideoPlayer videoPlayer;
 
 		GameData* gameData;
 		//* of audio because i'm tired of cast void*
 		AudioEngine* audio;
+		TransitionClass transition;
 	};
 	SceneData* m_data;
 
