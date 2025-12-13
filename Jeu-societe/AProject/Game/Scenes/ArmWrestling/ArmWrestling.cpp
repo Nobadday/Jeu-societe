@@ -20,15 +20,16 @@ void ArmWrestling::Load(void)
 
 	m_bar.SetSize(sf::Vector2f(SCREEN_WIDTH / 7, SCREEN_HEIGHT / 18));
 	m_bar.setOrigin(m_bar.GetLocalBounds().getSize().x / 2, m_bar.GetLocalBounds().getSize().y / 2);
-	m_bar.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.1f);
+	m_bar.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.15f);
 
 
 	m_bar.SetBarCompletion(m_currentValue, MAX, 0);
 	m_bar.SetAvoidOverflow(true);
 	
-	
-	m_bar.SetTextureBG(m_gameData->m_assetManager->GetAsset<sf::Texture>("BackgroundBar", AssetManager::AssetType::TEXTURE), true);
-	m_bar.SetTextureFiller(m_gameData->m_assetManager->GetAsset<sf::Texture>("ForegroundBar", AssetManager::AssetType::TEXTURE), true);
+	m_bar.SetColorFiller(sf::Color(5, 215, 223));
+	m_bar.SetColorBG(sf::Color(94, 6, 113));
+	//m_bar.SetTextureBG(m_gameData->m_assetManager->GetAsset<sf::Texture>("BackgroundBar", AssetManager::AssetType::TEXTURE), true);
+	//m_bar.SetTextureFiller(m_gameData->m_assetManager->GetAsset<sf::Texture>("ForegroundBar", AssetManager::AssetType::TEXTURE), true);
 
 
 	m_currentValue = MAX / 2;

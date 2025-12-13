@@ -46,7 +46,7 @@ void Warmup::Load(void)
 
 	if (m_data->gameData->m_nextScene == "rockPaperSizor")
 	{
-		m_data->videoPlayer.loadFromFile("Assets/Video/rockPaperSizor.mp4");
+		m_data->videoPlayer.loadFromFile("Assets/Video/RPS.mov");
 
 
 		m_data->buttonName.push_back("X");
@@ -60,7 +60,7 @@ void Warmup::Load(void)
 	}
 	else if (m_data->gameData->m_nextScene == "ArmWrestling")
 	{
-		m_data->videoPlayer.loadFromFile("Assets/Video/ArmWrestling.mp4");
+		m_data->videoPlayer.loadFromFile("Assets/Video/ArmW.mov");
 
 		m_data->buttonName.push_back("A");
 
@@ -78,11 +78,11 @@ void Warmup::Load(void)
 	}
 	else if (m_data->gameData->m_nextScene == "RandCard")
 	{
-		m_data->videoPlayer.loadFromFile("Assets/Video/RandCard.mp4");
+		m_data->videoPlayer.loadFromFile("Assets/Video/RandCard.mov");
 	}
 	else if (m_data->gameData->m_nextScene == "RuRoul")
 	{
-		m_data->videoPlayer.loadFromFile("Assets/Video/RuRoul.mp4");
+		m_data->videoPlayer.loadFromFile("Assets/Video/RuRoul.mov");
 	}
 	else
 	{
