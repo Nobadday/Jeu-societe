@@ -20,7 +20,10 @@ private:
 	struct SceneData
 	{
 		TextPlus text;
+		TextPlus buttonText;
 		SpriteAnimated iconsChara;
+		SpriteAtlas buttonSpr;
+		
 		sf::Sprite background;
 		State state = TRANS_1;
 		sf::Vector2f scaleVid = { 1.f,1.f };
@@ -40,7 +43,7 @@ private:
 	SceneData* m_data;
 
 	void PrintIcons(sf::RenderWindow& _renderWindow);
-
+	void PrintButtons(sf::RenderWindow& _renderWindow);
 public:
 	virtual void Load(void);
 	virtual void Unload(void);

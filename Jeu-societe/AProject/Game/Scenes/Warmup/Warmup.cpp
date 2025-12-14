@@ -14,6 +14,17 @@ void Warmup::Load(void)
 		m_data->playersReadyVec[i] = false;
 	}
 
+	m_data->text.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("BadFont"));
+	m_data->buttonText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("BadFont"));
+	m_data->text.setCharacterSize(50u);
+	m_data->buttonText.setCharacterSize(50u);
+	m_data->text.setPosition({ SCREEN_WIDTH / 2.f , SCREEN_HEIGHT * 0.8f });
+	m_data->buttonText.SetCharactersPerLine(17);
+	m_data->text.setOrigin({ 0.6f,0.8f });
+	//m_data->buttonText.setOrigin({ 0.6f,0.8f });
+	m_data->text.setString("Press button to be ready");
+
+
 	#pragma region Icons
 	m_data->background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground", AssetManager::AssetType::TEXTURE));
 
@@ -22,11 +33,6 @@ void Warmup::Load(void)
 	m_data->iconsChara.SetAnimation("Perso1-1");
 	m_data->iconsChara.setOrigin({ 0.5f,0.f });
 
-	m_data->text.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("BadFont"));
-	m_data->text.setCharacterSize(50u);
-	m_data->text.setPosition({ SCREEN_WIDTH / 2 , SCREEN_HEIGHT * 0.8 });
-	m_data->text.setOrigin({ 0.6f,0.8f });
-	m_data->text.setString("Press button to be ready");
 	//Icons chara
 	m_data->charaAvaible.push_back("Perso1-1");
 	m_data->charaAvaible.push_back("Perso2-1");
@@ -40,10 +46,7 @@ void Warmup::Load(void)
 	#pragma endregion
 	m_data->scaleVid = { 0.75f,0.75f };
 
-	//m_data->videoPlayer.loadFromFile("Assets/Video/TRANSITION_1_LOUIS_VERSION.mp4");
-	//m_data->videoPlayer.play();
-	//m_data->videoPlayer.update(1.f);
-
+	m_data->buttonSpr.setTexture((*m_data->gameData->m_assetManager->GetAsset<TextureAtlas>("Input", AssetManager::AssetType::TEXTURE_ATLAS)));
 	if (m_data->gameData->m_nextScene == "rockPaperSizor")
 	{
 		m_data->videoPlayer.loadFromFile("Assets/Video/RPS.mov");
@@ -54,6 +57,7 @@ void Warmup::Load(void)
 		m_data->buttonName.push_back("B");
 
 
+		m_data->stringOfButton.push_back("Rock Paper Scissor");
 		m_data->stringOfButton.push_back("Rock");
 		m_data->stringOfButton.push_back("Paper");
 		m_data->stringOfButton.push_back("Scissors");
@@ -64,25 +68,26 @@ void Warmup::Load(void)
 
 		m_data->buttonName.push_back("A");
 
-		m_data->buttonName.push_back("Press to force");
+		m_data->stringOfButton.push_back("Arm Wrestling");
+		m_data->stringOfButton.push_back("Press to force");
 	}
 	else if (m_data->gameData->m_nextScene == "FlagGame")
 	{
 		m_data->videoPlayer.loadFromFile("Assets/Video/FlagGame.mp4");
 	
-		m_data->buttonName.push_back("A");
-
-		m_data->buttonName.push_back("Press to force");	
-	
-	
+		m_data->stringOfButton.push_back("Flag Game\n\nPress the button displayed as quickly as possible");
 	}
 	else if (m_data->gameData->m_nextScene == "RandCard")
 	{
 		m_data->videoPlayer.loadFromFile("Assets/Video/RandCard.mov");
+		
+		m_data->stringOfButton.push_back("Random Card\n\nSelect one card, but dont pick the bomb !");
 	}
 	else if (m_data->gameData->m_nextScene == "RuRoul")
 	{
 		m_data->videoPlayer.loadFromFile("Assets/Video/RuRoul.mov");
+
+		m_data->stringOfButton.push_back("Russian Roulette\n\nPress button to shoot. Be lucky to survive !");
 	}
 	else
 	{
@@ -177,12 +182,9 @@ void Warmup::Update(float _deltaTime)
 void Warmup::Draw(sf::RenderWindow& _renderWindow)
 {
 	_renderWindow.draw(m_data->background);
-
-	if (!m_data->playersReady)
-	{
-		_renderWindow.draw(m_data->text);
-	}
 	PrintIcons(_renderWindow);
+
+
 
 	switch (m_data->state)
 	{
@@ -193,6 +195,10 @@ void Warmup::Draw(sf::RenderWindow& _renderWindow)
 
 		case VIDEO:
 		{
+			_renderWindow.draw(m_data->text);
+			PrintButtons(_renderWindow);
+
+			//Video
 			sf::Sprite vid = m_data->videoPlayer.getSprite();
 			vid.setScale(m_data->scaleVid.x, m_data->scaleVid.y);
 			_renderWindow.draw(vid);
@@ -229,4 +235,36 @@ void Warmup::PrintIcons(sf::RenderWindow& _renderWindow)
 		m_data->iconsChara.setScale({ 1.0f,1.0f });
 		m_data->iconsChara.setColor({ 255,255,255,150 });
 	}
+}
+
+void Warmup::PrintButtons(sf::RenderWindow& _renderWindow)
+{
+	//Title of the minigame
+	m_data->buttonText.setPosition({ SCREEN_WIDTH * 0.76f, SCREEN_HEIGHT * 0.1f });
+	m_data->buttonText.setString(m_data->stringOfButton[0]);
+	_renderWindow.draw(m_data->buttonText);
+
+	std::cout << "size of string of button : " << m_data->stringOfButton.size() << std::endl;
+	if (m_data->stringOfButton.size() > 1)
+	{
+		for (size_t i = 1; i < m_data->stringOfButton.size(); i++)
+		{
+			std::cout << "Drawing button " << i << " name : " << m_data->buttonName[i - 1] << " with string : " << m_data->stringOfButton[i] << std::endl;
+
+
+			//m_data->buttonText.setString(m_data->buttonName[i - 1] + "\n\n" + m_data->stringOfButton[i]);
+			m_data->buttonSpr.SetTextureFrame(m_data->buttonName[i - 1]);
+			m_data->buttonSpr.setPosition({ SCREEN_WIDTH * 0.76f, SCREEN_HEIGHT / 3.f + i * 100.f });
+			_renderWindow.draw(m_data->buttonSpr);
+
+			//m_data->buttonSpr.setPosition({ SCREEN_WIDTH * 0.8f, SCREEN_HEIGHT / 3.f + i * 100.f });
+			m_data->buttonText.setString(m_data->stringOfButton[i]);
+			m_data->buttonText.setPosition({ SCREEN_WIDTH * 0.85f, SCREEN_HEIGHT / 3.f + i * 100.f });
+			_renderWindow.draw(m_data->buttonText);
+		}
+	}
+
+
+
+
 }
