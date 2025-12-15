@@ -91,7 +91,7 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
 	_mainData.renderWindow.setVerticalSyncEnabled(true);
 	_mainData.renderWindow.setMouseCursorVisible(false);
-	_mainData.renderWindow.SetFullscreen(true);
+	//_mainData.renderWindow.SetFullscreen(true);
 
 
 	// GAME DATA

@@ -286,20 +286,9 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	m_data->bridge.setPosition(m_data->posCase[19].GetPosition() + sf::Vector2f(0.f, -500.f));
 	m_data->end.setPosition(m_data->posCase.back().GetPosition() + sf::Vector2f(0.f, -500.f));
 
-
-	m_data->texteDisplay.texte.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
-	m_data->texteDisplay.texte.setCharacterSize(110);
-	m_data->texteDisplay.texte.setFillColor(sf::Color::White);
-	m_data->texteDisplay.texte.setOutlineColor(sf::Color::Black);
-	m_data->texteDisplay.texte.setOutlineThickness(3.f);
-	m_data->texteDisplay.texte.setOrigin({ 0.5f, 0.5f });
-	m_data->texteDisplay.texte.setPosition(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f - 100);
-	m_data->texteDisplay.texte.SetAlignement(TextPlus::Alignement::CENTER);
-	m_data->texteDisplay.texte.SetCharactersPerLine(40);
 	m_data->texteDisplay.displayTime = 3.0f;
 	m_data->texteDisplay.currentTime = 0.0f;
 	m_data->texteDisplay.isActive = false;
-	m_data->texteDisplay.type = TexteState::NoneTexte;
 
 	// NOUVEAU : Initialisation du fade
 	m_data->texteDisplay.fadeState = TexteDisplay::FADE_NONE;
@@ -319,9 +308,16 @@ void BaseGame::Load(void)
 
 void BaseGame::Unload(void)
 {
-	if (m_data != nullptr)
-	{
-		// 1. Arrêter l'audio stream AVANT de libérer les vidéos
+    if (m_data != nullptr)
+    {
+        // Libérer les textes
+        for (auto* texte : m_data->texteDisplay.texte)
+        {
+            delete texte;
+        }
+        m_data->texteDisplay.texte.clear();
+        
+        // 1. Arrêter l'audio stream AVANT de libérer les vidéos
 		if (m_data->currentDiceVideo != nullptr)
 		{
 			m_data->currentDiceVideo->setPaused(true);
@@ -435,24 +431,50 @@ void BaseGame::ProcessDiceRoll(int rando)
 // NOUVEAU : Méthode pour afficher un message à l'écran
 void BaseGame::ShowTextDisplay(const std::string& message, float duration)
 {
-    m_data->texteDisplay.texte.setString(message);
+    // Nettoyer les textes précédents
+    for (auto* texte : m_data->texteDisplay.texte)
+    {
+        delete texte;
+    }
+    m_data->texteDisplay.texte.clear();
+    
+    // Séparer le message en lignes
+    std::vector<std::string> lines;
+    std::string messageModified = message;
+    size_t pos = 0;
+    
+    while ((pos = messageModified.find("\n")) != std::string::npos)
+    {
+        lines.push_back(messageModified.substr(0, pos));
+        messageModified.erase(0, pos + 1);
+    }
+    lines.push_back(messageModified);
+    
+    float startY = SCREEN_HEIGHT / 2.0f - ((float)lines.size() - 1.0f) * 60.0f;
+    const sf::Font& font = *m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT);
+    
+    for (size_t i = 0; i < lines.size(); i++)
+    {
+        TextPlus* texte = new TextPlus(); // Allouer dynamiquement
+        texte->setFont(font);
+        texte->setCharacterSize(90);
+        texte->setFillColor(sf::Color(255, 255, 255, 0));
+        texte->setOutlineColor(sf::Color(0, 0, 0, 0));
+        texte->setOutlineThickness(3.f);
+        texte->setOrigin({ 0.5f, 0.5f });
+        texte->setPosition(SCREEN_WIDTH / 2.0f, startY + (float)i * 120.0f);
+        //texte->SetAlignement(TextPlus::Alignement::CENTER);
+        texte->SetCharactersPerLine(40);
+        texte->setString(lines[i]);
+        
+        m_data->texteDisplay.texte.push_back(texte);
+    }
+    
     m_data->texteDisplay.displayTime = duration;
     m_data->texteDisplay.currentTime = 0.0f;
     m_data->texteDisplay.isActive = true;
-    m_data->texteDisplay.texte.setPosition(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f);
-    
-    // NOUVEAU : Démarrer avec fade in
     m_data->texteDisplay.fadeState = TexteDisplay::FADE_IN;
     m_data->texteDisplay.fadeTimer = 0.0f;
-    
-    // Commencer avec alpha à 0 (invisible)
-    sf::Color fillColor = m_data->texteDisplay.texte.getFillColor();
-    fillColor.a = 0;
-    m_data->texteDisplay.texte.setFillColor(fillColor);
-    
-    sf::Color outlineColor = m_data->texteDisplay.texte.getOutlineColor();
-    outlineColor.a = 0;
-    m_data->texteDisplay.texte.setOutlineColor(outlineColor);
 }
 
 void BaseGame::PollEvent(sf::Event& _event)
@@ -472,7 +494,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 	}
 
 	// Gestion simplifiée des états d'attente de lancer
-	if (m_data->state == WAITING_FIN_ROLL)
+	if (m_data->state == WAITING_FIN_ROLL and !m_data->texteDisplay.isActive)
 	{
 		bool shouldRoll = false;
 		if (CheckPlayerInput(_event, shouldRoll) && shouldRoll)
@@ -482,7 +504,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 		return;
 	}
 
-	if (m_data->state == WAITING_BRIDGE_ROLL)
+	if (m_data->state == WAITING_BRIDGE_ROLL and !m_data->texteDisplay.isActive)
 	{
 		bool shouldRoll = false;
 		if (CheckPlayerInput(_event, shouldRoll) && shouldRoll)
@@ -493,7 +515,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 	}
 
 	// Si on attend un choix de chemin
-	if (m_data->state == WAITING_PATH_CHOICE)
+	if (m_data->state == WAITING_PATH_CHOICE and !m_data->texteDisplay.isActive)
 	{
 		// Gestion joystick
 		if (_event.type == sf::Event::JoystickMoved)
@@ -559,7 +581,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 	}
 
 	// Gestion du lancer de dé principal
-	if (_event.type == sf::Event::JoystickButtonPressed)
+	if (_event.type == sf::Event::JoystickButtonPressed and !m_data->texteDisplay.isActive)
 	{
 		if (m_gameData->m_playerDataList[m_data->currentPlayerIndex].m_joystickId == _event.joystickButton.joystickId &&
 			m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE &&
@@ -575,7 +597,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 	}
 
 	// Gestion des entrées clavier (DEBUG)
-	if (_event.type == sf::Event::KeyPressed)
+	if (_event.type == sf::Event::KeyPressed and !m_data->texteDisplay.isActive)
 	{
 		if (_event.key.code == sf::Keyboard::Space && m_data->animator.IsFinished() &&
 			m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE &&
@@ -605,14 +627,17 @@ void BaseGame::Update(float _deltaTime)
             // Calculer l'alpha basé sur le temps écoulé
             float alpha = std::min(1.0f, m_data->texteDisplay.fadeTimer / m_data->texteDisplay.fadeInDuration);
             
-            // Appliquer l'alpha au texte
-            sf::Color fillColor = m_data->texteDisplay.texte.getFillColor();
-            fillColor.a = static_cast<sf::Uint8>(255 * alpha);
-            m_data->texteDisplay.texte.setFillColor(fillColor);
-            
-            sf::Color outlineColor = m_data->texteDisplay.texte.getOutlineColor();
-            outlineColor.a = static_cast<sf::Uint8>(255 * alpha);
-            m_data->texteDisplay.texte.setOutlineColor(outlineColor);
+            // Appliquer l'alpha à tous les textes
+            for (auto* texte : m_data->texteDisplay.texte)
+            {
+                sf::Color fillColor = texte->getFillColor();
+                fillColor.a = static_cast<sf::Uint8>(255 * alpha);
+                texte->setFillColor(fillColor);
+                
+                sf::Color outlineColor = texte->getOutlineColor();
+                outlineColor.a = static_cast<sf::Uint8>(255 * alpha);
+                texte->setOutlineColor(outlineColor);
+            }
             
             // Passer à l'état FADE_DISPLAY quand le fade in est terminé
             if (m_data->texteDisplay.fadeTimer >= m_data->texteDisplay.fadeInDuration)
@@ -642,14 +667,17 @@ void BaseGame::Update(float _deltaTime)
             // Calculer l'alpha inversé (de 1.0 à 0.0)
             float alpha = 1.0f - std::min(1.0f, m_data->texteDisplay.fadeTimer / m_data->texteDisplay.fadeOutDuration);
             
-            // Appliquer l'alpha au texte
-            sf::Color fillColor = m_data->texteDisplay.texte.getFillColor();
-            fillColor.a = static_cast<sf::Uint8>(255 * alpha);
-            m_data->texteDisplay.texte.setFillColor(fillColor);
-            
-            sf::Color outlineColor = m_data->texteDisplay.texte.getOutlineColor();
-            outlineColor.a = static_cast<sf::Uint8>(255 * alpha);
-            m_data->texteDisplay.texte.setOutlineColor(outlineColor);
+            // Appliquer l'alpha à tous les textes
+            for (auto* texte : m_data->texteDisplay.texte)
+            {
+                sf::Color fillColor = texte->getFillColor();
+                fillColor.a = static_cast<sf::Uint8>(255 * alpha);
+                texte->setFillColor(fillColor);
+                
+                sf::Color outlineColor = texte->getOutlineColor();
+                outlineColor.a = static_cast<sf::Uint8>(255 * alpha);
+                texte->setOutlineColor(outlineColor);
+            }
             
             // Désactiver quand le fade out est terminé
             if (m_data->texteDisplay.fadeTimer >= m_data->texteDisplay.fadeOutDuration)
@@ -658,6 +686,7 @@ void BaseGame::Update(float _deltaTime)
                 m_data->texteDisplay.fadeState = TexteDisplay::FADE_NONE;
                 m_data->texteDisplay.currentTime = 0.0f;
                 m_data->texteDisplay.fadeTimer = 0.0f;
+                m_data->texteDisplay.texte.clear();
             }
             break;
         }
@@ -903,7 +932,10 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 	// NOUVEAU : Afficher le texte d'information
 	if (m_data->texteDisplay.isActive)
 	{
-		mod->draw(m_data->texteDisplay.texte);
+		for (const auto* texte : m_data->texteDisplay.texte)
+		{
+			mod->draw(*texte);
+		}
 	}
 
 	if (!m_data->currentDiceVideo->isFinish())
