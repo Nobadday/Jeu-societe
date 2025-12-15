@@ -47,7 +47,7 @@ void RussianRoulette::Load(void)
 	PlayerData::PlayerSkin skin = (PlayerData::PlayerSkin)m_data->players[0].skin;
 	m_data->iconsChara.SetAnimation(skin);
 
-	//m_data->iconsChara.SetAnimation(PlayerData::GetTextureName((PlayerData::PlayerSkin)m_data->players[0].skin));
+	//m_data->iconsChara.SetAnimation(Player::GetTextureName((Player::PlayerSkin)m_data->players[0].skin));
 		
 
 	m_data->background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground", AssetManager::AssetType::TEXTURE));
@@ -210,7 +210,7 @@ void RussianRoulette::Update(float _deltaTime)
 					
 					
 					
-					//m_data->iconsChara.SetAnimation(PlayerData::GetTextureName((PlayerData::PlayerSkin)m_data->players[m_data->currentPlayer].skin));
+					//m_data->iconsChara.SetAnimation(Player::GetTextureName((Player::PlayerSkin)m_data->players[m_data->currentPlayer].skin));
 					//m_data->iconsChara.SetAnimation(m_data->iconsChara[m_data->players[m_data->currentPlayer].skin]);
 
 				}

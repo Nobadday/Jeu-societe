@@ -9,7 +9,7 @@ void FlagGame::Load(void)
 {
 	m_data = new SceneData();
 	m_data->gameData = (GameData*)this->m_keptData;
-	
+
 	if (((GameData*)this->m_keptData)->m_gonnaPlayIndex.size() == 0)
 	{
 		((GameData*)this->m_keptData)->m_gonnaPlayIndex.push_back(0);
@@ -24,6 +24,10 @@ void FlagGame::Load(void)
 	m_data->playersRemaining = 0;
 	m_data->eliminationCounter = 0;
 	m_data->totalGameTime = 0.0f;
+
+	// NOUVEAU : Initialiser les valeurs de difficulté
+	m_data->currentInputChangeMin = INPUT_CHANGE_MIN;
+	m_data->currentInputChangeMax = INPUT_CHANGE_MAX;
 
 	// Initialize background sprite
 	m_data->backgroundSprite.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground"));
@@ -70,7 +74,7 @@ void FlagGame::Load(void)
 	m_data->resultText.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
 	m_data->buttonSprite.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAtlas>("Input"));
-	m_data->buttonSprite.setOrigin({0.5f,0.5f});
+	m_data->buttonSprite.setOrigin({ 0.5f,0.5f });
 	m_data->buttonSprite.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2.5f);
 
 	m_data->buttonSprite.SetTextureFrame("A");
@@ -89,10 +93,6 @@ void FlagGame::Load(void)
 		m_data->playerData[i].currentInput = (GamePadBindList)(-1);
 		m_data->playerData[i].eliminationOrder = 0;
 		m_data->playerData[i].eliminationTime = 0.0f;
-
-		m_data->playerData[i].inputText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("FlagFont"));
-		m_data->playerData[i].inputText.setCharacterSize(20);
-		m_data->playerData[i].inputText.setFillColor(sf::Color::Green);
 	}
 
 	// Setup only participating players
@@ -106,14 +106,17 @@ void FlagGame::Load(void)
 				m_data->playerData[playerID].isEliminated = false;
 				m_data->playersRemaining++;
 
-				// Position text based on number of participating players
-				m_data->playerData[playerID].inputText.setPosition(
-					SCREEN_WIDTH / ((float)m_data->gameData->m_gonnaPlayIndex.size() + 1) * (i + 1),
-					175.f
-				);
-				m_data->playerData[playerID].buttonSprite.setOrigin({ 0.5f,0.5f });
-				m_data->playerData[playerID].buttonSprite.setPosition(SCREEN_WIDTH / ((float)m_data->gameData->m_gonnaPlayIndex.size() + 1) * (i + 1),
-					100.f);
+				// Position des éléments en bas de l'écran
+				float spacing = SCREEN_WIDTH / ((float)m_data->gameData->m_gonnaPlayIndex.size() + 1);
+				float xPos = spacing * (i + 1);
+
+				// Icône du joueur en bas
+				InitializePlayerIcon(playerID, i);
+				m_data->playerData[playerID].playerIcone.setPosition(xPos, SCREEN_HEIGHT);
+
+				// Bouton au-dessus de l'icône
+				m_data->playerData[playerID].buttonSprite.setOrigin({ 0.5f, 0.5f });
+				m_data->playerData[playerID].buttonSprite.setPosition(xPos, SCREEN_HEIGHT - 250.f);
 				m_data->playerData[playerID].buttonSprite.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAtlas>("Input"));
 				m_data->playerData[playerID].buttonSprite.SetTextureFrame("A");
 				m_data->playerData[playerID].buttonSprite.setColor(sf::Color::White);
@@ -128,6 +131,47 @@ void FlagGame::Load(void)
 	{
 		m_data->state = STATE_PLAYING;
 		StartNewRound();
+	}
+}
+
+void FlagGame::InitializePlayerIcon(int playerID, int positionIndex)
+{
+	// Initialiser les sprites d'icône et d'aura pour le joueur
+	m_data->playerData[playerID].playerIcone.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Icone"));
+
+	m_data->playerData[playerID].playerIcone.setOrigin({ 0.5f, 1.f });
+
+	m_data->playerData[playerID].playerIcone.setScale({ 0.8f, 0.8f });
+
+	// Définir l'animation selon le skin du joueur
+	switch (m_data->gameData->m_playerDataList[playerID].GetPlayerSkin())
+	{
+	case PlayerData::CHARACTER_1_1:
+		m_data->playerData[playerID].playerIcone.SetAnimation("Perso1-1");
+		break;
+	case PlayerData::CHARACTER_1_2:
+		m_data->playerData[playerID].playerIcone.SetAnimation("Perso1-2");
+		break;
+	case PlayerData::CHARACTER_2_1:
+		m_data->playerData[playerID].playerIcone.SetAnimation("Perso2-1");
+		break;
+	case PlayerData::CHARACTER_2_2:
+		m_data->playerData[playerID].playerIcone.SetAnimation("Perso2-2");
+		break;
+	case PlayerData::CHARACTER_3_1:
+		m_data->playerData[playerID].playerIcone.SetAnimation("Perso3-1");
+		break;
+	case PlayerData::CHARACTER_3_2:
+		m_data->playerData[playerID].playerIcone.SetAnimation("Perso3-2");
+		break;
+	case PlayerData::CHARACTER_4_1:
+		m_data->playerData[playerID].playerIcone.SetAnimation("Perso4-1");
+		break;
+	case PlayerData::CHARACTER_4_2:
+		m_data->playerData[playerID].playerIcone.SetAnimation("Perso4-2");
+		break;
+	default:
+		break;
 	}
 }
 
@@ -325,7 +369,7 @@ void FlagGame::Update(float _deltaTime)
 
 void FlagGame::Draw(sf::RenderWindow& _renderWindow)
 {
-	sfMod::RenderWindow& renderWindow = *m_data->gameData->m_renderWindow ;
+	sfMod::RenderWindow& renderWindow = *m_data->gameData->m_renderWindow;
 
 	// IMPORTANT : Dessiner le background en PREMIER
 	renderWindow.draw(m_data->backgroundSprite);
@@ -344,15 +388,17 @@ void FlagGame::Draw(sf::RenderWindow& _renderWindow)
 		renderWindow.draw(m_data->timerText);
 		renderWindow.draw(m_data->buttonSprite);
 
-		// Draw only participating players' texts
+		// Draw only participating players' icons and buttons at the bottom
 		if (m_data->gameData)
 		{
 			for (int playerID : m_data->gameData->m_gonnaPlayIndex)
 			{
 				if (playerID >= 0 && playerID < 4)
 				{
+					// Dessiner l'icône
+					renderWindow.draw(m_data->playerData[playerID].playerIcone);
+					// Dessiner le bouton au-dessus de l'icône
 					renderWindow.draw(m_data->playerData[playerID].buttonSprite);
-					renderWindow.draw(m_data->playerData[playerID].inputText);
 				}
 			}
 		}
@@ -387,9 +433,36 @@ void FlagGame::StartNewRound(void)
 	}
 	UpdatePlayerInputTexts();
 
-	// Set timers
-	m_data->roundTimer.SetTimeTarget(ROUND_TIME, true);
+	// NOUVEAU : Augmenter la difficulté progressivement
+	// Réduire le temps du round après le premier
+	float roundTime = ROUND_TIME;
+	if (m_data->currentRound > 1)
+	{
+		// Réduire de 0.5 seconde par round (min 2 secondes)
+		roundTime = std::max(2.0f, ROUND_TIME - (m_data->currentRound - 1) * 0.5f);
+	}
+
+	// NOUVEAU : Accélérer le changement d'input requis
+	float inputChangeMin = INPUT_CHANGE_MIN;
+	float inputChangeMax = INPUT_CHANGE_MAX;
+	
+	if (m_data->currentRound > 1)
+	{
+		// Réduire les intervalles de changement d'input
+		float reduction = (m_data->currentRound - 1) * 0.15f;
+		inputChangeMin = std::max(0.2f, INPUT_CHANGE_MIN - reduction);
+		inputChangeMax = std::max(0.8f, INPUT_CHANGE_MAX - reduction * 1.5f);
+	}
+
+	// Set timers avec les nouvelles valeurs
+	m_data->roundTimer.SetTimeTarget(roundTime, true);
+	m_data->inputChangeTimer.SetTimeTarget(random::RandomFloat(inputChangeMin, inputChangeMax), true);
+	
 	ChangeRequiredInput();
+	
+	// Stocker les valeurs pour le prochain changement d'input
+	m_data->currentInputChangeMin = inputChangeMin;
+	m_data->currentInputChangeMax = inputChangeMax;
 }
 
 void FlagGame::EvaluateRound(void)
@@ -474,16 +547,18 @@ void FlagGame::EvaluateRound(void)
 void FlagGame::ChangeRequiredInput(void)
 {
 	m_data->requiredInput = GetRandomValidInput();
-	//m_data->buttonSprite.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>(m_data->stringTab[(int)m_data->requiredInput]));
 	m_data->buttonSprite.SetTextureFrame(m_data->stringTab[(int)m_data->requiredInput]);
-	//m_data->buttonSprite.setOrigin(m_data->buttonSprite.getLocalBounds().width / 2, m_data->buttonSprite.getLocalBounds().height / 2);
 
 	char inputBuffer[100];
 	std::snprintf(inputBuffer, 100, "Press: %s", GetGamePadButtonName(m_data->requiredInput));
 	m_data->requiredInputText.setString(inputBuffer);
 	m_data->requiredInputText.setOrigin(m_data->requiredInputText.getLocalBounds().width / 2, m_data->requiredInputText.getLocalBounds().height / 2);
 
-	float nextChangeDelay = random::RandomFloat(INPUT_CHANGE_MIN, INPUT_CHANGE_MAX);
+	// MODIFICATION : Utiliser les valeurs dynamiques de difficulté
+	float nextChangeDelay = random::RandomFloat(
+		m_data->currentInputChangeMin, 
+		m_data->currentInputChangeMax
+	);
 	m_data->inputChangeTimer.SetTimeTarget(nextChangeDelay, true);
 }
 
@@ -516,49 +591,20 @@ void FlagGame::UpdatePlayerInputTexts(void)
 
 		if (m_data->playerData[playerID].isEliminated)
 		{
-			m_data->playerData[playerID].inputText.setFillColor(sf::Color::Red);
 			m_data->playerData[playerID].buttonSprite.setColor(sf::Color::Red);
-			char buffer[50];
-			std::snprintf(buffer, 50, "Player %d\nELIMINATED", playerID + 1);
-			m_data->playerData[playerID].inputText.setString(buffer);
-			
-			// Centrer l'origine du texte
-			m_data->playerData[playerID].inputText.setOrigin(
-				m_data->playerData[playerID].inputText.getLocalBounds().width / 2,
-				m_data->playerData[playerID].inputText.getLocalBounds().height / 2
-			);
+			m_data->playerData[playerID].playerIcone.setColor(sf::Color(255, 100, 100, 255));
 		}
 		else
 		{
-			m_data->playerData[playerID].inputText.setFillColor(sf::Color::Green);
 			m_data->playerData[playerID].buttonSprite.setColor(sf::Color::Green);
+			m_data->playerData[playerID].playerIcone.setColor(sf::Color::White);
 
 			if (m_data->playerData[playerID].currentInput != (GamePadBindList)(-1))
 			{
-				char buffer[100];
-				std::snprintf(buffer, 100, "Player %d\n%s", playerID + 1,
-					GetGamePadButtonName(m_data->playerData[playerID].currentInput));
-				m_data->playerData[playerID].inputText.setString(buffer);
-
-				// CORRECTION : Afficher le bouton du JOUEUR, pas celui requis
+				// Afficher le bouton du JOUEUR
 				m_data->playerData[playerID].buttonSprite.setColor(sf::Color::White);
 				m_data->playerData[playerID].buttonSprite.SetTextureFrame(m_data->stringTab[(int)m_data->playerData[playerID].currentInput]);
 			}
-			else
-			{
-				char buffer[50];
-				std::snprintf(buffer, 50, "Player %d\nWaiting...", playerID + 1);
-				m_data->playerData[playerID].inputText.setString(buffer);
-				
-				// Réinitialiser la couleur du sprite en vert pour "Waiting"
-				//m_data->playerData[playerID].buttonSprite.setColor(sf::Color::White);
-			}
-			
-			// Centrer l'origine du texte
-			m_data->playerData[playerID].inputText.setOrigin(
-				m_data->playerData[playerID].inputText.getLocalBounds().width / 2,
-				m_data->playerData[playerID].inputText.getLocalBounds().height / 2
-			);
 		}
 	}
 }

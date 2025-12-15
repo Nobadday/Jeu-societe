@@ -15,10 +15,6 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 
 	progress.store(0.1f);
 
-	// CHANGEMENT : Ne plus charger le manifest ici car il est déjà chargé par LoadingScreen
-	// m_gameData->m_assetManager->LoadManifest("Manifests/Board.json", "Board");
-	progress.store(0.3f);
-
 	// Configuration des éléments UI
 	m_data->HudLBM.text.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
 	m_data->HudLBM.sprite.setTexture(*m_gameData->m_assetManager->GetAsset<TextureAnimated>("Anim_card", AssetManager::AssetType::TEXTURE_ANIMATED));
