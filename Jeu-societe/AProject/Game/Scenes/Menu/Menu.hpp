@@ -6,12 +6,14 @@
 #include "../../../Common.hpp"
 #include "../../../Animation/Graphics.hpp"
 #include "../../../Ui/Button.hpp"
+#include "../../Video+Audio/HighResVideoPlayer.hpp"
 
 class Menu : public SceneBase
 {
 private:
 	enum MenuState
 	{
+		INTRO,
 		MAIN_MENU,
 		OPTIONS,
 		CREDITS,
@@ -55,7 +57,7 @@ private:
 	{
 		UI ui;
 
-		MenuState state = MAIN_MENU;
+		MenuState state = INTRO;
 		ControlerCurrentButton controlerBtn = PLAY;
 		float inputDelay = 0.f;
 		int currentPlayer = 0;
@@ -64,6 +66,7 @@ private:
 
 		std::vector<PlayerData> playerDataVec;
 
+		HighResVideoPlayer introVideo;
 		GameSettings gameSettings;
 		GameData* gameData;
 		//* of audio because i'm tired of cast void*
