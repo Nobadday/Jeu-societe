@@ -3,6 +3,7 @@
 
 #include "../../../Common.hpp"
 #include "../../../Scenes/Scene.hpp"
+#include "../../Ui/Transition/Transition.hpp"
 #include "../../../Animation/Animation/Timer.hpp" 
 #include "../../../Animation/Graphics/SpriteAtlas.hpp" 
 #include "../../../Animation/Graphics/TextureAtlas.hpp" 
@@ -16,6 +17,7 @@ class FlagGame : public SceneBase
 private:
 	enum State
 	{
+		TRANSITION,
 		STATE_WAITING,
 		STATE_PLAYING,
 		STATE_ROUND_END,
@@ -64,6 +66,9 @@ private:
 
 		float currentInputChangeMin;
 		float currentInputChangeMax;
+
+		TransitionClass transition;
+		bool end = false;
 	};
 	
 	SceneData* m_data;

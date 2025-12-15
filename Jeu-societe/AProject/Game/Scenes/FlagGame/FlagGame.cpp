@@ -19,7 +19,9 @@ void FlagGame::Load(void)
 	}
 
 	m_data->gameData->m_assetManager->LoadManifest("Manifests/FlagGame.json", "FlagGame");
-	m_data->state = STATE_WAITING;
+	m_data->state = TRANSITION;
+	m_data->transition.PlayTransition();
+
 	m_data->currentRound = 0;
 	m_data->playersRemaining = 0;
 	m_data->eliminationCounter = 0;
@@ -127,13 +129,12 @@ void FlagGame::Load(void)
 	UpdatePlayerInputTexts();
 
 	// Start the game if enough players
-	if (HasEnoughPlayers())
-	{
-		m_data->state = STATE_PLAYING;
-		StartNewRound();
-	}
+	//if (HasEnoughPlayers())
+	//{
+	//	m_data->state = STATE_PLAYING;
+	//	StartNewRound();
+	//}
 }
-
 void FlagGame::InitializePlayerIcon(int playerID, int positionIndex)
 {
 	// Initialiser les sprites d'icône et d'aura pour le joueur
@@ -174,7 +175,6 @@ void FlagGame::InitializePlayerIcon(int playerID, int positionIndex)
 		break;
 	}
 }
-
 void FlagGame::Unload(void)
 {
 	delete m_data;
@@ -214,200 +214,223 @@ void FlagGame::PollEvent(sf::Event& _event)
 		}
 	}
 }
-
 void FlagGame::Update(float _deltaTime)
 {
-	// Track total game time during playing state
-	if (m_data->state == STATE_PLAYING)
-	{
-		m_data->totalGameTime += _deltaTime;
-	}
-
-	if (!HasEnoughPlayers() && m_data->state != STATE_WAITING)
-	{
-		m_data->state = STATE_WAITING;
-		return;
-	}
+	//if (!HasEnoughPlayers() && m_data->state != STATE_WAITING)
+	//{
+	//	m_data->state = STATE_WAITING;
+	//	return;
+	//}
 
 	switch (m_data->state)
 	{
-	case STATE_WAITING:
-		if (HasEnoughPlayers())
-		{
-			m_data->state = STATE_PLAYING;
-			StartNewRound();
-		}
-		break;
-
-	case STATE_PLAYING:
-		m_data->roundTimer.Update(_deltaTime);
-		m_data->inputChangeTimer.Update(_deltaTime);
-
-		// Update timer text
-		char timerBuffer[20];
-		std::snprintf(timerBuffer, 20, "Time: %.2f", m_data->roundTimer.GetRemainingTime());
-		m_data->timerText.setString(timerBuffer);
-		m_data->timerText.setOrigin(m_data->timerText.getLocalBounds().width / 2, m_data->timerText.getLocalBounds().height / 2);
-
-		// Change required input randomly
-		if (m_data->inputChangeTimer.IsFinished() && m_data->roundTimer.GetRemainingTime() > 1.0f)
-		{
-			ChangeRequiredInput();
-		}
-
-		// Check if round is over
-		if (m_data->roundTimer.IsFinished())
-		{
-			EvaluateRound();
-		}
-		break;
-
-	case STATE_ROUND_END:
-		m_data->roundTimer.Update(_deltaTime);
-
-		if (m_data->roundTimer.IsFinished())
-		{
-			if (m_data->currentRound >= MAX_ROUND || m_data->playersRemaining <= 1)
+		case TRANSITION:
+			m_data->transition.Update(_deltaTime);
+			if (m_data->transition.IsFinished())
 			{
-				m_data->state = STATE_GAME_OVER;
-				m_data->roundTimer.SetTimeTarget(ROUND_END_TIME, true);
+				if (!m_data->end)
+				{
+					m_data->state = STATE_WAITING;
+
+
+				}
+				else
+				{
+					ChangeScene("Board", false);
+				}
 			}
-			else
+			break;
+
+		case STATE_WAITING:
+			if (HasEnoughPlayers())
 			{
 				m_data->state = STATE_PLAYING;
 				StartNewRound();
 			}
-		}
-		break;
+			break;
 
-	case STATE_GAME_OVER:
-		m_data->roundTimer.Update(_deltaTime);
+		case STATE_PLAYING:
 
-		if (m_data->roundTimer.IsFinished())
-		{
-			// Return to board
-			if (m_data->gameData)
+			// Track total game time during playing state
+			m_data->totalGameTime += _deltaTime;
+
+			m_data->roundTimer.Update(_deltaTime);
+			m_data->inputChangeTimer.Update(_deltaTime);
+
+			// Update timer text
+			char timerBuffer[20];
+			std::snprintf(timerBuffer, 20, "Time: %.2f", m_data->roundTimer.GetRemainingTime());
+			m_data->timerText.setString(timerBuffer);
+			m_data->timerText.setOrigin(m_data->timerText.getLocalBounds().width / 2, m_data->timerText.getLocalBounds().height / 2);
+
+			// Change required input randomly
+			if (m_data->inputChangeTimer.IsFinished() && m_data->roundTimer.GetRemainingTime() > 1.0f)
 			{
-				// Check if it's a tie (all players eliminated simultaneously)
-				int totalPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size();
-				int eliminatedPlayers = 0;
-				int maxEliminationOrder = 0;
-				int playersWithMaxOrder = 0;
-
-				// Count eliminated players and find the highest elimination order
-				for (int playerID : m_data->gameData->m_gonnaPlayIndex)
-				{
-					if (m_data->playerData[playerID].isEliminated)
-					{
-						eliminatedPlayers++;
-						if (m_data->playerData[playerID].eliminationOrder > maxEliminationOrder)
-						{
-							maxEliminationOrder = m_data->playerData[playerID].eliminationOrder;
-							playersWithMaxOrder = 1;
-						}
-						else if (m_data->playerData[playerID].eliminationOrder == maxEliminationOrder)
-						{
-							playersWithMaxOrder++;
-						}
-					}
-				}
-
-				// If all players are eliminated and multiple players share the last elimination order, it's a tie
-				bool isTie = (m_data->playersRemaining == 0 && playersWithMaxOrder > 1);
-
-				if (isTie)
-				{
-					// Tie scenario - don't add anyone to the win list
-					std::cout << "Game ended in a tie! No winners added to win list." << std::endl;
-				}
-				else if (m_data->playersRemaining == 1)
-				{
-					// Award winner if there is one
-					for (int playerID : m_data->gameData->m_gonnaPlayIndex)
-					{
-						if (!m_data->playerData[playerID].isEliminated)
-						{
-							m_data->gameData->AddPlayerWin(playerID);
-							std::cout << "Player " << (playerID + 1) << " wins!" << std::endl;
-							break;
-						}
-					}
-
-					// Add losers in REVERSE order of elimination (last eliminated first, first eliminated last)
-					std::vector<std::pair<int, int>> eliminatedPlayersList;
-
-					for (int playerID : m_data->gameData->m_gonnaPlayIndex)
-					{
-						if (m_data->playerData[playerID].isEliminated && m_data->playerData[playerID].eliminationOrder > 0)
-						{
-							eliminatedPlayersList.push_back({ playerID, m_data->playerData[playerID].eliminationOrder });
-						}
-					}
-
-					// Sort by elimination order in DESCENDING order (last eliminated first)
-					std::sort(eliminatedPlayersList.begin(), eliminatedPlayersList.end(),
-						[](const std::pair<int, int>& a, const std::pair<int, int>& b) {
-							return a.second > b.second;
-						});
-
-					// Add all losers in reverse order
-					for (const auto& player : eliminatedPlayersList)
-					{
-						m_data->gameData->AddPlayerWin(player.first);
-						std::cout << "Player " << (player.first + 1) << " added as loser (order "
-							<< player.second << ", time: "
-							<< m_data->playerData[player.first].eliminationTime << "s)" << std::endl;
-					}
-				}
+				ChangeRequiredInput();
 			}
 
-			ChangeScene("Board", false);
-		}
-		break;
+			// Check if round is over
+			if (m_data->roundTimer.IsFinished())
+			{
+				EvaluateRound();
+			}
+			break;
+
+		case STATE_ROUND_END:
+			m_data->roundTimer.Update(_deltaTime);
+
+			if (m_data->roundTimer.IsFinished())
+			{
+				if (m_data->currentRound >= MAX_ROUND || m_data->playersRemaining <= 1)
+				{
+					m_data->state = STATE_GAME_OVER;
+					m_data->roundTimer.SetTimeTarget(ROUND_END_TIME, true);
+				}
+				else
+				{
+					m_data->state = STATE_PLAYING;
+					StartNewRound();
+				}
+			}
+			break;
+
+		case STATE_GAME_OVER:
+			m_data->roundTimer.Update(_deltaTime);
+
+			if (m_data->roundTimer.IsFinished())
+			{
+				// Return to board
+				if (m_data->gameData)
+				{
+					// Check if it's a tie (all players eliminated simultaneously)
+					int totalPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size();
+					int eliminatedPlayers = 0;
+					int maxEliminationOrder = 0;
+					int playersWithMaxOrder = 0;
+
+					// Count eliminated players and find the highest elimination order
+					for (int playerID : m_data->gameData->m_gonnaPlayIndex)
+					{
+						if (m_data->playerData[playerID].isEliminated)
+						{
+							eliminatedPlayers++;
+							if (m_data->playerData[playerID].eliminationOrder > maxEliminationOrder)
+							{
+								maxEliminationOrder = m_data->playerData[playerID].eliminationOrder;
+								playersWithMaxOrder = 1;
+							}
+							else if (m_data->playerData[playerID].eliminationOrder == maxEliminationOrder)
+							{
+								playersWithMaxOrder++;
+							}
+						}
+					}
+
+					// If all players are eliminated and multiple players share the last elimination order, it's a tie
+					bool isTie = (m_data->playersRemaining == 0 && playersWithMaxOrder > 1);
+
+					if (isTie)
+					{
+						// Tie scenario - don't add anyone to the win list
+						std::cout << "Game ended in a tie! No winners added to win list." << std::endl;
+					}
+					else if (m_data->playersRemaining == 1)
+					{
+						// Award winner if there is one
+						for (int playerID : m_data->gameData->m_gonnaPlayIndex)
+						{
+							if (!m_data->playerData[playerID].isEliminated)
+							{
+								m_data->gameData->AddPlayerWin(playerID);
+								std::cout << "Player " << (playerID + 1) << " wins!" << std::endl;
+								break;
+							}
+						}
+
+						// Add losers in REVERSE order of elimination (last eliminated first, first eliminated last)
+						std::vector<std::pair<int, int>> eliminatedPlayersList;
+
+						for (int playerID : m_data->gameData->m_gonnaPlayIndex)
+						{
+							if (m_data->playerData[playerID].isEliminated && m_data->playerData[playerID].eliminationOrder > 0)
+							{
+								eliminatedPlayersList.push_back({ playerID, m_data->playerData[playerID].eliminationOrder });
+							}
+						}
+
+						// Sort by elimination order in DESCENDING order (last eliminated first)
+						std::sort(eliminatedPlayersList.begin(), eliminatedPlayersList.end(),
+							[](const std::pair<int, int>& a, const std::pair<int, int>& b) {
+								return a.second > b.second;
+							});
+
+						// Add all losers in reverse order
+						for (const auto& player : eliminatedPlayersList)
+						{
+							m_data->gameData->AddPlayerWin(player.first);
+							std::cout << "Player " << (player.first + 1) << " added as loser (order "
+								<< player.second << ", time: "
+								<< m_data->playerData[player.first].eliminationTime << "s)" << std::endl;
+						}
+					}
+				}
+
+
+				m_data->end = true;
+				m_data->state = TRANSITION;
+				m_data->transition.SetTransition(TransitionClass::FADED_OUT);
+				m_data->transition.PlayTransition();
+			}
+			break;
 	}
 }
-
 void FlagGame::Draw(sf::RenderWindow& _renderWindow)
 {
 	sfMod::RenderWindow& renderWindow = *m_data->gameData->m_renderWindow;
 
-	// IMPORTANT : Dessiner le background en PREMIER
 	renderWindow.draw(m_data->backgroundSprite);
 
-	if (!HasEnoughPlayers())
+	switch (m_data->state)
 	{
-		renderWindow.draw(m_data->notEnoughPlayersText);
-		return;
-	}
+		case TRANSITION:
 
-	renderWindow.draw(m_data->titleText);
+			m_data->transition.Draw(renderWindow);
+			break;
 
-	if (m_data->state == STATE_PLAYING || m_data->state == STATE_ROUND_END)
-	{
-		renderWindow.draw(m_data->roundText);
-		renderWindow.draw(m_data->timerText);
-		renderWindow.draw(m_data->buttonSprite);
+		case STATE_PLAYING:
+		case STATE_ROUND_END:
 
-		// Draw only participating players' icons and buttons at the bottom
-		if (m_data->gameData)
-		{
-			for (int playerID : m_data->gameData->m_gonnaPlayIndex)
+			renderWindow.draw(m_data->titleText);
+			renderWindow.draw(m_data->roundText);
+			renderWindow.draw(m_data->timerText);
+			renderWindow.draw(m_data->buttonSprite);
+
+			// Draw only participating players' icons and buttons at the bottom
+			if (m_data->gameData)
 			{
-				if (playerID >= 0 && playerID < 4)
+				for (int playerID : m_data->gameData->m_gonnaPlayIndex)
 				{
-					// Dessiner l'icône
-					renderWindow.draw(m_data->playerData[playerID].playerIcone);
-					// Dessiner le bouton au-dessus de l'icône
-					renderWindow.draw(m_data->playerData[playerID].buttonSprite);
+					if (playerID >= 0 && playerID < 4)
+					{
+						// Dessiner l'icône
+						renderWindow.draw(m_data->playerData[playerID].playerIcone);
+						// Dessiner le bouton au-dessus de l'icône
+						renderWindow.draw(m_data->playerData[playerID].buttonSprite);
+					}
 				}
 			}
-		}
+			break;
+
+		case STATE_GAME_OVER:
+			renderWindow.draw(m_data->resultText);
+			break;
 	}
 
-	if (m_data->state == STATE_GAME_OVER)
-	{
-		renderWindow.draw(m_data->resultText);
-	}
+	//if (!HasEnoughPlayers())
+	//{
+	//	renderWindow.draw(m_data->notEnoughPlayersText);
+	//	return;
+	//}
 }
 
 void FlagGame::StartNewRound(void)
@@ -464,7 +487,6 @@ void FlagGame::StartNewRound(void)
 	m_data->currentInputChangeMin = inputChangeMin;
 	m_data->currentInputChangeMax = inputChangeMax;
 }
-
 void FlagGame::EvaluateRound(void)
 {
 	// Track players eliminated this round
@@ -561,7 +583,6 @@ void FlagGame::ChangeRequiredInput(void)
 	);
 	m_data->inputChangeTimer.SetTimeTarget(nextChangeDelay, true);
 }
-
 GamePadBindList FlagGame::GetRandomValidInput(void)
 {
 	GamePadBindList validInputs[] = {
@@ -571,7 +592,6 @@ GamePadBindList FlagGame::GetRandomValidInput(void)
 	int randomIndex = random::RandomInt(0, 5);
 	return validInputs[randomIndex];
 }
-
 bool FlagGame::IsInputValid(GamePadBindList _input)
 {
 	return (_input == GAMEPAD_A || _input == GAMEPAD_B ||
@@ -608,7 +628,6 @@ void FlagGame::UpdatePlayerInputTexts(void)
 		}
 	}
 }
-
 bool FlagGame::HasEnoughPlayers(void)
 {
 	if (!m_data->gameData)
@@ -616,7 +635,6 @@ bool FlagGame::HasEnoughPlayers(void)
 
 	return m_data->gameData->m_gonnaPlayIndex.size() >= 2;
 }
-
 int FlagGame::GetFirstEliminatedPlayer(void)
 {
 	int firstEliminatedID = -1;

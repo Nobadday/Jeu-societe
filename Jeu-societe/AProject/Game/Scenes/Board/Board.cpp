@@ -1775,10 +1775,7 @@ std::string BaseGame::RandomDuel()
 	//int randomIndex = 2;
 	int randomIndex = randmt::RandomInt(0, miniGameCount - 1);
 
-	//std::cout << "Random minigame selected: " << miniGames[randomIndex] << std::endl;
-
-
-	//return "FlagGame";
+	std::cout << "Random minigame selected: " << miniGames[randomIndex] << std::endl;
 
 
 	m_gameData->m_nextScene = miniGames[randomIndex];
