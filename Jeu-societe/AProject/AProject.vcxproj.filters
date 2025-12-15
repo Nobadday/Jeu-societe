@@ -1,69 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Animation\Animation\AnimationEasing.cpp" />
-    <ClCompile Include="Animation\Animation\AnimationHandler.cpp" />
-    <ClCompile Include="Animation\Animation\Animator.cpp" />
-    <ClCompile Include="Animation\Animation\Timer.cpp" />
-    <ClCompile Include="Animation\Graphics\AnimatedObject.cpp" />
-    <ClCompile Include="Animation\Graphics\AtlasContainer.cpp" />
-    <ClCompile Include="Animation\Graphics\GraphicAddons.cpp" />
-    <ClCompile Include="Animation\Graphics\SpriteAnimated.cpp" />
-    <ClCompile Include="Animation\Graphics\TextAnimated.cpp" />
-    <ClCompile Include="Animation\Graphics\TextPlus.cpp" />
-    <ClCompile Include="Animation\Graphics\SpriteAtlas.cpp" />
-    <ClCompile Include="Animation\Graphics\TextureAnimated.cpp" />
-    <ClCompile Include="Animation\Graphics\TextureAtlas.cpp" />
-    <ClCompile Include="Animation\Utilities\Bezier.cpp" />
-    <ClCompile Include="Animation\Utilities\Math.cpp" />
-    <ClCompile Include="Game\GameData.cpp" />
-    <ClCompile Include="Game\PlayerData.cpp" />
-    <ClCompile Include="Game\Scenes\ArmWrestling\ArmWrestling.cpp" />
-    <ClCompile Include="Game\Scenes\Basket\Basket.cpp" />
-    <ClCompile Include="Game\Scenes\Board\Board.cpp" />
-    <ClCompile Include="Game\Scenes\Board\Effects.cpp" />
-    <ClCompile Include="Game\Scenes\Board\Icone.cpp" />
-    <ClCompile Include="Game\Scenes\Board\LBM.cpp" />
-    <ClCompile Include="Game\Scenes\Board\PathManagement.cpp" />
-    <ClCompile Include="Game\Scenes\Board\PlayerActions.cpp" />
-    <ClCompile Include="Game\Scenes\Board\PlayerCam.cpp" />
-    <ClCompile Include="Game\Scenes\Board\StartThrow.cpp" />
-    <ClCompile Include="Game\Scenes\FlagGame\FlagGame.cpp" />
-    <ClCompile Include="Game\Scenes\Loading\LoadingScreen.cpp" />
-    <ClCompile Include="Game\Scenes\Menu\Menu.cpp" />
-    <ClCompile Include="Game\Scenes\Podium\Podium.cpp" />
-    <ClCompile Include="Game\Scenes\RandCard\RandCard.cpp" />
-    <ClCompile Include="Game\Scenes\RockPaperScissors\RockPaperScissors.cpp" />
-    <ClCompile Include="Game\Scenes\RussianRoulette\RussianRoulette.cpp" />
-    <ClCompile Include="Game\Scenes\Warmup\Warmup.cpp" />
-    <ClCompile Include="Map\JsonReader.cpp" />
-    <ClCompile Include="Map\MapLayer.cpp" />
-    <ClCompile Include="Map\MapObject.cpp" />
-    <ClCompile Include="Map\Tiled.cpp" />
-    <ClCompile Include="Map\Tileset.cpp" />
-    <ClCompile Include="Scenes\Scene.cpp" />
-    <ClCompile Include="Scenes\SceneHandler.cpp" />
-    <ClCompile Include="Ui\Button.cpp" />
-    <ClCompile Include="Ui\HealthBar\HealthBar.cpp" />
-    <ClCompile Include="Ui\MenuSystem.cpp" />
-    <ClCompile Include="Ui\Transition\Transition.cpp" />
-    <ClCompile Include="Utilities\AssetManager.cpp" />
-    <ClCompile Include="Utilities\AudioEngine\AudioEngine.cpp" />
-    <ClCompile Include="Utilities\BetterWindow\BetterWindow.cpp" />
-    <ClCompile Include="Utilities\Binds.cpp" />
-    <ClCompile Include="Utilities\Camera\Camera.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Utilities\Controller\Controller.cpp" />
-    <ClCompile Include="Utilities\FileTools.cpp" />
-    <ClCompile Include="Utilities\Lists\PyDict.cpp" />
-    <ClCompile Include="Utilities\Lists\DynaList.cpp" />
-    <ClCompile Include="Utilities\Lists\PyList.cpp" />
-    <ClCompile Include="Utilities\MathPlus.cpp" />
-    <ClCompile Include="Utilities\NewMath.cpp" />
-    <ClCompile Include="Utilities\Random.cpp" />
-    <ClCompile Include="Video+Audio\HighResVideoPlayer.cpp" />
-    <ClCompile Include="Video+Audio\VideoCommun.hpp" />
-    <ClCompile Include="Game\Scenes\Credits\Credits.cpp" />
+    <Filter Include="Fichiers sources">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Fichiers de ressources">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
