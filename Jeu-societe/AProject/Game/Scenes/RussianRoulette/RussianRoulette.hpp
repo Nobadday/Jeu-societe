@@ -33,6 +33,8 @@ class RussianRoulette : public SceneBase
 		{
 			SpriteAnimated gunSprAnim;
 			SpriteAnimated iconsChara;
+			std::vector<std::string> charaAvaible;
+
 			sf::Sprite background;
 
 			GameState gameState = TRANSITION;
