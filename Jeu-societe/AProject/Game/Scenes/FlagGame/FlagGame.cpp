@@ -384,6 +384,7 @@ void FlagGame::Update(float _deltaTime)
 			break;
 	}
 }
+
 void FlagGame::Draw(sf::RenderWindow& _renderWindow)
 {
 	sfMod::RenderWindow& renderWindow = *m_data->gameData->m_renderWindow;
