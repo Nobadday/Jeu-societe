@@ -1,8 +1,6 @@
 #include "Tiled.h"
 #include <sstream>
 
-
-
 void Tiled::InitTiled(const char* _Map)
 {
 	if (m_config.LoadFromFile(_Map))
@@ -74,7 +72,7 @@ void Tiled::InitTiled(const char* _Map)
 			{
 				std::cerr << "Certaines textures n'ont pas pu être chargées." << std::endl;
 			}
-			std::cout << std::endl;
+			//std::cout << std::endl;
 		}
 
 		// Accéder au tableau des layers
@@ -97,7 +95,7 @@ void Tiled::InitTiled(const char* _Map)
 				mapLayer.SetParallaxX(layer.value("parallaxx", 1.0f));
 				mapLayer.SetParallaxY(layer.value("parallaxy", 1.0f));
 
-				/*  std::cout << "Layer " << i << ": " << mapLayer.GetName()
+				/* std::cout << "Layer " << i << ": " << mapLayer.GetName()
 							<< " (Type: " << mapLayer.GetType() << ")"
 							<< ", Visible: " << (mapLayer.IsVisible() ? "Oui" : "Non")
 							<< ", Opacité: " << mapLayer.GetOpacity()
@@ -155,7 +153,7 @@ void Tiled::InitTiled(const char* _Map)
 						const Tileset* tileset = tilesetManager.GetTilesetByGid(gid);
 						std::string tilesetName = tileset ? tileset->GetName() : "Aucun";
 
-					/*	 std::cout << "    Objet " << j << " : " << mapObject.GetName() << " : GID=" << gid
+						/* std::cout << "    Objet " << j << " : " << mapObject.GetName() << " : GID=" << gid
 								   << " (Tileset: " << tilesetName << ")"
 								   << ", Pos=(" << mapObject.GetX() << "," << mapObject.GetY() << ")"
 								   << ", Taille=(" << mapObject.GetWidth() << "x" << mapObject.GetHeight() << ")" << std::endl;*/
@@ -164,7 +162,7 @@ void Tiled::InitTiled(const char* _Map)
 
 				// Ajouter le layer à la liste
 				mapLayers.push_back(mapLayer);
-				std::cout << std::endl;
+				//std::cout << std::endl;
 			}
 		}
 

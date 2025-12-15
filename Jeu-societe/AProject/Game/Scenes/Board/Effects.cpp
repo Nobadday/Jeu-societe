@@ -37,7 +37,7 @@ void BaseGame::CreateSmokeEffectForSwap(Player& _player)
 
 void BaseGame::CreateSmokeEffectAnotherPart(sf::Vector2f _posMin, sf::Vector2f _posMax)
 {
-	for (int i = 0; i < 1002; i++)
+	for (int i = 0; i < 1110*2; i++)
 	{
 		sf::Vector2f posEffect;
 		posEffect.x = randmt::RandomFloat(_posMin.x + 512.f / 2.f, _posMax.x);

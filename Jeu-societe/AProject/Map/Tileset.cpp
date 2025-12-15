@@ -234,14 +234,14 @@ void TilesetManager::Clear()
 
 void TilesetManager::Print() const
 {
-   /* std::cout << "=== TILESET MANAGER ===" << std::endl;
+  /* std::cout << "=== TILESET MANAGER ===" << std::endl;
     std::cout << "Nombre de tilesets: " << m_tilesets.size() << std::endl;
-    std::cout << "Nombre de mappings GID: " << m_gidToTileset.size() << std::endl;*/
-    std::cout << std::endl;
+    std::cout << "Nombre de mappings GID: " << m_gidToTileset.size() << std::endl;
+    std::cout << std::endl;*/
     
     for (const auto& tileset : m_tilesets)
     {
         tileset.Print();
-        std::cout << std::endl;
+        //std::cout << std::endl;
     }
 }

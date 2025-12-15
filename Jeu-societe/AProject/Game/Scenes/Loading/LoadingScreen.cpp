@@ -14,8 +14,10 @@ void LoadingScreen::Load(void)
     }
     // Ligne 17 : Remplacer le texte de chargement
     m_data->loadingText.setString("Loading...");
-    m_data->loadingText.setCharacterSize(40);
+    m_data->loadingText.setCharacterSize(50);
     m_data->loadingText.setFillColor(sf::Color::White);
+	m_data->loadingText.setOutlineColor(sf::Color::Black);
+	m_data->loadingText.setOutlineThickness(2.f);
     
     sf::FloatRect textBounds = m_data->loadingText.getLocalBounds();
     m_data->loadingText.setOrigin(textBounds.width / 2.f, textBounds.height / 2.f);
