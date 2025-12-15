@@ -1,4 +1,4 @@
-﻿#include "Common.hpp"
+#include "Common.hpp"
 
 #include "Game/Scenes/Board/Board.hpp"
 #include "Game/Scenes/Loading/LoadingScreen.hpp"
@@ -49,6 +49,15 @@ int main()
 	//binds = new Binds();
 
 	MainData mainData;
+
+	//mainData.gameData.m_playerDataList.resize(2);
+	//for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
+	//{
+	//	mainData.gameData.m_playerDataList[i].SetJoystickID(i);
+	//	mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 4));
+	//	mainData.gameData.AddPlayerPlaying(i);
+	//}
+
 
 	mainData.gameData.m_playerDataList.resize(2);
 	for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
@@ -118,9 +127,9 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<Warmup>("Warmup");
 
 	// Sélectionner le LoadingScreen metre false pour tout scene au debut 
-
-	//YANNOU !!! VERIFIE SI LA SCENE CHARGE EST DEJA CHARGE
-	_mainData.scenes.SelectScene("Lo", false);
+	_mainData.scenes.SelectScene("Menu", false);
+	//_mainData.scenes.SelectScene("FlagGame", false);
+	//_mainData.scenes.SelectScene("Lo", false);
 
 	_mainData.clock.restart();
 }

@@ -5,6 +5,7 @@
 #include "../../../Common.hpp"
 #include "../../../Video+Audio/HighResVideoPlayer.hpp"
 #include "../../../Animation/Graphics.hpp"
+#include "../../../UI/Transition/Transition.hpp"
 
 
 class Warmup : public SceneBase
@@ -19,25 +20,30 @@ private:
 	struct SceneData
 	{
 		TextPlus text;
+		TextPlus buttonText;
 		SpriteAnimated iconsChara;
+		SpriteAtlas buttonSpr;
+		
 		sf::Sprite background;
 		State state = TRANS_1;
 		sf::Vector2f scaleVid = { 1.f,1.f };
 		bool playersReady = false;
 		std::vector<bool> playersReadyVec;
 		std::vector<std::string> charaAvaible;
+		std::vector<std::string> buttonName;
+		std::vector<std::string> stringOfButton;
 
-		sf::Shader chromaKeyShader;
 		HighResVideoPlayer videoPlayer;
 
 		GameData* gameData;
 		//* of audio because i'm tired of cast void*
 		AudioEngine* audio;
+		TransitionClass transition;
 	};
 	SceneData* m_data;
 
 	void PrintIcons(sf::RenderWindow& _renderWindow);
-
+	void PrintButtons(sf::RenderWindow& _renderWindow);
 public:
 	virtual void Load(void);
 	virtual void Unload(void);
