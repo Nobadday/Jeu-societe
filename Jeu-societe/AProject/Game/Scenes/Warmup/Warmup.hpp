@@ -25,6 +25,9 @@ private:
 		SpriteAtlas buttonSpr;
 		
 		sf::Sprite background;
+		sf::RectangleShape backgroundShape;
+
+
 		State state = TRANS_1;
 		sf::Vector2f scaleVid = { 1.f,1.f };
 		bool playersReady = false;
@@ -42,8 +45,8 @@ private:
 	};
 	SceneData* m_data;
 
-	void PrintIcons(sf::RenderWindow& _renderWindow);
-	void PrintButtons(sf::RenderWindow& _renderWindow);
+	void PrintIcons(sfMod::RenderWindow* _renderWindow);
+	void PrintButtons(sfMod::RenderWindow* _renderWindow);
 public:
 	virtual void Load(void);
 	virtual void Unload(void);

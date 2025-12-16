@@ -266,26 +266,27 @@ void RandCard::Update(float _deltaTime)
 
 void RandCard::Draw(sf::RenderWindow& _renderWindow)
 {
-	_renderWindow.draw(m_data->background);
+	sfMod::RenderWindow* bWindow = m_data->gameData->m_renderWindow;
+	bWindow->draw(m_data->background);
 	//Cards and icons are printed in all states
-	PrintCards(_renderWindow);
-	PrintIcons(_renderWindow);
+	PrintCards(bWindow);
+	PrintIcons(bWindow);
 	switch (m_data->gameState)
 	{
 		case TRANSITION:
 		{
-			m_data->transition.Draw(_renderWindow);
+			m_data->transition.Draw(bWindow);
 		}
 		break;
 		case WAITING_BETWEEN_PLAYER:
 		case CHOOSE_CARD:
-			_renderWindow.draw(m_data->text);
+			bWindow->draw(m_data->text);
 			break;
 	}
 }
 
 
-void RandCard::PrintCards(sf::RenderWindow& _renderWindow)
+void RandCard::PrintCards(sfMod::RenderWindow* _renderWindow)
 {
 	//For placement 
 	float border = 200.f;
@@ -299,17 +300,17 @@ void RandCard::PrintCards(sf::RenderWindow& _renderWindow)
 		{
 			//m_data->cardChosenSprAnim.setPosition(BORDER_X + cardSpacing * i, SCREEN_HEIGHT / 2.f);
 			m_data->cardChosenSprAnim.setPosition(pos);
-			_renderWindow.draw(m_data->cardChosenSprAnim);
+			_renderWindow->draw(m_data->cardChosenSprAnim);
 		}
 		else
 		{
 			//m_data->cardUnchosenSprAnim.setPosition(BORDER_X + cardSpacing * i, SCREEN_HEIGHT / 2.f);
 			m_data->cardUnchosenSprAnim.setPosition(pos);
-			_renderWindow.draw(m_data->cardUnchosenSprAnim);
+			_renderWindow->draw(m_data->cardUnchosenSprAnim);
 		}
 	}
 }
-void RandCard::PrintIcons(sf::RenderWindow& _renderWindow)
+void RandCard::PrintIcons(sfMod::RenderWindow* _renderWindow)
 {
 	//For placement 
 	float border = 200.f;
@@ -332,7 +333,7 @@ void RandCard::PrintIcons(sf::RenderWindow& _renderWindow)
 			m_data->iconsChara.setScale({ 1.2f,1.2f });
 			m_data->iconsChara.setColor({ 255,255,255,255 });
 		}
-		_renderWindow.draw(m_data->iconsChara);
+		_renderWindow->draw(m_data->iconsChara);
 		m_data->iconsChara.setScale({ 1.0f,1.0f });
 		m_data->iconsChara.setColor({ 255,255,255,150 });
 	}
