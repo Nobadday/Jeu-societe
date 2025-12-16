@@ -54,7 +54,7 @@ int main()
 	//for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
 	//{
 	//	mainData.gameData.m_playerDataList[i].SetJoystickID(i);
-	//	mainData.gameData.m_playerDataList[i].SetPlayerSkin((Player::PlayerSkin)(i % 4));
+	//	mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 4));
 	//	mainData.gameData.AddPlayerPlaying(i);
 	//}
 
@@ -100,7 +100,7 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.renderWindow.setKeyRepeatEnabled(false);
 	_mainData.renderWindow.setVerticalSyncEnabled(true);
 	_mainData.renderWindow.setMouseCursorVisible(false);
-	//_mainData.renderWindow.SetFullscreen(true);
+	_mainData.renderWindow.SetFullscreen(true);
 
 
 	// GAME DATA
@@ -127,7 +127,7 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<Warmup>("Warmup");
 
 	// Sélectionner le LoadingScreen metre false pour tout scene au debut 
-	_mainData.scenes.SelectScene("FlagGame", false);
+	_mainData.scenes.SelectScene("Menu", false);
 	//_mainData.scenes.SelectScene("FlagGame", false);
 	//_mainData.scenes.SelectScene("Lo", false);
 
