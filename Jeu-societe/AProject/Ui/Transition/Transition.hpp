@@ -1,10 +1,10 @@
 #ifndef _INC_TRANSITION_HPP
 #define _INC_TRANSITION_HPP
 
-
-
+#include "../../Utilities/BetterWindow/BetterWindow.hpp"
 #include "../../Video+Audio/HighResVideoPlayer.hpp"
 #include <SFML/Graphics.hpp>
+
 
 
 class TransitionClass
@@ -23,6 +23,7 @@ public:
 	void PlayTransition();
 	void SetTransition(Transition _transition);
 	void Update(float _dt);
+	void Draw(sfMod::RenderWindow* _window);
 	void Draw(sf::RenderWindow& _window);
 	bool IsFinished(void);
 

@@ -181,8 +181,10 @@ void Warmup::Update(float _deltaTime)
 }
 void Warmup::Draw(sf::RenderWindow& _renderWindow)
 {
-	_renderWindow.draw(m_data->background);
-	PrintIcons(_renderWindow);
+	sfMod::RenderWindow* bWindow = m_data->gameData->m_renderWindow;
+
+	bWindow->draw(m_data->background);
+	PrintIcons(bWindow);
 
 
 
@@ -190,13 +192,13 @@ void Warmup::Draw(sf::RenderWindow& _renderWindow)
 	{
 		case TRANS_1:
 
-			m_data->transition.Draw(_renderWindow);
+			m_data->transition.Draw(bWindow);
 			break;
 
 		case VIDEO:
 		{
 			_renderWindow.draw(m_data->text);
-			PrintButtons(_renderWindow);
+			PrintButtons(bWindow);
 
 			//Video
 			sf::Sprite vid = m_data->videoPlayer.getSprite();
@@ -207,12 +209,12 @@ void Warmup::Draw(sf::RenderWindow& _renderWindow)
 
 		case TRANS_2:
 
-			m_data->transition.Draw(_renderWindow);
+			m_data->transition.Draw(bWindow);
 			break;
 	}
 }
 
-void Warmup::PrintIcons(sf::RenderWindow& _renderWindow)
+void Warmup::PrintIcons(sfMod::RenderWindow* _renderWindow)
 {
 	//For placement 
 	float border = 200.f;
@@ -231,18 +233,19 @@ void Warmup::PrintIcons(sf::RenderWindow& _renderWindow)
 		{
 			m_data->iconsChara.setColor({ 155,155,155,255 });
 		}
-		_renderWindow.draw(m_data->iconsChara);
+
+		_renderWindow->draw(m_data->iconsChara);
 		m_data->iconsChara.setScale({ 1.0f,1.0f });
 		m_data->iconsChara.setColor({ 255,255,255,150 });
 	}
 }
 
-void Warmup::PrintButtons(sf::RenderWindow& _renderWindow)
+void Warmup::PrintButtons(sfMod::RenderWindow* _renderWindow)
 {
 	//Title of the minigame
 	m_data->buttonText.setPosition({ SCREEN_WIDTH * 0.76f, SCREEN_HEIGHT * 0.1f });
 	m_data->buttonText.setString(m_data->stringOfButton[0]);
-	_renderWindow.draw(m_data->buttonText);
+	_renderWindow->draw(m_data->buttonText);
 
 	std::cout << "size of string of button : " << m_data->stringOfButton.size() << std::endl;
 	if (m_data->stringOfButton.size() > 1)
@@ -255,16 +258,12 @@ void Warmup::PrintButtons(sf::RenderWindow& _renderWindow)
 			//m_data->buttonText.setString(m_data->buttonName[i - 1] + "\n\n" + m_data->stringOfButton[i]);
 			m_data->buttonSpr.SetTextureFrame(m_data->buttonName[i - 1]);
 			m_data->buttonSpr.setPosition({ SCREEN_WIDTH * 0.76f, SCREEN_HEIGHT / 3.f + i * 100.f });
-			_renderWindow.draw(m_data->buttonSpr);
+			_renderWindow->draw(m_data->buttonSpr);
 
 			//m_data->buttonSpr.setPosition({ SCREEN_WIDTH * 0.8f, SCREEN_HEIGHT / 3.f + i * 100.f });
 			m_data->buttonText.setString(m_data->stringOfButton[i]);
 			m_data->buttonText.setPosition({ SCREEN_WIDTH * 0.85f, SCREEN_HEIGHT / 3.f + i * 100.f });
-			_renderWindow.draw(m_data->buttonText);
+			_renderWindow->draw(m_data->buttonText);
 		}
 	}
-
-
-
-
 }

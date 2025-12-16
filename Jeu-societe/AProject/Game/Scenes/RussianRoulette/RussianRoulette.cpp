@@ -250,10 +250,11 @@ void RussianRoulette::Update(float _deltaTime)
 }
 void RussianRoulette::Draw(sf::RenderWindow& _renderWindow)
 {
+	sfMod::RenderWindow* bWindow = m_data->gameData->m_renderWindow;
 
-	_renderWindow.draw(m_data->background);
-	_renderWindow.draw(m_data->gunSprAnim);
-	_renderWindow.draw(m_data->text);
-	_renderWindow.draw(m_data->iconsChara);
-	m_data->transition.Draw(_renderWindow);
+	bWindow->draw(m_data->background);
+	bWindow->draw(m_data->gunSprAnim);
+	bWindow->draw(m_data->text);
+	bWindow->draw(m_data->iconsChara);
+	m_data->transition.Draw(bWindow);
 }

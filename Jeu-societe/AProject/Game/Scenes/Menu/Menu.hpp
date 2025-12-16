@@ -76,13 +76,13 @@ private:
 	void LoadUI(void);
 	void ButtonsUpdate(float _dt);
 	void ButtonsPollEvent(sf::Event& _event);
-	void DrawUI(sf::RenderWindow& _renderWindow);
+	void DrawUI(sfMod::RenderWindow* _renderWindow);
 
 	void ChangeSelection(int _value, int _joystick);
 	void PressSelection(int _id);
 
-	void PrintIcons(sf::RenderWindow& _renderWindow);
-	void PrintOptions(sf::RenderWindow& _renderWindow);
+	void PrintIcons(sfMod::RenderWindow* _renderWindow);
+	void PrintOptions(sfMod::RenderWindow* _renderWindow);
 
 	void ReturnPressed(void);
 

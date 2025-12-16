@@ -229,34 +229,34 @@ void Menu::ButtonsUpdate(float _dt)
 
 void Menu::Draw(sf::RenderWindow& _renderWindow)
 {
+	sfMod::RenderWindow* bWindow = m_data->gameData->m_renderWindow;
+
 	if (m_data->state == INTRO)
 	{
 		sf::Sprite vid = m_data->introVideo.getSprite();
-		_renderWindow.draw(vid);
+		bWindow->draw(vid);
 	}
 	else
 	{
-		_renderWindow.draw(m_data->ui.background);
-		DrawUI(_renderWindow);
+		bWindow->draw(m_data->ui.background);
+		DrawUI(bWindow);
 	}
 }
-void Menu::DrawUI(sf::RenderWindow& _renderWindow)
+void Menu::DrawUI(sfMod::RenderWindow* _renderWindow)
 {
 	sf::Vector2i mousePos = sf::Mouse::getPosition();
 	switch (m_data->state)
 	{
 	case MAIN_MENU:
-		_renderWindow.draw(m_data->ui.buttonMap["playBtn"]);
-		_renderWindow.draw(m_data->ui.buttonMap["settingsBtn"]);
-		_renderWindow.draw(m_data->ui.buttonMap["leaveBtn"]);
-		_renderWindow.draw(m_data->ui.buttonMap["creditsBtn"]);
-		_renderWindow.draw(m_data->ui.logoGame);
-		//Bandage fix
-		//_renderWindow.draw(m_data->ui.logoCrea);
+		_renderWindow->draw(m_data->ui.buttonMap["playBtn"]);
+		_renderWindow->draw(m_data->ui.buttonMap["settingsBtn"]);
+		_renderWindow->draw(m_data->ui.buttonMap["leaveBtn"]);
+		_renderWindow->draw(m_data->ui.buttonMap["creditsBtn"]);
+		_renderWindow->draw(m_data->ui.logoGame);
 
 		if (m_data->ui.buttonMap["leaveBtn"].HasBeenClicked())
 		{
-			_renderWindow.close();
+			_renderWindow->close();
 		}
 		break;
 
@@ -266,10 +266,10 @@ void Menu::DrawUI(sf::RenderWindow& _renderWindow)
 		break;
 
 	case PLAYER_NB_SELECTION:
-		_renderWindow.draw(m_data->ui.buttonMap["playBtn"]);
-		_renderWindow.draw(m_data->ui.buttonMap["moinsBtn"]);
-		_renderWindow.draw(m_data->ui.playerCount);
-		_renderWindow.draw(m_data->ui.buttonMap["plusBtn"]);
+		_renderWindow->draw(m_data->ui.buttonMap["playBtn"]);
+		_renderWindow->draw(m_data->ui.buttonMap["moinsBtn"]);
+		_renderWindow->draw(m_data->ui.playerCount);
+		_renderWindow->draw(m_data->ui.buttonMap["plusBtn"]);
 		break;
 
 	case PLAYER_SELECTION:
@@ -603,7 +603,7 @@ void Menu::PressSelection(int _id)
 	}
 }
 
-void Menu::PrintIcons(sf::RenderWindow& _renderWindow)
+void Menu::PrintIcons(sfMod::RenderWindow* _renderWindow)
 {
 	// Sauvegarder la couleur temporaire pour la restaurer apr�s
 	sf::Color tempColor = m_data->ui.iconsChara.getColor();
@@ -630,7 +630,7 @@ void Menu::PrintIcons(sf::RenderWindow& _renderWindow)
 		std::snprintf(buffer, 30, "Player : %d", i + 1);
 		m_data->ui.playerCount.setString(buffer);
 		m_data->ui.playerCount.setCharacterSize(60u);
-		_renderWindow.draw(m_data->ui.playerCount);
+		_renderWindow->draw(m_data->ui.playerCount);
 
 		// Index de l'animation s�lectionn�e pour ce joueur
 		int currentSelection = m_data->currentCharaSelected[i];
@@ -646,7 +646,7 @@ void Menu::PrintIcons(sf::RenderWindow& _renderWindow)
 		m_data->ui.iconsChara.setColor(tempColor);
 		m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[leftIndex]);
 		m_data->ui.iconsChara.setPosition(iconPos[0]);
-		_renderWindow.draw(m_data->ui.iconsChara);
+		_renderWindow->draw(m_data->ui.iconsChara);
 
 		// Ic�ne du centre (opaque ou sombre si s�lectionn�e)
 		tempColor.a = 255;
@@ -662,20 +662,20 @@ void Menu::PrintIcons(sf::RenderWindow& _renderWindow)
 		}
 		m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[centerIndex]);
 		m_data->ui.iconsChara.setPosition(iconPos[1]);
-		_renderWindow.draw(m_data->ui.iconsChara);
+		_renderWindow->draw(m_data->ui.iconsChara);
 
 		// Ic�ne de droite (semi-transparente)
 		tempColor.a = 100;
 		m_data->ui.iconsChara.setColor(tempColor);
 		m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[rightIndex]);
 		m_data->ui.iconsChara.setPosition(iconPos[2]);
-		_renderWindow.draw(m_data->ui.iconsChara);
+		_renderWindow->draw(m_data->ui.iconsChara);
 	}
 
 	// R�initialiser la couleur � blanc opaque
 	m_data->ui.iconsChara.setColor(sf::Color(255, 255, 255, 255));
 }
-void Menu::PrintOptions(sf::RenderWindow& _renderWindow)
+void Menu::PrintOptions(sfMod::RenderWindow* _renderWindow)
 {
 	m_data->ui.playerCount.setCharacterSize(50u);
 	m_data->ui.playerCount.setOrigin({ 0.f,0.f });
@@ -684,17 +684,17 @@ void Menu::PrintOptions(sf::RenderWindow& _renderWindow)
 	char buffer[100];
 	std::snprintf(buffer, 100, "Game volume : %0.0f", m_data->audio->GetMusicVolume());
 	m_data->ui.playerCount.setString(buffer);
-	_renderWindow.draw(m_data->ui.playerCount);
+	_renderWindow->draw(m_data->ui.playerCount);
 
 	m_data->ui.playerCount.setCharacterSize(150u);
 	m_data->ui.playerCount.setOrigin({ 0.6f,0.8f });
 	m_data->ui.playerCount.setPosition(SCREEN_WIDTH / 2.f, 1.f / 4.f * SCREEN_HEIGHT);
 	m_data->ui.playerCount.setString("Settings");
-	_renderWindow.draw(m_data->ui.playerCount);
+	_renderWindow->draw(m_data->ui.playerCount);
 
-	_renderWindow.draw(m_data->ui.buttonMap["plusBtn"]);
-	_renderWindow.draw(m_data->ui.buttonMap["moinsBtn"]);
-	_renderWindow.draw(m_data->ui.buttonMap["playBtn"]);
+	_renderWindow->draw(m_data->ui.buttonMap["plusBtn"]);
+	_renderWindow->draw(m_data->ui.buttonMap["moinsBtn"]);
+	_renderWindow->draw(m_data->ui.buttonMap["playBtn"]);
 }
 
 void Menu::ReturnPressed(void)
