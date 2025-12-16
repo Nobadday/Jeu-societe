@@ -43,6 +43,11 @@
             "path": "Assets/Shared/MinigameBackground.png"
         },
 		{
+            "name": "Background",
+            "type": "Texture",
+            "path": "Assets/Shared/fond.png"
+        },
+		{
             "name" : "IconeAura",
             "type" : "Texture Animated",
             "path" : "Assets/Shared/Icone/Icone-PersoAura.anim",
