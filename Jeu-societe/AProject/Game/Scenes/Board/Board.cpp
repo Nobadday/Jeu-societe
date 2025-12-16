@@ -231,7 +231,7 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 
 	// Configuration des animateurs
 	m_data->animator.Modify(1.0f, 120.0f, false, 1.0f);
-	m_data->animator.SetSpeed(0.5f);
+	//m_data->animator.SetSpeed(0.5f);
 
 	m_data->animator2.Modify(1.0f, 120.0f, false, 1.0f);
 	m_data->animator.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::LINEAR);
@@ -646,7 +646,7 @@ void BaseGame::Update(float _deltaTime)
 			}
 			break;
 		}
-
+			
 		case TexteDisplay::FADE_DISPLAY:
 		{
 			// Affichage complet (alpha = 255)
@@ -833,7 +833,7 @@ void BaseGame::HandleMovementState(State state, float _dt)
 			}
 
 			// Vérifier pont ou ligne d'arrivée
-			if (caseType == "bridge" && (state != DEPLACEMENT_BACK && state != DEPLACEMENT_ACTION_BACK))
+			if (caseType == "bridge" && (state != DEPLACEMENT_BACK && state != DEPLACEMENT_ACTION_BACK && state != DEPLACEMENT_ACTION))
 			{
 				player.sprite.SetAnimation("Idle");
 				std::cout << "Pont détecté ! Lancez le dé pour traverser..." << std::endl;
@@ -842,7 +842,7 @@ void BaseGame::HandleMovementState(State state, float _dt)
 				return;
 			}
 
-			if (caseType == "end" && (state != DEPLACEMENT_BACK && state != DEPLACEMENT_ACTION_BACK))
+			if (caseType == "end" && (state != DEPLACEMENT_BACK && state != DEPLACEMENT_ACTION_BACK && state != DEPLACEMENT_ACTION))
 			{
 				player.sprite.SetAnimation("Idle");
 				std::cout << "Ligne d'arrivée détectée ! Lancez le dé pour franchir..." << std::endl;
@@ -852,7 +852,7 @@ void BaseGame::HandleMovementState(State state, float _dt)
 			}
 
 			// Vérifier choix de chemin
-			if (HasPathChoice(player.currentCaseIndex) && (state != DEPLACEMENT_BACK && state != DEPLACEMENT_ACTION_BACK))
+			if (HasPathChoice(player.currentCaseIndex) && (state != DEPLACEMENT_BACK && state != DEPLACEMENT_ACTION_BACK && state != DEPLACEMENT_ACTION))
 			{
 				m_data->pathChoices = availablePaths;
 				SetBoardState(WAITING_PATH_CHOICE);
@@ -1812,3 +1812,4 @@ std::string BaseGame::RandomBattle()
 	return "Warmup";
 }
 
+	

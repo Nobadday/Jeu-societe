@@ -275,6 +275,9 @@ class BaseGame : public SceneBase
 			TextPlus end;
 
 			TexteDisplay texteDisplay;
+
+			float diceFadeDuration;
+			float diceFadeTimer;
 			
 		};
 
