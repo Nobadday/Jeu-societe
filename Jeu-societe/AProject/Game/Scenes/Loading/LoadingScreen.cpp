@@ -10,7 +10,7 @@ void LoadingScreen::Load(void)
     if (m_gameData->m_assetManager->GetAsset<sf::Font>("MainFont", AssetManager::AssetType::FONT))
     {
         m_data->loadingText.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("MainFont", AssetManager::AssetType::FONT));
-        m_data->background.setTexture(*m_gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground", AssetManager::AssetType::TEXTURE));
+        m_data->background.setTexture(*m_gameData->m_assetManager->GetAsset<sf::Texture>("Background", AssetManager::AssetType::TEXTURE));
     }
     // Ligne 17 : Remplacer le texte de chargement
     m_data->loadingText.setString("Loading...");
