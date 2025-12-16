@@ -778,8 +778,8 @@
                  "type":"",
                  "visible":true,
                  "width":361.661,
-                 "x":9496.50283333333,
-                 "y":710.917833333333
+                 "x":9602.50283333333,
+                 "y":712.917833333333
                 }, 
                 {
                  "gid":20,
@@ -1567,37 +1567,14 @@
                         {
                          "name":"nextPath",
                          "type":"string",
-                         "value":"26"
+                         "value":"27"
                         }],
                  "rotation":0,
                  "type":"Luck",
                  "visible":true,
                  "width":0,
-                 "x":9785.85,
-                 "y":654.909
-                }, 
-                {
-                 "height":0,
-                 "id":232,
-                 "name":"26",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"backPath",
-                         "type":"string",
-                         "value":"25"
-                        }, 
-                        {
-                         "name":"nextPath",
-                         "type":"string",
-                         "value":"27"
-                        }],
-                 "rotation":0,
-                 "type":"Case",
-                 "visible":true,
-                 "width":0,
-                 "x":10004.8,
-                 "y":655.909
+                 "x":9889.85,
+                 "y":656.909
                 }, 
                 {
                  "height":0,
@@ -1669,7 +1646,7 @@
                         {
                          "name":"nextPath",
                          "type":"string",
-                         "value":"30"
+                         "value":"31"
                         }],
                  "rotation":0,
                  "type":"Luck",
@@ -1677,29 +1654,6 @@
                  "width":0,
                  "x":9646.85,
                  "y":865.409
-                }, 
-                {
-                 "height":0,
-                 "id":228,
-                 "name":"30",
-                 "point":true,
-                 "properties":[
-                        {
-                         "name":"backPath",
-                         "type":"string",
-                         "value":"29"
-                        }, 
-                        {
-                         "name":"nextPath",
-                         "type":"string",
-                         "value":"31"
-                        }],
-                 "rotation":0,
-                 "type":"Battle",
-                 "visible":true,
-                 "width":0,
-                 "x":9879.85,
-                 "y":877.909
                 }, 
                 {
                  "height":0,
@@ -1982,7 +1936,7 @@
  "nextobjectid":346,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.10.1",
+ "tiledversion":"1.11.2",
  "tileheight":32,
  "tilesets":[
         {

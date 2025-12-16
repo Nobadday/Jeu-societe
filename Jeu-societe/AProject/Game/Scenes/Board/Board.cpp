@@ -230,10 +230,12 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	progress.store(0.95f);
 
 	// Configuration des animateurs
-	m_data->animator.Modify(1.0f, 60.0f, false, 1.0f);
-	m_data->animator2.Modify(1.0f, 60.0f, false, 1.0f);
-	m_data->animator.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::INOUTSINE);
-	m_data->animator2.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::INOUTSINE);
+	m_data->animator.Modify(1.0f, 120.0f, false, 1.0f);
+	m_data->animator.SetSpeed(0.5f);
+
+	m_data->animator2.Modify(1.0f,120.0f, false, 1.0f);
+	m_data->animator.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::LINEAR);
+	m_data->animator2.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::LINEAR);
 	m_data->animator.End();
 	m_data->animator2.End();
 
@@ -246,15 +248,12 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 		auto& mapObject = m_data->posCase[i];
 		if (mapObject.GetName() == "6")
 		{
-			m_data->arrow.setPosition(mapObject.GetPosition() + sf::Vector2f(150, 0));
+			m_data->arrow.setPosition(mapObject.GetPosition() + sf::Vector2f(150, -20));
 		}
 
 	}
 
 	m_data->arrow.setScale({ 0.5f,0.5f });
-
-	m_data->arrow.setRotation(315);
-
 
 	m_data->HudLBM.text.SetCharactersPerLine(25);
 
@@ -525,13 +524,13 @@ void BaseGame::PollEvent(sf::Event& _event)
 					if (_event.joystickMove.position < -50.0f) // Haut
 					{
 						ProcessPathChoice(0);
-						m_data->arrow.setRotation(315);
+						m_data->arrow.setRotation(325);
 						std::cout << "Top path selected (joystick)" << std::endl;
 					}
 					else if (_event.joystickMove.position > 50.0f) // Bas
 					{
 						ProcessPathChoice(1);
-						m_data->arrow.setRotation(25);
+						m_data->arrow.setRotation(5);
 						std::cout << "Bottom path selected (joystick)" << std::endl;
 					}
 				}
@@ -556,13 +555,13 @@ void BaseGame::PollEvent(sf::Event& _event)
 			if (_event.key.code == sf::Keyboard::Up || _event.key.code == sf::Keyboard::Z)
 			{
 				ProcessPathChoice(0);
-				m_data->arrow.setRotation(315);
+				m_data->arrow.setRotation(325);
 				std::cout << "Top path selected (keyboard)" << std::endl;
 			}
 			else if (_event.key.code == sf::Keyboard::Down || _event.key.code == sf::Keyboard::S)
 			{
 				ProcessPathChoice(1);
-				m_data->arrow.setRotation(25);
+				m_data->arrow.setRotation(5);
 				std::cout << "Bottom path selected (keyboard)" << std::endl;
 			}
 
@@ -830,7 +829,7 @@ void BaseGame::HandleMovementState(State state, float _dt)
 			}
 
 			// Vérifier pont ou ligne d'arrivée
-			if (caseType == "bridge")
+			if (caseType == "bridge" && (state != DEPLACEMENT_BACK && state != DEPLACEMENT_ACTION_BACK))
 			{
 				player.sprite.SetAnimation("Idle");
 				std::cout << "Pont détecté ! Lancez le dé pour traverser..." << std::endl;
@@ -839,7 +838,7 @@ void BaseGame::HandleMovementState(State state, float _dt)
 				return;
 			}
 
-			if (caseType == "end")
+			if (caseType == "end" && (state != DEPLACEMENT_BACK && state != DEPLACEMENT_ACTION_BACK))
 			{
 				player.sprite.SetAnimation("Idle");
 				std::cout << "Ligne d'arrivée détectée ! Lancez le dé pour franchir..." << std::endl;
@@ -849,7 +848,7 @@ void BaseGame::HandleMovementState(State state, float _dt)
 			}
 
 			// Vérifier choix de chemin
-			if (HasPathChoice(player.currentCaseIndex))
+			if (HasPathChoice(player.currentCaseIndex) && (state != DEPLACEMENT_BACK && state != DEPLACEMENT_ACTION_BACK))
 			{
 				m_data->pathChoices = availablePaths;
 				SetBoardState(WAITING_PATH_CHOICE);
@@ -906,8 +905,10 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 
 	DrawLBM(*mod);
 
-
-	mod->draw(m_data->arrow);
+	if (m_data->state == WAITING_PATH_CHOICE)
+	{
+		mod->draw(m_data->arrow);
+	}
 
 	if (m_data->state == WAITING_BRIDGE_ROLL)
 	{
@@ -1129,7 +1130,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
 		m_data->pathChoices.clear();
 		m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
-		m_data->arrow.setRotation(315);
+		//m_data->arrow.setRotation(315);
 		ShowTextDisplay(m_data->players[m_data->currentPlayerIndex].playeur.getString() + " turn!\nPress A to roll the dice", 3.0f);
 		break;
 	case WIN:

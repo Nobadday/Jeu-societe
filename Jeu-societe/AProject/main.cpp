@@ -127,7 +127,7 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<Warmup>("Warmup");
 
 	// Sélectionner le LoadingScreen metre false pour tout scene au debut 
-	_mainData.scenes.SelectScene("FlagGame", false);
+	_mainData.scenes.SelectScene("Lo", false);
 	//_mainData.scenes.SelectScene("FlagGame", false);
 	//_mainData.scenes.SelectScene("Lo", false);
 
