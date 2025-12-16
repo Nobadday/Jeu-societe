@@ -62,8 +62,8 @@ class RandCard : public SceneBase
 			TransitionClass transition;
 		};
 		SceneData* m_data;
-		void PrintCards(sf::RenderWindow& _renderWindow);
-		void PrintIcons(sf::RenderWindow& _renderWindow);
+		void PrintCards(sfMod::RenderWindow* _renderWindow);
+		void PrintIcons(sfMod::RenderWindow* _renderWindow);
 		void SetCardChosen(int _card);
 		void AddCardChosen(int _value);
 
