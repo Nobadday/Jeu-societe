@@ -261,7 +261,6 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 
 	m_data->HudLBM.text.SetCharactersPerLine(25);
 
-
 	m_data->bridge.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
 	m_data->end.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
 
@@ -878,6 +877,7 @@ void BaseGame::HandleMovementState(State state, float _dt)
 			// Déplacement terminé
 			State nextState = (state == DEPLACEMENT_ACTION || state == DEPLACEMENT_ACTION_BACK || state == DEPLACEMENT_ACTION_2)
 				? CASE_ACTION_END : CASE_ACTION;
+			m_data->animator.SetSpeed(1.f);
 			SetBoardState(nextState);
 		}
 	}
@@ -1454,6 +1454,8 @@ void BaseGame::BoardStateUpdate(float _dt)
 					std::cout << "Traversée réussie !" << std::endl;
 					ShowTextDisplay("Bridge crossed successfully!\nTransformation...", 2.0f);
 					m_data->smokeOff = true;
+
+					m_data->animator.SetSpeed(0.5f);
 
 					// Change le skin du personnage (transformation)
 					switch (m_gameData->m_playerDataList[m_data->currentPlayerIndex].GetPlayerSkin())
