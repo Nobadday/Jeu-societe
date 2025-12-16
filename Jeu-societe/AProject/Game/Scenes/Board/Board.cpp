@@ -1750,10 +1750,12 @@ std::string BaseGame::RandomDuel()
 	//std::cout << "Random minigame selected: " << miniGames[randomIndex] << std::endl;
 
 
-	//return "FlagGame";
 
 
-	m_gameData->m_nextScene = miniGames[randomIndex];
+	//m_gameData->m_nextScene = miniGames[randomIndex];
+	//m_gameData->m_nextScene = "RandCard";
+	m_gameData->m_nextScene = "rockPaperSizor";
+
 	return "Warmup";
 }
 
@@ -1772,8 +1774,9 @@ std::string BaseGame::RandomBattle()
 
 	std::cout << "Random minigame selected: " << miniGames[randomIndex] << std::endl;
 
-	m_gameData->m_nextScene = miniGames[randomIndex];
+	//m_gameData->m_nextScene = miniGames[randomIndex];
 	//m_gameData->m_nextScene = "RandCard";
+	m_gameData->m_nextScene = "rockPaperSizor";
 
 	return "Warmup";
 }

@@ -29,6 +29,7 @@ void Menu::LoadUI(void)
 	m_data->ui.buttonMap["playBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("playBtn"));
 	m_data->ui.buttonMap["settingsBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("settingsBtn"));
 	m_data->ui.buttonMap["leaveBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("leaveBtn"));
+	m_data->ui.buttonMap["creditsBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("creditsBtn"));
 	m_data->ui.buttonMap["moinsBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("moinsBtn"));
 	m_data->ui.buttonMap["plusBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("plusBtn"));
 	//Background
@@ -56,18 +57,21 @@ void Menu::LoadUI(void)
 	m_data->ui.iconsChara.SetAnimation("Perso1-1");
 	m_data->ui.iconsChara.setOrigin({ 0.5f,0.5f });
 
-	sf::FloatRect buttonRect = m_data->ui.buttonMap["playBtn"].getLocalBounds();
+	sf::FloatRect buttonRect = m_data->ui.buttonMap["playBtn"].getGlobalBounds();
 	m_data->ui.buttonMap["playBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 });
 	m_data->ui.buttonMap["settingsBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + buttonRect.height });
 	m_data->ui.buttonMap["leaveBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 2 * buttonRect.height });
+	m_data->ui.buttonMap["creditsBtn"].setPosition({ SCREEN_WIDTH - buttonRect.width / 2, SCREEN_HEIGHT / 2 + 2 * buttonRect.height });
 
 
 	m_data->ui.buttonMap["playBtn"].setOrigin({ 0.5f,0.5f });
 	m_data->ui.buttonMap["settingsBtn"].setOrigin({ 0.5f,0.5f });
+	m_data->ui.buttonMap["creditsBtn"].setOrigin({ 0.5f,0.5f });
 	m_data->ui.buttonMap["leaveBtn"].setOrigin({ 0.5f,0.5f });
 	m_data->ui.buttonMap["moinsBtn"].setOrigin({ 0.5f,0.5f });
 	m_data->ui.buttonMap["plusBtn"].setOrigin({ 0.5f,0.5f });
 
+	m_data->ui.buttonMap["creditsBtn"].setScale({ 0.8f,0.8f });
 
 	m_data->ui.playerCount.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("MenuFont"));
 	m_data->ui.playerCount.setCharacterSize(200u);
@@ -418,7 +422,6 @@ void Menu::ChangeSelection(int _value, int _joystick)
 	//std::cout << "mouse x = " << mouseNewPos.x << " y = " << mouseNewPos.y << std::endl;
 	sf::Mouse::setPosition(sf::Vector2i(mouseNewPos), *m_data->gameData->m_renderWindow);
 }
-
 void Menu::PressSelection(int _id)
 {
 	m_data->audio->PlaySound("uiSoundClick");
@@ -650,7 +653,7 @@ void Menu::PrintIcons(sf::RenderWindow& _renderWindow)
 		if (m_data->charaSelected[i] == true)
 		{
 			// Si le joueur a valid� son choix, afficher en noir
-			m_data->ui.iconsChara.setColor(sf::Color(50, 50, 50, 255));
+			m_data->ui.iconsChara.setColor(sf::Color(150, 150, 150, 255));
 		}
 		else
 		{
@@ -672,12 +675,11 @@ void Menu::PrintIcons(sf::RenderWindow& _renderWindow)
 	// R�initialiser la couleur � blanc opaque
 	m_data->ui.iconsChara.setColor(sf::Color(255, 255, 255, 255));
 }
-
 void Menu::PrintOptions(sf::RenderWindow& _renderWindow)
 {
 	m_data->ui.playerCount.setCharacterSize(50u);
 	m_data->ui.playerCount.setOrigin({ 0.f,0.f });
-	m_data->ui.playerCount.setPosition(0.f, 2.f / 4.f * SCREEN_HEIGHT);
+	m_data->ui.playerCount.setPosition(0.f, 1.8f / 4.f * SCREEN_HEIGHT);
 	m_data->ui.playerCount.setCharacterSize(100u);
 	char buffer[100];
 	std::snprintf(buffer, 100, "Game volume : %0.0f", m_data->audio->GetMusicVolume());
