@@ -795,6 +795,7 @@ void BaseGame::HandleMovementState(State state, float _dt)
 	{
 		auto& player = m_data->players[m_data->currentPlayerIndex];
 		player.pendingMovement--;
+		m_data->animator.SetSpeed(1.f);
 
 		std::cout << "Mouvement restant : " << player.pendingMovement << std::endl;
 
