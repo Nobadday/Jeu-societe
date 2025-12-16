@@ -146,6 +146,15 @@ class BaseGame : public SceneBase
 			DONW_RIGHT
 		};
 
+		enum TexteState
+		{
+			NoneTexte = -1,
+			IntroTexte,
+			TourTexte,
+			BridgeTexte,
+			EndTexte
+		};
+
 		struct Player
 		{
 			SpriteAnimated sprite;
@@ -195,7 +204,8 @@ class BaseGame : public SceneBase
 
 		struct TexteDisplay
 		{
-			std::vector<TextPlus*> texte; // CHANGÉ : vecteur de pointeurs
+			TextPlus texte;
+			TexteState type;
 			float displayTime;
 			float currentTime;
 			bool isActive;
@@ -203,10 +213,10 @@ class BaseGame : public SceneBase
 			// NOUVEAU : Gestion du fade
 			enum FadeState
 			{
-				FADE_NONE,
 				FADE_IN,
 				FADE_DISPLAY,
-				FADE_OUT				
+				FADE_OUT,
+				FADE_NONE
 			};
 			
 			FadeState fadeState;
