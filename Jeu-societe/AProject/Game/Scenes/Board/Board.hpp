@@ -269,6 +269,8 @@ class BaseGame : public SceneBase
 
 			sf::Sprite arrow;
 
+			sf::Vector2f posArrow[2];
+
 			TextPlus bridge;
 			TextPlus end;
 

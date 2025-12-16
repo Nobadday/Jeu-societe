@@ -233,7 +233,7 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	m_data->animator.Modify(1.0f, 120.0f, false, 1.0f);
 	m_data->animator.SetSpeed(0.5f);
 
-	m_data->animator2.Modify(1.0f,120.0f, false, 1.0f);
+	m_data->animator2.Modify(1.0f, 120.0f, false, 1.0f);
 	m_data->animator.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::LINEAR);
 	m_data->animator2.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::LINEAR);
 	m_data->animator.End();
@@ -248,7 +248,11 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 		auto& mapObject = m_data->posCase[i];
 		if (mapObject.GetName() == "6")
 		{
-			m_data->arrow.setPosition(mapObject.GetPosition() + sf::Vector2f(150, -20));
+			m_data->posArrow[0] = (mapObject.GetPosition() + sf::Vector2f(150, -22));
+		}
+		if (mapObject.GetName() == "23")
+		{
+			m_data->posArrow[1] = (mapObject.GetPosition() + sf::Vector2f(150, -22));
 		}
 
 	}
@@ -303,16 +307,16 @@ void BaseGame::Load(void)
 
 void BaseGame::Unload(void)
 {
-    if (m_data != nullptr)
-    {
-        // Libérer les textes
-        for (auto* texte : m_data->texteDisplay.texte)
-        {
-            delete texte;
-        }
-        m_data->texteDisplay.texte.clear();
-        
-        // 1. Arrêter l'audio stream AVANT de libérer les vidéos
+	if (m_data != nullptr)
+	{
+		// Libérer les textes
+		for (auto* texte : m_data->texteDisplay.texte)
+		{
+			delete texte;
+		}
+		m_data->texteDisplay.texte.clear();
+
+		// 1. Arrêter l'audio stream AVANT de libérer les vidéos
 		if (m_data->currentDiceVideo != nullptr)
 		{
 			m_data->currentDiceVideo->setPaused(true);
@@ -426,50 +430,50 @@ void BaseGame::ProcessDiceRoll(int rando)
 // NOUVEAU : Méthode pour afficher un message à l'écran
 void BaseGame::ShowTextDisplay(const std::string& message, float duration)
 {
-    // Nettoyer les textes précédents
-    for (auto* texte : m_data->texteDisplay.texte)
-    {
-        delete texte;
-    }
-    m_data->texteDisplay.texte.clear();
-    
-    // Séparer le message en lignes
-    std::vector<std::string> lines;
-    std::string messageModified = message;
-    size_t pos = 0;
-    
-    while ((pos = messageModified.find("\n")) != std::string::npos)
-    {
-        lines.push_back(messageModified.substr(0, pos));
-        messageModified.erase(0, pos + 1);
-    }
-    lines.push_back(messageModified);
-    
-    float startY = SCREEN_HEIGHT / 2.0f - ((float)lines.size() - 1.0f) * 60.0f;
-    const sf::Font& font = *m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT);
-    
-    for (size_t i = 0; i < lines.size(); i++)
-    {
-        TextPlus* texte = new TextPlus(); // Allouer dynamiquement
-        texte->setFont(font);
-        texte->setCharacterSize(90);
-        texte->setFillColor(sf::Color(255, 255, 255, 0));
-        texte->setOutlineColor(sf::Color(0, 0, 0, 0));
-        texte->setOutlineThickness(3.f);
-        texte->setOrigin({ 0.5f, 0.5f });
-        texte->setPosition(SCREEN_WIDTH / 2.0f, startY + (float)i * 120.0f);
-        //texte->SetAlignement(TextPlus::Alignement::CENTER);
-        texte->SetCharactersPerLine(40);
-        texte->setString(lines[i]);
-        
-        m_data->texteDisplay.texte.push_back(texte);
-    }
-    
-    m_data->texteDisplay.displayTime = duration;
-    m_data->texteDisplay.currentTime = 0.0f;
-    m_data->texteDisplay.isActive = true;
-    m_data->texteDisplay.fadeState = TexteDisplay::FADE_IN;
-    m_data->texteDisplay.fadeTimer = 0.0f;
+	// Nettoyer les textes précédents
+	for (auto* texte : m_data->texteDisplay.texte)
+	{
+		delete texte;
+	}
+	m_data->texteDisplay.texte.clear();
+
+	// Séparer le message en lignes
+	std::vector<std::string> lines;
+	std::string messageModified = message;
+	size_t pos = 0;
+
+	while ((pos = messageModified.find("\n")) != std::string::npos)
+	{
+		lines.push_back(messageModified.substr(0, pos));
+		messageModified.erase(0, pos + 1);
+	}
+	lines.push_back(messageModified);
+
+	float startY = SCREEN_HEIGHT / 2.0f - ((float)lines.size() - 1.0f) * 60.0f;
+	const sf::Font& font = *m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT);
+
+	for (size_t i = 0; i < lines.size(); i++)
+	{
+		TextPlus* texte = new TextPlus(); // Allouer dynamiquement
+		texte->setFont(font);
+		texte->setCharacterSize(90);
+		texte->setFillColor(sf::Color(255, 255, 255, 0));
+		texte->setOutlineColor(sf::Color(0, 0, 0, 0));
+		texte->setOutlineThickness(3.f);
+		texte->setOrigin({ 0.5f, 0.5f });
+		texte->setPosition(SCREEN_WIDTH / 2.0f, startY + (float)i * 120.0f);
+		//texte->SetAlignement(TextPlus::Alignement::CENTER);
+		texte->SetCharactersPerLine(40);
+		texte->setString(lines[i]);
+
+		m_data->texteDisplay.texte.push_back(texte);
+	}
+
+	m_data->texteDisplay.displayTime = duration;
+	m_data->texteDisplay.currentTime = 0.0f;
+	m_data->texteDisplay.isActive = true;
+	m_data->texteDisplay.fadeState = TexteDisplay::FADE_IN;
+	m_data->texteDisplay.fadeTimer = 0.0f;
 }
 
 void BaseGame::PollEvent(sf::Event& _event)
@@ -607,151 +611,151 @@ void BaseGame::PollEvent(sf::Event& _event)
 
 void BaseGame::Update(float _deltaTime)
 {
-    // Mise à jour des animations
-    UpdateLBM(_deltaTime);
+	// Mise à jour des animations
+	UpdateLBM(_deltaTime);
 
-    // NOUVEAU : Mise à jour du texte d'affichage avec fade
-    if (m_data->texteDisplay.isActive)
-    {
-        m_data->texteDisplay.fadeTimer += _deltaTime;
-        
-        switch (m_data->texteDisplay.fadeState)
-        {
-        case TexteDisplay::FADE_IN:
-        {
-            // Calculer l'alpha basé sur le temps écoulé
-            float alpha = std::min(1.0f, m_data->texteDisplay.fadeTimer / m_data->texteDisplay.fadeInDuration);
-            
-            // Appliquer l'alpha à tous les textes
-            for (auto* texte : m_data->texteDisplay.texte)
-            {
-                sf::Color fillColor = texte->getFillColor();
-                fillColor.a = static_cast<sf::Uint8>(255 * alpha);
-                texte->setFillColor(fillColor);
-                
-                sf::Color outlineColor = texte->getOutlineColor();
-                outlineColor.a = static_cast<sf::Uint8>(255 * alpha);
-                texte->setOutlineColor(outlineColor);
-            }
-            
-            // Passer à l'état FADE_DISPLAY quand le fade in est terminé
-            if (m_data->texteDisplay.fadeTimer >= m_data->texteDisplay.fadeInDuration)
-            {
-                m_data->texteDisplay.fadeState = TexteDisplay::FADE_DISPLAY;
-                m_data->texteDisplay.currentTime = 0.0f;
-            }
-            break;
-        }
-        
-        case TexteDisplay::FADE_DISPLAY:
-        {
-            // Affichage complet (alpha = 255)
-            m_data->texteDisplay.currentTime += _deltaTime;
-            
-            // Démarrer le fade out quand le temps d'affichage est presque écoulé
-            if (m_data->texteDisplay.currentTime >= m_data->texteDisplay.displayTime - m_data->texteDisplay.fadeOutDuration)
-            {
-                m_data->texteDisplay.fadeState = TexteDisplay::FADE_OUT;
-                m_data->texteDisplay.fadeTimer = 0.0f;
-            }
-            break;
-        }
-        
-        case TexteDisplay::FADE_OUT:
-        {
-            // Calculer l'alpha inversé (de 1.0 à 0.0)
-            float alpha = 1.0f - std::min(1.0f, m_data->texteDisplay.fadeTimer / m_data->texteDisplay.fadeOutDuration);
-            
-            // Appliquer l'alpha à tous les textes
-            for (auto* texte : m_data->texteDisplay.texte)
-            {
-                sf::Color fillColor = texte->getFillColor();
-                fillColor.a = static_cast<sf::Uint8>(255 * alpha);
-                texte->setFillColor(fillColor);
-                
-                sf::Color outlineColor = texte->getOutlineColor();
-                outlineColor.a = static_cast<sf::Uint8>(255 * alpha);
-                texte->setOutlineColor(outlineColor);
-            }
-            
-            // Désactiver quand le fade out est terminé
-            if (m_data->texteDisplay.fadeTimer >= m_data->texteDisplay.fadeOutDuration)
-            {
-                m_data->texteDisplay.isActive = false;
-                m_data->texteDisplay.fadeState = TexteDisplay::FADE_NONE;
-                m_data->texteDisplay.currentTime = 0.0f;
-                m_data->texteDisplay.fadeTimer = 0.0f;
-                m_data->texteDisplay.texte.clear();
-            }
-            break;
-        }
-        
-        case TexteDisplay::FADE_NONE:
-        default:
-            break;
-        }
-    }
+	// NOUVEAU : Mise à jour du texte d'affichage avec fade
+	if (m_data->texteDisplay.isActive)
+	{
+		m_data->texteDisplay.fadeTimer += _deltaTime;
 
-    if (m_data->players[m_data->currentPlayerIndex].state != CANT_PLAY)
-    {
-        m_data->animator.Update(_deltaTime);
-        m_data->animator2.Update(_deltaTime);
+		switch (m_data->texteDisplay.fadeState)
+		{
+		case TexteDisplay::FADE_IN:
+		{
+			// Calculer l'alpha basé sur le temps écoulé
+			float alpha = std::min(1.0f, m_data->texteDisplay.fadeTimer / m_data->texteDisplay.fadeInDuration);
 
-        // Mise à jour de la logique du plateau
-        BoardStateUpdate(_deltaTime);
+			// Appliquer l'alpha à tous les textes
+			for (auto* texte : m_data->texteDisplay.texte)
+			{
+				sf::Color fillColor = texte->getFillColor();
+				fillColor.a = static_cast<sf::Uint8>(255 * alpha);
+				texte->setFillColor(fillColor);
 
-        for (int i = (int)m_data->effectSwap.size() - 1; i >= 0; i--)
-        {
-            auto& effect = m_data->effectSwap[i];
-            effect.Update(_deltaTime);
+				sf::Color outlineColor = texte->getOutlineColor();
+				outlineColor.a = static_cast<sf::Uint8>(255 * alpha);
+				texte->setOutlineColor(outlineColor);
+			}
 
-            if (!effect.IsActive())
-            {
-                effect = m_data->effectSwap.back();
-                m_data->effectSwap.pop_back();
-            }
-        }
+			// Passer à l'état FADE_DISPLAY quand le fade in est terminé
+			if (m_data->texteDisplay.fadeTimer >= m_data->texteDisplay.fadeInDuration)
+			{
+				m_data->texteDisplay.fadeState = TexteDisplay::FADE_DISPLAY;
+				m_data->texteDisplay.currentTime = 0.0f;
+			}
+			break;
+		}
 
-        for (int i = (int)m_data->effectsMap.size() - 1; i >= 0; i--)
-        {
-            auto& effect = m_data->effectsMap[i];
+		case TexteDisplay::FADE_DISPLAY:
+		{
+			// Affichage complet (alpha = 255)
+			m_data->texteDisplay.currentTime += _deltaTime;
 
-            if (!m_data->smokeOff)
-            {
-                effect.UpdateSpecial(_deltaTime);
-            }
-            else
-            {
-                effect.Update(_deltaTime);
+			// Démarrer le fade out quand le temps d'affichage est presque écoulé
+			if (m_data->texteDisplay.currentTime >= m_data->texteDisplay.displayTime - m_data->texteDisplay.fadeOutDuration)
+			{
+				m_data->texteDisplay.fadeState = TexteDisplay::FADE_OUT;
+				m_data->texteDisplay.fadeTimer = 0.0f;
+			}
+			break;
+		}
 
-                if (!effect.IsActive())
-                {
-                    effect = m_data->effectsMap.back();
-                    m_data->effectsMap.pop_back();
-                }
-            }
-        }
+		case TexteDisplay::FADE_OUT:
+		{
+			// Calculer l'alpha inversé (de 1.0 à 0.0)
+			float alpha = 1.0f - std::min(1.0f, m_data->texteDisplay.fadeTimer / m_data->texteDisplay.fadeOutDuration);
 
-        // MODIFICATION : Mettre à jour aussi la position du texte du dé
-        for (auto& player : m_data->players)
-        {
-            player.v.setPosition(player.boardPosition + sf::Vector2f{ 0.f,-250.f });
-            player.playeur.setPosition(player.boardPosition + sf::Vector2f{ 0.f,-275.f });
-            player.diceNumber.setPosition(player.boardPosition + sf::Vector2f{ 0.f,-300.f }); // NOUVEAU
-        }
+			// Appliquer l'alpha à tous les textes
+			for (auto* texte : m_data->texteDisplay.texte)
+			{
+				sf::Color fillColor = texte->getFillColor();
+				fillColor.a = static_cast<sf::Uint8>(255 * alpha);
+				texte->setFillColor(fillColor);
+
+				sf::Color outlineColor = texte->getOutlineColor();
+				outlineColor.a = static_cast<sf::Uint8>(255 * alpha);
+				texte->setOutlineColor(outlineColor);
+			}
+
+			// Désactiver quand le fade out est terminé
+			if (m_data->texteDisplay.fadeTimer >= m_data->texteDisplay.fadeOutDuration)
+			{
+				m_data->texteDisplay.isActive = false;
+				m_data->texteDisplay.fadeState = TexteDisplay::FADE_NONE;
+				m_data->texteDisplay.currentTime = 0.0f;
+				m_data->texteDisplay.fadeTimer = 0.0f;
+				m_data->texteDisplay.texte.clear();
+			}
+			break;
+		}
+
+		case TexteDisplay::FADE_NONE:
+		default:
+			break;
+		}
+	}
+
+	if (m_data->players[m_data->currentPlayerIndex].state != CANT_PLAY)
+	{
+		m_data->animator.Update(_deltaTime);
+		m_data->animator2.Update(_deltaTime);
+
+		// Mise à jour de la logique du plateau
+		BoardStateUpdate(_deltaTime);
+
+		for (int i = (int)m_data->effectSwap.size() - 1; i >= 0; i--)
+		{
+			auto& effect = m_data->effectSwap[i];
+			effect.Update(_deltaTime);
+
+			if (!effect.IsActive())
+			{
+				effect = m_data->effectSwap.back();
+				m_data->effectSwap.pop_back();
+			}
+		}
+
+		for (int i = (int)m_data->effectsMap.size() - 1; i >= 0; i--)
+		{
+			auto& effect = m_data->effectsMap[i];
+
+			if (!m_data->smokeOff)
+			{
+				effect.UpdateSpecial(_deltaTime);
+			}
+			else
+			{
+				effect.Update(_deltaTime);
+
+				if (!effect.IsActive())
+				{
+					effect = m_data->effectsMap.back();
+					m_data->effectsMap.pop_back();
+				}
+			}
+		}
+
+		// MODIFICATION : Mettre à jour aussi la position du texte du dé
+		for (auto& player : m_data->players)
+		{
+			player.v.setPosition(player.boardPosition + sf::Vector2f{ 0.f,-250.f });
+			player.playeur.setPosition(player.boardPosition + sf::Vector2f{ 0.f,-275.f });
+			player.diceNumber.setPosition(player.boardPosition + sf::Vector2f{ 0.f,-300.f }); // NOUVEAU
+		}
 
 
-        UpdateCameraFollowPlayer(_deltaTime);
-    }
-    else
-    {
-        if (m_data->HudLBM.state == NONELBM)
-        {
-            m_data->players[m_data->currentPlayerIndex].tourstate = 0;
-            m_data->players[m_data->currentPlayerIndex].state = StatePlayer::NONE;
-            SetBoardState(PLAY, 0);
-        }
-    }
+		UpdateCameraFollowPlayer(_deltaTime);
+	}
+	else
+	{
+		if (m_data->HudLBM.state == NONELBM)
+		{
+			m_data->players[m_data->currentPlayerIndex].tourstate = 0;
+			m_data->players[m_data->currentPlayerIndex].state = StatePlayer::NONE;
+			SetBoardState(PLAY, 0);
+		}
+	}
 }
 
 // NOUVEAU : Méthode helper pour initier un mouvement
@@ -800,7 +804,7 @@ void BaseGame::HandleMovementState(State state, float _dt)
 			// CORRECTION : Ne pas vérifier les conditions immédiatement
 			// Initier directement le prochain mouvement
 			std::vector<int> availablePaths;
-			
+
 			// Déterminer les chemins selon l'état
 			if (state == DEPLACEMENT_BACK || state == DEPLACEMENT_ACTION_BACK)
 			{
@@ -820,7 +824,7 @@ void BaseGame::HandleMovementState(State state, float _dt)
 
 			// Vérifier s'il y a un choix de chemin SEULEMENT si le personnage s'arrête
 			const MapObject& currentCase = m_data->posCase[player.currentCaseIndex];
-			
+
 			// Vérifier le type de case
 			std::string caseType = "";
 			if (currentCase.GetPropertyByName("type") != nullptr)
@@ -859,7 +863,7 @@ void BaseGame::HandleMovementState(State state, float _dt)
 
 			// Sinon continuer le mouvement automatiquement
 			int nextIndex = availablePaths[0];
-			
+
 			// Si un chemin spécifique est sélectionné
 			if (player.currentPathId != -1 && availablePaths.size() > 1)
 			{
@@ -907,7 +911,11 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 
 	if (m_data->state == WAITING_PATH_CHOICE)
 	{
-		mod->draw(m_data->arrow);
+		for (size_t i = 0; i < 2; i++)
+		{
+			m_data->arrow.setPosition(m_data->posArrow[i]);
+			mod->draw(m_data->arrow);
+		}
 	}
 
 	if (m_data->state == WAITING_BRIDGE_ROLL)
@@ -1155,7 +1163,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 		if (HasPathChoice(player.currentCaseIndex) && player.pendingMovement > 0)
 		{
 			m_data->pathChoices = GetAvailablePaths(player.currentCaseIndex);
-			SetBoardState( WAITING_PATH_CHOICE);
+			SetBoardState(WAITING_PATH_CHOICE);
 			std::cout << "Choix de chemin requis : " << m_data->pathChoices.size() << " options" << std::endl;
 			player.sprite.SetAnimation("Idle");
 			return;
