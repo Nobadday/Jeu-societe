@@ -480,17 +480,6 @@
         }, 
         {
          "draworder":"topdown",
-         "id":17,
-         "name":"caseNuit",
-         "objects":[],
-         "opacity":1,
-         "type":"objectgroup",
-         "visible":true,
-         "x":0,
-         "y":0
-        }, 
-        {
-         "draworder":"topdown",
          "id":8,
          "name":"cases",
          "objects":[
@@ -517,6 +506,245 @@
                  "width":6576,
                  "x":7611,
                  "y":1089
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":17,
+         "name":"caseNuit",
+         "objects":[
+                {
+                 "gid":29,
+                 "height":53,
+                 "id":346,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":114,
+                 "x":9307,
+                 "y":803
+                }, 
+                {
+                 "gid":29,
+                 "height":82.5,
+                 "id":348,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":176.5,
+                 "x":9271.5,
+                 "y":827
+                }, 
+                {
+                 "gid":29,
+                 "height":82.5,
+                 "id":349,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":176.5,
+                 "x":9552.75,
+                 "y":905.75
+                }, 
+                {
+                 "gid":29,
+                 "height":82.5,
+                 "id":350,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":176.5,
+                 "x":9504.75,
+                 "y":693.75
+                }, 
+                {
+                 "gid":29,
+                 "height":82.5,
+                 "id":351,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":176.5,
+                 "x":9798.75,
+                 "y":685.75
+                }, 
+                {
+                 "gid":29,
+                 "height":82.5,
+                 "id":352,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":176.5,
+                 "x":10091.75,
+                 "y":694.75
+                }, 
+                {
+                 "gid":29,
+                 "height":82.5,
+                 "id":353,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":176.5,
+                 "x":10300.75,
+                 "y":824.75
+                }, 
+                {
+                 "gid":29,
+                 "height":82.5,
+                 "id":354,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":176.5,
+                 "x":10035.75,
+                 "y":906.75
+                }, 
+                {
+                 "gid":29,
+                 "height":82.5,
+                 "id":355,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":176.5,
+                 "x":8818.75,
+                 "y":829.75
+                }, 
+                {
+                 "gid":29,
+                 "height":82.5,
+                 "id":356,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":176.5,
+                 "x":8311.75,
+                 "y":826.75
+                }, 
+                {
+                 "gid":29,
+                 "height":82.5,
+                 "id":357,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":176.5,
+                 "x":7757.75,
+                 "y":828.75
+                }, 
+                {
+                 "gid":29,
+                 "height":82.5,
+                 "id":358,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":176.5,
+                 "x":10682.75,
+                 "y":821.75
+                }, 
+                {
+                 "gid":29,
+                 "height":82.5,
+                 "id":359,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":176.5,
+                 "x":11091.75,
+                 "y":821.75
+                }, 
+                {
+                 "gid":29,
+                 "height":82.5,
+                 "id":360,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":176.5,
+                 "x":11465.75,
+                 "y":825.75
+                }, 
+                {
+                 "gid":29,
+                 "height":82.5,
+                 "id":361,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":176.5,
+                 "x":11942.75,
+                 "y":820.75
+                }, 
+                {
+                 "gid":29,
+                 "height":82.5,
+                 "id":362,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":176.5,
+                 "x":12446.75,
+                 "y":830.75
+                }, 
+                {
+                 "gid":29,
+                 "height":82.5,
+                 "id":363,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":176.5,
+                 "x":12942.75,
+                 "y":824.75
+                }, 
+                {
+                 "gid":29,
+                 "height":82.5,
+                 "id":364,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":176.5,
+                 "x":13497.75,
+                 "y":824.75
+                }, 
+                {
+                 "gid":29,
+                 "height":82.5,
+                 "id":365,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":176.5,
+                 "x":14018.75,
+                 "y":820.75
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -1864,8 +2092,8 @@
                  "type":"Case",
                  "visible":true,
                  "width":0,
-                 "x":14118.8,
-                 "y":783.909
+                 "x":14106.8,
+                 "y":788.909
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -1933,7 +2161,7 @@
          "y":0
         }],
  "nextlayerid":35,
- "nextobjectid":346,
+ "nextobjectid":366,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.2",
@@ -2058,7 +2286,7 @@
          "margin":0,
          "name":"mapNuit",
          "spacing":0,
-         "tilecount":12,
+         "tilecount":13,
          "tileheight":1080,
          "tiles":[
                 {
@@ -2132,6 +2360,12 @@
                  "image":"png\/water.png",
                  "imageheight":870,
                  "imagewidth":7001
+                }, 
+                {
+                 "id":12,
+                 "image":"png\/CasePourMapRonan.png",
+                 "imageheight":53,
+                 "imagewidth":114
                 }],
          "tilewidth":8000
         }],
