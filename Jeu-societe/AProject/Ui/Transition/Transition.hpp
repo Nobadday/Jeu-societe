@@ -4,6 +4,7 @@
 
 
 #include "../../Video+Audio/HighResVideoPlayer.hpp"
+#include "../../Utilities/BetterWindow/BetterWindow.hpp"
 #include <SFML/Graphics.hpp>
 
 
@@ -23,7 +24,7 @@ public:
 	void PlayTransition();
 	void SetTransition(Transition _transition);
 	void Update(float _dt);
-	void Draw(sf::RenderWindow& _window);
+	void Draw(sfMod::RenderWindow* _window);
 	bool IsFinished(void);
 
 private:

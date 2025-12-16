@@ -387,9 +387,9 @@ void FlagGame::Update(float _deltaTime)
 
 void FlagGame::Draw(sf::RenderWindow& _renderWindow)
 {
-	sfMod::RenderWindow& renderWindow = *m_data->gameData->m_renderWindow;
+	sfMod::RenderWindow* renderWindow = m_data->gameData->m_renderWindow;
 
-	renderWindow.draw(m_data->backgroundSprite);
+	renderWindow->draw(m_data->backgroundSprite);
 
 	switch (m_data->state)
 	{
@@ -401,10 +401,10 @@ void FlagGame::Draw(sf::RenderWindow& _renderWindow)
 		case STATE_PLAYING:
 		case STATE_ROUND_END:
 
-			renderWindow.draw(m_data->titleText);
-			renderWindow.draw(m_data->roundText);
-			renderWindow.draw(m_data->timerText);
-			renderWindow.draw(m_data->buttonSprite);
+			renderWindow->draw(m_data->titleText);
+			renderWindow->draw(m_data->roundText);
+			renderWindow->draw(m_data->timerText);
+			renderWindow->draw(m_data->buttonSprite);
 
 			// Draw only participating players' icons and buttons at the bottom
 			if (m_data->gameData)
@@ -414,16 +414,16 @@ void FlagGame::Draw(sf::RenderWindow& _renderWindow)
 					if (playerID >= 0 && playerID < 4)
 					{
 						// Dessiner l'icône
-						renderWindow.draw(m_data->playerData[playerID].playerIcone);
+						renderWindow->draw(m_data->playerData[playerID].playerIcone);
 						// Dessiner le bouton au-dessus de l'icône
-						renderWindow.draw(m_data->playerData[playerID].buttonSprite);
+						renderWindow->draw(m_data->playerData[playerID].buttonSprite);
 					}
 				}
 			}
 			break;
 
 		case STATE_GAME_OVER:
-			renderWindow.draw(m_data->resultText);
+			renderWindow->draw(m_data->resultText);
 			break;
 	}
 

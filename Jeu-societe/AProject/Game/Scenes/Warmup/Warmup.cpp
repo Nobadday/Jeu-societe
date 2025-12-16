@@ -26,7 +26,7 @@ void Warmup::Load(void)
 
 
 	#pragma region Icons
-	m_data->background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground", AssetManager::AssetType::TEXTURE));
+	m_data->background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("Background", AssetManager::AssetType::TEXTURE));
 
 	//Icons
 	m_data->iconsChara.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Icone", AssetManager::AssetType::TEXTURE_ANIMATED));

@@ -877,7 +877,6 @@ void BaseGame::HandleMovementState(State state, float _dt)
 			// Déplacement terminé
 			State nextState = (state == DEPLACEMENT_ACTION || state == DEPLACEMENT_ACTION_BACK || state == DEPLACEMENT_ACTION_2)
 				? CASE_ACTION_END : CASE_ACTION;
-			m_data->animator.SetSpeed(1.f);
 			SetBoardState(nextState);
 		}
 	}
@@ -958,13 +957,6 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 
 		// Positionner au centre de la caméra
 		videoSprite.setPosition(cameraCenter);
-
-		//// NOUVEAU : Ajuster la taille d'affichage (exemple : 2x plus grand)
-		//float desiredDisplaySize = 600.0f; // Taille souhaitée en pixels à l'écran
-		//float currentSize = videoBounds.width; // Taille actuelle du sprite
-		//float displayScale = desiredDisplaySize / currentSize;
-		//
-		//videoSprite.setScale(displayScale, displayScale);
 
 		// Dessiner avec le shader de chroma key
 		mod->draw(videoSprite, &m_data->chromaKeyShader);
@@ -1455,7 +1447,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 					ShowTextDisplay("Bridge crossed successfully!\nTransformation...", 2.0f);
 					m_data->smokeOff = true;
 
-					m_data->animator.SetSpeed(0.5f);
+					m_data->animator.SetSpeed(0.25f);
 
 					// Change le skin du personnage (transformation)
 					switch (m_gameData->m_playerDataList[m_data->currentPlayerIndex].GetPlayerSkin())
