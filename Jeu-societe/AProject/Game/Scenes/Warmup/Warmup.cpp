@@ -73,7 +73,7 @@ void Warmup::Load(void)
 	}
 	else if (m_data->gameData->m_nextScene == "FlagGame")
 	{
-		m_data->videoPlayer.loadFromFile("Assets/Video/FlagGame.mp4");
+		m_data->videoPlayer.loadFromFile("Assets/Video/FlagGame.mov");
 	
 		m_data->stringOfButton.push_back("Flag Game\n\nPress the button displayed as quickly as possible");
 	}

@@ -92,7 +92,6 @@ int main()
 void MainDataLoad(MainData& _mainData)
 {
 	//Cursor
-
 	_mainData.renderWindow.SetAntiAliasing(sfMod::RenderWindow::AntiAliasing::X16);
 	_mainData.renderWindow.setIcon("./Assets/Images/icon.png");
 	_mainData.renderWindow.create(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Cute & Cursed", sf::Style::Default);
@@ -129,7 +128,6 @@ void MainDataLoad(MainData& _mainData)
 	// Sélectionner le LoadingScreen metre false pour tout scene au debut 
 	_mainData.scenes.SelectScene("Lo", false);
 	//_mainData.scenes.SelectScene("FlagGame", false);
-	//_mainData.scenes.SelectScene("Lo", false);
 
 	_mainData.clock.restart();
 }
