@@ -65,6 +65,8 @@ public:
 	void SetMusicVolume(float _vol);
 	void AddMusicVolume(float _vol);
 	float GetMusicVolume(void);
+	//Return the music playing
+	std::string GetMusicName(void);
 	void TogglePauseMusic(void);
 	void StopMusic(void);
 
