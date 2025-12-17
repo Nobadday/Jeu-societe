@@ -261,29 +261,6 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 
 	m_data->HudLBM.text.SetCharactersPerLine(25);
 
-	m_data->bridge.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
-	m_data->end.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
-
-	m_data->bridge.setCharacterSize(50);
-	m_data->end.setCharacterSize(50);
-
-	m_data->bridge.setFillColor(sf::Color::White);
-	m_data->end.setFillColor(sf::Color::White);
-
-	m_data->bridge.setOutlineColor(sf::Color::Black);
-	m_data->end.setOutlineColor(sf::Color::Black);
-	m_data->bridge.setOutlineThickness(2.f);
-	m_data->end.setOutlineThickness(2.f);
-
-	m_data->bridge.setString("3");
-	m_data->end.setString("4");
-
-	m_data->bridge.setOrigin({ 0.5f , 0.5f });
-	m_data->end.setOrigin({ 0.5f , 0.5f });
-
-	m_data->bridge.setPosition(m_data->posCase[19].GetPosition() + sf::Vector2f(0.f, -500.f));
-	m_data->end.setPosition(m_data->posCase.back().GetPosition() + sf::Vector2f(0.f, -500.f));
-
 	m_data->texteDisplay.displayTime = 3.0f;
 	m_data->texteDisplay.currentTime = 0.0f;
 	m_data->texteDisplay.isActive = false;
@@ -916,16 +893,6 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 			m_data->arrow.setPosition(m_data->posArrow[i]);
 			mod->draw(m_data->arrow);
 		}
-	}
-
-	if (m_data->state == WAITING_BRIDGE_ROLL)
-	{
-		mod->draw(m_data->bridge);
-	}
-
-	if (m_data->state == WAITING_FIN_ROLL)
-	{
-		mod->draw(m_data->end);
 	}
 
 	m_gameData->m_renderWindow->ResetView();

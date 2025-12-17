@@ -271,9 +271,6 @@ class BaseGame : public SceneBase
 
 			sf::Vector2f posArrow[2];
 
-			TextPlus bridge;
-			TextPlus end;
-
 			TexteDisplay texteDisplay;
 
 			float diceFadeDuration;

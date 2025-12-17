@@ -13,6 +13,9 @@
 #include "./Game/Scenes/RandCard/RandCard.hpp"
 #include "Game/Scenes/FlagGame/FlagGame.hpp"
 #include "Game/Scenes/Menu/Menu.hpp"
+
+#include "Game/Scenes/Credits/Credits.hpp"
+
 #include "Game/Scenes/Warmup/Warmup.hpp"
 
 #include "./Game/Scenes/Podium/Podium.hpp"
@@ -115,6 +118,9 @@ void MainDataLoad(MainData& _mainData)
 	// Ajouter les scènes
 	_mainData.scenes.AddScene<Basket>("Basket");
 	_mainData.scenes.AddScene<Menu>("Menu");
+
+	_mainData.scenes.AddScene<Credits>("Credits");
+	
 	_mainData.scenes.AddScene<LoadingScreen>("Lo");
 	_mainData.scenes.AddScene<BaseGame>("Board");
 	_mainData.scenes.AddScene<RockPaperScissors>("rockPaperSizor");
@@ -126,7 +132,7 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<Warmup>("Warmup");
 
 	// Sélectionner le LoadingScreen metre false pour tout scene au debut 
-	_mainData.scenes.SelectScene("Lo", false);
+	_mainData.scenes.SelectScene("Menu", false);
 	//_mainData.scenes.SelectScene("FlagGame", false);
 
 	_mainData.clock.restart();
