@@ -121,7 +121,7 @@ void Podium::PollEvent(sf::Event& _event)
 				switch (_event.joystickButton.button)
 				{
 					case 0:
-						ChangeScene("Lo", false);
+						ChangeScene("Menu", false);
 						break;
 
 					default:
@@ -135,7 +135,7 @@ void Podium::PollEvent(sf::Event& _event)
 			{
 				if (sf::Keyboard::Space)
 				{
-					ChangeScene("Lo", false);
+					ChangeScene("Menu", false);
 				}
 			}
 
