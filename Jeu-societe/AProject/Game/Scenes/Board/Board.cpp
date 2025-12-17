@@ -232,10 +232,10 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	progress.store(0.95f);
 
 	// Configuration des animateurs
-	m_data->animator.Modify(1.0f, 120.0f, false, 1.0f);
+	m_data->animator.Modify(1.0f, 60.0f, false, 1.0f);
 	//m_data->animator.SetSpeed(0.5f);
 
-	m_data->animator2.Modify(1.0f, 120.0f, false, 1.0f);
+	m_data->animator2.Modify(1.0f, 60.0f, false, 1.0f);
 	m_data->animator.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::LINEAR);
 	m_data->animator2.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::LINEAR);
 	m_data->animator.End();
@@ -790,6 +790,7 @@ void BaseGame::HandleMovementState(State state, float _dt)
 		auto& player = m_data->players[m_data->currentPlayerIndex];
 		player.pendingMovement--;
 		m_data->animator.SetSpeed(1.f);
+		m_data->animator.SetDuration(1.f);
 
 		std::cout << "Mouvement restant : " << player.pendingMovement << std::endl;
 
@@ -991,6 +992,7 @@ void BaseGame::SortDrawOrder()
 
 void BaseGame::CaseAction()
 {
+	m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
 	const std::string& caseType = m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType();
 
 	//int sameCase = OnSameCase();
@@ -1432,7 +1434,8 @@ void BaseGame::BoardStateUpdate(float _dt)
 					ShowTextDisplay("Bridge crossed successfully!\nTransformation...", 2.0f);
 					m_data->smokeOff = true;
 
-					m_data->animator.SetSpeed(0.25f);
+					m_data->animator.SetSpeed(0.35f);
+					m_data->animator.SetDuration(0.5f);
 
 					// Change le skin du personnage (transformation)
 					switch (m_gameData->m_playerDataList[m_data->currentPlayerIndex].GetPlayerSkin())
@@ -1711,6 +1714,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 		}
 		break;
 	case END:
+		m_data->timerEnd -= _dt;
 		if (m_data->timerEnd <= 0 )
 		{
 			if (!m_data->endActive)

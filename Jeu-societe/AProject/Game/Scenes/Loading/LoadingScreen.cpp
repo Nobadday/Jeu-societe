@@ -81,8 +81,14 @@ void LoadingScreen::Load(void)
         m_data->chromaKeyShader.setUniform("threshold", 0.7f); // Ajuster selon vos besoins
     }
 
-
-    m_audioEngine->PlayMusicTransition("Plato1", true);
+    if (m_audioEngine->GetMusicName() != "")
+    {
+        m_audioEngine->PlayMusicTransition("Plato1", true);
+    }
+    else
+    {
+        m_audioEngine->PlayMusic("Plato1", true);
+	}
 
     LoadResourcesAsync();
 }
