@@ -17,7 +17,6 @@ void Menu::Load(void)
 	m_data->audio = (AudioEngine*)m_data->gameData->m_audioEngine;
 	LoadUI();
 	m_data->audio->SetMusicVolume(25.f);
-	m_data->audio->PlayMusic("Music1", true);
 
 	m_data->introVideo.loadFromFile("Assets/Video/Intro.mov");
 	m_data->introVideo.play();
@@ -188,6 +187,7 @@ void Menu::Update(float _deltaTime)
 		if (m_data->introVideo.isFinish())
 		{
 			m_data->state = MAIN_MENU;
+			m_data->audio->PlayMusic("Music1", true);
 		}
 		return;
 	}
@@ -441,6 +441,7 @@ void Menu::PressSelection(int _id)
 			m_data->ui.buttonMap["moinsBtn"].setPosition({ SCREEN_WIDTH / 2 - 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2 });
 			m_data->ui.buttonMap["plusBtn"].setPosition({ SCREEN_WIDTH / 2 + 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2 });
 			m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
+			m_data->ui.playerCount.setPosition({ SCREEN_WIDTH / 2 , SCREEN_HEIGHT / 2 });
 			break;
 
 		case PLAYER_NB_SELECTION:
@@ -549,14 +550,11 @@ void Menu::PressSelection(int _id)
 		{
 		case PLAYER_NB_SELECTION:
 
-			m_data->audio->PlayMusicTransition("Music1", true, true, 5.f, TransitionType::FADED_MIX);
-
 			std::cout << "player count : " << m_data->gameSettings.playerCount;
 			for (int i = 0; i < m_data->gameSettings.playerCount + 1; i++)
 			{
 				PlayerData newPlayer;
 				newPlayer.m_joystickId = i;
-				std::cout << " zigounette : " << std::endl;
 				m_data->gameData->m_playerDataList.push_back(newPlayer);
 				m_data->charaSelected.push_back(false);
 				m_data->currentCharaSelected.push_back(0);
