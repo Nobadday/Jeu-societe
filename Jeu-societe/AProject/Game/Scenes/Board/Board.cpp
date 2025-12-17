@@ -12,6 +12,7 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 {
 	m_data = new SceneData;
 	m_gameData = (GameData*)this->m_keptData;
+	m_audioEngine = (AudioEngine*)m_gameData->m_audioEngine;
 
 	progress.store(0.1f);
 
@@ -587,6 +588,21 @@ void BaseGame::PollEvent(sf::Event& _event)
 
 void BaseGame::Update(float _deltaTime)
 {
+	if (m_data->players[m_data->currentPlayerIndex].boardPosition.x > m_data->posCase[19].GetPosition().x + 100)
+	{
+		if (m_audioEngine->GetMusicName() == "Plato1")
+		{
+			//m_audioEngine->PlayMusicTransition("Plato2");
+		}
+	}
+	else
+	{
+		if (m_audioEngine->GetMusicName() == "Plato2")
+		{
+			//m_audioEngine->PlayMusicTransition("Plato1");
+		}
+	}
+
 	// Mise à jour des animations
 	UpdateLBM(_deltaTime);
 

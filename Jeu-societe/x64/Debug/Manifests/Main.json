@@ -63,6 +63,16 @@
             "type" : "Texture Animated",
             "path" : "Assets/Shared/Icone/Icone-Perso.anim",
 			"subType" : 1
+        },
+        {
+            "name" : "Music1",
+            "type" : "Music",
+            "path" :"Assets/Audio/Musics/musicMenu.wav"
+        },
+        {
+            "name" : "Plato1",
+            "type" : "Music",
+            "path" :"Assets/Audio/Musics/Part1Plato.wav"
         }
     ]
 }

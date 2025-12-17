@@ -85,11 +85,6 @@
             "name" : "soundTest",
             "type" : "Sound Buffer",
             "path" : "Assets/Audio/Sounds/KtK_BeatA_100-01.wav"
-        },
-        {
-            "name" : "Music1",
-            "type" : "Music",
-            "path" :"Assets/Audio/Musics/musicMenu.wav"
         }
     ]
 }

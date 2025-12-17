@@ -282,6 +282,8 @@ class BaseGame : public SceneBase
 
 		SceneData* m_data;
 
+		AudioEngine* m_audioEngine;
+
 	private:
 		
 		void SortDrawOrder();

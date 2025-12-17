@@ -5,6 +5,7 @@ void LoadingScreen::Load(void)
 {
     m_data = new LoadingData;
     m_gameData = (GameData*)this->m_keptData;
+	m_audioEngine =(AudioEngine*)m_gameData->m_audioEngine;
 
     // Configuration visuelle
     if (m_gameData->m_assetManager->GetAsset<sf::Font>("MainFont", AssetManager::AssetType::FONT))
@@ -79,6 +80,9 @@ void LoadingScreen::Load(void)
         m_data->chromaKeyShader.setUniform("keyColor", sf::Glsl::Vec3(0.0f, 1.0f, 0.0f)); // RGB vert
         m_data->chromaKeyShader.setUniform("threshold", 0.7f); // Ajuster selon vos besoins
     }
+
+
+    m_audioEngine->PlayMusicTransition("Plato1", true);
 
     LoadResourcesAsync();
 }
