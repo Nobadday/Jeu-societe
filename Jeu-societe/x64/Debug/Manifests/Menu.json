@@ -89,12 +89,7 @@
         {
             "name" : "Music1",
             "type" : "Music",
-            "path" :"Assets/Audio/Musics/Spacestation.ogg"
-        },
-        {
-            "name" : "Music2",
-            "type" : "Music",
-            "path" :"Assets/Audio/Musics/08 - Two Faced.flac"
+            "path" :"Assets/Audio/Musics/musicMenu.wav"
         }
     ]
 }

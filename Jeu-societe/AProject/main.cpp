@@ -163,7 +163,7 @@ void PollEvent(MainData& _mainData)
 void Update(MainData& _mainData)
 {
 	float deltaTime = _mainData.clock.restart().asSeconds();
-
+	_mainData.audioEngine.UpdateMusicTransition(deltaTime);
 	_mainData.scenes.Update(deltaTime);
 }
 

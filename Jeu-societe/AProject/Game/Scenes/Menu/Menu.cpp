@@ -193,7 +193,6 @@ void Menu::Update(float _deltaTime)
 	}
 	else
 	{
-		m_data->audio->UpdateMusicTransition(_deltaTime);
 		ButtonsUpdate(_deltaTime);
 
 		//std::cout << "current chara = " << m_data->currentCharaSelected << std::endl;
