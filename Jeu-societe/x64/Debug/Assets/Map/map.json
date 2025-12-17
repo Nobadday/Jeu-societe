@@ -1818,7 +1818,7 @@
                         {
                          "name":"nextPath",
                          "type":"string",
-                         "value":"28"
+                         "value":"27"
                         }],
                  "rotation":0,
                  "type":"Bonus",
@@ -2164,7 +2164,7 @@
  "nextobjectid":366,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.11.2",
+ "tiledversion":"1.10.1",
  "tileheight":32,
  "tilesets":[
         {
