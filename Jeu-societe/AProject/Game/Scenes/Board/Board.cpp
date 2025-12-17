@@ -48,6 +48,7 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	m_data->timeLBM = TIME_LBM_DISPLAY;
 	m_data->timeDice = TIME_DIS_DISPLAY;
 	m_data->timeStart = TIME_START_DISPLAY;
+	m_data->timerEnd = TIME_END_DISPLAY;
 
 	// NOUVEAU : Initialisation de la vidéo du dé
 	m_data->diceAnimationPlaying = false;
@@ -1710,11 +1711,21 @@ void BaseGame::BoardStateUpdate(float _dt)
 		}
 		break;
 	case END:
-		m_data->currentDiceVideo->update(_dt);
-		if (m_data->currentDiceVideo->isFinish())
+		if (m_data->timerEnd <= 0 )
 		{
-			m_gameData->m_renderWindow->ResetView();
-			ChangeScene("Podium", false);
+			if (!m_data->endActive)
+			{
+				m_data->endActive = true;
+				m_data->currentDiceVideo = m_data->diceVideos[TRANSITION_2];
+				m_data->currentDiceVideo->play();
+			}
+
+			m_data->currentDiceVideo->update(_dt);
+			if (m_data->currentDiceVideo->isFinish())
+			{
+				m_gameData->m_renderWindow->ResetView();
+				ChangeScene("Podium", false);
+			}
 		}
 		break;
 	default:

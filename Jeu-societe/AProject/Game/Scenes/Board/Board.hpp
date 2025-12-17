@@ -25,6 +25,7 @@
 
 #define TIME_WIN_DISPLAY 0.5f
 #define TIME_LBM_DISPLAY 6.0f
+#define TIME_END_DISPLAY 2.0f
 #define TIME_DIS_DISPLAY 0.2f
 #define TIME_START_DISPLAY 1.2f
 #define MAX_TOUR_EFFECT 2
@@ -273,8 +274,9 @@ class BaseGame : public SceneBase
 
 			TexteDisplay texteDisplay;
 
-			float diceFadeDuration;
-			float diceFadeTimer;
+			float timerEnd;
+
+			bool endActive;
 			
 		};
 
