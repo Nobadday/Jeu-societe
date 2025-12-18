@@ -456,8 +456,10 @@ void BaseGame::ShowTextDisplay(const std::string& message, float duration)
 
 void BaseGame::PollEvent(sf::Event& _event)
 {
+	// ==================== DEBUG KEYS ====================
 	if (_event.type == sf::Event::KeyPressed)
 	{
+		// DEBUG: Touche R - Swap aléatoire (déjà existant)
 		if (_event.key.code == sf::Keyboard::R)
 		{
 			int swapIndex = randmt::RandomInt(0, (int)m_data->players.size() - 1);
@@ -468,7 +470,194 @@ void BaseGame::PollEvent(sf::Event& _event)
 
 			SwapPlayers(swapIndex);
 		}
+
+		// DEBUG: Touche Num1 - Lancer Rock Paper Scissors
+		if (_event.key.code == sf::Keyboard::Numpad1)
+		{
+			std::cout << "[DEBUG] Lancement Rock Paper Scissors" << std::endl;
+			m_gameData->InitMiniGamePlayer();
+			m_gameData->AddPlayerPlaying(m_data->currentPlayerIndex);
+			m_gameData->AddPlayerPlaying((m_data->currentPlayerIndex + 1) % m_data->players.size());
+			m_gameData->m_nextScene = "rockPaperSizor";
+			m_gameData->m_renderWindow->ResetView();
+			ChangeScene("Warmup", true);
+			return;
+		}
+
+		// DEBUG: Touche Num2 - Lancer Arm Wrestling
+		if (_event.key.code == sf::Keyboard::Numpad2)
+		{
+			std::cout << "[DEBUG] Lancement Arm Wrestling" << std::endl;
+			m_gameData->InitMiniGamePlayer();
+			m_gameData->AddPlayerPlaying(m_data->currentPlayerIndex);
+			m_gameData->AddPlayerPlaying((m_data->currentPlayerIndex + 1) % m_data->players.size());
+			m_gameData->m_nextScene = "ArmWrestling";
+			m_gameData->m_renderWindow->ResetView();
+			ChangeScene("Warmup", true);
+			return;
+		}
+
+		// DEBUG: Touche Num3 - Lancer Flag Game
+		if (_event.key.code == sf::Keyboard::Numpad3)
+		{
+			std::cout << "[DEBUG] Lancement Flag Game" << std::endl;
+			m_gameData->InitMiniGamePlayer();
+			for (int i = 0; i < m_data->players.size(); i++)
+				m_gameData->AddPlayerPlaying(i);
+			m_gameData->m_nextScene = "FlagGame";
+			m_gameData->m_renderWindow->ResetView();
+			ChangeScene("Warmup", true);
+			return;
+		}
+
+		// DEBUG: Touche Num4 - Lancer Rand Card
+		if (_event.key.code == sf::Keyboard::Numpad4)
+		{
+			std::cout << "[DEBUG] Lancement Rand Card" << std::endl;
+			m_gameData->InitMiniGamePlayer();
+			for (int i = 0; i < m_data->players.size(); i++)
+				m_gameData->AddPlayerPlaying(i);
+			m_gameData->m_nextScene = "RandCard";
+			m_gameData->m_renderWindow->ResetView();
+			ChangeScene("Warmup", true);
+			return;
+		}
+
+		// DEBUG: Touche Num5 - Lancer Roulette Russe
+		if (_event.key.code == sf::Keyboard::Numpad5)
+		{
+			std::cout << "[DEBUG] Lancement Roulette Russe" << std::endl;
+			m_gameData->InitMiniGamePlayer();
+			for (int i = 0; i < m_data->players.size(); i++)
+				m_gameData->AddPlayerPlaying(i);
+			m_gameData->m_nextScene = "RuRoul";
+			m_gameData->m_renderWindow->ResetView();
+			ChangeScene("Warmup", true);
+			return;
+		}
+
+		// DEBUG: Touche Num6 - Forcer un 6 au prochain lancer
+		if (_event.key.code == sf::Keyboard::Numpad6)
+		{
+			std::cout << "[DEBUG] Prochain lancer forcé à 6" << std::endl;
+			if (m_data->state != DICE_ANIMATION && m_data->state != WIN && 
+				m_data->state != DUEL && m_data->state != BATTLE_ACTION)
+			{
+				ProcessDiceRoll(6);
+			}
+			return;
+		}
+
+		// DEBUG: Touche T - Téléporter après le pont (case 19)
+		if (_event.key.code == sf::Keyboard::T)
+		{
+			std::cout << "[DEBUG] Téléportation après le pont" << std::endl;
+			auto& player = m_data->players[m_data->currentPlayerIndex];
+			
+			// Trouver la case après le pont (case 19)
+			for (int i = 0; i < m_data->posCase.size(); i++)
+			{
+				auto& mapObject = m_data->posCase[i];
+				if (mapObject.GetName() == "20") // Case juste après le pont
+				{
+					player.currentCaseIndex = i;
+					player.boardPosition = mapObject.GetPosition() + sf::Vector2f{ 0.f, 0.f };
+					player.pendingMovement = 0;
+					player.currentPathId = -1;
+					
+					// CORRECTION : Activer les effets de fumée
+					m_data->smokeOff = true;
+					
+					// Transformer le personnage si ce n'est pas déjà fait
+					switch (m_gameData->m_playerDataList[m_data->currentPlayerIndex].GetPlayerSkin())
+					{
+					case PlayerData::CHARACTER_1_1:
+						m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_1_2);
+						player.texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+						break;
+					case PlayerData::CHARACTER_2_1:
+						m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_2_2);
+						player.texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso2-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+						break;
+					case PlayerData::CHARACTER_3_1:
+						m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_3_2);
+						player.texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso3-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+						break;
+					case PlayerData::CHARACTER_4_1:
+						m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_4_2);
+						player.texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso4-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+						break;
+					default:
+						break;
+					}
+					
+					player.sprite.setTexture(player.texture);
+					player.sprite.SetAnimation("Idle");
+					
+					ShowTextDisplay("DEBUG: Teleported after bridge!", 2.0f);
+					UpdateCameraToShowAllPlayers();
+					break;
+				}
+			}
+			return;
+		}
+
+		// DEBUG: Touche B - Téléporter directement sur le pont
+		if (_event.key.code == sf::Keyboard::B)
+		{
+			std::cout << "[DEBUG] Téléportation sur le pont" << std::endl;
+			auto& player = m_data->players[m_data->currentPlayerIndex];
+			
+			// Trouver la case du pont (case 19)
+			for (int i = 0; i < m_data->posCase.size(); i++)
+			{
+				auto& mapObject = m_data->posCase[i];
+				if (mapObject.GetName() == "19")
+				{
+					player.currentCaseIndex = i;
+					player.boardPosition = mapObject.GetPosition() + sf::Vector2f{ 0.f, 0.f };
+					player.pendingMovement = 0;
+					player.currentPathId = -1;
+					player.sprite.SetAnimation("Idle");
+					
+					ShowTextDisplay("DEBUG: Teleported to bridge!", 2.0f);
+					UpdateCameraToShowAllPlayers();
+					break;
+				}
+			}
+			return;
+		}
+
+		// DEBUG: Touche F - Téléporter à la ligne d'arrivée
+		if (_event.key.code == sf::Keyboard::F)
+		{
+			std::cout << "[DEBUG] Téléportation à la ligne d'arrivée" << std::endl;
+			auto& player = m_data->players[m_data->currentPlayerIndex];
+			
+			// Trouver la case de fin
+			for (int i = 0; i < m_data->posCase.size(); i++)
+			{
+				auto& mapObject = m_data->posCase[i];
+				if (mapObject.GetPropertyByName("type") != nullptr)
+				{
+					if (mapObject.GetPropertyByName("type")->GetStringValue() == "end")
+					{
+						player.currentCaseIndex = i;
+						player.boardPosition = mapObject.GetPosition() + sf::Vector2f{ 0.f, 0.f };
+						player.pendingMovement = 0;
+						player.currentPathId = -1;
+						player.sprite.SetAnimation("Idle");
+						
+						ShowTextDisplay("DEBUG: Teleported to finish line!", 2.0f);
+						UpdateCameraToShowAllPlayers();
+						break;
+					}
+				}
+			}
+			return;
+		}
 	}
+	// ==================== FIN DEBUG KEYS ====================
 
 	// Gestion simplifiée des états d'attente de lancer
 	if (m_data->state == WAITING_FIN_ROLL and !m_data->texteDisplay.isActive)
