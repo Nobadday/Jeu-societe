@@ -995,12 +995,12 @@ void BaseGame::CaseAction()
 	m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
 	const std::string& caseType = m_data->posCase[m_data->players[m_data->currentPlayerIndex].currentCaseIndex].GetType();
 
-	//int sameCase = OnSameCase();
-	//if (sameCase != -1)
-	//{
-	//	SetBoardState(DUEL, 0);
-	//	return;
-	//}
+	int sameCase = OnSameCase();
+	if (sameCase != -1)
+	{
+		SetBoardState(DUEL, 0);
+		return;
+	}
 
 	if (caseType == "Bonus" and m_data->players[m_data->currentPlayerIndex].state == StatePlayer::INFEC)
 	{
@@ -1086,10 +1086,10 @@ void BaseGame::CaseAction()
 
 	}
 	break;
-	/*case hash("Battle"):
+	case hash("Battle"):
 		std::cout << "Landed on a Battle case!" << std::endl;
 		SetBoardState(BATTLE_ACTION);
-		break;*/
+		break;
 
 	default:
 	{

@@ -124,6 +124,7 @@ void Menu::PollEvent(sf::Event& _event)
 				//U V joystick droite
 				//Z R pression des gachettes
 				//La croix povX povY		
+
 				if (m_data->inputDelay > INPUT_DELAY)
 				{
 					switch (_event.joystickMove.axis)
@@ -243,7 +244,7 @@ void Menu::Draw(sf::RenderWindow& _renderWindow)
 }
 void Menu::DrawUI(sfMod::RenderWindow* _renderWindow)
 {
-	sf::Vector2i mousePos = sf::Mouse::getPosition();
+	sf::Vector2i mousePos = sf::Mouse::getPosition(*_renderWindow);
 	switch (m_data->state)
 	{
 	case MAIN_MENU:
@@ -450,6 +451,20 @@ void Menu::PressSelection(int _id)
 		{
 			std::cout << "id = " << _id << " size of datalist = " << m_data->gameData->m_playerDataList.size() << std::endl;
 
+			if (m_data->gameData->m_playerDataList.size() > m_data->gameSettings.playerCount)
+			{
+				if(_id > m_data->gameSettings.playerCount)
+				{
+					return;
+				}
+				int oui = m_data->gameData->m_playerDataList.size() - m_data->gameSettings.playerCount;
+				std::cout << "WTF WHY MORE THAN 4 PLAYERS ??? size = " << oui << std::endl;
+				for (int i = (int)m_data->gameData->m_playerDataList.size() - 1 ; i >= m_data->gameSettings.playerCount + 1 ; i--)
+				{
+					m_data->gameData->m_playerDataList.pop_back();
+				}
+			}
+
 			// CORRECTION : Convertir l'index de s�lection en PlayerSkin
 			// m_currentCharaSelected[_id] contient l'index dans charaAvaible (0-3)
 			// Correspondance :
@@ -533,6 +548,11 @@ void Menu::PressSelection(int _id)
 				m_data->gameSettings.playerCount -= 1;
 				m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
 			}
+			else
+			{
+				m_data->gameSettings.playerCount = 3;
+				m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
+			}
 			break;
 
 		case OPTIONS:
@@ -586,6 +606,11 @@ void Menu::PressSelection(int _id)
 			if (m_data->gameSettings.playerCount < MAX_PLAYERS)
 			{
 				m_data->gameSettings.playerCount += 1;
+				m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
+			}
+			else
+			{
+				m_data->gameSettings.playerCount = 1;
 				m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
 			}
 			break;
