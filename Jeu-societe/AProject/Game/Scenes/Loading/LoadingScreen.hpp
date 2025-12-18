@@ -9,7 +9,6 @@
 
 struct LoadingData
 {
-    GameData* gameData = nullptr;
     sf::Sprite background;
     sf::Text loadingText;
     sf::RectangleShape progressBarBackground;
@@ -34,6 +33,7 @@ class LoadingScreen : public SceneBase
 private:
     LoadingData* m_data = nullptr;
     GameData* m_gameData = nullptr;
+    AudioEngine* m_audioEngine = nullptr;
 
 public:
     LoadingScreen() = default;  // NOUVEAU : Constructeur par défaut

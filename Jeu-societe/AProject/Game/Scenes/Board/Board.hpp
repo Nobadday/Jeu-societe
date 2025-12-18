@@ -25,6 +25,7 @@
 
 #define TIME_WIN_DISPLAY 0.5f
 #define TIME_LBM_DISPLAY 6.0f
+#define TIME_END_DISPLAY 2.0f
 #define TIME_DIS_DISPLAY 0.2f
 #define TIME_START_DISPLAY 1.2f
 #define MAX_TOUR_EFFECT 2
@@ -269,16 +270,21 @@ class BaseGame : public SceneBase
 
 			sf::Sprite arrow;
 
-			TextPlus bridge;
-			TextPlus end;
+			sf::Vector2f posArrow[2];
 
 			TexteDisplay texteDisplay;
+
+			float timerEnd;
+
+			bool endActive;
 			
 		};
 
 		GameData* m_gameData;
 
 		SceneData* m_data;
+
+		AudioEngine* m_audioEngine;
 
 	private:
 		

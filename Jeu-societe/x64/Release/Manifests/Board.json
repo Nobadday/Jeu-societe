@@ -52,6 +52,11 @@
             "name" : "BoardFont",
             "type" : "Font",
             "path" : "Assets/Fonts/Font.ttf"
+        },  
+		{
+            "name" : "TestFont",
+            "type" : "Font",
+            "path" : "Assets/Fonts/Kingdom_Hearts_Font.ttf"
         },
 		{
             "name" : "Anim_card",

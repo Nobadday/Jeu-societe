@@ -54,18 +54,20 @@ void Credits::Update(float _dt)
 
 void Credits::Draw(sf::RenderWindow& _window)
 {
-	_window.draw(m_data->background);
+	sfMod::RenderWindow* bWindow = m_data->gameData->m_renderWindow;
+
+	bWindow->draw(m_data->background);
 	switch (m_data->state)
 	{
 	case CREDITS_TRANSITION_1:
 
-		m_data->transition.Draw(_window);
+		m_data->transition.Draw(bWindow);
 		break;
 
 	case ANIMATION:
 
 		sf::Sprite vid = m_data->videoPlayer.getSprite();
-		_window.draw(vid);
+		bWindow->draw(vid);
 		break;
 	}
 }

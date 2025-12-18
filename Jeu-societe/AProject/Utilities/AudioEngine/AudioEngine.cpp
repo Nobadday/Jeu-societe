@@ -429,6 +429,15 @@ float AudioEngine::GetMusicVolume(void)
 {
 	return m_musicVol;
 }
+std::string AudioEngine::GetMusicName(void)
+{
+	if (m_currentMusic != "" &&
+	m_music->getStatus() == sf::Music::Status::Playing)
+	{
+		return m_currentMusic;
+	}
+	return "";
+}
 void AudioEngine::TogglePauseMusic(void)
 {
 	if (m_currentMusic != "")

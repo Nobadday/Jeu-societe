@@ -63,10 +63,10 @@ void TransitionClass::Update(float _dt)
 {
     videoPlayer.update(_dt);
 }
-void TransitionClass::Draw(sf::RenderWindow& _window)
+void TransitionClass::Draw(sfMod::RenderWindow* _window)
 {
     sf::Sprite vid = videoPlayer.getSprite();
-    _window.draw(vid, &chromaKeyShader);
+    _window->draw(vid, &chromaKeyShader);
 }
 bool TransitionClass::IsFinished(void)
 {
