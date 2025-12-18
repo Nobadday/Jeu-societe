@@ -278,6 +278,9 @@ class BaseGame : public SceneBase
 
 			bool endActive;
 			
+
+			bool song1;
+			bool song2;
 		};
 
 		GameData* m_gameData;

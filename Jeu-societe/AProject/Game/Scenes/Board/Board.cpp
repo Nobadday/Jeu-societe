@@ -274,6 +274,8 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	m_data->texteDisplay.fadeOutDuration = 0.5f;  // 0.5 seconde pour disparaître
 	m_data->texteDisplay.fadeTimer = 0.0f;
 
+	m_data->song1 = false;
+
 	progress.store(1.0f);
 }
 
@@ -787,13 +789,12 @@ void BaseGame::PollEvent(sf::Event& _event)
 
 void BaseGame::Update(float _deltaTime)
 {
-	if (m_data->players[m_data->currentPlayerIndex].boardPosition.x > m_data->posCase[19].GetPosition().x + 100)
+	if (m_data->players[m_data->currentPlayerIndex].boardPosition.x > m_data->posCase[19].GetPosition().x + 100 && m_data->song1)
 	{
 		if (m_audioEngine->IsTransitionFinished())
 		{
 			if (m_audioEngine->GetMusicName() != "Plato2")
 			{
-
 				std::cout << m_audioEngine->GetMusicName() << std::endl;
 
 				m_audioEngine->PlayMusicTransition("Plato2", true, false,FADED_MIX);
@@ -821,12 +822,13 @@ void BaseGame::Update(float _deltaTime)
 				}
 
 				m_data->smokeOff = true;
+
+				m_data->song1 = false;
 			}
 		}
 	}
-	else
+	else if (!m_data->song1)
 	{
-
 		if (m_audioEngine->IsTransitionFinished())
 		{
 			if (m_audioEngine->GetMusicName() != "Plato1")
@@ -834,6 +836,7 @@ void BaseGame::Update(float _deltaTime)
 				std::cout << m_audioEngine->GetMusicName() << std::endl;
 
 				m_audioEngine->PlayMusicTransition("Plato1", true, false, FADED_MIX);
+				m_data->song1 = true;
 			}
 
 		}
