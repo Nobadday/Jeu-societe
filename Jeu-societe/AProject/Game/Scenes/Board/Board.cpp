@@ -783,14 +783,14 @@ void BaseGame::Update(float _deltaTime)
 	{
 		if (m_audioEngine->GetMusicName() == "Plato1")
 		{
-			//m_audioEngine->PlayMusicTransition("Plato2");
+			m_audioEngine->PlayMusicTransition("Plato2",true,FADED_MIX);
 		}
 	}
 	else
 	{
 		if (m_audioEngine->GetMusicName() == "Plato2")
 		{
-			//m_audioEngine->PlayMusicTransition("Plato1");
+			m_audioEngine->PlayMusicTransition("Plato1",true,FADED_MIX);
 		}
 	}
 

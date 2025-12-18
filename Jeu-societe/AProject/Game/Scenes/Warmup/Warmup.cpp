@@ -102,6 +102,7 @@ void Warmup::Load(void)
 	}
 
 	m_data->transition.PlayTransition();
+	m_data->audio->PlayMusicTransition("Warm",true, FADED_MIX);
 }
 
 void Warmup::Unload(void)
@@ -176,8 +177,9 @@ void Warmup::Update(float _deltaTime)
 
 		case TRANS_2:
 			
-			m_data->transition.Update(_deltaTime);
+			m_data->audio->PlayMusicTransition("MiniGameTheme",true ,FADED_MIX);
 
+			m_data->transition.Update(_deltaTime);
 			if (m_data->transition.IsFinished())
 			{
 				ChangeScene(m_data->gameData->m_nextScene);
@@ -217,6 +219,7 @@ void Warmup::Draw(sf::RenderWindow& _renderWindow)
 		case TRANS_2:
 
 			m_data->transition.Draw(bWindow);
+
 			break;
 	}
 }
