@@ -89,7 +89,7 @@ void BaseGame::LBMDisplayUpdate(float _dt)
 			{
 				m_data->HudLBM.swap = randmt::RandomInt(0, (int)m_data->players.size() - 1);
 			}
-			m_data->HudLBM.text.setString("Swap Position with Player " + std::to_string(m_data->HudLBM.swap + 1));
+			m_data->HudLBM.text.setString("Swap Position with " + m_data->players[m_data->HudLBM.swap].playeur.getString());
 			m_data->HudLBM.text.setPosition({ SCREEN_WIDTH / 2  , SCREEN_WIDTH / 10 });
 			m_data->HudLBM.active = true;
 		}

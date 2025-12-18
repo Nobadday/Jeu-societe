@@ -259,6 +259,8 @@ void RockPaperScissors::Update(float _deltaTime)
 
 void RockPaperScissors::Draw(sf::RenderWindow& _renderWindow)
 {
+	sfMod::RenderWindow* bWindow = m_data->gameData->m_renderWindow;
+
 	_renderWindow.draw(m_data->background);
 
 	for (short i = 0; i < 2; i++)
@@ -271,7 +273,7 @@ void RockPaperScissors::Draw(sf::RenderWindow& _renderWindow)
 	{
 		case STATE_WARMUP:
 		case STATE_ENDGAME:
-			m_data->transition.Draw(_renderWindow);
+			m_data->transition.Draw(bWindow);
 			break;
 	}
 }

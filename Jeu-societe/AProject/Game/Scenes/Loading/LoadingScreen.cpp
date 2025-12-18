@@ -5,12 +5,13 @@ void LoadingScreen::Load(void)
 {
     m_data = new LoadingData;
     m_gameData = (GameData*)this->m_keptData;
+	m_audioEngine =(AudioEngine*)m_gameData->m_audioEngine;
 
     // Configuration visuelle
     if (m_gameData->m_assetManager->GetAsset<sf::Font>("MainFont", AssetManager::AssetType::FONT))
     {
         m_data->loadingText.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("MainFont", AssetManager::AssetType::FONT));
-        m_data->background.setTexture(*m_gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground", AssetManager::AssetType::TEXTURE));
+        m_data->background.setTexture(*m_gameData->m_assetManager->GetAsset<sf::Texture>("Background", AssetManager::AssetType::TEXTURE));
     }
     // Ligne 17 : Remplacer le texte de chargement
     m_data->loadingText.setString("Loading...");
@@ -24,7 +25,7 @@ void LoadingScreen::Load(void)
     m_data->loadingText.setPosition(SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f - 100.f);
 
     m_data->progressBarBackground.setSize(sf::Vector2f(600.f, 40.f));
-    m_data->progressBarBackground.setFillColor(sf::Color(135, 206, 250));
+    m_data->progressBarBackground.setFillColor(sf::Color(0, 206, 250));
     m_data->progressBarBackground.setPosition(SCREEN_WIDTH / 2.f - 300.f, SCREEN_HEIGHT / 2.f);
 
     m_data->progressBarFill.setSize(sf::Vector2f(0.f, 40.f));
@@ -79,6 +80,15 @@ void LoadingScreen::Load(void)
         m_data->chromaKeyShader.setUniform("keyColor", sf::Glsl::Vec3(0.0f, 1.0f, 0.0f)); // RGB vert
         m_data->chromaKeyShader.setUniform("threshold", 0.7f); // Ajuster selon vos besoins
     }
+
+    if (m_audioEngine->GetMusicName() != "")
+    {
+        m_audioEngine->PlayMusicTransition("Plato1", true);
+    }
+    else
+    {
+        m_audioEngine->PlayMusic("Plato1", true);
+	}
 
     LoadResourcesAsync();
 }
@@ -139,10 +149,12 @@ void LoadingScreen::Update(float _deltaTime)
 
 void LoadingScreen::Draw(sf::RenderWindow& _renderWindow)
 {
-    _renderWindow.draw(m_data->background);
-    _renderWindow.draw(m_data->progressBarBackground);
-    _renderWindow.draw(m_data->progressBarFill);
-    _renderWindow.draw(m_data->loadingText);
+	sfMod::RenderWindow* mod = m_gameData->m_renderWindow;
+
+    mod->draw(m_data->background);
+    mod->draw(m_data->progressBarBackground);
+    mod->draw(m_data->progressBarFill);
+    mod->draw(m_data->loadingText);
 
     if (m_data->videoLoaded)
     {
@@ -153,7 +165,7 @@ void LoadingScreen::Draw(sf::RenderWindow& _renderWindow)
         videoSprite.setOrigin(videoBounds.width / 2.0f, videoBounds.height / 2.0f);
         // Positionner au centre de l'écran
         videoSprite.setPosition(SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f);
-		_renderWindow.draw(videoSprite,&m_data->chromaKeyShader);
+        mod->draw(videoSprite,&m_data->chromaKeyShader);
 
     }
 

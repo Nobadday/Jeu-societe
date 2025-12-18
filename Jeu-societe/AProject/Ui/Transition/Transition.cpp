@@ -68,11 +68,6 @@ void TransitionClass::Draw(sfMod::RenderWindow* _window)
     sf::Sprite vid = videoPlayer.getSprite();
     _window->draw(vid, &chromaKeyShader);
 }
-void TransitionClass::Draw(sf::RenderWindow& _window)
-{
-    sf::Sprite vid = videoPlayer.getSprite();
-    _window.draw(vid, &chromaKeyShader);
-}
 bool TransitionClass::IsFinished(void)
 {
     return videoPlayer.isFinish();

@@ -17,7 +17,6 @@ void Menu::Load(void)
 	m_data->audio = (AudioEngine*)m_data->gameData->m_audioEngine;
 	LoadUI();
 	m_data->audio->SetMusicVolume(25.f);
-	m_data->audio->PlayMusic("Music1", true);
 
 	m_data->introVideo.loadFromFile("Assets/Video/Intro.mov");
 	m_data->introVideo.play();
@@ -74,6 +73,8 @@ void Menu::LoadUI(void)
 	m_data->ui.buttonMap["creditsBtn"].setScale({ 0.8f,0.8f });
 
 	m_data->ui.playerCount.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("MenuFont"));
+	m_data->ui.playerCount.setOutlineColor(sf::Color::Black);
+	m_data->ui.playerCount.setOutlineThickness(1.5f);
 	m_data->ui.playerCount.setCharacterSize(200u);
 	m_data->ui.playerCount.setPosition({ SCREEN_WIDTH / 2 , SCREEN_HEIGHT / 2 });
 	//This font sucks bro
@@ -125,6 +126,7 @@ void Menu::PollEvent(sf::Event& _event)
 				//U V joystick droite
 				//Z R pression des gachettes
 				//La croix povX povY		
+
 				if (m_data->inputDelay > INPUT_DELAY)
 				{
 					switch (_event.joystickMove.axis)
@@ -188,12 +190,12 @@ void Menu::Update(float _deltaTime)
 		if (m_data->introVideo.isFinish())
 		{
 			m_data->state = MAIN_MENU;
+			m_data->audio->PlayMusic("Music1", true);
 		}
 		return;
 	}
 	else
 	{
-		m_data->audio->UpdateMusicTransition(_deltaTime);
 		ButtonsUpdate(_deltaTime);
 
 		//std::cout << "current chara = " << m_data->currentCharaSelected << std::endl;
@@ -244,7 +246,7 @@ void Menu::Draw(sf::RenderWindow& _renderWindow)
 }
 void Menu::DrawUI(sfMod::RenderWindow* _renderWindow)
 {
-	sf::Vector2i mousePos = sf::Mouse::getPosition();
+	sf::Vector2i mousePos = sf::Mouse::getPosition(*_renderWindow);
 	switch (m_data->state)
 	{
 	case MAIN_MENU:
@@ -441,6 +443,7 @@ void Menu::PressSelection(int _id)
 			m_data->ui.buttonMap["moinsBtn"].setPosition({ SCREEN_WIDTH / 2 - 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2 });
 			m_data->ui.buttonMap["plusBtn"].setPosition({ SCREEN_WIDTH / 2 + 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2 });
 			m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
+			m_data->ui.playerCount.setPosition({ SCREEN_WIDTH / 2 , SCREEN_HEIGHT / 2 });
 			break;
 
 		case PLAYER_NB_SELECTION:
@@ -449,6 +452,20 @@ void Menu::PressSelection(int _id)
 		case PLAYER_SELECTION:
 		{
 			std::cout << "id = " << _id << " size of datalist = " << m_data->gameData->m_playerDataList.size() << std::endl;
+
+			if (m_data->gameData->m_playerDataList.size() > m_data->gameSettings.playerCount)
+			{
+				if(_id > m_data->gameSettings.playerCount)
+				{
+					return;
+				}
+				int oui = m_data->gameData->m_playerDataList.size() - m_data->gameSettings.playerCount;
+				std::cout << "WTF WHY MORE THAN 4 PLAYERS ??? size = " << oui << std::endl;
+				for (int i = (int)m_data->gameData->m_playerDataList.size() - 1 ; i >= m_data->gameSettings.playerCount + 1 ; i--)
+				{
+					m_data->gameData->m_playerDataList.pop_back();
+				}
+			}
 
 			// CORRECTION : Convertir l'index de s�lection en PlayerSkin
 			// m_currentCharaSelected[_id] contient l'index dans charaAvaible (0-3)
@@ -533,6 +550,11 @@ void Menu::PressSelection(int _id)
 				m_data->gameSettings.playerCount -= 1;
 				m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
 			}
+			else
+			{
+				m_data->gameSettings.playerCount = 3;
+				m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
+			}
 			break;
 
 		case OPTIONS:
@@ -549,14 +571,11 @@ void Menu::PressSelection(int _id)
 		{
 		case PLAYER_NB_SELECTION:
 
-			m_data->audio->PlayMusicTransition("Music1", true, true, 5.f, TransitionType::FADED_MIX);
-
 			std::cout << "player count : " << m_data->gameSettings.playerCount;
 			for (int i = 0; i < m_data->gameSettings.playerCount + 1; i++)
 			{
 				PlayerData newPlayer;
 				newPlayer.m_joystickId = i;
-				std::cout << " zigounette : " << std::endl;
 				m_data->gameData->m_playerDataList.push_back(newPlayer);
 				m_data->charaSelected.push_back(false);
 				m_data->currentCharaSelected.push_back(0);
@@ -589,6 +608,11 @@ void Menu::PressSelection(int _id)
 			if (m_data->gameSettings.playerCount < MAX_PLAYERS)
 			{
 				m_data->gameSettings.playerCount += 1;
+				m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
+			}
+			else
+			{
+				m_data->gameSettings.playerCount = 1;
 				m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
 			}
 			break;

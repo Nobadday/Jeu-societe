@@ -32,8 +32,10 @@ void RussianRoulette::Load(void)
 	m_data->bullet = random::RandomInt(1, 6);
 	
 	m_data->text.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("GameFont"));
-	m_data->text.setCharacterSize(40u);
+	m_data->text.setCharacterSize(50u);
 	m_data->text.setOrigin({0.5f,0.5f});
+	m_data->text.setOutlineColor(sf::Color::Black);
+	m_data->text.setOutlineThickness(1.5f);
 	m_data->text.setPosition({SCREEN_WIDTH / 2.f, 0.8 * SCREEN_HEIGHT});
 
 	m_data->iconsChara.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Icone", AssetManager::AssetType::TEXTURE_ANIMATED));
@@ -157,7 +159,7 @@ void RussianRoulette::Update(float _deltaTime)
 
 					//char buffer[100];
 					//std::cout << buffer << std::endl;
-					std::string text = "Player die";
+					std::string text = "Player died";
 					m_data->text.setString(text);
 
 					m_data->deadPlayers.push_back(m_data->players[m_data->currentPlayer]);

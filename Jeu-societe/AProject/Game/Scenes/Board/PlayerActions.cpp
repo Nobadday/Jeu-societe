@@ -2,8 +2,6 @@
 
 void BaseGame::SwapPlayers(int _swapIndex)
 {
-	std::cout << "Swap de place avec : Player " << _swapIndex << std::endl;
-
 	auto& player1 = m_data->players[m_data->currentPlayerIndex];
 	auto& player2 = m_data->players[_swapIndex];
 

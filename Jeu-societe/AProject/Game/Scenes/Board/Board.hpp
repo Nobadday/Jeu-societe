@@ -25,6 +25,7 @@
 
 #define TIME_WIN_DISPLAY 0.5f
 #define TIME_LBM_DISPLAY 6.0f
+#define TIME_END_DISPLAY 2.0f
 #define TIME_DIS_DISPLAY 0.2f
 #define TIME_START_DISPLAY 1.2f
 #define MAX_TOUR_EFFECT 2
@@ -146,15 +147,6 @@ class BaseGame : public SceneBase
 			DONW_RIGHT
 		};
 
-		enum TexteState
-		{
-			NoneTexte = -1,
-			IntroTexte,
-			TourTexte,
-			BridgeTexte,
-			EndTexte
-		};
-
 		struct Player
 		{
 			SpriteAnimated sprite;
@@ -204,8 +196,7 @@ class BaseGame : public SceneBase
 
 		struct TexteDisplay
 		{
-			TextPlus texte;
-			TexteState type;
+			std::vector<TextPlus*> texte; // CHANGÉ : vecteur de pointeurs
 			float displayTime;
 			float currentTime;
 			bool isActive;
@@ -213,10 +204,10 @@ class BaseGame : public SceneBase
 			// NOUVEAU : Gestion du fade
 			enum FadeState
 			{
+				FADE_NONE,
 				FADE_IN,
 				FADE_DISPLAY,
-				FADE_OUT,
-				FADE_NONE
+				FADE_OUT				
 			};
 			
 			FadeState fadeState;
@@ -279,16 +270,21 @@ class BaseGame : public SceneBase
 
 			sf::Sprite arrow;
 
-			TextPlus bridge;
-			TextPlus end;
+			sf::Vector2f posArrow[2];
 
 			TexteDisplay texteDisplay;
+
+			float timerEnd;
+
+			bool endActive;
 			
 		};
 
 		GameData* m_gameData;
 
 		SceneData* m_data;
+
+		AudioEngine* m_audioEngine;
 
 	private:
 		

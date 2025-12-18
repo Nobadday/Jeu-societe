@@ -3,9 +3,12 @@
 
 #include "../../../Common.hpp"
 #include "../../../Scenes/Scene.hpp"
+#include "../../Ui/Transition/Transition.hpp"
 #include "../../../Animation/Animation/Timer.hpp" 
 #include "../../../Animation/Graphics/SpriteAtlas.hpp" 
 #include "../../../Animation/Graphics/TextureAtlas.hpp" 
+#include "../../../Animation/Graphics/SpriteAnimated.hpp" 
+#include "../../../Animation/Graphics/TextureAnimated.hpp" 
 
 #define MAX_ROUND 3
 
@@ -14,13 +17,14 @@ class FlagGame : public SceneBase
 private:
 	enum State
 	{
+		TRANSITION,
 		STATE_WAITING,
 		STATE_PLAYING,
 		STATE_ROUND_END,
 		STATE_GAME_OVER
 	};
 
-	struct PlayerData
+	struct Player
 	{
 		bool isEliminated;
 		GamePadBindList currentInput;
@@ -28,6 +32,7 @@ private:
 		int eliminationOrder;
 		float eliminationTime;
 		SpriteAtlas buttonSprite;
+		SpriteAnimated playerIcone;
 	};
 
 	struct SceneData
@@ -47,7 +52,7 @@ private:
 		State state;
 		GameData* gameData;
 		
-		PlayerData playerData[4];
+		Player playerData[4];
 		int currentRound;
 		int playersRemaining;
 		int eliminationCounter;
@@ -58,6 +63,12 @@ private:
 		
 		GamePadBindList requiredInput;
 		sf::String stringTab[6];
+
+		float currentInputChangeMin;
+		float currentInputChangeMax;
+
+		TransitionClass transition;
+		bool end = false;
 	};
 	
 	SceneData* m_data;
@@ -78,6 +89,7 @@ private:
 	void UpdatePlayerInputTexts(void);
 	bool HasEnoughPlayers(void);
 	int GetFirstEliminatedPlayer(void);
+	void InitializePlayerIcon(int playerID, int positionIndex);
 };
 
 #endif // !FLAGGAME_H

@@ -17,12 +17,12 @@ void RandCard::Load(void)
 	m_data->timer.SetTimeTarget(3.f);
 
 	int nbOfPlayers = (int)m_data->gameData->m_gonnaPlayIndex.size();
-	std::cout << "nb of player " << nbOfPlayers << std::endl;
+	//std::cout << "nb of player " << nbOfPlayers << std::endl;
 
 	//Copy players playig from GameData
 	for (int i = 0; i < nbOfPlayers; ++i)
 	{
-		std::cout << "Add player\n";
+		//std::cout << "Add player\n";
 		int playerId = (int)m_data->gameData->m_gonnaPlayIndex.at(i);
 		m_data->players.push_back({ (short)playerId });
 	}
@@ -32,6 +32,8 @@ void RandCard::Load(void)
 	m_data->text.setCharacterSize(100u);
 	m_data->text.setOrigin({ 0.6f, 0.8f });
 	m_data->text.setPosition({ SCREEN_WIDTH / 2.f, 0.8 * SCREEN_HEIGHT });
+	m_data->text.setOutlineColor(sf::Color::Black);
+	m_data->text.setOutlineThickness(1.5f);
 	m_data->text.setString("Choose card");
 
 
@@ -85,10 +87,10 @@ void RandCard::Load(void)
 		}
 	}
 	//DEBUG : print all cards in terminal
-	for (int i = 0; i < m_data->cards.size(); ++i)
-	{
-		std::cout << "Card n " << i << " : " << m_data->cards[i] << std::endl;
-	}
+	//for (int i = 0; i < m_data->cards.size(); ++i)
+	//{
+	//	std::cout << "Card n " << i << " : " << m_data->cards[i] << std::endl;
+	//}
 
 	//Icons chara
 	m_data->charaAvaible.push_back("Perso1-1");
@@ -323,9 +325,6 @@ void RandCard::PrintIcons(sfMod::RenderWindow* _renderWindow)
 
 		PlayerData::PlayerSkin skin = (PlayerData::PlayerSkin)m_data->gameData->m_playerDataList[m_data->players[i].id].GetPlayerSkin();
 		m_data->iconsChara.SetAnimation(skin);
-
-		std::cout << "Player i = " << i;
-		std::cout << " skin = " << m_data->gameData->m_playerDataList[m_data->players[i].id].GetPlayerSkin() << std::endl;
 
 		m_data->iconsChara.setPosition(pos);
 		if (m_data->currentPlayer == i)
