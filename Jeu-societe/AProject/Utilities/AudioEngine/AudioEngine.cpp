@@ -459,5 +459,9 @@ void AudioEngine::StopMusic(void)
 	std::cout << "save outset\n";
 	m_music->stop();
 }
+bool AudioEngine::IsTransitionFinished(void) const
+{
+	return m_transition.nextMusic == nullptr;
+}
 
 

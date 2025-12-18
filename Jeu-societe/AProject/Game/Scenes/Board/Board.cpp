@@ -537,7 +537,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 			return;
 		}
 
-		// DEBUG: Touche Num6 - Forcer un 6 au prochain lancer
+		// DEBUG: Touche Num6 - Forcer un 6 au prochain lancer (fonctionne aussi pour bridge et end)
 		if (_event.key.code == sf::Keyboard::Numpad6)
 		{
 			std::cout << "[DEBUG] Prochain lancer forcé à 6" << std::endl;
@@ -545,6 +545,14 @@ void BaseGame::PollEvent(sf::Event& _event)
 				m_data->state != DUEL && m_data->state != BATTLE_ACTION)
 			{
 				ProcessDiceRoll(6);
+			}
+			else if (m_data->state == WAITING_BRIDGE_ROLL)
+			{
+				ProcessBridgeRoll();
+			}
+			else if (m_data->state == WAITING_FIN_ROLL)
+			{
+				ProcessFinRoll();
 			}
 			return;
 		}
@@ -781,40 +789,49 @@ void BaseGame::Update(float _deltaTime)
 {
 	if (m_data->players[m_data->currentPlayerIndex].boardPosition.x > m_data->posCase[19].GetPosition().x + 100)
 	{
-		if (m_audioEngine->GetMusicName() != "Plato2")
+		if (m_audioEngine->IsTransitionFinished())
 		{
-			m_audioEngine->PlayMusicTransition("Plato2", true, FADED_MIX);
-			
-			switch (m_gameData->m_playerDataList[m_data->currentPlayerIndex].GetPlayerSkin())
+			if (m_audioEngine->GetMusicName() != "Plato2")
 			{
-			case PlayerData::CHARACTER_1_1:
-				m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_1_2);
-				m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-2", AssetManager::AssetType::TEXTURE_ANIMATED);
-				break;
-			case PlayerData::CHARACTER_2_1:
-				m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_2_2);
-				m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso2-2", AssetManager::AssetType::TEXTURE_ANIMATED);
-				break;
-			case PlayerData::CHARACTER_3_1:
-				m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_3_2);
-				m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso3-2", AssetManager::AssetType::TEXTURE_ANIMATED);
-				break;
-			case PlayerData::CHARACTER_4_1:
-				m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_4_2);
-				m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso4-2", AssetManager::AssetType::TEXTURE_ANIMATED);
-				break;
-			default:
-				break;
+				m_audioEngine->PlayMusicTransition("Plato2", true, FADED_MIX);
+
+				switch (m_gameData->m_playerDataList[m_data->currentPlayerIndex].GetPlayerSkin())
+				{
+				case PlayerData::CHARACTER_1_1:
+					m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_1_2);
+					m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+					break;
+				case PlayerData::CHARACTER_2_1:
+					m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_2_2);
+					m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso2-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+					break;
+				case PlayerData::CHARACTER_3_1:
+					m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_3_2);
+					m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso3-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+					break;
+				case PlayerData::CHARACTER_4_1:
+					m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_4_2);
+					m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso4-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+					break;
+				default:
+					break;
+				}
+
+				m_data->smokeOff = true;
 			}
-			
-			m_data->smokeOff = true;
 		}
 	}
 	else
 	{
-		if (m_audioEngine->GetMusicName() != "Plato1")
+
+		if (m_audioEngine->IsTransitionFinished())
 		{
-			m_audioEngine->PlayMusicTransition("Plato1", true, FADED_MIX);
+			if (m_audioEngine->GetMusicName() != "Plato1")
+			{
+
+				m_audioEngine->PlayMusicTransition("Plato1", true, FADED_MIX);
+			}
+
 		}
 	}
 

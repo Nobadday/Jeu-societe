@@ -70,7 +70,7 @@ public:
 	void TogglePauseMusic(void);
 	void StopMusic(void);
 
-	
+	bool IsTransitionFinished(void) const;
 
 private:
 	std::vector< sf::Sound> m_soundVec;
