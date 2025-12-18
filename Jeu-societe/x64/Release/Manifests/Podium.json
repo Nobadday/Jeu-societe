@@ -1,6 +1,7 @@
 {
-    "assets" : [
-        {
+    "assets" : 
+    [
+         {
             "name" : "podiumFont",
             "type" : "Font",
             "path" : "Assets/Fonts/Font.ttf"
@@ -12,10 +13,15 @@
             "subType" : 3
         },
         {
-            "name" : "Podiums",
+            "name" : "Podium",
             "type" : "Texture Atlas",
-            "path" : "Assets/Sprites/Podium/Podiums.json",
+            "path" : "Assets/Sprites/Podium/Podium.json",
             "subType" : 3
+        },
+        {
+            "name": "congratulation",
+            "type": "Texture",
+            "path": "Assets/Sprites/Podium/Congratulation.png"
         }
     ]
 }

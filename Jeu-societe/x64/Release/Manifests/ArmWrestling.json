@@ -3,7 +3,24 @@
         {
             "name": "ArmWrestlingFont",
             "type": "Font",
-            "path": "./Assets/Fonts/Font.ttf"
+            "path": "./Assets/Fonts/pointfree.ttf"
+        },
+        {
+            "name": "playerArms",
+            "type": "Texture Atlas",
+            "path": "./Assets/Sprites/ArmWrestling/ArmWrestling hands.json",
+            "subType": 3
+        },
+        {
+            "name" : "BackgroundBar",
+            "type" : "Texture",
+            "path" : "./Assets/Sprites/ArmWrestling/BackgroundBar.png"
+        },
+        {
+            "name" : "ForegroundBar",
+            "type" : "Texture",
+            "path" : "./Assets/Sprites/ArmWrestling/ForeGroundBar.png"
         }
+
     ]
 }
