@@ -233,10 +233,10 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	progress.store(0.95f);
 
 	// Configuration des animateurs
-	m_data->animator.Modify(1.0f, 120.0f, false, 1.0f);
+	m_data->animator.Modify(1.0f, 240.f, false, 1.0f);
 	//m_data->animator.SetSpeed(0.5f);
 
-	m_data->animator2.Modify(1.0f, 120.0f, false, 1.0f);
+	m_data->animator2.Modify(1.0f, 240.f, false, 1.0f);
 	m_data->animator.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::LINEAR);
 	m_data->animator2.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::LINEAR);
 	m_data->animator.End();
