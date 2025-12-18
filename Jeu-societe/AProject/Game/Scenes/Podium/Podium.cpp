@@ -7,6 +7,8 @@ void Podium::Load()
 	m_data = new SceneData;
 	m_data->gameData = (GameData*)this->m_keptData;
 
+	m_data->audio = (AudioEngine*)this->m_data->gameData->m_audioEngine;
+
 	m_data->gameData->m_assetManager->LoadManifest("Manifests/Podium.json", "Podium");
 
 	if (m_data->gameData->m_gonnaPlayIndex.size() == 0)
@@ -243,6 +245,7 @@ void Podium::Update(float _dt)
 					std::cout << std::endl;
 				}
 				m_data->state = CONGRATS;
+
 			}
 		}
 		break;
@@ -254,15 +257,21 @@ void Podium::Update(float _dt)
 
 			if (m_data->animatorArray[0].IsFinished())
 			{
+				if (!m_data->patate)
+				{
+					for (int  i = 0; i < 5; i++)
+					{
+						m_data->audio->PlaySound("baloonPop");
+					}
+					m_data->audio->PlaySound("YaY");
+					m_data->patate = true;
+				}
+
 				for (auto& it : m_data->confettiVector)
 				{
-					//std::cout << "position confetti A = " << it.position.x << "   " << it.position.y << std::endl;
-
 					it.currentLife -= _dt;
 					it.position.x += it.velocity.x * _dt;
 					it.position.y += it.velocity.y * _dt;
-
-					//std::cout << "position confetti B = " << it.position.x << "   " << it.position.y << std::endl << std::endl;
 
 					it.velocity.x *= 0.99f;
 					it.velocity.y *= 0.99f;
@@ -283,7 +292,6 @@ void Podium::Update(float _dt)
 			}
 		}
 		break;
-
 
 	default:
 		break;
@@ -318,10 +326,6 @@ void Podium::Draw(sf::RenderWindow& _renderWindow)
 			Apply(it, m_data->confetti);
 			_renderWindow.draw(m_data->confetti);
 		}
-	}
-	else if (m_data->state == DONE)
-	{
-
 	}
 }
 

@@ -57,6 +57,8 @@
 			TextPlus continueText;
 			sf::Sprite Button;
 
+			AudioEngine* audio;
+			bool patate = false;
 		};
 		SceneData* m_data = NULL;
 
