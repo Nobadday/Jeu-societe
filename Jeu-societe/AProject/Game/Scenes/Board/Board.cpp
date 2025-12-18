@@ -16,6 +16,8 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 
 	progress.store(0.1f);
 
+	m_data->state = INTRO;
+
 	// Configuration des éléments UI
 	m_data->HudLBM.text.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
 	m_data->HudLBM.sprite.setTexture(*m_gameData->m_assetManager->GetAsset<TextureAnimated>("Anim_card", AssetManager::AssetType::TEXTURE_ANIMATED));
@@ -33,7 +35,6 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	m_data->posCase = layer.GetObjects();
 
 	m_data->players.resize(m_gameData->m_playerDataList.size());
-	m_data->state = INTRO;
 
 	m_data->icone.setTexture(*m_gameData->m_assetManager->GetAsset<TextureAnimated>("Icone", AssetManager::AssetType::TEXTURE_ANIMATED));
 	m_data->icone.setOrigin({ 0.5f,1 });
@@ -232,10 +233,10 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	progress.store(0.95f);
 
 	// Configuration des animateurs
-	m_data->animator.Modify(1.0f, 60.0f, false, 1.0f);
+	m_data->animator.Modify(1.0f, 120.0f, false, 1.0f);
 	//m_data->animator.SetSpeed(0.5f);
 
-	m_data->animator2.Modify(1.0f, 60.0f, false, 1.0f);
+	m_data->animator2.Modify(1.0f, 120.0f, false, 1.0f);
 	m_data->animator.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::LINEAR);
 	m_data->animator2.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::LINEAR);
 	m_data->animator.End();
@@ -1074,12 +1075,15 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 	mod->setView(referenceView);
 
 	std::string layer = "point";
+	
+	if (m_data->state != STATE)
+	{
+		m_gameData->m_tile->DrawMapLayers(*mod, referenceView.getCenter(), layer);
 
-	m_gameData->m_tile->DrawMapLayers(*mod, referenceView.getCenter(), layer);
+		SortDrawOrder();
 
-	SortDrawOrder();
-
-	m_gameData->m_tile->DrawMapLayers(*mod, referenceView.getCenter(), "point");
+		m_gameData->m_tile->DrawMapLayers(*mod, referenceView.getCenter(), "point");
+	}
 
 	for (auto& effect : m_data->effectSwap)
 	{
@@ -1624,7 +1628,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 					m_data->smokeOff = true;
 
 					m_data->animator.SetSpeed(0.35f);
-					m_data->animator.SetDuration(0.5f);
+					//m_data->animator.SetDuration(0.5f);
 
 					// Change le skin du personnage (transformation)
 					switch (m_gameData->m_playerDataList[m_data->currentPlayerIndex].GetPlayerSkin())
