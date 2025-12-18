@@ -97,6 +97,8 @@ void Podium::Load()
 		m_data->animatorArray[i].SetGoTo(m_data->podiumsSpriteArray[i], sf::Vector2f(m_data->podiumsSpriteArray[i].getPosition().x, SCREEN_HEIGHT + 1));
 		m_data->animatorArray[i].SetAnimationEasing(anim::Animator::GOTO, anim::Easing::INOUTSINE);
 
+
+
 		currentPlayer++;
 	}
 
@@ -107,7 +109,10 @@ void Podium::Load()
 	m_data->confetti.setSize(sf::Vector2f(4, 4));
 	m_data->confetti.setOrigin(sf::Vector2f(2, 2));
 
-	m_data->state = PODIUM;
+	m_data->transition.SetTransition(TransitionClass::FADED_IN);
+	m_data->transition.PlayTransition();
+
+	m_data->state = INTRO;
 }
 
 
@@ -128,7 +133,7 @@ void Podium::PollEvent(sf::Event& _event)
 				switch (_event.joystickButton.button)
 				{
 					case 0:
-						ChangeScene("Menu", false);
+						m_data->state = PATATE;
 						break;
 
 					default:
@@ -142,7 +147,7 @@ void Podium::PollEvent(sf::Event& _event)
 			{
 				if (sf::Keyboard::Space)
 				{
-					ChangeScene("Menu", false);
+					m_data->state = PATATE;
 				}
 			}
 
@@ -156,13 +161,25 @@ void Podium::PollEvent(sf::Event& _event)
 void Podium::Update(float _dt)
 {
 	int playerPos = 0;
-	m_data->animatorArray[0].Update(_dt);
 
 	switch (m_data->state)
 	{
+		case INTRO:
+
+		m_data->transition.Update(_dt);
+
+		if (m_data->transition.IsFinished())
+		{
+			m_data->state = PODIUM;
+		}
+		break;
+
+
+
 		case PODIUM:
 			for (short i = 0; i < m_data->podiumsSpriteArray.size(); i++)
 			{
+				m_data->animatorArray[0].Update(_dt);
 				m_data->animatorArray[i].SyncTime(m_data->animatorArray[0]);
 				m_data->animatorArray[i].AnimateObject(m_data->podiumsSpriteArray[i]);
 
@@ -173,24 +190,24 @@ void Podium::Update(float _dt)
 						sf::Vector2f finalPos(m_data->playerSpriteArray[i].getPosition().x, 0.f);
 						switch (GetPlayerClassement(i))
 						{
-						case 1:
-							finalPos.y = SCREEN_HEIGHT - 470;
-							break;
+							case 1:
+								finalPos.y = SCREEN_HEIGHT - 470;
+								break;
 
-						case 2:
-							finalPos.y = SCREEN_HEIGHT - 300;
-							break;
+							case 2:
+								finalPos.y = SCREEN_HEIGHT - 300;
+								break;
 
-						case 3:
-							finalPos.y = SCREEN_HEIGHT - 150;
-							break;
+							case 3:
+								finalPos.y = SCREEN_HEIGHT - 150;
+								break;
 
-						case 4:
-							finalPos.y = SCREEN_HEIGHT;
-							break;
+							case 4:
+								finalPos.y = SCREEN_HEIGHT;
+								break;
 
-						default:
-							break;
+							default:
+								break;
 						}
 
 						m_data->animatorArray[i].SetGoTo(m_data->playerSpriteArray[i], finalPos);
@@ -205,6 +222,7 @@ void Podium::Update(float _dt)
 
 		case PLAYERS:
 		{
+			m_data->animatorArray[0].Update(_dt);
 			for (short i = 0; i < m_data->playerSpriteArray.size(); i++)
 			{
 				m_data->animatorArray[i].SyncTime(m_data->animatorArray[0]);
@@ -291,6 +309,20 @@ void Podium::Update(float _dt)
 				}
 			}
 		}
+
+		case DONE:
+			break;
+
+		case PATATE:
+			m_data->transition.Update(_dt);
+
+			if (m_data->transition.IsFinished())
+			{
+				ChangeScene("Board");
+			}
+
+			break;
+
 		break;
 
 	default:
