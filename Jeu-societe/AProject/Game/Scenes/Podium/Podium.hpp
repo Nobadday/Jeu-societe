@@ -21,6 +21,20 @@
 			DONE
 		};
 
+		struct Confetti
+		{
+			sf::Vector2f velocity;
+			sf::Vector2f position;
+			sf::Color color;
+
+
+			float rotation;
+			float currentLife;
+			float lifeTime;
+
+			sf::Vector2f scale;
+		};
+
 		struct SceneData
 		{
 			GameData* gameData;
@@ -36,8 +50,17 @@
 			anim::Animator animatorArray[4];
 
 			State state = NONE;
+
+			sf::RectangleShape confetti;
+			std::vector<Confetti> confettiVector;
+
+			TextPlus continueText;
+			sf::Sprite Button;
+
 		};
 		SceneData* m_data = NULL;
+
+		void Apply(Confetti& _confetti, sf::RectangleShape& _rectangle);
 
 	public:
 		virtual void Load(void);

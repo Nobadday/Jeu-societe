@@ -1,5 +1,7 @@
 #include "Podium.hpp"
 
+#define CONFETTI_NB 250
+
 void Podium::Load()
 {
 	m_data = new SceneData;
@@ -100,6 +102,9 @@ void Podium::Load()
 	m_data->congrat.setOrigin(m_data->congrat.getLocalBounds().getSize().x / 2, 0);
 	m_data->congrat.setPosition(sf::Vector2f(SCREEN_WIDTH / 2, -(m_data->congrat.getLocalBounds().height * 2)));
 
+	m_data->confetti.setSize(sf::Vector2f(4, 4));
+	m_data->confetti.setOrigin(sf::Vector2f(2, 2));
+
 	m_data->state = PODIUM;
 }
 
@@ -151,8 +156,6 @@ void Podium::Update(float _dt)
 	int playerPos = 0;
 	m_data->animatorArray[0].Update(_dt);
 
-
-	//Anmiation
 	switch (m_data->state)
 	{
 		case PODIUM:
@@ -213,6 +216,32 @@ void Podium::Update(float _dt)
 				m_data->animatorArray[0].SetGoTo(m_data->congrat, sf::Vector2f(SCREEN_WIDTH / 2, -3 ));
 				m_data->animatorArray[0].Modify(3.f, 60.f);
 
+				int nbExplosions = m_data->playerSpriteArray.size() * 2 + 1 ;
+				int patate = 1;
+
+				for (int i = 0; i < nbExplosions; i++)
+				{
+					sf::Vector2f origin(SCREEN_WIDTH / (nbExplosions) * (i + 1), random::RandomFloat(SCREEN_HEIGHT * 0.1f, SCREEN_HEIGHT * 0.6f));
+
+					
+					for (int j = 0; j < CONFETTI_NB; j++)
+					{
+						Confetti newConfetti;
+
+						newConfetti.position = origin;
+						newConfetti.lifeTime = random::RandomFloat(1.f, 2.5f);
+						newConfetti.currentLife = newConfetti.lifeTime;
+
+						float tempAngle = rand() / float(RAND_MAX) * 2 * M_PI;
+						float tempAmplitude = 1000 * acosf(rand() / float(RAND_MAX));
+
+						newConfetti.velocity = sf::Vector2f(cosf(tempAngle) * tempAmplitude, sinf(tempAngle) * tempAmplitude);
+						
+						newConfetti.color = sf::Color(random::RandomInt(0, 255), random::RandomInt(0, 255), random::RandomInt(0, 255));
+						m_data->confettiVector.push_back(newConfetti);
+					}
+					std::cout << std::endl;
+				}
 				m_data->state = CONGRATS;
 			}
 		}
@@ -225,10 +254,36 @@ void Podium::Update(float _dt)
 
 			if (m_data->animatorArray[0].IsFinished())
 			{
-				m_data->state = DONE;
+				for (auto& it : m_data->confettiVector)
+				{
+					//std::cout << "position confetti A = " << it.position.x << "   " << it.position.y << std::endl;
+
+					it.currentLife -= _dt;
+					it.position.x += it.velocity.x * _dt;
+					it.position.y += it.velocity.y * _dt;
+
+					//std::cout << "position confetti B = " << it.position.x << "   " << it.position.y << std::endl << std::endl;
+
+					it.velocity.x *= 0.99f;
+					it.velocity.y *= 0.99f;
+
+					it.rotation = atan2f(it.velocity.y, it.velocity.x) * 180 / M_PI;
+					it.scale = sf::Vector2f(sqrtf(it.velocity.x * it.velocity.x + it.velocity.y * it.velocity.y) * 0.01f + 1, 1);
+
+					if (it.currentLife <= 0)
+					{
+						it = m_data->confettiVector.back();
+						m_data->confettiVector.pop_back();
+					}
+				}
+				if (m_data->confettiVector.size() == 0)
+				{
+					m_data->state = DONE;
+				}
 			}
 		}
 		break;
+
 
 	default:
 		break;
@@ -255,6 +310,19 @@ void Podium::Draw(sf::RenderWindow& _renderWindow)
 	{
 		_renderWindow.draw(it);
 	}
+
+	if (m_data->state == CONGRATS)
+	{
+		for (auto& it : m_data->confettiVector)
+		{
+			Apply(it, m_data->confetti);
+			_renderWindow.draw(m_data->confetti);
+		}
+	}
+	else if (m_data->state == DONE)
+	{
+
+	}
 }
 
 int Podium::GetPlayerClassement(int _i)
@@ -267,4 +335,13 @@ int Podium::GetPlayerClassement(int _i)
 		}
 	}
 	return 0;
+}
+
+void Podium::Apply(Confetti& _confetti, sf::RectangleShape& _rectangle)
+{
+	_rectangle.setPosition(_confetti.position);
+	_rectangle.setRotation(_confetti.rotation);
+	_rectangle.setScale(_confetti.scale);
+
+	_rectangle.setFillColor(_confetti.color);
 }
