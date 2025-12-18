@@ -20,6 +20,7 @@ struct TransitionSettings
 	float transitionDuration;
 	float timer;
 	TransitionType tansitionType;
+	bool loop; // Ajout du membre manquant
 };
 
 

@@ -483,6 +483,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 			m_gameData->AddPlayerPlaying((m_data->currentPlayerIndex + 1) % m_data->players.size());
 			m_gameData->m_nextScene = "rockPaperSizor";
 			m_gameData->m_renderWindow->ResetView();
+			m_data->song1 = false;
 			ChangeScene("Warmup", true);
 			return;
 		}
@@ -496,6 +497,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 			m_gameData->AddPlayerPlaying((m_data->currentPlayerIndex + 1) % m_data->players.size());
 			m_gameData->m_nextScene = "ArmWrestling";
 			m_gameData->m_renderWindow->ResetView();
+			m_data->song1 = false;
 			ChangeScene("Warmup", true);
 			return;
 		}
@@ -509,6 +511,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 				m_gameData->AddPlayerPlaying(i);
 			m_gameData->m_nextScene = "FlagGame";
 			m_gameData->m_renderWindow->ResetView();
+			m_data->song1 = false;
 			ChangeScene("Warmup", true);
 			return;
 		}
@@ -522,6 +525,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 				m_gameData->AddPlayerPlaying(i);
 			m_gameData->m_nextScene = "RandCard";
 			m_gameData->m_renderWindow->ResetView();
+			m_data->song1 = false;
 			ChangeScene("Warmup", true);
 			return;
 		}
@@ -530,11 +534,12 @@ void BaseGame::PollEvent(sf::Event& _event)
 		if (_event.key.code == sf::Keyboard::Numpad5)
 		{
 			std::cout << "[DEBUG] Lancement Roulette Russe" << std::endl;
-			m_gameData->InitMiniGamePlayer();
+		 m_gameData->InitMiniGamePlayer();
 			for (int i = 0; i < m_data->players.size(); i++)
 				m_gameData->AddPlayerPlaying(i);
 			m_gameData->m_nextScene = "RuRoul";
 			m_gameData->m_renderWindow->ResetView();
+			m_data->song1 = false;
 			ChangeScene("Warmup", true);
 			return;
 		}
@@ -789,59 +794,58 @@ void BaseGame::PollEvent(sf::Event& _event)
 
 void BaseGame::Update(float _deltaTime)
 {
+	// CORRECTION : Toujours mettre à jour les transitions audio
+	//m_audioEngine->UpdateMusicTransition(_deltaTime);
+
+	// Gestion des transitions musicales entre Plato1 et Plato2
+	// Condition : joueur actuel a dépassé le pont (position X > case 19 + 100)
 	if (m_data->players[m_data->currentPlayerIndex].boardPosition.x > m_data->posCase[19].GetPosition().x + 100 && m_data->song1)
 	{
-		if (m_audioEngine->IsTransitionFinished())
+		// Ne déclencher la transition que si elle est terminée ET que la musique actuelle n'est pas déjà "Plato2"
+		if (m_audioEngine->IsTransitionFinished() && m_audioEngine->GetMusicName() != "Plato2")
 		{
-			if (m_audioEngine->GetMusicName() != "Plato2")
+			std::cout << "Transition vers Plato2 depuis : " << m_audioEngine->GetMusicName() << std::endl;
+			m_audioEngine->PlayMusicTransition("Plato2", true, false, 5.0f, FADED_MIX);
+
+			// Transformation du personnage
+			switch (m_gameData->m_playerDataList[m_data->currentPlayerIndex].GetPlayerSkin())
 			{
-				std::cout << m_audioEngine->GetMusicName() << std::endl;
-
-				m_audioEngine->PlayMusicTransition("Plato2", true, false,FADED_MIX);
-
-				switch (m_gameData->m_playerDataList[m_data->currentPlayerIndex].GetPlayerSkin())
-				{
-				case PlayerData::CHARACTER_1_1:
-					m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_1_2);
-					m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-2", AssetManager::AssetType::TEXTURE_ANIMATED);
-					break;
-				case PlayerData::CHARACTER_2_1:
-					m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_2_2);
-					m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso2-2", AssetManager::AssetType::TEXTURE_ANIMATED);
-					break;
-				case PlayerData::CHARACTER_3_1:
-					m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_3_2);
-					m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso3-2", AssetManager::AssetType::TEXTURE_ANIMATED);
-					break;
-				case PlayerData::CHARACTER_4_1:
-					m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_4_2);
-					m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso4-2", AssetManager::AssetType::TEXTURE_ANIMATED);
-					break;
-				default:
-					break;
-				}
-
-				m_data->smokeOff = true;
-
-				m_data->song1 = false;
+			case PlayerData::CHARACTER_1_1:
+				m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_1_2);
+				m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+				break;
+			case PlayerData::CHARACTER_2_1:
+				m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_2_2);
+				m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso2-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+				break;
+			case PlayerData::CHARACTER_3_1:
+				m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_3_2);
+				m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso3-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+				break;
+			case PlayerData::CHARACTER_4_1:
+				m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_4_2);
+				m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso4-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+				break;
+			default:
+				break;
 			}
+
+			m_data->smokeOff = true;
+			m_data->song1 = false;
 		}
 	}
-	else if (!m_data->song1)
+	// Condition : joueur actuel est avant ou sur le pont (position X <= case 19 + 100)
+	else if (!m_data->song1 && m_data->players[m_data->currentPlayerIndex].boardPosition.x <= m_data->posCase[19].GetPosition().x + 100)
 	{
-		if (m_audioEngine->IsTransitionFinished())
+		// Ne déclencher la transition que si elle est terminée ET que la musique actuelle n'est pas déjà "Plato1"
+		if (m_audioEngine->IsTransitionFinished() && m_audioEngine->GetMusicName() != "Plato1")
 		{
-			if (m_audioEngine->GetMusicName() != "Plato1")
-			{
-				std::cout << m_audioEngine->GetMusicName() << std::endl;
-
-				m_audioEngine->PlayMusicTransition("Plato1", true, false, FADED_MIX);
-				m_data->song1 = true;
-			}
-
+			std::cout << "Transition vers Plato1 depuis : " << m_audioEngine->GetMusicName() << std::endl;
+			m_audioEngine->PlayMusicTransition("Plato1", true, false, 5.0f, FADED_MIX);
+			m_data->song1 = true;
 		}
 	}
-
+	std::cout << "Transition vers Plato1 depuis : " << m_audioEngine->GetMusicName() << std::endl;
 	// Mise à jour des animations
 	UpdateLBM(_deltaTime);
 
@@ -1768,7 +1772,8 @@ void BaseGame::BoardStateUpdate(float _dt)
 
 					// Prépare la liste des joueurs triés par position X décroissante
 					std::vector<std::pair<int, float>> playerPositions;
-					for (int i = 0; i < m_data->players.size(); i++)
+					for (int i = 0; i < m_data->players.size();
+						i++)
 					{
 						playerPositions.push_back({ i, m_data->players[i].boardPosition.x });
 					}
@@ -1857,6 +1862,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 
 			SetBoardState(WIN);
 			m_gameData->m_renderWindow->ResetView();
+			m_data->song1 = false;
 			ChangeScene(RandomBattle(), true);
 		}
 
@@ -1872,6 +1878,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 
 			SetBoardState(WIN);
 			m_gameData->m_renderWindow->ResetView();
+			m_data->song1 = false;
 			ChangeScene(RandomDuel(), true);
 		}
 

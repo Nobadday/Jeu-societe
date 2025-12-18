@@ -1,140 +1,126 @@
 #include "AudioEngine.hpp"
+#include <algorithm>
 
-//Init Audio engine, set to null all things
+// Init Audio engine, set to null all things
 AudioEngine::AudioEngine(void)
 	: m_currentMusic(""), m_assetManager(nullptr), m_music(nullptr),
 	m_soundProtected(nullptr), m_musicVol(50.f), 
 	m_soundVol(50.f), m_transition({nullptr})
 {
-	//initial size to prevent bug
-	this->m_soundVec.resize((size_t)20);
-
+	// Reserve initial capacity to prevent frequent reallocations
+	m_soundVec.reserve(20);
 }
+
 void AudioEngine::SetAssetManager(AssetManager& _assetManager)
 {
 	m_assetManager = &_assetManager;
 }
+
 AudioEngine::~AudioEngine(void)
 {
+	// Stop all sounds before clearing
+	for (auto& sound : m_soundVec)
+	{
+		if (sound.getStatus() != sf::Sound::Status::Stopped)
+		{
+			sound.stop();
+		}
+	}
 	m_soundVec.clear();
-	if (m_currentMusic != "")
+
+	// Stop music before destruction
+	if (m_music != nullptr && m_currentMusic != "")
 	{
 		m_music->stop();
+	}
+
+	// Clean up transition music if active
+	if (m_transition.nextMusic != nullptr)
+	{
+		m_transition.nextMusic->stop();
+		m_transition.nextMusic = nullptr;
 	}
 }
 
 void AudioEngine::PlaySound(const std::string& _soundName, bool _loop)
 {
-	//Clean outdated sound
-	this->CleanOldSound();
-
-	//Check if soundbuffer exist
-	sf::SoundBuffer* sound = ((sf::SoundBuffer*)(m_assetManager->GetAsset(_soundName, AssetManager::SOUND_BUFFER)));
-	if (sound != NULL)
+	// Validate asset manager
+	if (m_assetManager == nullptr)
 	{
-		//Launch sound
-		this->m_soundVec.resize(this->m_soundVec.size() + 1);
-		this->m_soundVec.back().setBuffer(*sound);
-		this->m_soundVec.back().setVolume(this->m_soundVol);
-		this->m_soundVec.back().setLoop(_loop);
-		this->m_soundVec.back().play();
-	}
-	else
-	{
-		std::cout << "WARNING : sound isnt in asset manager" << std::endl;
+		std::cout << "ERROR: AssetManager not set in AudioEngine" << std::endl;
+		return;
 	}
 
-	//Debug
-	//std::cout << "PlaySound, nb of sound : " << this->m_soundVec.size() << std::endl;
+	// Clean outdated sounds before adding new one
+	CleanOldSound();
+
+	// Check if soundbuffer exists
+	sf::SoundBuffer* sound = static_cast<sf::SoundBuffer*>(m_assetManager->GetAsset(_soundName, AssetManager::SOUND_BUFFER));
+	if (sound == nullptr)
+	{
+		std::cout << "WARNING: Sound '" << _soundName << "' not found in AssetManager" << std::endl;
+		return;
+	}
+
+	// Add new sound
+	m_soundVec.emplace_back();
+	m_soundVec.back().setBuffer(*sound);
+	m_soundVec.back().setVolume(m_soundVol);
+	m_soundVec.back().setLoop(_loop);
+	m_soundVec.back().play();
 }
+
 void AudioEngine::CleanOldSound(void)
 {
-	//Debug 
-	//std::cout << "Clean old sound, nb of sound : " << this->m_soundVec.size() << std::endl;
-
-
-	//Remove by swap end pos could have problem if back sound is also stopped
-	//Not big problem, but sound not removed, it will be at the next clean
-	//for (auto sound = this->m_soundVec.end(); sound > this->m_soundVec.begin(); sound--)
-	//{
-	//	if ((*sound).getStatus() == sf::Sound::Status::Stopped)
-	//	{
-	//		*sound = this->m_soundVec.back();
-	//		this->m_soundVec.pop_back();
-	//	}
-	//}
-
-
-
-	//std::cout << "Sounds debug :" << std::endl;
-	for (int sound = (int)this->m_soundVec.size() - 1; sound >= 0 ; sound--)
-	{
-
-		auto& truesound = this->m_soundVec[sound];
-		//std::cout << "Sounds n " << sound << " status : " << truesound.getStatus() <<std::endl;
-
-
-
-			if (truesound.getStatus() == sf::Sound::Status::Stopped)
-			{
-				truesound = this->m_soundVec.back();
-				this->m_soundVec.pop_back();
-			}
-	}
-
-	//for (auto& sound : this->m_soundVec)
-	//{
-	//	if (sound.getStatus() == sf::Sound::Status::Stopped)
-	//	{
-	//		sound = this->m_soundVec.back();
-	//		this->m_soundVec.pop_back();
-	//	}
-	//}
-	//std::cout << "Clean old sound finished, nb of sound : " << this->m_soundVec.size() << std::endl;
+	// Remove stopped sounds using erase-remove idiom
+	m_soundVec.erase(
+		std::remove_if(m_soundVec.begin(), m_soundVec.end(),
+			[](const sf::Sound& sound) {
+				return sound.getStatus() == sf::Sound::Status::Stopped;
+			}),
+		m_soundVec.end()
+	);
 }
 
 void AudioEngine::SetSoundVolume(float _vol)
 {
-	//Store sound vol if we need after
-	m_soundVol = _vol;
+	// Clamp volume to valid range [0, 100]
+	m_soundVol = std::max(0.f, std::min(100.f, _vol));
 
-	for (auto sound = this->m_soundVec.begin(); sound < this->m_soundVec.end(); ++sound)
+	// Apply to all active sounds
+	for (auto& sound : m_soundVec)
 	{
-		(*sound).setVolume(_vol);
+		sound.setVolume(m_soundVol);
 	}
 }
+
 void AudioEngine::AddSoundVolume(float _vol)
 {
-	if (m_soundVol + _vol > 100.f)
-	{
-		SetSoundVolume(100.f);
-		m_soundVol = 100.f;
-	}
-	else if (m_soundVol + _vol < 0.f)
-	{
-		SetSoundVolume(0.f);
-		m_soundVol = 0.f;
-	}
-	else
-	{
-		m_soundVol += _vol;
-		SetSoundVolume(m_soundVol);
-	}
+	SetSoundVolume(m_soundVol + _vol);
 }
+
 float AudioEngine::GetSoundVolume(void)
 {
 	return m_soundVol;
 }
+
 void AudioEngine::TogglePauseSound(const std::string& _soundName)
 {
-	//if you have more than one sound playing you can toggle
-	//only the first
-	//Btw this function will be slow if you have a lot of sound
-	//(parse all sound and compare name to assetManager
+	if (m_assetManager == nullptr)
+	{
+		std::cout << "ERROR: AssetManager not set in AudioEngine" << std::endl;
+		return;
+	}
 
-	sf::SoundBuffer* target = ((sf::SoundBuffer*)(m_assetManager->GetAsset(_soundName, AssetManager::SOUND_BUFFER)));
+	sf::SoundBuffer* target = static_cast<sf::SoundBuffer*>(m_assetManager->GetAsset(_soundName, AssetManager::SOUND_BUFFER));
+	if (target == nullptr)
+	{
+		std::cout << "WARNING: Sound '" << _soundName << "' not found in AssetManager" << std::endl;
+		return;
+	}
 
-	for (auto& sound : this->m_soundVec)
+	// Toggle pause for the first matching sound
+	for (auto& sound : m_soundVec)
 	{
 		if (sound.getBuffer() == target)
 		{
@@ -142,323 +128,274 @@ void AudioEngine::TogglePauseSound(const std::string& _soundName)
 			{
 				sound.pause();
 			}
-			else
+			else if (sound.getStatus() == sf::Sound::Status::Paused)
 			{
-				sound.pause();
+				sound.play();
 			}
+			break; // Only toggle first matching sound
 		}
 	}
-	//Clean outdated sound
-	//Dont impacted paused sound, only stopped
-	this->CleanOldSound();
-}
 
+	// Clean outdated sounds
+	CleanOldSound();
+}
 
 void AudioEngine::PlayMusic(const std::string& _musicName, bool _loop, bool _startForSavedPos)
 {
-	//Check if you play the current music
-	if (m_currentMusic == _musicName)
+	if (m_assetManager == nullptr)
 	{
-		//Check if music is playing
-		sf::Music* music = ((sf::Music*)(m_assetManager->GetAsset(_musicName, AssetManager::MUSIC)));
-		if (music->getStatus() == sf::Music::Status::Playing)
-		{
-			std::cout << "WARNING : you want to play the music that already playing," << std::endl 
-				<< "You want to restart ? If yes, pause / stop and play it" << std::endl;
-		}
-		else
-		{
-			//Launch music
-			if (_startForSavedPos)
-			{
-				music->setPlayingOffset(musicPos[_musicName]);
-			}
-			music->play();
-			music->setLoop(_loop);
-			music->setVolume(this->m_musicVol);
-			this->m_music = music;
-			m_currentMusic = _musicName;
-		}
-	}
-	else
-	{
-		//Search if asset exist
-		sf::Music* music = ((sf::Music*)(m_assetManager->GetAsset(_musicName, AssetManager::MUSIC)));
-		if (music != NULL && m_currentMusic != "")
-		{
-			this->StopMusic();
-
-			//Launch music
-			if (_startForSavedPos)
-			{
-				music->setPlayingOffset(musicPos[_musicName]);
-			}
-			music->play();
-			music->setLoop(_loop);
-			music->setVolume(this->m_musicVol);
-			this->m_music = music;
-			m_currentMusic = _musicName;
-		}
-		else if (music != NULL)
-		{
-			//Launch music
-			if (_startForSavedPos)
-			{
-				music->setPlayingOffset(musicPos[_musicName]);
-			}
-			music->play();
-			music->setLoop(_loop);
-			this->m_music = music;
-			m_currentMusic = _musicName;
-		}
-		else
-		{
-			std::cout << "WARNING : your music isnt finded in asset manager" << std::endl;
-		}
-	}
-}
-void AudioEngine::PlayMusic(const std::string& _musicName, sf::Music* _music, bool _loop, bool _startForSavedPos)
-{
-	//Check if you play the current music
-	if (m_currentMusic == _musicName)
-	{
-		//Check if music is playing
-		if (m_music->getStatus() == sf::Music::Status::Playing)
-		{
-			std::cout << "WARNING : you want to play music that already playing," << std::endl
-				<< "You want to restart ? If yes, pause / stop and play it" << std::endl;
-		}
-		else
-		{
-			//Launch music (the old music stored is the same as the new one)
-			if (_startForSavedPos)
-			{
-				m_music->setPlayingOffset(musicPos[_musicName]);
-			}
-			m_music->play();
-			m_music->setLoop(_loop);
-			m_music->setVolume(this->m_musicVol);
-		}
-	}
-	else
-	{
-		if (_music != NULL && m_currentMusic != "")
-		{
-			this->StopMusic();
-
-			//Launch music
-			if (_startForSavedPos)
-			{
-				m_music->setPlayingOffset(musicPos[_musicName]);
-			}
-			_music->play();
-			_music->setLoop(_loop);
-			_music->setVolume(this->m_musicVol);
-			this->m_music = _music;
-			m_currentMusic = _musicName;
-		}
-		else if (_music != NULL)
-		{
-			//Launch music
-			if (_startForSavedPos)
-			{
-				m_music->setPlayingOffset(musicPos[_musicName]);
-			}
-			_music->play();
-			_music->setLoop(_loop);
-			this->m_music = _music;
-			m_currentMusic = _musicName;
-		}
-		else
-		{
-			std::cout << "WARNING : your music isnt is NULL" << std::endl;
-		}
-	}
-
-}
-void AudioEngine::PlayMusicTransition(const std::string& _musicName, bool _loop, bool _startForSavedPos, float _transitionDuration, TransitionType _type)
-{
-	//Remove big problem
-	//If next music != nullptr ->
-	//One transition is in activity : 
-	//WE DO NOT TO INTERFER WITH CURRENT TRANSITION
-	if (m_transition.nextMusic != nullptr)
-	{
-		std::cout << "CRITICAL PROBLEM : OMG YOU WANT ADD MUSIC AND TRANSITION BUT CURRENT TRANSITION ISNT FINISHED" << std::endl;
+		std::cout << "ERROR: AssetManager not set in AudioEngine" << std::endl;
 		return;
 	}
 
-	//Check if you play the current music
+	// Get music from asset manager
+	sf::Music* music = static_cast<sf::Music*>(m_assetManager->GetAsset(_musicName, AssetManager::MUSIC));
+	if (music == nullptr)
+	{
+		std::cout << "WARNING: Music '" << _musicName << "' not found in AssetManager" << std::endl;
+		return;
+	}
+
+	// Check if trying to play the same music
 	if (m_currentMusic == _musicName)
 	{
-		//Check if music is playing
-		sf::Music* music = ((sf::Music*)(m_assetManager->GetAsset(_musicName, AssetManager::MUSIC)));
 		if (music->getStatus() == sf::Music::Status::Playing)
 		{
-			std::cout << "WARNING : you want to play with transition the music that already playing," << std::endl
-				<< "This is what you want ? Ok so I do it" << std::endl;
-
-			m_transition.nextMusic = music;
-			m_transition.transitionDuration = _transitionDuration;
-			m_transition.timer = 0.f;
-			m_transition.tansitionType = _type;
-			m_transition.nextMusic->setVolume(0.f);
-			m_transition.nextMusic->setLoop(_loop);
-			if (_type == FADED_MIX)
-			{
-				m_transition.nextMusic->play();
-			}
+			std::cout << "WARNING: Music '" << _musicName << "' is already playing" << std::endl;
+			return;
 		}
-		else
+	}
+	else if (m_currentMusic != "")
+	{
+		// Stop current music before starting new one
+		StopMusic();
+	}
+
+	// Set playing offset if requested
+	if (_startForSavedPos && musicPos.find(_musicName) != musicPos.end())
+	{
+		music->setPlayingOffset(musicPos[_musicName]);
+	}
+
+	// Start the music
+	music->play();
+	music->setLoop(_loop);
+	music->setVolume(m_musicVol);
+	m_music = music;
+	m_currentMusic = _musicName;
+}
+
+void AudioEngine::PlayMusic(const std::string& _musicName, sf::Music* _music, bool _loop, bool _startForSavedPos)
+{
+	if (_music == nullptr)
+	{
+		std::cout << "ERROR: Music pointer is null" << std::endl;
+		return;
+	}
+
+	// Check if trying to play the same music
+	if (m_currentMusic == _musicName)
+	{
+		if (m_music != nullptr && m_music->getStatus() == sf::Music::Status::Playing)
 		{
-			m_transition.nextMusic = music;
-			m_transition.transitionDuration = _transitionDuration;
-			m_transition.timer = 0.f;
-			m_transition.tansitionType = _type;
-			m_transition.nextMusic->setVolume(0.f);
-			m_transition.nextMusic->setLoop(_loop);
-			if (_type == FADED_MIX)
+			std::cout << "WARNING: Music '" << _musicName << "' is already playing" << std::endl;
+			return;
+		}
+	}
+	else if (m_currentMusic != "")
+	{
+		// Stop current music before starting new one
+		StopMusic();
+	}
+
+	// Set playing offset if requested
+	if (_startForSavedPos && musicPos.find(_musicName) != musicPos.end())
+	{
+		_music->setPlayingOffset(musicPos[_musicName]);
+	}
+
+	// Start the music
+	_music->play();
+	_music->setLoop(_loop);
+	_music->setVolume(m_musicVol);
+	m_music = _music;
+	m_currentMusic = _musicName;
+}
+
+void AudioEngine::PlayMusicTransition(const std::string& _musicName, bool _loop, bool _startForSavedPos, float _transitionDuration, TransitionType _type)
+{
+	if (m_assetManager == nullptr)
+	{
+		std::cout << "ERROR: AssetManager not set in AudioEngine" << std::endl;
+		return;
+	}
+
+	// Check if transition is already in progress
+	if (m_transition.nextMusic != nullptr)
+	{
+		std::cout << "WARNING: Transition already in progress, ignoring new transition request" << std::endl;
+		return;
+	}
+
+	// Get music from asset manager
+	sf::Music* music = static_cast<sf::Music*>(m_assetManager->GetAsset(_musicName, AssetManager::MUSIC));
+	if (music == nullptr)
+	{
+		std::cout << "WARNING: Music '" << _musicName << "' not found in AssetManager" << std::endl;
+		return;
+	}
+
+	// Setup transition
+	m_transition.nextMusic = music;
+	m_transition.nextMusicName = _musicName;
+	m_transition.transitionDuration = std::max(0.1f, _transitionDuration); // Minimum 0.1s
+	m_transition.timer = 0.f;
+	m_transition.tansitionType = _type;
+	m_transition.loop = _loop;
+
+	// Set starting offset if requested
+	if (_startForSavedPos && musicPos.find(_musicName) != musicPos.end())
+	{
+		m_transition.nextMusic->setPlayingOffset(musicPos[_musicName]);
+	}
+
+	// Configure transition music
+	m_transition.nextMusic->setVolume(0.f);
+	m_transition.nextMusic->setLoop(_loop);
+
+	// Start playing immediately for FADED_MIX
+	if (_type == FADED_MIX)
+	{
+		m_transition.nextMusic->play();
+	}
+}
+
+void AudioEngine::UpdateMusicTransition(float _dt)
+{
+	// No transition active
+	if (m_transition.nextMusic == nullptr)
+	{
+		return;
+	}
+
+	m_transition.timer += _dt;
+
+	// Transition in progress
+	if (m_transition.timer < m_transition.transitionDuration)
+	{
+		const float progress = m_transition.timer / m_transition.transitionDuration;
+
+		switch (m_transition.tansitionType)
+		{
+		case FADED_MIX:
+			// Crossfade: new music fades in, old music fades out
+			m_transition.nextMusic->setVolume(progress * m_musicVol);
+			if (m_music != nullptr)
 			{
-				m_transition.nextMusic->play();
+				m_music->setVolume((1.f - progress) * m_musicVol);
 			}
+			break;
+
+		case FADED_ONE_BY_ONE:
+			// Sequential fade: first fade out, then fade in
+			if (progress < 0.5f)
+			{
+				// First half: fade out current music
+				const float fadeOutProgress = progress * 2.f;
+				if (m_music != nullptr)
+				{
+					m_music->setVolume((1.f - fadeOutProgress) * m_musicVol);
+				}
+			}
+			else
+			{
+				// Second half: fade in next music
+				if (m_transition.nextMusic->getStatus() != sf::Music::Status::Playing)
+				{
+					m_transition.nextMusic->play();
+				}
+				const float fadeInProgress = (progress - 0.5f) * 2.f;
+				m_transition.nextMusic->setVolume(fadeInProgress * m_musicVol);
+			}
+			break;
 		}
 	}
 	else
 	{
-		//Search if asset exist
-		sf::Music* music = ((sf::Music*)(m_assetManager->GetAsset(_musicName, AssetManager::MUSIC)));
-		if (music != NULL)
-		{
-			m_transition.nextMusic = music;
-			m_transition.transitionDuration = _transitionDuration;
-			m_transition.timer = 0.f;
-			m_transition.tansitionType = _type;
-			m_transition.nextMusic->setVolume(0.f);
-			m_transition.nextMusic->setLoop(_loop);
-			if (_type == FADED_MIX)
-			{
-				m_transition.nextMusic->play();
-			}
-		}
-		else
-		{
-			std::cout << "WARNING : your music isnt finded in asset manager" << std::endl;
-		}
-	}
-	if (_startForSavedPos)
-	{
-		m_transition.nextMusic->setPlayingOffset(musicPos[_musicName]);
-	}
-}
-void AudioEngine::UpdateMusicTransition(float _dt)
-{
-	if (m_transition.nextMusic != nullptr)
-	{
-		m_transition.timer += _dt;
-		if (m_transition.timer < m_transition.transitionDuration)
-		{
-			switch (m_transition.tansitionType)
-			{
-				case FADED_MIX:
+		// Transition complete
+		StopMusic();
+		m_music = m_transition.nextMusic;
+		m_music->setVolume(m_musicVol);
+		m_currentMusic = m_transition.nextMusicName;
 
-					m_transition.nextMusic->setVolume(m_transition.timer / m_transition.transitionDuration * m_musicVol);
-					m_music->setVolume((m_transition.transitionDuration - m_transition.timer) / m_transition.transitionDuration * m_musicVol);
-					break;
-
-				case FADED_ONE_BY_ONE:
-
-					if (m_transition.timer < m_transition.transitionDuration / 2.f)
-					{
-						m_music->setVolume(((m_transition.transitionDuration / 2.f) - m_transition.timer) / (m_transition.transitionDuration / 2.f) * m_musicVol);
-					}
-					else
-					{
-						if (m_transition.nextMusic->getStatus() != sf::Music::Status::Playing)
-						{
-							m_transition.nextMusic->play();
-						}
-
-						//Coeficient du temp, xSon
-						//Temp / TempMax * 100
-						m_transition.nextMusic->setVolume((m_transition.timer - m_transition.transitionDuration / 2) / (m_transition.transitionDuration / 2) * m_musicVol);
-					}
-				break;
-			}
-		}
-		else
-		{	
-			//Stop current music and save his playingOffset
-			StopMusic();
-			m_music = m_transition.nextMusic;
-			m_transition.nextMusic = nullptr;
-			m_transition.timer = 0.f;
-			m_currentMusic = m_transition.nextMusicName;
-			m_transition.nextMusicName = "";
-		}
+		// Reset transition
+		m_transition.nextMusic = nullptr;
+		m_transition.nextMusicName = "";
+		m_transition.timer = 0.f;
 	}
 }
 
 void AudioEngine::SetMusicVolume(float _vol)
 {
-	//Store music vol if we need after
-	m_musicVol = _vol;
-	if (m_currentMusic != "")
+	// Clamp volume to valid range [0, 100]
+	m_musicVol = std::max(0.f, std::min(100.f, _vol));
+
+	if (m_music != nullptr && m_currentMusic != "")
 	{
-		m_music->setVolume(_vol);
+		m_music->setVolume(m_musicVol);
 	}
 }
+
 void AudioEngine::AddMusicVolume(float _vol)
 {
-	if (m_musicVol + _vol > 100.f)
-	{
-		SetMusicVolume(100.f);
-		m_musicVol = 100.f;
-	}
-	else if (m_musicVol + _vol < 0.f)
-	{
-		SetMusicVolume(0.f);
-		m_musicVol = 0.f;
-	}
-	else
-	{
-		m_musicVol += _vol;
-		SetMusicVolume(m_musicVol);
-	}
+	SetMusicVolume(m_musicVol + _vol);
 }
+
 float AudioEngine::GetMusicVolume(void)
 {
 	return m_musicVol;
 }
+
 std::string AudioEngine::GetMusicName(void)
 {
-	if (m_currentMusic != "" &&
-	m_music->getStatus() == sf::Music::Status::Playing)
+	if (m_music != nullptr && m_currentMusic != "" && 
+		m_music->getStatus() == sf::Music::Status::Playing)
 	{
 		return m_currentMusic;
 	}
 	return "";
 }
+
 void AudioEngine::TogglePauseMusic(void)
 {
-	if (m_currentMusic != "")
+	if (m_music == nullptr || m_currentMusic == "")
 	{
-		if (m_music->getStatus() == sf::Music::Status::Playing)
-		{
-			musicPos[m_currentMusic] = m_music->getPlayingOffset();
-			m_music->pause();
-		}
-		else
-		{
-			m_music->play();
-		}
+		return;
+	}
+
+	if (m_music->getStatus() == sf::Music::Status::Playing)
+	{
+		musicPos[m_currentMusic] = m_music->getPlayingOffset();
+		m_music->pause();
+	}
+	else if (m_music->getStatus() == sf::Music::Status::Paused)
+	{
+		m_music->play();
 	}
 }
+
 void AudioEngine::StopMusic(void)
 {
+	if (m_music == nullptr || m_currentMusic == "")
+	{
+		return;
+	}
+
+	// Save position before stopping
 	musicPos[m_currentMusic] = m_music->getPlayingOffset();
-	std::cout << "save outset\n";
 	m_music->stop();
 }
+
 bool AudioEngine::IsTransitionFinished(void) const
 {
 	return m_transition.nextMusic == nullptr;
