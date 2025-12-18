@@ -26,6 +26,7 @@ private:
 		STATE_COUNT
 	};
 
+	SpriteAnimated m_playerIcones[2];
 
 
 public:
