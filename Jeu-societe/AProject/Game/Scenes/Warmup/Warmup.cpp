@@ -177,7 +177,7 @@ void Warmup::Update(float _deltaTime)
 
 		case TRANS_2:
 			
-			m_data->audio->PlayMusicTransition("MiniGameTheme",true ,FADED_MIX);
+			m_data->audio->PlayMusicTransition("MiniGameMusic",true ,FADED_MIX);
 
 			m_data->transition.Update(_deltaTime);
 			if (m_data->transition.IsFinished())
