@@ -49,12 +49,6 @@
             "subType" : 0
         },
         {
-            "name" : "Icone",
-            "type" : "Texture Animated",
-            "path" : "Assets/Sprites/Menu/Icone-Perso.anim",
-			"subType" : 1
-        },
-        {
             "name" : "LogoGame",
             "type" : "Texture",
             "path" : "Assets/Sprites/Menu/CUTE & CURSED.png",
