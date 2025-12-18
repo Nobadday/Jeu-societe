@@ -1298,7 +1298,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 	switch (m_data->state)
 	{
 	case START:
-		ShowTextDisplay("Roll the dice to determine turn order!\nPress A to roll it", 5.0f);
+		ShowTextDisplay("Roll the dice to determine turn order!\nPress A to roll it", 4.0f);
 		break;
 
 	case PLAY:
@@ -1307,7 +1307,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 		m_data->pathChoices.clear();
 		m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
 		//m_data->arrow.setRotation(315);
-		ShowTextDisplay(m_data->players[m_data->currentPlayerIndex].playeur.getString() + " turn!\nPress A to roll the dice", 3.0f);
+		ShowTextDisplay(m_data->players[m_data->currentPlayerIndex].playeur.getString() + " turn!\nPress A to roll the dice", 2.5f);
 		break;
 	case WIN:
 		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
@@ -1440,15 +1440,15 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 
 	case WAITING_PATH_CHOICE:
 		// Attente de l'entrée du joueur
-		ShowTextDisplay("Choose your path!\nMove joystick Up or Down", 3.5f);
+		ShowTextDisplay("Choose your path!\nMove joystick Up or Down", 3.0f);
 		break;
 
 	case WAITING_BRIDGE_ROLL:
-		ShowTextDisplay("Bridge ahead!\nRoll the dice to cross\n(Need 4 or more)", 4.f);
+		ShowTextDisplay("Bridge ahead!\nRoll the dice to cross\n(Need 4 or more)", 3.5f);
 		break;
 
 	case WAITING_FIN_ROLL:
-		ShowTextDisplay("Finish line!\nRoll the dice to win\n(Need 5 or 6)", 4.f);
+		ShowTextDisplay("Finish line!\nRoll the dice to win\n(Need 5 or 6)", 3.5f);
 		break;
 
 	case WIN_DEPLACEMENT:
