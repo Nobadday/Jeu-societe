@@ -541,7 +541,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 		if (_event.key.code == sf::Keyboard::Numpad6)
 		{
 			std::cout << "[DEBUG] Prochain lancer forcé à 6" << std::endl;
-			if (m_data->state != DICE_ANIMATION && m_data->state != WIN && 
+			if (m_data->state != DICE_ANIMATION && m_data->state != WIN &&
 				m_data->state != DUEL && m_data->state != BATTLE_ACTION)
 			{
 				ProcessDiceRoll(6);
@@ -554,7 +554,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 		{
 			std::cout << "[DEBUG] Téléportation après le pont" << std::endl;
 			auto& player = m_data->players[m_data->currentPlayerIndex];
-			
+
 			// Trouver la case après le pont (case 19)
 			for (int i = 0; i < m_data->posCase.size(); i++)
 			{
@@ -565,10 +565,10 @@ void BaseGame::PollEvent(sf::Event& _event)
 					player.boardPosition = mapObject.GetPosition() + sf::Vector2f{ 0.f, 0.f };
 					player.pendingMovement = 0;
 					player.currentPathId = -1;
-					
+
 					// CORRECTION : Activer les effets de fumée
 					m_data->smokeOff = true;
-					
+
 					// Transformer le personnage si ce n'est pas déjà fait
 					switch (m_gameData->m_playerDataList[m_data->currentPlayerIndex].GetPlayerSkin())
 					{
@@ -591,10 +591,10 @@ void BaseGame::PollEvent(sf::Event& _event)
 					default:
 						break;
 					}
-					
+
 					player.sprite.setTexture(player.texture);
 					player.sprite.SetAnimation("Idle");
-					
+
 					ShowTextDisplay("DEBUG: Teleported after bridge!", 2.0f);
 					UpdateCameraToShowAllPlayers();
 					break;
@@ -608,7 +608,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 		{
 			std::cout << "[DEBUG] Téléportation sur le pont" << std::endl;
 			auto& player = m_data->players[m_data->currentPlayerIndex];
-			
+
 			// Trouver la case du pont (case 19)
 			for (int i = 0; i < m_data->posCase.size(); i++)
 			{
@@ -620,7 +620,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 					player.pendingMovement = 0;
 					player.currentPathId = -1;
 					player.sprite.SetAnimation("Idle");
-					
+
 					ShowTextDisplay("DEBUG: Teleported to bridge!", 2.0f);
 					UpdateCameraToShowAllPlayers();
 					break;
@@ -634,7 +634,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 		{
 			std::cout << "[DEBUG] Téléportation à la ligne d'arrivée" << std::endl;
 			auto& player = m_data->players[m_data->currentPlayerIndex];
-			
+
 			// Trouver la case de fin
 			for (int i = 0; i < m_data->posCase.size(); i++)
 			{
@@ -648,7 +648,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 						player.pendingMovement = 0;
 						player.currentPathId = -1;
 						player.sprite.SetAnimation("Idle");
-						
+
 						ShowTextDisplay("DEBUG: Teleported to finish line!", 2.0f);
 						UpdateCameraToShowAllPlayers();
 						break;
@@ -783,14 +783,14 @@ void BaseGame::Update(float _deltaTime)
 	{
 		if (m_audioEngine->GetMusicName() == "Plato1")
 		{
-			m_audioEngine->PlayMusicTransition("Plato2",true,FADED_MIX);
+			m_audioEngine->PlayMusicTransition("Plato2", true, FADED_MIX);
 		}
 	}
 	else
 	{
 		if (m_audioEngine->GetMusicName() == "Plato2")
 		{
-			m_audioEngine->PlayMusicTransition("Plato1",true,FADED_MIX);
+			m_audioEngine->PlayMusicTransition("Plato1", true, FADED_MIX);
 		}
 	}
 
@@ -829,7 +829,7 @@ void BaseGame::Update(float _deltaTime)
 			}
 			break;
 		}
-			
+
 		case TexteDisplay::FADE_DISPLAY:
 		{
 			// Affichage complet (alpha = 255)
@@ -1075,15 +1075,12 @@ void BaseGame::Draw(sf::RenderWindow& _renderWindow)
 	mod->setView(referenceView);
 
 	std::string layer = "point";
-	
-	if (m_data->state != STATE)
-	{
-		m_gameData->m_tile->DrawMapLayers(*mod, referenceView.getCenter(), layer);
 
-		SortDrawOrder();
+	m_gameData->m_tile->DrawMapLayers(*mod, referenceView.getCenter(), layer);
 
-		m_gameData->m_tile->DrawMapLayers(*mod, referenceView.getCenter(), "point");
-	}
+	SortDrawOrder();
+
+	m_gameData->m_tile->DrawMapLayers(*mod, referenceView.getCenter(), "point");
 
 	for (auto& effect : m_data->effectSwap)
 	{
@@ -1908,7 +1905,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 		break;
 	case END:
 		m_data->timerEnd -= _dt;
-		if (m_data->timerEnd <= 0 )
+		if (m_data->timerEnd <= 0)
 		{
 			if (!m_data->endActive)
 			{
@@ -1998,4 +1995,3 @@ std::string BaseGame::RandomBattle()
 	return "Warmup";
 }
 
-	
