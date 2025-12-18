@@ -793,7 +793,10 @@ void BaseGame::Update(float _deltaTime)
 		{
 			if (m_audioEngine->GetMusicName() != "Plato2")
 			{
-				m_audioEngine->PlayMusicTransition("Plato2", true, FADED_MIX);
+
+				std::cout << m_audioEngine->GetMusicName() << std::endl;
+
+				m_audioEngine->PlayMusicTransition("Plato2", true, false,FADED_MIX);
 
 				switch (m_gameData->m_playerDataList[m_data->currentPlayerIndex].GetPlayerSkin())
 				{
@@ -828,8 +831,9 @@ void BaseGame::Update(float _deltaTime)
 		{
 			if (m_audioEngine->GetMusicName() != "Plato1")
 			{
+				std::cout << m_audioEngine->GetMusicName() << std::endl;
 
-				m_audioEngine->PlayMusicTransition("Plato1", true, FADED_MIX);
+				m_audioEngine->PlayMusicTransition("Plato1", true, false, FADED_MIX);
 			}
 
 		}
