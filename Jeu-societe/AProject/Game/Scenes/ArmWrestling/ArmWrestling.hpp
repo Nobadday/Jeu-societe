@@ -6,6 +6,7 @@
 #include "../../Animation/Graphics.hpp"
 #include "../../Animation/Animation/Timer.hpp" 
 #include "../../Animation/Animation.hpp"
+#include "../../Ui/Transition/Transition.hpp"
 
  
 class ArmWrestling : public SceneBase
@@ -16,13 +17,20 @@ private:
 	{
 		NONE = -1,
 
+		INTRO,
 		GAME,
 		END,
+
+		OUTRO,
 
 		STATE_COUNT
 	};
 
+
+
 public:
+
+	TransitionClass m_transition;
 
 	Timer m_timer;
 	TextPlus m_timerText;

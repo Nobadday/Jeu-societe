@@ -7,6 +7,8 @@ void Podium::Load()
 	m_data = new SceneData;
 	m_data->gameData = (GameData*)this->m_keptData;
 
+	m_data->audio = (AudioEngine*)this->m_data->gameData->m_audioEngine;
+
 	m_data->gameData->m_assetManager->LoadManifest("Manifests/Podium.json", "Podium");
 
 	if (m_data->gameData->m_gonnaPlayIndex.size() == 0)
@@ -95,6 +97,8 @@ void Podium::Load()
 		m_data->animatorArray[i].SetGoTo(m_data->podiumsSpriteArray[i], sf::Vector2f(m_data->podiumsSpriteArray[i].getPosition().x, SCREEN_HEIGHT + 1));
 		m_data->animatorArray[i].SetAnimationEasing(anim::Animator::GOTO, anim::Easing::INOUTSINE);
 
+
+
 		currentPlayer++;
 	}
 
@@ -105,7 +109,11 @@ void Podium::Load()
 	m_data->confetti.setSize(sf::Vector2f(4, 4));
 	m_data->confetti.setOrigin(sf::Vector2f(2, 2));
 
-	m_data->state = PODIUM;
+
+	m_data->transition.SetTransition(TransitionClass::FADED_IN);
+	m_data->transition.PlayTransition();
+
+	m_data->state = INTRO;
 }
 
 
@@ -126,7 +134,7 @@ void Podium::PollEvent(sf::Event& _event)
 				switch (_event.joystickButton.button)
 				{
 					case 0:
-						ChangeScene("Menu", false);
+						m_data->state = PATATE;
 						break;
 
 					default:
@@ -140,7 +148,8 @@ void Podium::PollEvent(sf::Event& _event)
 			{
 				if (sf::Keyboard::Space)
 				{
-					ChangeScene("Menu", false);
+					m_data->transition.SetTransition(TransitionClass::FADED_OUT);
+					m_data->state = PATATE;
 				}
 			}
 
@@ -154,13 +163,26 @@ void Podium::PollEvent(sf::Event& _event)
 void Podium::Update(float _dt)
 {
 	int playerPos = 0;
-	m_data->animatorArray[0].Update(_dt);
 
 	switch (m_data->state)
 	{
+		case INTRO:
+
+			m_data->transition.Update(_dt);
+
+			if (m_data->transition.IsFinished())
+			{
+				m_data->state = PODIUM;
+			}
+
+		break;
+
+
+
 		case PODIUM:
 			for (short i = 0; i < m_data->podiumsSpriteArray.size(); i++)
 			{
+				m_data->animatorArray[0].Update(_dt);
 				m_data->animatorArray[i].SyncTime(m_data->animatorArray[0]);
 				m_data->animatorArray[i].AnimateObject(m_data->podiumsSpriteArray[i]);
 
@@ -171,24 +193,24 @@ void Podium::Update(float _dt)
 						sf::Vector2f finalPos(m_data->playerSpriteArray[i].getPosition().x, 0.f);
 						switch (GetPlayerClassement(i))
 						{
-						case 1:
-							finalPos.y = SCREEN_HEIGHT - 470;
-							break;
+							case 1:
+								finalPos.y = SCREEN_HEIGHT - 470;
+								break;
 
-						case 2:
-							finalPos.y = SCREEN_HEIGHT - 300;
-							break;
+							case 2:
+								finalPos.y = SCREEN_HEIGHT - 300;
+								break;
 
-						case 3:
-							finalPos.y = SCREEN_HEIGHT - 150;
-							break;
+							case 3:
+								finalPos.y = SCREEN_HEIGHT - 150;
+								break;
 
-						case 4:
-							finalPos.y = SCREEN_HEIGHT;
-							break;
+							case 4:
+								finalPos.y = SCREEN_HEIGHT;
+								break;
 
-						default:
-							break;
+							default:
+								break;
 						}
 
 						m_data->animatorArray[i].SetGoTo(m_data->playerSpriteArray[i], finalPos);
@@ -203,6 +225,7 @@ void Podium::Update(float _dt)
 
 		case PLAYERS:
 		{
+			m_data->animatorArray[0].Update(_dt);
 			for (short i = 0; i < m_data->playerSpriteArray.size(); i++)
 			{
 				m_data->animatorArray[i].SyncTime(m_data->animatorArray[0]);
@@ -243,6 +266,7 @@ void Podium::Update(float _dt)
 					std::cout << std::endl;
 				}
 				m_data->state = CONGRATS;
+
 			}
 		}
 		break;
@@ -254,15 +278,21 @@ void Podium::Update(float _dt)
 
 			if (m_data->animatorArray[0].IsFinished())
 			{
+				if (!m_data->patate)
+				{
+					for (int  i = 0; i < 5; i++)
+					{
+						m_data->audio->PlaySound("baloonPop");
+					}
+					m_data->audio->PlaySound("YaY");
+					m_data->patate = true;
+				}
+
 				for (auto& it : m_data->confettiVector)
 				{
-					//std::cout << "position confetti A = " << it.position.x << "   " << it.position.y << std::endl;
-
 					it.currentLife -= _dt;
 					it.position.x += it.velocity.x * _dt;
 					it.position.y += it.velocity.y * _dt;
-
-					//std::cout << "position confetti B = " << it.position.x << "   " << it.position.y << std::endl << std::endl;
 
 					it.velocity.x *= 0.99f;
 					it.velocity.y *= 0.99f;
@@ -282,8 +312,21 @@ void Podium::Update(float _dt)
 				}
 			}
 		}
-		break;
 
+		case DONE:
+			break;
+
+		case PATATE:
+			m_data->transition.Update(_dt);
+
+			if (m_data->transition.IsFinished())
+			{
+				ChangeScene("Board");
+			}
+
+			break;
+
+		break;
 
 	default:
 		break;
@@ -293,6 +336,8 @@ void Podium::Update(float _dt)
 
 void Podium::Draw(sf::RenderWindow& _renderWindow)
 {
+	sfMod::RenderWindow* bWindow = m_data->gameData->m_renderWindow;
+
 	_renderWindow.draw(m_data->background);
 	_renderWindow.draw(m_data->congrat);
 
@@ -319,9 +364,9 @@ void Podium::Draw(sf::RenderWindow& _renderWindow)
 			_renderWindow.draw(m_data->confetti);
 		}
 	}
-	else if (m_data->state == DONE)
+	else if (m_data->state == INTRO || m_data->state == PATATE)
 	{
-
+		m_data->transition.Draw(bWindow);
 	}
 }
 

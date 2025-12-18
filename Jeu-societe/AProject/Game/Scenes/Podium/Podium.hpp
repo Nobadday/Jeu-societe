@@ -6,6 +6,8 @@
 #include "../../../Scenes/Scene.hpp"
 #include "../../../Ui/MenuSystem.hpp"
 #include "../../../Animation/Animation.hpp"
+#include "../../Ui/Transition/Transition.hpp"
+
 
  class Podium : public SceneBase
 {
@@ -15,10 +17,12 @@
 		{
 			NONE = -1,
 
+			INTRO,
 			PODIUM,
 			PLAYERS,
 			CONGRATS,
-			DONE
+			DONE,
+			PATATE
 		};
 
 		struct Confetti
@@ -57,6 +61,10 @@
 			TextPlus continueText;
 			sf::Sprite Button;
 
+			AudioEngine* audio;
+			bool patate = false;
+
+			TransitionClass transition;
 		};
 		SceneData* m_data = NULL;
 
