@@ -50,7 +50,10 @@ void ArmWrestling::Load(void)
 		m_gameData->m_gonnaPlayIndex.push_back(1);
 	}
 
-	m_state = GAME;
+	m_transition.SetTransition(TransitionClass::FADED_IN);
+	m_transition.PlayTransition();
+
+	m_state = INTRO;
 }
 
 
@@ -92,8 +95,21 @@ void ArmWrestling::PollEvent(sf::Event& _event)
 						}
 					}
 				}
+				if (m_state == END)
+				{
+					m_transition.SetTransition(TransitionClass::FADED_OUT);
+					m_state = OUTRO;
+				}
 			}
 		break;
+		case sf::Event::KeyPressed:
+			if (m_state == END)
+			{
+				m_transition.SetTransition(TransitionClass::FADED_OUT);
+				m_state = OUTRO;
+			}
+
+			break;
 	}
 }
 
@@ -103,6 +119,24 @@ void ArmWrestling::Update(float _deltaTime)
 	m_timer.Update(_deltaTime);
 	switch (m_state)
 	{
+	case ArmWrestling::INTRO:
+
+		m_transition.Update(_deltaTime);
+		if (m_transition.IsFinished())
+		{
+			m_state = GAME;
+		}
+
+		break;
+	case ArmWrestling::OUTRO:
+		m_transition.Update(_deltaTime); 
+
+		if (m_transition.IsFinished())
+		{
+			ChangeScene("Board");
+		}
+		break;
+
 		case ArmWrestling::GAME:
 			char buffer[50];
 			std::snprintf(buffer, 50, "%02.2f", m_timer.GetRemainingTime());
@@ -157,8 +191,6 @@ void ArmWrestling::Update(float _deltaTime)
 				break;
 
 			case ArmWrestling::END:
-
-				//ChangeScene("Board");
 				break;
 
 		default:
@@ -190,22 +222,27 @@ void ArmWrestling::Update(float _deltaTime)
 
 void ArmWrestling::Draw(sf::RenderWindow& _renderWindow)
 {
-	_renderWindow.draw(m_background);
-	_renderWindow.draw(m_playerArms);
+	sfMod::RenderWindow* bWindow = m_gameData->m_renderWindow;
 
+	bWindow->draw(m_background);
+	bWindow->draw(m_playerArms);
+
+	_renderWindow.draw(m_timerText);
 	switch (m_state)
 	{
 		case ArmWrestling::GAME:
-			_renderWindow.draw(m_bar);
+			bWindow->draw(m_bar);
 		break;
 
 		case ArmWrestling::END:
 			break;
 
+		case INTRO:
+		case OUTRO:
+			m_transition.Draw(bWindow);
+			break;
+
 		default:
 			break;
 	}
-	
-	_renderWindow.draw(m_timerText);
-
 }

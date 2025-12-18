@@ -109,6 +109,7 @@ void Podium::Load()
 	m_data->confetti.setSize(sf::Vector2f(4, 4));
 	m_data->confetti.setOrigin(sf::Vector2f(2, 2));
 
+
 	m_data->transition.SetTransition(TransitionClass::FADED_IN);
 	m_data->transition.PlayTransition();
 
@@ -147,6 +148,7 @@ void Podium::PollEvent(sf::Event& _event)
 			{
 				if (sf::Keyboard::Space)
 				{
+					m_data->transition.SetTransition(TransitionClass::FADED_OUT);
 					m_data->state = PATATE;
 				}
 			}
@@ -166,12 +168,13 @@ void Podium::Update(float _dt)
 	{
 		case INTRO:
 
-		m_data->transition.Update(_dt);
+			m_data->transition.Update(_dt);
 
-		if (m_data->transition.IsFinished())
-		{
-			m_data->state = PODIUM;
-		}
+			if (m_data->transition.IsFinished())
+			{
+				m_data->state = PODIUM;
+			}
+
 		break;
 
 
@@ -333,6 +336,8 @@ void Podium::Update(float _dt)
 
 void Podium::Draw(sf::RenderWindow& _renderWindow)
 {
+	sfMod::RenderWindow* bWindow = m_data->gameData->m_renderWindow;
+
 	_renderWindow.draw(m_data->background);
 	_renderWindow.draw(m_data->congrat);
 
@@ -358,6 +363,10 @@ void Podium::Draw(sf::RenderWindow& _renderWindow)
 			Apply(it, m_data->confetti);
 			_renderWindow.draw(m_data->confetti);
 		}
+	}
+	else if (m_data->state == INTRO || m_data->state == PATATE)
+	{
+		m_data->transition.Draw(bWindow);
 	}
 }
 
