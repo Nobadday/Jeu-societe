@@ -52,13 +52,13 @@ int main()
 
 	MainData mainData;
 	
-	mainData.gameData.m_playerDataList.resize(2);
+	/*mainData.gameData.m_playerDataList.resize(4);
 	for (short i = 0; i < mainData.gameData.m_playerDataList.size(); i++)
 	{
 		mainData.gameData.m_playerDataList[i].SetJoystickID(i);
-		mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 4));
+		mainData.gameData.m_playerDataList[i].SetPlayerSkin((PlayerData::PlayerSkin)(i % 4 +4));
 		mainData.gameData.AddPlayerPlaying(i);
-	}
+	}*/
 
 	MainDataLoad(mainData);
 
@@ -122,7 +122,7 @@ void MainDataLoad(MainData& _mainData)
 	_mainData.scenes.AddScene<Warmup>("Warmup");
 
 	// Sélectionner le LoadingScreen metre false pour tout scene au debut 
-	_mainData.scenes.SelectScene("Lo", false);
+	_mainData.scenes.SelectScene("Menu", false);
 	//_mainData.scenes.SelectScene("FlagGame", false);
 
 	_mainData.clock.restart();

@@ -37,7 +37,6 @@ private:
 
 	struct SceneData
 	{
-		sf::Text titleText;
 		sf::Text roundText;
 		sf::Text timerText;
 		sf::Text notEnoughPlayersText;

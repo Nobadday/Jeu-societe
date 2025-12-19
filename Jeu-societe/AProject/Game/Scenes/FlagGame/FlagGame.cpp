@@ -35,14 +35,6 @@ void FlagGame::Load(void)
 	m_data->backgroundSprite.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground"));
 	m_data->backgroundSprite.setPosition(0, 0);
 
-	// Initialize title text
-	m_data->titleText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("FlagFont"));
-	m_data->titleText.setCharacterSize(24);
-	m_data->titleText.setFillColor(sf::Color::White);
-	m_data->titleText.setString("Flag Game Mini-Game");
-	m_data->titleText.setPosition(SCREEN_WIDTH / 2, 20);
-	m_data->titleText.setOrigin(m_data->titleText.getLocalBounds().width / 2, 0);
-
 	// Initialize round text
 	m_data->roundText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("FlagFont"));
 	m_data->roundText.setCharacterSize(25);
@@ -401,7 +393,6 @@ void FlagGame::Draw(sf::RenderWindow& _renderWindow)
 		case STATE_PLAYING:
 		case STATE_ROUND_END:
 
-			renderWindow->draw(m_data->titleText);
 			renderWindow->draw(m_data->roundText);
 			renderWindow->draw(m_data->timerText);
 			renderWindow->draw(m_data->buttonSprite);

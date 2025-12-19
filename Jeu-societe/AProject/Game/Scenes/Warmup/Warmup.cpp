@@ -235,7 +235,35 @@ void Warmup::PrintIcons(sfMod::RenderWindow* _renderWindow)
 		sf::Vector2f pos = { (float)(border + i * iconSpacing), SCREEN_HEIGHT - iconBounds.height};
 
 		PlayerData::PlayerSkin skin = m_data->gameData->m_playerDataList[i].GetPlayerSkin();
-		m_data->iconsChara.SetAnimation(skin);
+		switch (skin)
+		{
+		case PlayerData::CHARACTER_1_1:
+			m_data->iconsChara.SetAnimation("Perso1-1");
+			break;
+		case PlayerData::CHARACTER_1_2:
+			m_data->iconsChara.SetAnimation("Perso1-2");
+			break;
+		case PlayerData::CHARACTER_2_1:
+			m_data->iconsChara.SetAnimation("Perso2-1");
+			break;
+		case PlayerData::CHARACTER_2_2:
+			m_data->iconsChara.SetAnimation("Perso2-2");
+			break;
+		case PlayerData::CHARACTER_3_1:
+			m_data->iconsChara.SetAnimation("Perso3-1");
+			break;
+		case PlayerData::CHARACTER_3_2:
+			m_data->iconsChara.SetAnimation("Perso3-2");
+			break;
+		case PlayerData::CHARACTER_4_1:
+			m_data->iconsChara.SetAnimation("Perso4-1");
+			break;
+		case PlayerData::CHARACTER_4_2:
+			m_data->iconsChara.SetAnimation("Perso4-2");
+			break;
+		default:
+			break;
+		}
 
 		m_data->iconsChara.setPosition(pos);
 		if (m_data->playersReadyVec[i])

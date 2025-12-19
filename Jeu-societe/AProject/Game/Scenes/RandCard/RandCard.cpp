@@ -324,16 +324,44 @@ void RandCard::PrintIcons(sfMod::RenderWindow* _renderWindow)
 
 
 		PlayerData::PlayerSkin skin = (PlayerData::PlayerSkin)m_data->gameData->m_playerDataList[m_data->players[i].id].GetPlayerSkin();
-		m_data->iconsChara.SetAnimation(skin);
+		switch (skin)
+		{
+		case PlayerData::CHARACTER_1_1:
+			m_data->iconsChara.SetAnimation("Perso1-1");
+			break;
+		case PlayerData::CHARACTER_1_2:
+			m_data->iconsChara.SetAnimation("Perso1-2");
+			break;
+		case PlayerData::CHARACTER_2_1:
+			m_data->iconsChara.SetAnimation("Perso2-1");
+			break;
+		case PlayerData::CHARACTER_2_2:
+			m_data->iconsChara.SetAnimation("Perso2-2");
+			break;
+		case PlayerData::CHARACTER_3_1:
+			m_data->iconsChara.SetAnimation("Perso3-1");
+			break;
+		case PlayerData::CHARACTER_3_2:
+			m_data->iconsChara.SetAnimation("Perso3-2");
+			break;
+		case PlayerData::CHARACTER_4_1:
+			m_data->iconsChara.SetAnimation("Perso4-1");
+			break;
+		case PlayerData::CHARACTER_4_2:
+			m_data->iconsChara.SetAnimation("Perso4-2");
+			break;
+		default:
+			break;
+		}
 
 		m_data->iconsChara.setPosition(pos);
 		if (m_data->currentPlayer == i)
 		{
-			m_data->iconsChara.setScale({ 1.2f,1.2f });
+			m_data->iconsChara.setScale({ 1.f,1.f });
 			m_data->iconsChara.setColor({ 255,255,255,255 });
 		}
 		_renderWindow->draw(m_data->iconsChara);
-		m_data->iconsChara.setScale({ 1.0f,1.0f });
+		m_data->iconsChara.setScale({ 0.75f,0.75f });
 		m_data->iconsChara.setColor({ 255,255,255,150 });
 	}
 }
