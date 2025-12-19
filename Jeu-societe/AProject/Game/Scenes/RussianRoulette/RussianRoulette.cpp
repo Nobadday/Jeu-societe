@@ -235,7 +235,7 @@ void RussianRoulette::Update(float _deltaTime)
 					}
 					std::cout << "Player : " << m_data->currentPlayer << ", his skin : " << PlayerData::GetTextureName((PlayerData::PlayerSkin)m_data->players[m_data->currentPlayer].skin) << std::endl;
 					
-					PlayerData::PlayerSkin skin = m_data->gameData->m_playerDataList[m_data->players[m_data->currentPlayer].id].GetPlayerSkin();				
+					PlayerData::PlayerSkin skin = (PlayerData::PlayerSkin) m_data->players[m_data->currentPlayer].skin;
 					
 					switch (skin)
 					{
