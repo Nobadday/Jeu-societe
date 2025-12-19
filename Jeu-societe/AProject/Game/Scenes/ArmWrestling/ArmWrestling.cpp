@@ -53,6 +53,49 @@ void ArmWrestling::Load(void)
 	m_transition.SetTransition(TransitionClass::FADED_IN);
 	m_transition.PlayTransition();
 
+
+
+	for (int i = 0; i < 2; i++)
+	{
+
+		m_playerIcones[i].setTexture(*m_gameData->m_assetManager->GetAsset<TextureAnimated>("Icone", AssetManager::TEXTURE_ANIMATED));
+
+		m_playerIcones[i].setOrigin(sf::Vector2f(0.5f, 0.5f));
+
+		switch (m_gameData->m_playerDataList[i].GetPlayerSkin())
+		{
+			case PlayerData::CHARACTER_1_1:
+				m_playerIcones[i].SetAnimation("Perso1-1");
+				break;
+			case PlayerData::CHARACTER_1_2:
+				m_playerIcones[i].SetAnimation("Perso1-2");
+				break;
+			case PlayerData::CHARACTER_2_1:
+				m_playerIcones[i].SetAnimation("Perso2-1");
+				break;
+			case PlayerData::CHARACTER_2_2:
+				m_playerIcones[i].SetAnimation("Perso2-2");
+				break;
+			case PlayerData::CHARACTER_3_1:
+				m_playerIcones[i].SetAnimation("Perso3-1");
+				break;
+			case PlayerData::CHARACTER_3_2:
+				m_playerIcones[i].SetAnimation("Perso3-2");
+				break;
+			case PlayerData::CHARACTER_4_1:
+				m_playerIcones[i].SetAnimation("Perso4-1");
+				break;
+			case PlayerData::CHARACTER_4_2:
+				m_playerIcones[i].SetAnimation("Perso4-2");
+				break;
+			default:
+				break;
+		}
+	}
+
+	m_playerIcones[0].setPosition(sf::Vector2f(SCREEN_WIDTH * 0.1f, SCREEN_HEIGHT * 0.1f));
+	m_playerIcones[1].setPosition(sf::Vector2f(SCREEN_WIDTH * 0.9f, SCREEN_HEIGHT * 0.1f));
+
 	m_state = INTRO;
 }
 
@@ -226,6 +269,11 @@ void ArmWrestling::Draw(sf::RenderWindow& _renderWindow)
 
 	bWindow->draw(m_background);
 	bWindow->draw(m_playerArms);
+
+	for (auto& it : m_playerIcones)
+	{
+		bWindow->draw(it);
+	}
 
 	_renderWindow.draw(m_timerText);
 	switch (m_state)
