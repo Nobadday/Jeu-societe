@@ -1,5 +1,6 @@
 ﻿#include "Warmup.hpp"
 
+#define CADRE_OUTLINE_THICKNESS 20.f
 
 void Warmup::Load(void)
 {
@@ -14,16 +15,18 @@ void Warmup::Load(void)
 		m_data->playersReadyVec[i] = false;
 	}
 
-	m_data->text.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("BadFont"));
-	m_data->buttonText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("BadFont"));
-	m_data->text.setCharacterSize(50u);
-	m_data->buttonText.setCharacterSize(50u);
-	m_data->text.setPosition({ SCREEN_WIDTH / 2.f , SCREEN_HEIGHT * 0.8f });
-	m_data->buttonText.SetCharactersPerLine(17);
 	m_data->text.setOrigin({ 0.6f,0.8f });
-	//m_data->buttonText.setOrigin({ 0.6f,0.8f });
-	m_data->text.setString("Press button to be ready");
-
+	m_data->text.setPosition({ SCREEN_WIDTH /2.f, SCREEN_HEIGHT * 0.8f });
+	m_data->buttonText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("BadFont"));
+	m_data->buttonText.setCharacterSize(50u);
+	m_data->text.setCharacterSize(50u);
+	m_data->text.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("BadFont"));
+	m_data->text.setOutlineColor(sf::Color::Black);
+	m_data->text.setOutlineThickness(1.5f);
+	m_data->buttonText.setOutlineColor(sf::Color::Black);
+	m_data->buttonText.setOutlineThickness(1.5f);
+	m_data->text.setString("Press any button to be ready");
+	m_data->buttonSpr.setOrigin({ 0.0f,0.5f });
 
 	#pragma region Icons
 	m_data->background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("Background", AssetManager::AssetType::TEXTURE));
@@ -44,7 +47,10 @@ void Warmup::Load(void)
 	m_data->charaAvaible.push_back("Perso3-2");
 	m_data->charaAvaible.push_back("Perso4-2");
 	#pragma endregion
-	m_data->scaleVid = { 0.75f,0.75f };
+	m_data->scaleVid = { 0.73f,0.73f };
+	//m_data->backgroundShape.setFillColor(sf::Color(0, 0, 0, 255));
+	m_data->backgroundShape.setFillColor(sf::Color(50, 50, 50, 220));
+	m_data->backgroundShape.setSize({ (float)SCREEN_WIDTH * m_data->scaleVid.x + 2 * CADRE_OUTLINE_THICKNESS, (float)SCREEN_HEIGHT * m_data->scaleVid.y  +  2 * CADRE_OUTLINE_THICKNESS });
 
 	m_data->buttonSpr.setTexture((*m_data->gameData->m_assetManager->GetAsset<TextureAtlas>("Input", AssetManager::AssetType::TEXTURE_ATLAS)));
 	if (m_data->gameData->m_nextScene == "rockPaperSizor")
@@ -87,7 +93,7 @@ void Warmup::Load(void)
 	{
 		m_data->videoPlayer.loadFromFile("Assets/Video/RuRoul.mov");
 
-		m_data->stringOfButton.push_back("Russian Roulette\n\nPress button to shoot. Be lucky to survive !");
+		m_data->stringOfButton.push_back("Russian Roulette\n\nPress any button to shoot. Be lucky to survive !");
 	}
 	else
 	{
@@ -96,6 +102,7 @@ void Warmup::Load(void)
 	}
 
 	m_data->transition.PlayTransition();
+	m_data->audio->PlayMusicTransition("Warm",true, FADED_MIX);
 }
 
 void Warmup::Unload(void)
@@ -171,9 +178,9 @@ void Warmup::Update(float _deltaTime)
 		case TRANS_2:
 			
 			m_data->transition.Update(_deltaTime);
-
 			if (m_data->transition.IsFinished())
 			{
+				m_data->audio->PlayMusicTransition("MiniGameMusic", true, FADED_MIX);
 				ChangeScene(m_data->gameData->m_nextScene);
 			}			
 			break;
@@ -186,8 +193,6 @@ void Warmup::Draw(sf::RenderWindow& _renderWindow)
 	bWindow->draw(m_data->background);
 	PrintIcons(bWindow);
 
-
-
 	switch (m_data->state)
 	{
 		case TRANS_1:
@@ -197,19 +202,23 @@ void Warmup::Draw(sf::RenderWindow& _renderWindow)
 
 		case VIDEO:
 		{
-			_renderWindow.draw(m_data->text);
+			bWindow->draw(m_data->text);
+			
 			PrintButtons(bWindow);
 
 			//Video
 			sf::Sprite vid = m_data->videoPlayer.getSprite();
 			vid.setScale(m_data->scaleVid.x, m_data->scaleVid.y);
-			_renderWindow.draw(vid);
+			vid.setPosition({ CADRE_OUTLINE_THICKNESS, CADRE_OUTLINE_THICKNESS });
+			bWindow->draw(m_data->backgroundShape);
+			bWindow->draw(vid);
 		}
 		break;
 
 		case TRANS_2:
 
 			m_data->transition.Draw(bWindow);
+
 			break;
 	}
 }
@@ -243,9 +252,15 @@ void Warmup::PrintIcons(sfMod::RenderWindow* _renderWindow)
 void Warmup::PrintButtons(sfMod::RenderWindow* _renderWindow)
 {
 	//Title of the minigame
-	m_data->buttonText.setPosition({ SCREEN_WIDTH * 0.76f, SCREEN_HEIGHT * 0.1f });
+	m_data->buttonText.setOrigin({ 0.0f,0.0f });
+	m_data->buttonText.setPosition({ SCREEN_WIDTH * 0.76f, SCREEN_HEIGHT * 0.05f });
+	m_data->buttonText.SetCharactersPerLine(17);
 	m_data->buttonText.setString(m_data->stringOfButton[0]);
 	_renderWindow->draw(m_data->buttonText);
+
+	m_data->buttonText.setOrigin({ 0.0f,0.8f });
+
+	m_data->buttonText.SetCharactersPerLine(9);
 
 	std::cout << "size of string of button : " << m_data->stringOfButton.size() << std::endl;
 	if (m_data->stringOfButton.size() > 1)
@@ -254,13 +269,10 @@ void Warmup::PrintButtons(sfMod::RenderWindow* _renderWindow)
 		{
 			std::cout << "Drawing button " << i << " name : " << m_data->buttonName[i - 1] << " with string : " << m_data->stringOfButton[i] << std::endl;
 
-
-			//m_data->buttonText.setString(m_data->buttonName[i - 1] + "\n\n" + m_data->stringOfButton[i]);
 			m_data->buttonSpr.SetTextureFrame(m_data->buttonName[i - 1]);
 			m_data->buttonSpr.setPosition({ SCREEN_WIDTH * 0.76f, SCREEN_HEIGHT / 3.f + i * 100.f });
 			_renderWindow->draw(m_data->buttonSpr);
 
-			//m_data->buttonSpr.setPosition({ SCREEN_WIDTH * 0.8f, SCREEN_HEIGHT / 3.f + i * 100.f });
 			m_data->buttonText.setString(m_data->stringOfButton[i]);
 			m_data->buttonText.setPosition({ SCREEN_WIDTH * 0.85f, SCREEN_HEIGHT / 3.f + i * 100.f });
 			_renderWindow->draw(m_data->buttonText);

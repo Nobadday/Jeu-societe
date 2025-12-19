@@ -73,6 +73,8 @@ void Menu::LoadUI(void)
 	m_data->ui.buttonMap["creditsBtn"].setScale({ 0.8f,0.8f });
 
 	m_data->ui.playerCount.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("MenuFont"));
+	m_data->ui.playerCount.setOutlineColor(sf::Color::Black);
+	m_data->ui.playerCount.setOutlineThickness(1.5f);
 	m_data->ui.playerCount.setCharacterSize(200u);
 	m_data->ui.playerCount.setPosition({ SCREEN_WIDTH / 2 , SCREEN_HEIGHT / 2 });
 	//This font sucks bro

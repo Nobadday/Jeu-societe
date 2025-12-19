@@ -20,6 +20,7 @@ struct TransitionSettings
 	float transitionDuration;
 	float timer;
 	TransitionType tansitionType;
+	bool loop; // Ajout du membre manquant
 };
 
 
@@ -70,7 +71,7 @@ public:
 	void TogglePauseMusic(void);
 	void StopMusic(void);
 
-	
+	bool IsTransitionFinished(void) const;
 
 private:
 	std::vector< sf::Sound> m_soundVec;

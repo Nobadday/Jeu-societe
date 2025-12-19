@@ -25,6 +25,7 @@ private:
 		SpriteAtlas buttonSpr;
 		
 		sf::Sprite background;
+		
 		sf::RectangleShape backgroundShape;
 
 

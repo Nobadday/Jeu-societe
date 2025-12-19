@@ -83,7 +83,7 @@ void LoadingScreen::Load(void)
 
     if (m_audioEngine->GetMusicName() != "")
     {
-        m_audioEngine->PlayMusicTransition("Plato1", true);
+        m_audioEngine->PlayMusicTransition("Plato1", true , false, 5.0f, FADED_MIX);
     }
     else
     {

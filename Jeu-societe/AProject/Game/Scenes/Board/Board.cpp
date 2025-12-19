@@ -16,6 +16,8 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 
 	progress.store(0.1f);
 
+	m_data->state = INTRO;
+
 	// Configuration des éléments UI
 	m_data->HudLBM.text.setFont(*m_gameData->m_assetManager->GetAsset<sf::Font>("BoardFont", AssetManager::AssetType::FONT));
 	m_data->HudLBM.sprite.setTexture(*m_gameData->m_assetManager->GetAsset<TextureAnimated>("Anim_card", AssetManager::AssetType::TEXTURE_ANIMATED));
@@ -33,7 +35,6 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	m_data->posCase = layer.GetObjects();
 
 	m_data->players.resize(m_gameData->m_playerDataList.size());
-	m_data->state = INTRO;
 
 	m_data->icone.setTexture(*m_gameData->m_assetManager->GetAsset<TextureAnimated>("Icone", AssetManager::AssetType::TEXTURE_ANIMATED));
 	m_data->icone.setOrigin({ 0.5f,1 });
@@ -232,10 +233,10 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	progress.store(0.95f);
 
 	// Configuration des animateurs
-	m_data->animator.Modify(1.0f, 60.0f, false, 1.0f);
+	m_data->animator.Modify(1.0f, 240.f, false, 1.0f);
 	//m_data->animator.SetSpeed(0.5f);
 
-	m_data->animator2.Modify(1.0f, 60.0f, false, 1.0f);
+	m_data->animator2.Modify(1.0f, 240.f, false, 1.0f);
 	m_data->animator.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::LINEAR);
 	m_data->animator2.SetAnimationEasing(anim::Animator::GOTO, anim::Easing::LINEAR);
 	m_data->animator.End();
@@ -272,6 +273,8 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	m_data->texteDisplay.fadeInDuration = 0.5f;   // 0.5 seconde pour apparaître
 	m_data->texteDisplay.fadeOutDuration = 0.5f;  // 0.5 seconde pour disparaître
 	m_data->texteDisplay.fadeTimer = 0.0f;
+
+	m_data->song1 = false;
 
 	progress.store(1.0f);
 }
@@ -480,6 +483,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 			m_gameData->AddPlayerPlaying((m_data->currentPlayerIndex + 1) % m_data->players.size());
 			m_gameData->m_nextScene = "rockPaperSizor";
 			m_gameData->m_renderWindow->ResetView();
+			m_data->song1 = false;
 			ChangeScene("Warmup", true);
 			return;
 		}
@@ -493,6 +497,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 			m_gameData->AddPlayerPlaying((m_data->currentPlayerIndex + 1) % m_data->players.size());
 			m_gameData->m_nextScene = "ArmWrestling";
 			m_gameData->m_renderWindow->ResetView();
+			m_data->song1 = false;
 			ChangeScene("Warmup", true);
 			return;
 		}
@@ -506,6 +511,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 				m_gameData->AddPlayerPlaying(i);
 			m_gameData->m_nextScene = "FlagGame";
 			m_gameData->m_renderWindow->ResetView();
+			m_data->song1 = false;
 			ChangeScene("Warmup", true);
 			return;
 		}
@@ -519,6 +525,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 				m_gameData->AddPlayerPlaying(i);
 			m_gameData->m_nextScene = "RandCard";
 			m_gameData->m_renderWindow->ResetView();
+			m_data->song1 = false;
 			ChangeScene("Warmup", true);
 			return;
 		}
@@ -527,23 +534,32 @@ void BaseGame::PollEvent(sf::Event& _event)
 		if (_event.key.code == sf::Keyboard::Numpad5)
 		{
 			std::cout << "[DEBUG] Lancement Roulette Russe" << std::endl;
-			m_gameData->InitMiniGamePlayer();
+		 m_gameData->InitMiniGamePlayer();
 			for (int i = 0; i < m_data->players.size(); i++)
 				m_gameData->AddPlayerPlaying(i);
 			m_gameData->m_nextScene = "RuRoul";
 			m_gameData->m_renderWindow->ResetView();
+			m_data->song1 = false;
 			ChangeScene("Warmup", true);
 			return;
 		}
 
-		// DEBUG: Touche Num6 - Forcer un 6 au prochain lancer
+		// DEBUG: Touche Num6 - Forcer un 6 au prochain lancer (fonctionne aussi pour bridge et end)
 		if (_event.key.code == sf::Keyboard::Numpad6)
 		{
 			std::cout << "[DEBUG] Prochain lancer forcé à 6" << std::endl;
-			if (m_data->state != DICE_ANIMATION && m_data->state != WIN && 
+			if (m_data->state != DICE_ANIMATION && m_data->state != WIN &&
 				m_data->state != DUEL && m_data->state != BATTLE_ACTION)
 			{
 				ProcessDiceRoll(6);
+			}
+			else if (m_data->state == WAITING_BRIDGE_ROLL)
+			{
+				ProcessBridgeRoll();
+			}
+			else if (m_data->state == WAITING_FIN_ROLL)
+			{
+				ProcessFinRoll();
 			}
 			return;
 		}
@@ -553,7 +569,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 		{
 			std::cout << "[DEBUG] Téléportation après le pont" << std::endl;
 			auto& player = m_data->players[m_data->currentPlayerIndex];
-			
+
 			// Trouver la case après le pont (case 19)
 			for (int i = 0; i < m_data->posCase.size(); i++)
 			{
@@ -564,10 +580,10 @@ void BaseGame::PollEvent(sf::Event& _event)
 					player.boardPosition = mapObject.GetPosition() + sf::Vector2f{ 0.f, 0.f };
 					player.pendingMovement = 0;
 					player.currentPathId = -1;
-					
+
 					// CORRECTION : Activer les effets de fumée
 					m_data->smokeOff = true;
-					
+
 					// Transformer le personnage si ce n'est pas déjà fait
 					switch (m_gameData->m_playerDataList[m_data->currentPlayerIndex].GetPlayerSkin())
 					{
@@ -590,10 +606,10 @@ void BaseGame::PollEvent(sf::Event& _event)
 					default:
 						break;
 					}
-					
+
 					player.sprite.setTexture(player.texture);
 					player.sprite.SetAnimation("Idle");
-					
+
 					ShowTextDisplay("DEBUG: Teleported after bridge!", 2.0f);
 					UpdateCameraToShowAllPlayers();
 					break;
@@ -607,7 +623,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 		{
 			std::cout << "[DEBUG] Téléportation sur le pont" << std::endl;
 			auto& player = m_data->players[m_data->currentPlayerIndex];
-			
+
 			// Trouver la case du pont (case 19)
 			for (int i = 0; i < m_data->posCase.size(); i++)
 			{
@@ -619,7 +635,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 					player.pendingMovement = 0;
 					player.currentPathId = -1;
 					player.sprite.SetAnimation("Idle");
-					
+
 					ShowTextDisplay("DEBUG: Teleported to bridge!", 2.0f);
 					UpdateCameraToShowAllPlayers();
 					break;
@@ -633,7 +649,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 		{
 			std::cout << "[DEBUG] Téléportation à la ligne d'arrivée" << std::endl;
 			auto& player = m_data->players[m_data->currentPlayerIndex];
-			
+
 			// Trouver la case de fin
 			for (int i = 0; i < m_data->posCase.size(); i++)
 			{
@@ -647,7 +663,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 						player.pendingMovement = 0;
 						player.currentPathId = -1;
 						player.sprite.SetAnimation("Idle");
-						
+
 						ShowTextDisplay("DEBUG: Teleported to finish line!", 2.0f);
 						UpdateCameraToShowAllPlayers();
 						break;
@@ -778,21 +794,58 @@ void BaseGame::PollEvent(sf::Event& _event)
 
 void BaseGame::Update(float _deltaTime)
 {
-	if (m_data->players[m_data->currentPlayerIndex].boardPosition.x > m_data->posCase[19].GetPosition().x + 100)
-	{
-		if (m_audioEngine->GetMusicName() == "Plato1")
-		{
-			//m_audioEngine->PlayMusicTransition("Plato2");
-		}
-	}
-	else
-	{
-		if (m_audioEngine->GetMusicName() == "Plato2")
-		{
-			//m_audioEngine->PlayMusicTransition("Plato1");
-		}
-	}
+	// CORRECTION : Toujours mettre à jour les transitions audio
+	//m_audioEngine->UpdateMusicTransition(_deltaTime);
 
+	// Gestion des transitions musicales entre Plato1 et Plato2
+	// Condition : joueur actuel a dépassé le pont (position X > case 19 + 100)
+	if (m_data->players[m_data->currentPlayerIndex].boardPosition.x > m_data->posCase[19].GetPosition().x + 100 && m_data->song1)
+	{
+		// Ne déclencher la transition que si elle est terminée ET que la musique actuelle n'est pas déjà "Plato2"
+		if (m_audioEngine->IsTransitionFinished() && m_audioEngine->GetMusicName() != "Plato2")
+		{
+			std::cout << "Transition vers Plato2 depuis : " << m_audioEngine->GetMusicName() << std::endl;
+			m_audioEngine->PlayMusicTransition("Plato2", true, false, 5.0f, FADED_MIX);
+
+			// Transformation du personnage
+			switch (m_gameData->m_playerDataList[m_data->currentPlayerIndex].GetPlayerSkin())
+			{
+			case PlayerData::CHARACTER_1_1:
+				m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_1_2);
+				m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso1-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+				break;
+			case PlayerData::CHARACTER_2_1:
+				m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_2_2);
+				m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso2-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+				break;
+			case PlayerData::CHARACTER_3_1:
+				m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_3_2);
+				m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso3-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+				break;
+			case PlayerData::CHARACTER_4_1:
+				m_gameData->m_playerDataList[m_data->currentPlayerIndex].SetPlayerSkin(PlayerData::CHARACTER_4_2);
+				m_data->players[m_data->currentPlayerIndex].texture = *m_gameData->m_assetManager->GetAsset<TextureAnimated>("Perso4-2", AssetManager::AssetType::TEXTURE_ANIMATED);
+				break;
+			default:
+				break;
+			}
+
+			m_data->smokeOff = true;
+			m_data->song1 = false;
+		}
+	}
+	// Condition : joueur actuel est avant ou sur le pont (position X <= case 19 + 100)
+	else if (!m_data->song1 && m_data->players[m_data->currentPlayerIndex].boardPosition.x <= m_data->posCase[19].GetPosition().x + 100)
+	{
+		// Ne déclencher la transition que si elle est terminée ET que la musique actuelle n'est pas déjà "Plato1"
+		if (m_audioEngine->IsTransitionFinished() && m_audioEngine->GetMusicName() != "Plato1")
+		{
+			std::cout << "Transition vers Plato1 depuis : " << m_audioEngine->GetMusicName() << std::endl;
+			m_audioEngine->PlayMusicTransition("Plato1", true, false, 5.0f, FADED_MIX);
+			m_data->song1 = true;
+		}
+	}
+	std::cout << "Transition vers Plato1 depuis : " << m_audioEngine->GetMusicName() << std::endl;
 	// Mise à jour des animations
 	UpdateLBM(_deltaTime);
 
@@ -828,7 +881,7 @@ void BaseGame::Update(float _deltaTime)
 			}
 			break;
 		}
-			
+
 		case TexteDisplay::FADE_DISPLAY:
 		{
 			// Affichage complet (alpha = 255)
@@ -1298,7 +1351,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 	switch (m_data->state)
 	{
 	case START:
-		ShowTextDisplay("Roll the dice to determine turn order!\nPress A to roll it", 5.0f);
+		ShowTextDisplay("Roll the dice to determine turn order!\nPress A to roll it", 4.0f);
 		break;
 
 	case PLAY:
@@ -1307,7 +1360,7 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 		m_data->pathChoices.clear();
 		m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
 		//m_data->arrow.setRotation(315);
-		ShowTextDisplay(m_data->players[m_data->currentPlayerIndex].playeur.getString() + " turn!\nPress A to roll the dice", 3.0f);
+		ShowTextDisplay(m_data->players[m_data->currentPlayerIndex].playeur.getString() + " turn!\nPress A to roll the dice", 2.5f);
 		break;
 	case WIN:
 		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
@@ -1440,15 +1493,15 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 
 	case WAITING_PATH_CHOICE:
 		// Attente de l'entrée du joueur
-		ShowTextDisplay("Choose your path!\nMove joystick Up or Down", 3.5f);
+		ShowTextDisplay("Choose your path!\nMove joystick Up or Down", 3.0f);
 		break;
 
 	case WAITING_BRIDGE_ROLL:
-		ShowTextDisplay("Bridge ahead!\nRoll the dice to cross\n(Need 4 or more)", 4.f);
+		ShowTextDisplay("Bridge ahead!\nRoll the dice to cross\n(Need 4 or more)", 3.5f);
 		break;
 
 	case WAITING_FIN_ROLL:
-		ShowTextDisplay("Finish line!\nRoll the dice to win\n(Need 5 or 6)", 4.f);
+		ShowTextDisplay("Finish line!\nRoll the dice to win\n(Need 5 or 6)", 3.5f);
 		break;
 
 	case WIN_DEPLACEMENT:
@@ -1624,7 +1677,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 					m_data->smokeOff = true;
 
 					m_data->animator.SetSpeed(0.35f);
-					m_data->animator.SetDuration(0.5f);
+					//m_data->animator.SetDuration(0.5f);
 
 					// Change le skin du personnage (transformation)
 					switch (m_gameData->m_playerDataList[m_data->currentPlayerIndex].GetPlayerSkin())
@@ -1719,7 +1772,8 @@ void BaseGame::BoardStateUpdate(float _dt)
 
 					// Prépare la liste des joueurs triés par position X décroissante
 					std::vector<std::pair<int, float>> playerPositions;
-					for (int i = 0; i < m_data->players.size(); i++)
+					for (int i = 0; i < m_data->players.size();
+						i++)
 					{
 						playerPositions.push_back({ i, m_data->players[i].boardPosition.x });
 					}
@@ -1808,6 +1862,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 
 			SetBoardState(WIN);
 			m_gameData->m_renderWindow->ResetView();
+			m_data->song1 = false;
 			ChangeScene(RandomBattle(), true);
 		}
 
@@ -1823,6 +1878,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 
 			SetBoardState(WIN);
 			m_gameData->m_renderWindow->ResetView();
+			m_data->song1 = false;
 			ChangeScene(RandomDuel(), true);
 		}
 
@@ -1904,7 +1960,7 @@ void BaseGame::BoardStateUpdate(float _dt)
 		break;
 	case END:
 		m_data->timerEnd -= _dt;
-		if (m_data->timerEnd <= 0 )
+		if (m_data->timerEnd <= 0)
 		{
 			if (!m_data->endActive)
 			{
@@ -1994,4 +2050,3 @@ std::string BaseGame::RandomBattle()
 	return "Warmup";
 }
 
-	

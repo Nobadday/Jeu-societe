@@ -22,6 +22,16 @@
             "name": "congratulation",
             "type": "Texture",
             "path": "Assets/Sprites/Podium/Congratulation.png"
+        },
+        {
+            "name" : "YaY",
+            "type" : "Sound Buffer",
+            "path" : "Assets/Sprites/Podium/YaY.wav"
+        },
+        {
+            "name" : "baloonPop",
+            "type" : "Sound Buffer",
+            "path" : "Assets/Sprites/Podium/BaloonPop.wav"
         }
     ]
 }

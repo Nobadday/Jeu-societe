@@ -73,6 +73,26 @@
             "name" : "Plato1",
             "type" : "Music",
             "path" :"Assets/Audio/Musics/Part1Plato.wav"
+        },
+        {
+            "name" : "Plato2",
+            "type" : "Music",
+            "path" :"Assets/Audio/Musics/Part2Plato.wav"
+        },
+        {
+            "name" : "MiniGameMusic",
+            "type" : "Music",
+            "path" :"Assets/Audio/Musics/Mini-Game.wav"
+        },
+        {
+            "name" : "Warm",
+            "type" : "Music",
+            "path" :"Assets/Audio/Musics/Warm.wav"
+        },
+        {
+            "name" : "Win",
+            "type" : "Music",
+            "path" :"Assets/Audio/Musics/Win.wav"
         }
     ]
 }
