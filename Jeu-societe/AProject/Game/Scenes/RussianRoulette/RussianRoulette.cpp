@@ -111,7 +111,7 @@ void RussianRoulette::Unload(void)
 
 void RussianRoulette::PollEvent(sf::Event& _event)
 {
-	int joyId = m_data->players[m_data->currentPlayer].id;
+	int joyId = m_data->gameData->m_playerDataList[m_data->players[m_data->currentPlayer].id].GetJoystickId();
 
 	switch (m_data->gameState)
 	{

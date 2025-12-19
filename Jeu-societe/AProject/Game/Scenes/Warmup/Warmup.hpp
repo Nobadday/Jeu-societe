@@ -36,6 +36,7 @@ private:
 		std::vector<std::string> charaAvaible;
 		std::vector<std::string> buttonName;
 		std::vector<std::string> stringOfButton;
+		std::vector<int> index;
 
 		HighResVideoPlayer videoPlayer;
 

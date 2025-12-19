@@ -10,9 +10,11 @@ void Warmup::Load(void)
 	m_data->audio = (AudioEngine*)m_data->gameData->m_audioEngine;
 
 	m_data->playersReadyVec.resize(m_data->gameData->m_gonnaPlayIndex.size());
+	m_data->index.resize(m_data->gameData->m_gonnaPlayIndex.size());
 	for (size_t i = 0; i < m_data->playersReadyVec.size(); i++)
 	{
 		m_data->playersReadyVec[i] = false;
+		m_data->index[i] = m_data->gameData->m_gonnaPlayIndex[i];
 	}
 
 	m_data->text.setOrigin({ 0.6f,0.8f });
@@ -126,7 +128,7 @@ void Warmup::PollEvent(sf::Event& _event)
 			int nbOfReadyPlayers = 0;
 			for (size_t i = 0; i < m_data->gameData->m_gonnaPlayIndex.size(); i++)
 			{
-				if (_event.joystickButton.joystickId == m_data->gameData->m_playerDataList[m_data->gameData->m_gonnaPlayIndex[i]].GetJoystickId())
+				if (_event.joystickButton.joystickId == m_data->gameData->m_playerDataList[m_data->index[i]].GetJoystickId())
 				{
 					m_data->playersReadyVec[i] = true;
 				}
@@ -234,7 +236,7 @@ void Warmup::PrintIcons(sfMod::RenderWindow* _renderWindow)
 	{
 		sf::Vector2f pos = { (float)(border + i * iconSpacing), SCREEN_HEIGHT - iconBounds.height};
 
-		PlayerData::PlayerSkin skin = m_data->gameData->m_playerDataList[i].GetPlayerSkin();
+		PlayerData::PlayerSkin skin = m_data->gameData->m_playerDataList[m_data->index[i]].GetPlayerSkin();
 		switch (skin)
 		{
 		case PlayerData::CHARACTER_1_1:
