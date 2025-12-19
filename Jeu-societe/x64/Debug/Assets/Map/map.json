@@ -26,30 +26,6 @@
         }, 
         {
          "draworder":"topdown",
-         "id":2,
-         "name":"fond",
-         "objects":[
-                {
-                 "gid":1,
-                 "height":1080,
-                 "id":76,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":9995,
-                 "x":-1812,
-                 "y":1084
-                }],
-         "opacity":1,
-         "parallaxx":0.5,
-         "type":"objectgroup",
-         "visible":true,
-         "x":0,
-         "y":0
-        }, 
-        {
-         "draworder":"topdown",
          "id":30,
          "name":"FondNuit",
          "objects":[
@@ -87,10 +63,34 @@
                  "visible":true,
                  "width":8000,
                  "x":896.6,
-                 "y":1084
+                 "y":1082
                 }],
          "opacity":1,
          "parallaxx":0.55,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":2,
+         "name":"fond",
+         "objects":[
+                {
+                 "gid":1,
+                 "height":1080,
+                 "id":376,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":6576,
+                 "x":-5673,
+                 "y":1082
+                }],
+         "opacity":1,
+         "parallaxx":0.5,
          "type":"objectgroup",
          "visible":true,
          "x":0,
@@ -1980,7 +1980,7 @@
          "y":0
         }],
  "nextlayerid":36,
- "nextobjectid":376,
+ "nextobjectid":377,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.2",

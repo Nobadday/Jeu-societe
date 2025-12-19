@@ -23,8 +23,6 @@ void RussianRoulette::Load(void)
 		});
 
 		std::cout << "player skin = " << m_data->players[i].skin << std::endl;
-
-
 	}
 
 	m_data->currentPlayer = 0;
@@ -48,8 +46,35 @@ void RussianRoulette::Load(void)
 
 
 
-	PlayerData::PlayerSkin skin = (PlayerData::PlayerSkin)m_data->players[0].skin;
-	m_data->iconsChara.SetAnimation(skin);
+	switch (m_data->gameData->m_playerDataList[0].GetPlayerSkin())
+	{
+	case PlayerData::CHARACTER_1_1:
+		m_data->iconsChara.SetAnimation("Perso1-1");
+		break;
+	case PlayerData::CHARACTER_1_2:
+		m_data->iconsChara.SetAnimation("Perso1-2");
+		break;
+	case PlayerData::CHARACTER_2_1:
+		m_data->iconsChara.SetAnimation("Perso2-1");
+		break;
+	case PlayerData::CHARACTER_2_2:
+		m_data->iconsChara.SetAnimation("Perso2-2");
+		break;
+	case PlayerData::CHARACTER_3_1:
+		m_data->iconsChara.SetAnimation("Perso3-1");
+		break;
+	case PlayerData::CHARACTER_3_2:
+		m_data->iconsChara.SetAnimation("Perso3-2");
+		break;
+	case PlayerData::CHARACTER_4_1:
+		m_data->iconsChara.SetAnimation("Perso4-1");
+		break;
+	case PlayerData::CHARACTER_4_2:
+		m_data->iconsChara.SetAnimation("Perso4-2");
+		break;
+	default:
+		break;
+	}
 
 	//m_data->iconsChara.SetAnimation(PlayerData::GetTextureName((PlayerData::PlayerSkin)m_data->players[0].skin));
 		
@@ -210,11 +235,37 @@ void RussianRoulette::Update(float _deltaTime)
 					}
 					std::cout << "Player : " << m_data->currentPlayer << ", his skin : " << PlayerData::GetTextureName((PlayerData::PlayerSkin)m_data->players[m_data->currentPlayer].skin) << std::endl;
 					
-					PlayerData::PlayerSkin skin = m_data->gameData->m_playerDataList[m_data->players[m_data->currentPlayer].id].GetPlayerSkin();
-					m_data->iconsChara.SetAnimation(skin);
+					PlayerData::PlayerSkin skin = m_data->gameData->m_playerDataList[m_data->players[m_data->currentPlayer].id].GetPlayerSkin();				
 					
-					
-					
+					switch (skin)
+					{
+					case PlayerData::CHARACTER_1_1:
+						m_data->iconsChara.SetAnimation("Perso1-1");
+						break;
+					case PlayerData::CHARACTER_1_2:
+						m_data->iconsChara.SetAnimation("Perso1-2");
+						break;
+					case PlayerData::CHARACTER_2_1:
+						m_data->iconsChara.SetAnimation("Perso2-1");
+						break;
+					case PlayerData::CHARACTER_2_2:
+						m_data->iconsChara.SetAnimation("Perso2-2");
+						break;
+					case PlayerData::CHARACTER_3_1:
+						m_data->iconsChara.SetAnimation("Perso3-1");
+						break;
+					case PlayerData::CHARACTER_3_2:
+						m_data->iconsChara.SetAnimation("Perso3-2");
+						break;
+					case PlayerData::CHARACTER_4_1:
+						m_data->iconsChara.SetAnimation("Perso4-1");
+						break;
+					case PlayerData::CHARACTER_4_2:
+						m_data->iconsChara.SetAnimation("Perso4-2");
+						break;
+					default:
+						break;
+					}
 					
 					//m_data->iconsChara.SetAnimation(PlayerData::GetTextureName((PlayerData::PlayerSkin)m_data->players[m_data->currentPlayer].skin));
 					//m_data->iconsChara.SetAnimation(m_data->iconsChara[m_data->players[m_data->currentPlayer].skin]);
