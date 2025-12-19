@@ -677,7 +677,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 	// ==================== FIN DEBUG KEYS ====================
 
 	// Gestion simplifiée des états d'attente de lancer
-	if (m_data->state == WAITING_FIN_ROLL and !m_data->texteDisplay.isActive)
+	if (m_data->state == WAITING_FIN_ROLL and !m_data->texteDisplay.isActive && m_data->currentDiceVideo->isFinish())
 	{
 		bool shouldRoll = false;
 		if (CheckPlayerInput(_event, shouldRoll) && shouldRoll)
@@ -687,7 +687,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 		return;
 	}
 
-	if (m_data->state == WAITING_BRIDGE_ROLL and !m_data->texteDisplay.isActive)
+	if (m_data->state == WAITING_BRIDGE_ROLL and !m_data->texteDisplay.isActive && m_data->currentDiceVideo->isFinish())
 	{
 		bool shouldRoll = false;
 		if (CheckPlayerInput(_event, shouldRoll) && shouldRoll)
