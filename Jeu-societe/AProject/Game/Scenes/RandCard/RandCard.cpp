@@ -128,7 +128,7 @@ void RandCard::PollEvent(sf::Event& _event)
 		{
 		case sf::Event::JoystickButtonPressed:
 
-			if (_event.joystickButton.joystickId == m_data->currentPlayer)
+			if (_event.joystickButton.joystickId == m_data->gameData->m_playerDataList[m_data->players[m_data->currentPlayer].id].GetJoystickId())
 			{
 				//Confirm choice
 				if (m_data->cardChosen != -1)
@@ -160,7 +160,7 @@ void RandCard::PollEvent(sf::Event& _event)
 			//U V joystick droite
 			//Z R pression des gachettes
 			//La croix povX povY
-			if (_event.joystickButton.joystickId == m_data->currentPlayer)
+			if (_event.joystickButton.joystickId == m_data->gameData->m_playerDataList[m_data->players[m_data->currentPlayer].id].GetJoystickId())
 			{
 
 				if (m_data->inputDelay > 0.1f)
