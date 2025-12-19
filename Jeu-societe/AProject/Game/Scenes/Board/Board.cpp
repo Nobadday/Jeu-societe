@@ -138,7 +138,7 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 	{
 		// Définir la couleur à rendre transparente (vert dans cet exemple)
 		m_data->chromaKeyShader.setUniform("keyColor", sf::Glsl::Vec3(0.0f, 1.0f, 0.0f)); // RGB vert
-		m_data->chromaKeyShader.setUniform("threshold", 0.5f); // Ajuster selon vos besoins
+		m_data->chromaKeyShader.setUniform("threshold", 0.7f); // Ajuster selon vos besoins
 	}
 
 	progress.store(0.6f);
@@ -548,18 +548,19 @@ void BaseGame::PollEvent(sf::Event& _event)
 		if (_event.key.code == sf::Keyboard::Numpad6)
 		{
 			std::cout << "[DEBUG] Prochain lancer forcé à 6" << std::endl;
-			if (m_data->state != DICE_ANIMATION && m_data->state != WIN &&
+			if (m_data->state != DICE_ANIMATION && m_data->state != WIN && 
+				m_data->state != WAITING_BRIDGE_ROLL && m_data->state != WAITING_FIN_ROLL &&
 				m_data->state != DUEL && m_data->state != BATTLE_ACTION)
 			{
 				ProcessDiceRoll(6);
 			}
 			else if (m_data->state == WAITING_BRIDGE_ROLL)
 			{
-				ProcessBridgeRoll();
+				ProcessBridgeRollD();
 			}
 			else if (m_data->state == WAITING_FIN_ROLL)
 			{
-				ProcessFinRoll();
+				ProcessFinRollD();
 			}
 			return;
 		}
@@ -610,7 +611,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 					player.sprite.setTexture(player.texture);
 					player.sprite.SetAnimation("Idle");
 
-					ShowTextDisplay("DEBUG: Teleported after bridge!", 2.0f);
+					//ShowTextDisplay("DEBUG: Teleported after bridge!", 2.0f);
 					UpdateCameraToShowAllPlayers();
 					break;
 				}
@@ -636,7 +637,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 					player.currentPathId = -1;
 					player.sprite.SetAnimation("Idle");
 
-					ShowTextDisplay("DEBUG: Teleported to bridge!", 2.0f);
+					//ShowTextDisplay("DEBUG: Teleported to bridge!", 2.0f);
 					UpdateCameraToShowAllPlayers();
 					break;
 				}
@@ -664,7 +665,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 						player.currentPathId = -1;
 						player.sprite.SetAnimation("Idle");
 
-						ShowTextDisplay("DEBUG: Teleported to finish line!", 2.0f);
+						//ShowTextDisplay("DEBUG: Teleported to finish line!", 2.0f);
 						UpdateCameraToShowAllPlayers();
 						break;
 					}
@@ -765,7 +766,9 @@ void BaseGame::PollEvent(sf::Event& _event)
 	// Gestion du lancer de dé principal
 	if (_event.type == sf::Event::JoystickButtonPressed and !m_data->texteDisplay.isActive)
 	{
-		if (m_gameData->m_playerDataList[m_data->currentPlayerIndex].m_joystickId == _event.joystickButton.joystickId &&
+		if (m_gameData->m_playerDataList[m_data->currentPlayerIndex].m_joystickId == _event.joystickButton.joystickId 
+			&& m_data->animator.IsFinished() && m_data->currentDiceVideo->isFinish() &&
+			m_data->state != WAITING_BRIDGE_ROLL && m_data->state != WAITING_FIN_ROLL &&
 			m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE &&
 			m_data->state != DICE_ANIMATION && m_data->state != DUEL && m_data->state != BATTLE_ACTION
 			&& m_data->state != INTRO)
@@ -781,7 +784,8 @@ void BaseGame::PollEvent(sf::Event& _event)
 	// Gestion des entrées clavier (DEBUG)
 	if (_event.type == sf::Event::KeyPressed and !m_data->texteDisplay.isActive)
 	{
-		if (_event.key.code == sf::Keyboard::Space && m_data->animator.IsFinished() &&
+		if (_event.key.code == sf::Keyboard::Space && m_data->animator.IsFinished() && m_data->currentDiceVideo->isFinish()
+			&& m_data->state != WAITING_BRIDGE_ROLL && m_data->state != WAITING_FIN_ROLL &&
 			m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE &&
 			m_data->state != DICE_ANIMATION && m_data->state != DUEL && m_data->state != BATTLE_ACTION
 			&& m_data->state != INTRO)
@@ -799,7 +803,7 @@ void BaseGame::Update(float _deltaTime)
 
 	// Gestion des transitions musicales entre Plato1 et Plato2
 	// Condition : joueur actuel a dépassé le pont (position X > case 19 + 100)
-	if (m_data->players[m_data->currentPlayerIndex].boardPosition.x > m_data->posCase[19].GetPosition().x + 100 && m_data->song1)
+	if (m_data->players[m_data->currentPlayerIndex].boardPosition.x > m_data->posCase[19].GetPosition().x + 100 )
 	{
 		// Ne déclencher la transition que si elle est terminée ET que la musique actuelle n'est pas déjà "Plato2"
 		if (m_audioEngine->IsTransitionFinished() && m_audioEngine->GetMusicName() != "Plato2")

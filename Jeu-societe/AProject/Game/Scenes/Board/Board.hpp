@@ -341,7 +341,11 @@ class BaseGame : public SceneBase
 
 		void ProcessBridgeRoll();
 
+		void ProcessBridgeRollD();
+
 		void ProcessFinRoll();
+
+		void ProcessFinRollD();
 
 		void SwapPlayers(int _swap);
 

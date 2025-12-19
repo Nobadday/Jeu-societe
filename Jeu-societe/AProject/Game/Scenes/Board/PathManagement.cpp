@@ -181,8 +181,53 @@ void BaseGame::ProcessBridgeRoll()
 	}
 }
 
+void BaseGame::ProcessBridgeRollD()
+{
+	auto& player = m_data->players[m_data->currentPlayerIndex];
+
+	int rando =  6 ;
+	std::cout << "Bridge Roll: " << rando << std::endl;
+
+	m_data->diceResult = rando;
+	player.waitingBridgeRoll = false;
+
+	// Lancer l'animation vidéo du dé
+	if (rando >= 1 && rando <= 6)
+	{
+		m_data->currentDiceVideo = m_data->diceVideos[rando - 1];
+		m_data->currentDiceVideo->play();
+		m_data->diceAnimationPlaying = true;
+
+		// Nouveau état pour l'animation du dé sur le pont
+		m_data->state = DICE_ANIMATION_BRIDGE;
+	}
+}
+
+
 // Méthode pour traiter le lancer de dé sur la ligne d'arrivée
 void BaseGame::ProcessFinRoll()
+{
+	auto& player = m_data->players[m_data->currentPlayerIndex];
+
+	int rando = randmt::RandomInt(1, 6);
+	std::cout << "Fin Roll: " << rando << std::endl;
+
+	m_data->diceResult = rando;
+	player.waitingBridgeRoll = false;
+
+	// Lancer l'animation vidéo du dé
+	if (rando >= 1 && rando <= 6)
+	{
+		m_data->currentDiceVideo = m_data->diceVideos[rando - 1];
+		m_data->currentDiceVideo->play();
+		m_data->diceAnimationPlaying = true;
+
+		// Nouveau état pour l'animation du dé sur la ligne d'arrivée
+		m_data->state = DICE_ANIMATION_END;
+	}
+}
+
+void BaseGame::ProcessFinRollD()
 {
 	auto& player = m_data->players[m_data->currentPlayerIndex];
 
