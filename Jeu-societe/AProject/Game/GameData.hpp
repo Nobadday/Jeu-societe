@@ -3,7 +3,6 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
-
 #include "PlayerData.hpp"
 
 #include "../Utilities/AssetManager.hpp"
@@ -11,6 +10,9 @@
 #include "../Utilities/AudioEngine/AudioEngine.hpp"
 
 #include "../Utilities/BetterWindow/BetterWindow.hpp"
+
+// Forward declaration de l'enum pour éviter les dépendances circulaires
+enum class BotDifficulty;
 
 class Tiled;
 
@@ -32,6 +34,14 @@ class GameData
 
 		Tiled* m_tile;
 
+		struct BotConfig
+		{
+			bool enabled;
+			BotDifficulty difficulty;
+		};
+
+		std::vector<BotConfig> m_botConfigs;
+
 	public:
 		GameData(void);
 
@@ -50,6 +60,8 @@ class GameData
 
 		bool IsPlayerParticipating(int _playerID);
 
+		// Méthode helper - DÉCLARATION SEULEMENT (l'implémentation doit être dans le .cpp)
+		void ConfigureBot(int playerIndex, bool isBot, BotDifficulty difficulty);
 };
 
 #endif 

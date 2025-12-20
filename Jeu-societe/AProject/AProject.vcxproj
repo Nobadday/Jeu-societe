@@ -161,6 +161,7 @@
     <ClCompile Include="Animation\Graphics\TextureAtlas.cpp" />
     <ClCompile Include="Animation\Utilities\Bezier.cpp" />
     <ClCompile Include="Animation\Utilities\Math.cpp" />
+    <ClCompile Include="Game\Bot\BotAI.cpp" />
     <ClCompile Include="Game\GameData.cpp" />
     <ClCompile Include="Game\PlayerData.cpp" />
     <ClCompile Include="Game\Scenes\ArmWrestling\ArmWrestling.cpp" />
@@ -229,6 +230,7 @@
     <ClInclude Include="Animation\Graphics\TextureAtlas.hpp" />
     <ClInclude Include="Animation\Utilities\Bezier.hpp" />
     <ClInclude Include="Animation\Utilities\Math.hpp" />
+    <ClInclude Include="Game\Bot\BotAI.hpp" />
     <ClInclude Include="Game\GameData.hpp" />
     <ClInclude Include="Game\PlayerData.hpp" />
     <ClInclude Include="Game\Scenes\ArmWrestling\ArmWrestling.hpp" />

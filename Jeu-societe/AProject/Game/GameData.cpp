@@ -1,4 +1,5 @@
 #include "GameData.hpp"
+#include "Bot/BotAI.hpp"
 
 GameData::GameData() :
 m_renderWindow(NULL),
@@ -11,6 +12,15 @@ m_winIndex()
 
 }
 
+
+void GameData::ConfigureBot(int playerIndex, bool isBot, BotDifficulty difficulty)
+{
+	if (playerIndex >= static_cast<int>(m_botConfigs.size()))
+		m_botConfigs.resize(playerIndex + 1);
+
+	m_botConfigs[playerIndex].enabled = isBot;
+	m_botConfigs[playerIndex].difficulty = difficulty;
+}
 
 
 void GameData::InitMiniGamePlayer() 

@@ -1,5 +1,7 @@
 #include "Board.hpp"
 
+
+
 constexpr unsigned int hash(const char* str, int h);
 
 constexpr unsigned int hash(const char* str, int h = 0)
@@ -203,7 +205,22 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 		m_data->players[i].pendingMovement = 0;
 		m_data->players[i].currentPathId = -1;
 
-		progress.store(0.6f + (0.2f * (i + 1) / m_data->players.size()));
+		if (!sf::Joystick::isConnected(m_gameData->m_playerDataList[i].m_joystickId))
+		{
+			m_data->players[i].isBot = true;
+
+			// Choisir difficulté (vous pouvez ajouter un menu de configuration)
+			BotDifficulty difficulty = BotDifficulty::MEDIUM;
+			m_data->players[i].botAI = new BotAI(i, difficulty);
+
+			std::cout << "Player " << (i + 1) << " is a BOT (Difficulty: MEDIUM)" << std::endl;
+		}
+		else
+		{
+			m_data->players[i].isBot = false;
+			m_data->players[i].botAI = nullptr;
+			std::cout << "Player " << (i + 1) << " is HUMAN" << std::endl;
+		}
 	}
 
 	m_data->currentPlayerIndex = 0;
@@ -985,6 +1002,8 @@ void BaseGame::Update(float _deltaTime)
 
 
 		UpdateCameraFollowPlayer(_deltaTime);
+
+		UpdateBotBehavior(_deltaTime);
 	}
 	else
 	{
@@ -2054,3 +2073,86 @@ std::string BaseGame::RandomBattle()
 	return "Warmup";
 }
 
+
+// NOUVEAU : Méthode pour mettre à jour le comportement des bots
+void BaseGame::UpdateBotBehavior(float _deltaTime)
+{
+    auto& currentPlayer = m_data->players[m_data->currentPlayerIndex];
+    
+    if (!currentPlayer.isBot || currentPlayer.botAI == nullptr)
+        return;
+    
+    // Bot attend la fin de l'animation de dé
+    if (m_data->diceAnimationPlaying || !m_data->currentDiceVideo->isFinish())
+        return;
+    
+    // Bot attend la fin des messages
+    if (m_data->texteDisplay.isActive)
+        return;
+    
+    switch (m_data->state)
+    {
+    case START:
+    case PLAY:
+        if (m_data->animator.IsFinished())
+        {
+            if (currentPlayer.botAI->ShouldRollDice(_deltaTime))
+            {
+                ProcessBotDiceRoll();
+            }
+        }
+        break;
+        
+    case WAITING_PATH_CHOICE:
+        ProcessBotPathChoice();
+        break;
+        
+    case WAITING_BRIDGE_ROLL:
+        if (currentPlayer.botAI->ShouldRollDice(_deltaTime))
+        {
+            ProcessBridgeRoll();
+        }
+        break;
+        
+    case WAITING_FIN_ROLL:
+        if (currentPlayer.botAI->ShouldRollDice(_deltaTime))
+        {
+            ProcessFinRoll();
+        }
+        break;
+    }
+}
+
+void BaseGame::ProcessBotDiceRoll()
+{
+    int rando = randmt::RandomInt(1, 6);
+    ProcessDiceRoll(rando);
+    std::cout << "Bot rolled: " << rando << std::endl;
+}
+
+void BaseGame::ProcessBotPathChoice()
+{
+    auto& player = m_data->players[m_data->currentPlayerIndex];
+    
+    if (player.botAI == nullptr)
+        return;
+    
+    // Le bot choisit un chemin
+    int choice = player.botAI->ChoosePath(m_data->pathChoices, player.currentCaseIndex);
+    
+    std::cout << "Bot chose path: " << choice << std::endl;
+    
+    ProcessPathChoice(choice);
+    
+    // Animation flèche (optionnel)
+    if (choice == 0)
+        m_data->arrow.setRotation(325);
+    else
+        m_data->arrow.setRotation(5);
+    
+    // Petite pause avant de continuer
+    sf::sleep(sf::milliseconds(500));
+    
+    player.sprite.SetAnimation("Idle");
+    SetBoardState(DEPLACEMENT_SPLIT);
+}

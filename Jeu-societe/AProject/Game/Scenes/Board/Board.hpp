@@ -23,6 +23,8 @@
 
 #include "../../../Animation/Graphics/TextPlus.hpp"
 
+#include "../../Bot/BotAI.hpp"
+
 #define TIME_WIN_DISPLAY 0.5f
 #define TIME_LBM_DISPLAY 6.0f
 #define TIME_END_DISPLAY 2.0f
@@ -173,6 +175,20 @@ class BaseGame : public SceneBase
 			int currentPathId;    // Nouveau : ID du chemin actuel (-1 = chemin principal)
 			bool waitingBridgeRoll;  // Nouveau : en attente du lancer pour le pont
 			bool firstTime = false;
+
+			// NOUVEAU: Support pour les bots
+			bool isBot;
+			BotAI* botAI;
+			
+			Player() : isBot(false), botAI(nullptr) {}
+			~Player() 
+			{ 
+				if (botAI != nullptr) 
+				{
+					delete botAI;
+					botAI = nullptr;
+				}
+			}
 		};
 
 		struct LuckBonusMalus
@@ -372,6 +388,10 @@ class BaseGame : public SceneBase
 		void DrawIconePlayer(sf::RenderWindow& _renderWindow, int _i);
 
 		void ShowTextDisplay(const std::string& message, float duration);
+
+		void UpdateBotBehavior(float _deltaTime);
+		void ProcessBotDiceRoll();
+		void ProcessBotPathChoice();
 
 	public:
 		void LoadAsync(std::atomic<float>& progress);
