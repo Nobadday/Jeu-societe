@@ -8,6 +8,8 @@
 #include "../../../Ui/Button.hpp"
 #include "../../Video+Audio/HighResVideoPlayer.hpp"
 
+#include "../../Bot/BotAI.hpp"
+
 class Menu : public SceneBase
 {
 private:
@@ -18,6 +20,7 @@ private:
 		OPTIONS,
 		CREDITS,
 		PLAYER_NB_SELECTION,
+		BOT_SELECTION,
 		PLAYER_SELECTION,
 	};
 	enum ControlerCurrentButton
@@ -52,6 +55,9 @@ private:
 		SpriteAnimated iconsChara;
 		std::vector<std::string> charaAvaible;
 		TextPlus playerCount;
+		Button botToggleBtn;  // Bouton pour activer/désactiver les bots
+		sf::Text botCountText; // Texte affichant le nombre de bots
+		int botCount;          // Nombre de bots (0-2)
 	};
 	struct SceneData
 	{
@@ -74,17 +80,32 @@ private:
 	};
 	SceneData* m_data;
 	void LoadUI(void);
+	void LoadButtons();
+	void LoadSprites();
+	void LoadCharacterIcons();
+	void LoadText();
+	void PositionMainMenuButtons();
 	void ButtonsUpdate(float _dt);
 	void ButtonsPollEvent(sf::Event& _event);
 	void DrawUI(sfMod::RenderWindow* _renderWindow);
 
 	void ChangeSelection(int _value, int _joystick);
+	void HandleMainMenuSelection(int _value);
+	void PrintBotSelection(sfMod::RenderWindow* _renderWindow);
+	void HandleOptionsSelection(int _value);
+	void HandlePlayerSelection(int _value, int _joystick);
 	void PressSelection(int _id);
 
 	void PrintIcons(sfMod::RenderWindow* _renderWindow);
 	void PrintOptions(sfMod::RenderWindow* _renderWindow);
 
+	sf::Vector2f GetButtonPosition(ControlerCurrentButton _button) const;
+
+	int CalculateMaxBots(int totalPlayers);
+
 	void ReturnPressed(void);
+
+	PlayerData::PlayerSkin GetPlayerSkinFromIndex(int _index) const;
 
 public:
 	virtual void Load(void);

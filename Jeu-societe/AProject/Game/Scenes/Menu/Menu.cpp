@@ -3,7 +3,7 @@
 //3 = 4 players
 #define MAX_PLAYERS 3
 //1 = 2 players
-#define MIN_PLAYERS 1
+#define MIN_PLAYERS 0
 //Delay to scroll in buttons with controler
 #define INPUT_DELAY 0.5f
 
@@ -25,62 +25,98 @@ void Menu::Load(void)
 
 void Menu::LoadUI(void)
 {
-	m_data->ui.buttonMap["playBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("playBtn"));
-	m_data->ui.buttonMap["settingsBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("settingsBtn"));
-	m_data->ui.buttonMap["leaveBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("leaveBtn"));
-	m_data->ui.buttonMap["creditsBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("creditsBtn"));
-	m_data->ui.buttonMap["moinsBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("moinsBtn"));
-	m_data->ui.buttonMap["plusBtn"].setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("plusBtn"));
-	//Background
-	m_data->ui.background.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground"));
-	//Game logo
-	m_data->ui.logoGame.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoGame"));
-	sf::Vector2u logoGameSize = m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoGame")->getSize();
-	m_data->ui.logoGame.setOrigin(sf::Vector2f(logoGameSize.x / 2.f, 1.f));
-	m_data->ui.logoGame.setPosition({ SCREEN_WIDTH / 2, 0 });
-	m_data->ui.logoGame.setScale({ 0.8f,0.8f });
-	//Crea logo
-	m_data->ui.logoCrea.setTexture(*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoCrea"));
-	logoGameSize = m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoCrea")->getSize();
-	m_data->ui.logoCrea.setOrigin(sf::Vector2f(1.f, logoGameSize.y / 2.f));
-	m_data->ui.logoCrea.setPosition({ 10, SCREEN_HEIGHT / 1.3 });
-	m_data->ui.logoCrea.setScale({ 0.3f,0.3f });
+	LoadButtons();
+	LoadSprites();
+	LoadCharacterIcons();
+	LoadText();
+	PositionMainMenuButtons();
+	
+	// NOUVEAU : Initialisation des éléments de sélection de bots
+	m_data->ui.botCount = 0;
+	m_data->ui.botCountText.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("MenuFont"));
+	m_data->ui.botCountText.setOutlineColor(sf::Color::Black);
+	m_data->ui.botCountText.setOutlineThickness(1.5f);
+	m_data->ui.botCountText.setCharacterSize(150u);
+	m_data->ui.botCountText.setPosition({SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2});
+	m_data->ui.botCountText.setOrigin({0.5f, 0.5f});
+}
 
-	//Icons chara
-	m_data->ui.charaAvaible.push_back("Perso1-1");
-	m_data->ui.charaAvaible.push_back("Perso2-1");
-	m_data->ui.charaAvaible.push_back("Perso3-1");
-	m_data->ui.charaAvaible.push_back("Perso4-1");
+void Menu::LoadButtons()
+{
+	const std::vector<std::string> buttonNames = {
+		"playBtn", "settingsBtn", "leaveBtn", "creditsBtn", "moinsBtn", "plusBtn"
+	};
+	
+	for (const auto& name : buttonNames)
+	{
+		m_data->ui.buttonMap[name].setTexture(
+			*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>(name)
+		);
+		m_data->ui.buttonMap[name].setOrigin({0.5f, 0.5f});
+	}
+	
+	m_data->ui.buttonMap["creditsBtn"].setScale({0.8f, 0.8f});
+}
 
-	m_data->ui.iconsChara.setTexture(*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Icone", AssetManager::AssetType::TEXTURE_ANIMATED));
+void Menu::LoadSprites()
+{
+	// Background
+	m_data->ui.background.setTexture(
+		*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("MinigameBackground")
+	);
+	
+	// Game logo
+	m_data->ui.logoGame.setTexture(
+		*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoGame")
+	);
+	sf::Vector2u logoSize = m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoGame")->getSize();
+	m_data->ui.logoGame.setOrigin(sf::Vector2f(logoSize.x / 2.f, 1.f));
+	m_data->ui.logoGame.setPosition({SCREEN_WIDTH / 2, 0});
+	m_data->ui.logoGame.setScale({0.8f, 0.8f});
+	
+	// Crea logo
+	m_data->ui.logoCrea.setTexture(
+		*m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoCrea")
+	);
+	logoSize = m_data->gameData->m_assetManager->GetAsset<sf::Texture>("LogoCrea")->getSize();
+	m_data->ui.logoCrea.setOrigin(sf::Vector2f(1.f, logoSize.y / 2.f));
+	m_data->ui.logoCrea.setPosition({10, SCREEN_HEIGHT / 1.3});
+	m_data->ui.logoCrea.setScale({0.3f, 0.3f});
+}
+
+void Menu::LoadCharacterIcons()
+{
+	m_data->ui.charaAvaible = {"Perso1-1", "Perso2-1", "Perso3-1", "Perso4-1"};
+	
+	m_data->ui.iconsChara.setTexture(
+		*m_data->gameData->m_assetManager->GetAsset<TextureAnimated>("Icone", AssetManager::AssetType::TEXTURE_ANIMATED)
+	);
 	m_data->ui.iconsChara.SetAnimation("Perso1-1");
-	m_data->ui.iconsChara.setOrigin({ 0.5f,0.5f });
+	m_data->ui.iconsChara.setOrigin({0.5f, 0.5f});
+}
 
-	sf::FloatRect buttonRect = m_data->ui.buttonMap["playBtn"].getGlobalBounds();
-	m_data->ui.buttonMap["playBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 });
-	m_data->ui.buttonMap["settingsBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + buttonRect.height });
-	m_data->ui.buttonMap["leaveBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 2 * buttonRect.height });
-	m_data->ui.buttonMap["creditsBtn"].setPosition({ SCREEN_WIDTH - buttonRect.width / 2, SCREEN_HEIGHT / 2 + 2 * buttonRect.height });
-
-
-	m_data->ui.buttonMap["playBtn"].setOrigin({ 0.5f,0.5f });
-	m_data->ui.buttonMap["settingsBtn"].setOrigin({ 0.5f,0.5f });
-	m_data->ui.buttonMap["creditsBtn"].setOrigin({ 0.5f,0.5f });
-	m_data->ui.buttonMap["leaveBtn"].setOrigin({ 0.5f,0.5f });
-	m_data->ui.buttonMap["moinsBtn"].setOrigin({ 0.5f,0.5f });
-	m_data->ui.buttonMap["plusBtn"].setOrigin({ 0.5f,0.5f });
-
-	m_data->ui.buttonMap["creditsBtn"].setScale({ 0.8f,0.8f });
-
-	m_data->ui.playerCount.setFont(*m_data->gameData->m_assetManager->GetAsset<sf::Font>("MenuFont"));
+void Menu::LoadText()
+{
+	m_data->ui.playerCount.setFont(
+		*m_data->gameData->m_assetManager->GetAsset<sf::Font>("MenuFont")
+	);
 	m_data->ui.playerCount.setOutlineColor(sf::Color::Black);
 	m_data->ui.playerCount.setOutlineThickness(1.5f);
 	m_data->ui.playerCount.setCharacterSize(200u);
-	m_data->ui.playerCount.setPosition({ SCREEN_WIDTH / 2 , SCREEN_HEIGHT / 2 });
-	//This font sucks bro
-	m_data->ui.playerCount.setOrigin({ 0.6f,0.8f });
+	m_data->ui.playerCount.setPosition({SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2});
+	m_data->ui.playerCount.setOrigin({0.6f, 0.8f});
 	m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
 }
+
+void Menu::PositionMainMenuButtons()
+{
+	sf::FloatRect buttonRect = m_data->ui.buttonMap["playBtn"].getGlobalBounds();
+	m_data->ui.buttonMap["playBtn"].setPosition({SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2});
+	m_data->ui.buttonMap["settingsBtn"].setPosition({SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + buttonRect.height});
+	m_data->ui.buttonMap["leaveBtn"].setPosition({SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 2 * buttonRect.height});
+	m_data->ui.buttonMap["creditsBtn"].setPosition({SCREEN_WIDTH - buttonRect.width / 2, SCREEN_HEIGHT / 2 + 2 * buttonRect.height});
+}
+
 void Menu::Unload(void)
 {
 
@@ -158,27 +194,32 @@ void Menu::PollEvent(sf::Event& _event)
 }
 void Menu::ButtonsPollEvent(sf::Event& _event)
 {
-	switch (m_data->state)
-	{
-	case MAIN_MENU:
-		m_data->ui.buttonMap["playBtn"].CheckEvent(_event);
-		m_data->ui.buttonMap["settingsBtn"].CheckEvent(_event);
-		m_data->ui.buttonMap["leaveBtn"].CheckEvent(_event);
-		m_data->ui.buttonMap["creditsBtn"].CheckEvent(_event);
-		break;
+    // Liste des boutons pour chaque état
+    static const std::vector<std::string> mainMenuButtons = {"playBtn", "settingsBtn", "leaveBtn", "creditsBtn"};
+    static const std::vector<std::string> optionsButtons = {"playBtn", "plusBtn", "moinsBtn"};
+    static const std::vector<std::string> botSelectionButtons = {"playBtn", "plusBtn", "moinsBtn"}; // NOUVEAU
 
-	case OPTIONS:
-		m_data->ui.buttonMap["playBtn"].CheckEvent(_event);
-		m_data->ui.buttonMap["plusBtn"].CheckEvent(_event);
-		m_data->ui.buttonMap["moinsBtn"].CheckEvent(_event);
-		break;
+    const std::vector<std::string>* buttons = nullptr;
+    
+    switch (m_data->state)
+    {
+        case MAIN_MENU:
+            buttons = &mainMenuButtons;
+            break;
+        case OPTIONS:
+        case PLAYER_NB_SELECTION:
+        case BOT_SELECTION: // NOUVEAU
+            buttons = &optionsButtons;
+            break;
+    }
 
-	case PLAYER_NB_SELECTION:
-		m_data->ui.buttonMap["playBtn"].CheckEvent(_event);
-		m_data->ui.buttonMap["plusBtn"].CheckEvent(_event);
-		m_data->ui.buttonMap["moinsBtn"].CheckEvent(_event);
-		break;
-	}
+    if (buttons)
+    {
+        for (const auto& btnName : *buttons)
+        {
+            m_data->ui.buttonMap[btnName].CheckEvent(_event);
+        }
+    }
 }
 
 void Menu::Update(float _deltaTime)
@@ -206,27 +247,30 @@ void Menu::Update(float _deltaTime)
 }
 void Menu::ButtonsUpdate(float _dt)
 {
-	switch (m_data->state)
-	{
-	case MAIN_MENU:
-		m_data->ui.buttonMap["playBtn"].Update(_dt);
-		m_data->ui.buttonMap["settingsBtn"].Update(_dt);
-		m_data->ui.buttonMap["leaveBtn"].Update(_dt);
-		m_data->ui.buttonMap["creditsBtn"].Update(_dt);
-		break;
+    static const std::vector<std::string> mainMenuButtons = {"playBtn", "settingsBtn", "leaveBtn", "creditsBtn"};
+    static const std::vector<std::string> optionsButtons = {"playBtn", "plusBtn", "moinsBtn"};
 
-	case OPTIONS:
-		m_data->ui.buttonMap["playBtn"].Update(_dt);
-		m_data->ui.buttonMap["plusBtn"].Update(_dt);
-		m_data->ui.buttonMap["moinsBtn"].Update(_dt);
-		break;
+    const std::vector<std::string>* buttons = nullptr;
+    
+    switch (m_data->state)
+    {
+        case MAIN_MENU:
+            buttons = &mainMenuButtons;
+            break;
+        case OPTIONS:
+        case PLAYER_NB_SELECTION:
+        case BOT_SELECTION: // NOUVEAU
+            buttons = &optionsButtons;
+            break;
+    }
 
-	case PLAYER_NB_SELECTION:
-		m_data->ui.buttonMap["playBtn"].Update(_dt);
-		m_data->ui.buttonMap["plusBtn"].Update(_dt);
-		m_data->ui.buttonMap["moinsBtn"].Update(_dt);
-		break;
-	}
+    if (buttons)
+    {
+        for (const auto& btnName : *buttons)
+        {
+            m_data->ui.buttonMap[btnName].Update(_dt);
+        }
+    }
 }
 
 void Menu::Draw(sf::RenderWindow& _renderWindow)
@@ -264,7 +308,6 @@ void Menu::DrawUI(sfMod::RenderWindow* _renderWindow)
 
 	case OPTIONS:
 		PrintOptions(_renderWindow);
-
 		break;
 
 	case PLAYER_NB_SELECTION:
@@ -274,451 +317,379 @@ void Menu::DrawUI(sfMod::RenderWindow* _renderWindow)
 		_renderWindow->draw(m_data->ui.buttonMap["plusBtn"]);
 		break;
 
+	// NOUVEAU : Écran de sélection des bots
+	case BOT_SELECTION:
+		PrintBotSelection(_renderWindow);
+		break;
+
 	case PLAYER_SELECTION:
 		PrintIcons(_renderWindow);
 		break;
 	}
 }
 
-void Menu::ChangeSelection(int _value, int _joystick)
+// NOUVELLE FONCTION : Afficher l'écran de sélection des bots
+void Menu::PrintBotSelection(sfMod::RenderWindow* _renderWindow)
 {
-	sf::Vector2f mouseNewPos;
+	// Titre
+	m_data->ui.botCountText.setCharacterSize(100u);
+	m_data->ui.botCountText.setOrigin({ 0.6f, 0.8f });
+	m_data->ui.botCountText.setPosition(SCREEN_WIDTH / 2.f - 400 , SCREEN_HEIGHT / 4.f);
+	m_data->ui.botCountText.setString("How many bots?");
+	_renderWindow->draw(m_data->ui.botCountText);
 
-	m_data->audio->PlaySound("uiSoundON");
+	// Nombre de bots
+	m_data->ui.botCountText.setCharacterSize(200u);
+	m_data->ui.botCountText.setOrigin({ 0.6f, 0.8f });
+	m_data->ui.botCountText.setPosition(SCREEN_WIDTH / 2.f - 100 , SCREEN_HEIGHT / 2.f -150);
+	m_data->ui.botCountText.setString(std::to_string(m_data->ui.botCount));
+	_renderWindow->draw(m_data->ui.botCountText);
 
-	switch (m_data->state)
-	{
-	case MAIN_MENU:
-
-		if ((m_data->controlerBtn + _value) < PLAY)
-		{
-			m_data->controlerBtn = CREDITS_BTN;
-			mouseNewPos = m_data->ui.buttonMap["creditsBtn"].getPosition();
-		}
-		else if ((m_data->controlerBtn + _value) > CREDITS_BTN)
-		{
-			m_data->controlerBtn = PLAY;
-			mouseNewPos = m_data->ui.buttonMap["playBtn"].getPosition();
-		}
-		else
-		{
-			m_data->controlerBtn = (ControlerCurrentButton)(m_data->controlerBtn + _value);
-
-			//Ok, racism
-			switch (m_data->controlerBtn)
-			{
-			case PLAY:
-				mouseNewPos = m_data->ui.buttonMap["playBtn"].getPosition();
-				break;
-
-			case SETTINGS:
-				mouseNewPos = m_data->ui.buttonMap["settingsBtn"].getPosition();
-				break;
-
-			case LEAVE:
-				mouseNewPos = m_data->ui.buttonMap["leaveBtn"].getPosition();
-				break;
-
-			case CREDITS_BTN:
-				mouseNewPos = m_data->ui.buttonMap["creditsBtn"].getPosition();
-				break;
-			}
-		}
-		break;
-
-	case OPTIONS:
-
-		if ((m_data->controlerBtn + _value) > MORE)
-		{
-			m_data->controlerBtn = LESS;
-			mouseNewPos = m_data->ui.buttonMap["moinsBtn"].getPosition();
-		}
-		else if ((m_data->controlerBtn + _value) < LESS)
-		{
-			m_data->controlerBtn = MORE;
-			mouseNewPos = m_data->ui.buttonMap["plusBtn"].getPosition();
-		}
-		else
-		{
-			m_data->controlerBtn = (ControlerCurrentButton)(m_data->controlerBtn + _value);
-
-			//Ok, racism
-			switch (m_data->controlerBtn)
-			{
-			case MORE:
-				mouseNewPos = m_data->ui.buttonMap["plusBtn"].getPosition();
-				break;
-
-			case LESS:
-				mouseNewPos = m_data->ui.buttonMap["moinsBtn"].getPosition();
-				break;
-
-			case PLAY_SELECTION:
-				mouseNewPos = m_data->ui.buttonMap["playBtn"].getPosition();
-				break;
-			}
-		}
-		break;
-
-	case PLAYER_NB_SELECTION:
-
-		if ((m_data->controlerBtn + _value) > MORE)
-		{
-			m_data->controlerBtn = LESS;
-			mouseNewPos = m_data->ui.buttonMap["moinsBtn"].getPosition();
-		}
-		else if ((m_data->controlerBtn + _value) < LESS)
-		{
-			m_data->controlerBtn = MORE;
-			mouseNewPos = m_data->ui.buttonMap["plusBtn"].getPosition();
-		}
-		else
-		{
-			m_data->controlerBtn = (ControlerCurrentButton)(m_data->controlerBtn + _value);
-
-			//Ok, racism
-			switch (m_data->controlerBtn)
-			{
-			case MORE:
-				mouseNewPos = m_data->ui.buttonMap["plusBtn"].getPosition();
-				break;
-
-			case LESS:
-				mouseNewPos = m_data->ui.buttonMap["moinsBtn"].getPosition();
-				break;
-
-			case PLAY_SELECTION:
-				mouseNewPos = m_data->ui.buttonMap["playBtn"].getPosition();
-				break;
-			}
-		}
-		break;
-
-	case PLAYER_SELECTION:
-
-		// CORRECTION : Ne changer la s�lection que si le joueur n'a pas encore valid� son choix
-		if (m_data->charaSelected[_joystick] == false)
-		{
-			int totalCharacters = (int)m_data->ui.charaAvaible.size();
-			int newSelection = m_data->currentCharaSelected[_joystick] + _value;
-
-			// Wrap circulaire : si on d�passe � droite, revenir au d�but
-			if (newSelection >= totalCharacters)
-			{
-				m_data->currentCharaSelected[_joystick] = 0;
-			}
-			// Wrap circulaire : si on d�passe � gauche, aller � la fin
-			else if (newSelection < 0)
-			{
-				m_data->currentCharaSelected[_joystick] = totalCharacters - 1;
-			}
-			// Sinon, changer normalement
-			else
-			{
-				m_data->currentCharaSelected[_joystick] = newSelection;
-			}
-		}
-		break;
-	}
-	//Set ON new button
-	//std::cout << "mouse x = " << mouseNewPos.x << " y = " << mouseNewPos.y << std::endl;
-	sf::Mouse::setPosition(sf::Vector2i(mouseNewPos), *m_data->gameData->m_renderWindow);
+	// Boutons +/-
+	_renderWindow->draw(m_data->ui.buttonMap["playBtn"]);
+	_renderWindow->draw(m_data->ui.buttonMap["moinsBtn"]);
+	_renderWindow->draw(m_data->ui.buttonMap["plusBtn"]);
 }
+
+void Menu::HandleOptionsSelection(int _value)
+{
+    int newBtn = m_data->controlerBtn + _value;
+    
+    // Wrap circulaire entre LESS et MORE
+    if (newBtn > MORE)
+        m_data->controlerBtn = LESS;
+    else if (newBtn < LESS)
+        m_data->controlerBtn = MORE;
+    else
+        m_data->controlerBtn = (ControlerCurrentButton)newBtn;
+
+    sf::Vector2f mouseNewPos = GetButtonPosition(m_data->controlerBtn);
+    sf::Mouse::setPosition(sf::Vector2i(mouseNewPos), *m_data->gameData->m_renderWindow);
+}
+
 void Menu::PressSelection(int _id)
 {
-	m_data->audio->PlaySound("uiSoundClick");
-	switch (m_data->controlerBtn)
-	{
-	case PLAY:
+    m_data->audio->PlaySound("uiSoundClick");
+    switch (m_data->controlerBtn)
+    {
+    case PLAY:
+        switch (m_data->state)
+        {
+        case MAIN_MENU:
+            m_data->state = PLAYER_NB_SELECTION;
+            m_data->controlerBtn = PLAY_SELECTION;
+            m_data->ui.buttonMap["plusBtn"].setScale(1, 1);
+            m_data->ui.buttonMap["moinsBtn"].setScale(1, 1);
+            m_data->ui.buttonMap["playBtn"].setPosition({SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.5});
+            m_data->ui.buttonMap["moinsBtn"].setPosition({SCREEN_WIDTH / 2 - 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2});
+            m_data->ui.buttonMap["plusBtn"].setPosition({SCREEN_WIDTH / 2 + 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2});
+            m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
+            m_data->ui.playerCount.setPosition({SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2});
+            break;
 
-		switch (m_data->state)
-		{
-		case MAIN_MENU:
+        case PLAYER_NB_SELECTION:
+            break;
 
-			m_data->state = PLAYER_NB_SELECTION;
-			m_data->controlerBtn = PLAY_SELECTION;
-			m_data->ui.buttonMap["plusBtn"].setScale(1, 1);
-			m_data->ui.buttonMap["moinsBtn"].setScale(1, 1);
-			m_data->ui.buttonMap["playBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.5 });
-			m_data->ui.buttonMap["moinsBtn"].setPosition({ SCREEN_WIDTH / 2 - 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2 });
-			m_data->ui.buttonMap["plusBtn"].setPosition({ SCREEN_WIDTH / 2 + 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2 });
-			m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
-			m_data->ui.playerCount.setPosition({ SCREEN_WIDTH / 2 , SCREEN_HEIGHT / 2 });
-			break;
+        // NOUVEAU : Gestion de la sélection des bots
+        case BOT_SELECTION:
+        {
+            int totalPlayers = m_data->gameSettings.playerCount + 1;
+            int minBots = (totalPlayers == 1) ? 1 : 0;
+            
+            // NOUVELLE VALIDATION : Vérifier que le nombre de bots est valide
+            if (m_data->ui.botCount < minBots)
+            {
+                std::cout << "Erreur : 1 joueur doit avoir au moins " << minBots << " bot(s)!" << std::endl;
+                m_data->audio->PlaySound("uiSoundError"); // Si vous avez un son d'erreur
+                return; // Ne pas valider
+            }
+            
+            // Créer les joueurs humains + bots
+            int humanPlayers = totalPlayers - m_data->ui.botCount;
 
-		case PLAYER_NB_SELECTION:
-			break;
+            std::cout << "Total players: " << totalPlayers << ", Humans: " << humanPlayers << ", Bots: " << m_data->ui.botCount << std::endl;
 
-		case PLAYER_SELECTION:
-		{
-			std::cout << "id = " << _id << " size of datalist = " << m_data->gameData->m_playerDataList.size() << std::endl;
+            // Créer les joueurs humains
+            for (int i = 0; i < humanPlayers; i++)
+            {
+                PlayerData newPlayer;
+                newPlayer.m_joystickId = i;
+                m_data->gameData->m_playerDataList.push_back(newPlayer);
+                m_data->charaSelected.push_back(false);
+                m_data->currentCharaSelected.push_back(0);
+            }
 
-			if (m_data->gameData->m_playerDataList.size() > m_data->gameSettings.playerCount)
-			{
-				if(_id > m_data->gameSettings.playerCount)
-				{
-					return;
-				}
-				int oui = m_data->gameData->m_playerDataList.size() - m_data->gameSettings.playerCount;
-				std::cout << "WTF WHY MORE THAN 4 PLAYERS ??? size = " << oui << std::endl;
-				for (int i = (int)m_data->gameData->m_playerDataList.size() - 1 ; i >= m_data->gameSettings.playerCount + 1 ; i--)
-				{
-					m_data->gameData->m_playerDataList.pop_back();
-				}
-			}
+            // Créer les bots
+            for (int i = humanPlayers; i < totalPlayers; i++)
+            {
+                PlayerData botPlayer;
+                botPlayer.m_joystickId = -1;
+                m_data->gameData->m_playerDataList.push_back(botPlayer);
+                m_data->charaSelected.push_back(true);
+                
+                int randomSkin = randmt::RandomInt(0, 3);
+                m_data->currentCharaSelected.push_back(randomSkin);
+                
+                m_data->gameData->ConfigureBot(i, true, BotDifficulty::MEDIUM);
+            }
 
-			// CORRECTION : Convertir l'index de s�lection en PlayerSkin
-			// m_currentCharaSelected[_id] contient l'index dans charaAvaible (0-3)
-			// Correspondance :
-			// 0 -> "Perso1-1" -> CHARACTER_1_1
-			// 1 -> "Perso2-1" -> CHARACTER_2_1
-			// 2 -> "Perso3-1" -> CHARACTER_3_1
-			// 3 -> "Perso4-1" -> CHARACTER_4_1
+            m_data->state = PLAYER_SELECTION;
+            m_data->controlerBtn = PLAY;
+            break;
+        }
 
-			PlayerData::PlayerSkin selectedSkin;
-			switch (m_data->currentCharaSelected[_id])
-			{
-			case 0:
-				selectedSkin = PlayerData::CHARACTER_1_1;
-				break;
-			case 1:
-				selectedSkin = PlayerData::CHARACTER_2_1;
-				break;
-			case 2:
-				selectedSkin = PlayerData::CHARACTER_3_1;
-				break;
-			case 3:
-				selectedSkin = PlayerData::CHARACTER_4_1;
-				break;
-			default:
-				selectedSkin = PlayerData::CHARACTER_1_1; // Valeur par d�faut
-				break;
-			}
+        case PLAYER_SELECTION:
+        {
+            // ... code existant pour la sélection de personnage ...
+            std::cout << "id = " << _id << " size of datalist = " << m_data->gameData->m_playerDataList.size() << std::endl;
 
-			m_data->gameData->m_playerDataList[_id].SetPlayerSkin(selectedSkin);
-			m_data->charaSelected[_id] = true;
+            if (m_data->gameData->m_playerDataList.size() > m_data->gameSettings.playerCount)
+            {
+                if(_id > m_data->gameSettings.playerCount)
+                {
+                    return;
+                }
+            }
 
-			// V�rifier si tous les joueurs ont s�lectionn� leur personnage
-			int result = 0;
-			for (auto selected : m_data->charaSelected)
-			{
-				if (selected)
-				{
-					result++;
-				}
-			}
+            PlayerData::PlayerSkin selectedSkin = GetPlayerSkinFromIndex(m_data->currentCharaSelected[_id]);
 
-			if (result == m_data->gameSettings.playerCount + 1)
-			{
-				std::cout << "All players have their skin, go to game\n";
-				SceneBase::ChangeScene("Lo");
-			}
-			break;
-		}
-		}
-		break;
+            m_data->gameData->m_playerDataList[_id].SetPlayerSkin(selectedSkin);
+            m_data->charaSelected[_id] = true;
 
-	case SETTINGS:
+            // Vérifier si tous les joueurs HUMAINS ont sélectionné
+            int humanPlayersSelected = 0;
+            int totalHumans = m_data->gameSettings.playerCount + 1 - m_data->ui.botCount;
+            
+            for (int i = 0; i < totalHumans; i++)
+            {
+                if (m_data->charaSelected[i])
+                {
+                    humanPlayersSelected++;
+                }
+            }
 
-		m_data->state = OPTIONS;
-		m_data->controlerBtn = MORE;
+            if (humanPlayersSelected == totalHumans)
+            {
+                // Assigner les skins aux bots
+                for (int i = totalHumans; i < m_data->gameData->m_playerDataList.size(); i++)
+                {
+                    PlayerData::PlayerSkin botSkin = GetPlayerSkinFromIndex(m_data->currentCharaSelected[i]);
+                    m_data->gameData->m_playerDataList[i].SetPlayerSkin(botSkin);
+                }
+                
+                std::cout << "All human players have selected, starting game\n";
+                SceneBase::ChangeScene("Lo");
+            }
+            break;
+        }
+        }
+        break;
 
-		m_data->ui.buttonMap["plusBtn"].setScale(0.8f, 0.8f);
-		m_data->ui.buttonMap["moinsBtn"].setScale(0.8f, 0.8f);
+    case SETTINGS:
+        m_data->state = OPTIONS;
+        m_data->controlerBtn = MORE;
+        m_data->ui.buttonMap["plusBtn"].setScale(0.8f, 0.8f);
+        m_data->ui.buttonMap["moinsBtn"].setScale(0.8f, 0.8f);
+        m_data->ui.buttonMap["plusBtn"].setPosition(SCREEN_WIDTH / 1.2f, 2.1f / 4.f * SCREEN_HEIGHT);
+        m_data->ui.buttonMap["moinsBtn"].setPosition(SCREEN_WIDTH / 1.5f, 2.1f / 4.f * SCREEN_HEIGHT);
+        m_data->ui.buttonMap["playBtn"].setPosition(SCREEN_WIDTH / 2.f, 3.f / 4.f * SCREEN_HEIGHT);
+        m_data->controlerBtn = PLAY_SELECTION;
+        break;
 
-		m_data->ui.buttonMap["plusBtn"].setPosition(SCREEN_WIDTH / 1.2f, 2.1f / 4.f * SCREEN_HEIGHT);
-		m_data->ui.buttonMap["moinsBtn"].setPosition(SCREEN_WIDTH / 1.5f, 2.1f / 4.f * SCREEN_HEIGHT);
-		m_data->ui.buttonMap["playBtn"].setPosition(SCREEN_WIDTH / 2.f, 3.f / 4.f * SCREEN_HEIGHT);
-		m_data->controlerBtn = PLAY_SELECTION;
-		break;
+    case CREDITS_BTN:
+        SceneBase::ChangeScene("Credits");
+        break;
 
-	case CREDITS_BTN:
-		SceneBase::ChangeScene("Credits");
-		break;
+    case LEAVE:
+        m_data->gameData->m_renderWindow->close();
+        break;
 
-	case LEAVE:
-		m_data->gameData->m_renderWindow->close();
-		break;
+    case LESS:
+        switch (m_data->state)
+        {
+        case PLAYER_NB_SELECTION:
+            if (m_data->gameSettings.playerCount > MIN_PLAYERS)
+            {
+                m_data->gameSettings.playerCount -= 1;
+                m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
+            }
+            else
+            {
+                m_data->gameSettings.playerCount = 3;
+                m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
+            }
+            break;
 
-	case LESS:
-		switch (m_data->state)
-		{
-		case PLAYER_NB_SELECTION:
+        // CORRECTION : Gestion du nombre de bots avec minimum
+        case BOT_SELECTION:
+        {
+            int totalPlayers = m_data->gameSettings.playerCount + 1;
+            int minBots = (totalPlayers == 1) ? 1 : 0; // Minimum 1 bot si 1 joueur seul
+            int maxBots = CalculateMaxBots(totalPlayers);
+            
+            if (m_data->ui.botCount > minBots) // CORRECTION : Vérifier le minimum
+            {
+                m_data->ui.botCount -= 1;
+            }
+            else
+            {
+                m_data->ui.botCount = maxBots; // Boucler vers le maximum
+            }
+            break;
+        }
 
-			if (m_data->gameSettings.playerCount > MIN_PLAYERS)
-			{
-				m_data->gameSettings.playerCount -= 1;
-				m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
-			}
-			else
-			{
-				m_data->gameSettings.playerCount = 3;
-				m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
-			}
-			break;
+        case OPTIONS:
+            m_data->audio->AddMusicVolume(-10.f);
+            m_data->audio->AddSoundVolume(-10.f);
+            break;
+        }
+        break;
 
-		case OPTIONS:
+    case PLAY_SELECTION:
+    {
+        switch (m_data->state)
+        {
+        case PLAYER_NB_SELECTION:
+        {
+            int totalPlayers = m_data->gameSettings.playerCount + 1;
+            
+            // CORRECTION : Logique mise à jour
+            if (totalPlayers == 1)
+            {
+                // 1 joueur : OBLIGATOIRE d'avoir au moins 1 bot
+                m_data->ui.botCount = 1; // Par défaut 1 bot
+                m_data->state = BOT_SELECTION;
+                m_data->controlerBtn = PLAY_SELECTION;
+                
+                // Repositionner les boutons
+                m_data->ui.buttonMap["playBtn"].setPosition({SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.5});
+                m_data->ui.buttonMap["moinsBtn"].setPosition({SCREEN_WIDTH / 2 - 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2});
+                m_data->ui.buttonMap["plusBtn"].setPosition({SCREEN_WIDTH / 2 + 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2});
+            }
+            else if (totalPlayers == 2)
+            {
+                // 2 joueurs : CHOIX de 0, 1 ou 2 bots
+                m_data->ui.botCount = 0; // Par défaut 0 bot
+                m_data->state = BOT_SELECTION;
+                m_data->controlerBtn = PLAY_SELECTION;
+                
+                m_data->ui.buttonMap["playBtn"].setPosition({SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.5});
+                m_data->ui.buttonMap["moinsBtn"].setPosition({SCREEN_WIDTH / 2 - 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2});
+                m_data->ui.buttonMap["plusBtn"].setPosition({SCREEN_WIDTH / 2 + 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2});
+            }
+            else if (totalPlayers == 3)
+            {
+                // 3 joueurs : CHOIX de 0 ou 1 bot
+                m_data->ui.botCount = 0;
+                m_data->state = BOT_SELECTION;
+                m_data->controlerBtn = PLAY_SELECTION;
+                
+                m_data->ui.buttonMap["playBtn"].setPosition({SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.5});
+                m_data->ui.buttonMap["moinsBtn"].setPosition({SCREEN_WIDTH / 2 - 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2});
+                m_data->ui.buttonMap["plusBtn"].setPosition({SCREEN_WIDTH / 2 + 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2});
+            }
+            else if (totalPlayers == 4)
+            {
+                // 4 joueurs : PAS de bots, passer directement à la sélection
+                m_data->ui.botCount = 0;
+                
+                for (int i = 0; i < totalPlayers; i++)
+                {
+                    PlayerData newPlayer;
+                    newPlayer.m_joystickId = i;
+                    m_data->gameData->m_playerDataList.push_back(newPlayer);
+                    m_data->charaSelected.push_back(false);
+                    m_data->currentCharaSelected.push_back(0);
+                }
+                
+                m_data->state = PLAYER_SELECTION;
+                m_data->controlerBtn = PLAY;
+            }
+            break;
+        }
 
-			m_data->audio->AddMusicVolume(-10.f);
-			m_data->audio->AddSoundVolume(-10.f);
-			break;
-		}
-		break;
+        case OPTIONS:
+            m_data->ui.playerCount.setCharacterSize(200u);
+            m_data->ui.playerCount.setOrigin({0.6f, 0.8f});
+            m_data->state = MAIN_MENU;
+            m_data->controlerBtn = PLAY;
+            sf::FloatRect buttonRect = m_data->ui.buttonMap["playBtn"].getLocalBounds();
+            m_data->ui.buttonMap["playBtn"].setPosition({SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2});
+            m_data->ui.buttonMap["settingsBtn"].setPosition({SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + buttonRect.height});
+            m_data->ui.buttonMap["leaveBtn"].setPosition({SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 2 * buttonRect.height});
+            break;
+        }
+        break;
+    }
 
-	case PLAY_SELECTION:
-	{
-		switch (m_data->state)
-		{
-		case PLAYER_NB_SELECTION:
+    case MORE:
+        switch (m_data->state)
+        {
+        case PLAYER_NB_SELECTION:
+            if (m_data->gameSettings.playerCount < MAX_PLAYERS)
+            {
+                m_data->gameSettings.playerCount += 1;
+                m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
+            }
+            else
+            {
+                m_data->gameSettings.playerCount = MIN_PLAYERS;
+                m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
+            }
+            break;
 
-			std::cout << "player count : " << m_data->gameSettings.playerCount;
-			for (int i = 0; i < m_data->gameSettings.playerCount + 1; i++)
-			{
-				PlayerData newPlayer;
-				newPlayer.m_joystickId = i;
-				m_data->gameData->m_playerDataList.push_back(newPlayer);
-				m_data->charaSelected.push_back(false);
-				m_data->currentCharaSelected.push_back(0);
-			}
-			m_data->state = PLAYER_SELECTION;
-			m_data->controlerBtn = PLAY;
-			break;
+        // CORRECTION : Gestion du nombre de bots avec minimum
+        case BOT_SELECTION:
+        {
+            int totalPlayers = m_data->gameSettings.playerCount + 1;
+            int minBots = (totalPlayers == 1) ? 1 : 0; // Minimum 1 bot si 1 joueur seul
+            int maxBots = CalculateMaxBots(totalPlayers);
+            
+            if (m_data->ui.botCount < maxBots)
+            {
+                m_data->ui.botCount += 1;
+            }
+            else
+            {
+                m_data->ui.botCount = minBots; // CORRECTION : Boucler vers le minimum
+            }
+            break;
+        }
 
-		case OPTIONS:
-
-			m_data->ui.playerCount.setCharacterSize(200u);
-			m_data->ui.playerCount.setOrigin({ 0.6f,0.8f });
-
-			m_data->state = MAIN_MENU;
-			m_data->controlerBtn = PLAY;
-			sf::FloatRect buttonRect = m_data->ui.buttonMap["playBtn"].getLocalBounds();
-			m_data->ui.buttonMap["playBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 });
-			m_data->ui.buttonMap["settingsBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + buttonRect.height });
-			m_data->ui.buttonMap["leaveBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 2 * buttonRect.height });
-			break;
-		}
-		break;
-	}
-	case MORE:
-
-		switch (m_data->state)
-		{
-		case PLAYER_NB_SELECTION:
-
-			if (m_data->gameSettings.playerCount < MAX_PLAYERS)
-			{
-				m_data->gameSettings.playerCount += 1;
-				m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
-			}
-			else
-			{
-				m_data->gameSettings.playerCount = 1;
-				m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
-			}
-			break;
-
-		case OPTIONS:
-
-			m_data->audio->AddMusicVolume(10.f);
-			m_data->audio->AddSoundVolume(10.f);
-			break;
-		}
-		break;
-	}
+        case OPTIONS:
+            m_data->audio->AddMusicVolume(10.f);
+            m_data->audio->AddSoundVolume(10.f);
+            break;
+        }
+        break;
+    }
 }
 
-void Menu::PrintIcons(sfMod::RenderWindow* _renderWindow)
+// NOUVELLE FONCTION : Calculer le nombre maximum de bots autorisés
+int Menu::CalculateMaxBots(int totalPlayers)
 {
-	// Sauvegarder la couleur temporaire pour la restaurer apr�s
-	sf::Color tempColor = m_data->ui.iconsChara.getColor();
-
-	// Calcul du placement des ic�nes
-	float border = 200.f;
-	float iconSpacing = (SCREEN_WIDTH - 2 * border) / m_data->gameSettings.playerCount;
-
-	for (int i = 0; i < m_data->gameSettings.playerCount + 1; i++)
-	{
-		// Positions des 3 ic�nes (gauche, centre, droite)
-		sf::Vector2f iconPos[] =
-		{
-			{(float)(border + i * iconSpacing), SCREEN_HEIGHT / 2.f - SCREEN_HEIGHT / 4.f},
-			{(float)(border + i * iconSpacing), SCREEN_HEIGHT / 2.f },
-			{(float)(border + i * iconSpacing), SCREEN_HEIGHT / 2.f + SCREEN_HEIGHT / 4.f}
-		};
-
-		// Afficher le texte "Player : X"
-		sf::Vector2f pos = { iconPos[0].x, iconPos[0].y - 70.f };
-		m_data->ui.playerCount.setPosition(pos);
-
-		char buffer[30];
-		std::snprintf(buffer, 30, "Player : %d", i + 1);
-		m_data->ui.playerCount.setString(buffer);
-		m_data->ui.playerCount.setCharacterSize(60u);
-		_renderWindow->draw(m_data->ui.playerCount);
-
-		// Index de l'animation s�lectionn�e pour ce joueur
-		int currentSelection = m_data->currentCharaSelected[i];
-		int totalCharacters = (int)m_data->ui.charaAvaible.size();
-
-		// Calculer les index des 3 ic�nes (avec wrap)
-		int leftIndex = (currentSelection - 1 + totalCharacters) % totalCharacters;
-		int centerIndex = currentSelection;
-		int rightIndex = (currentSelection + 1) % totalCharacters;
-
-		// Ic�ne de gauche (semi-transparente)
-		tempColor.a = 100;
-		m_data->ui.iconsChara.setColor(tempColor);
-		m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[leftIndex]);
-		m_data->ui.iconsChara.setPosition(iconPos[0]);
-		_renderWindow->draw(m_data->ui.iconsChara);
-
-		// Ic�ne du centre (opaque ou sombre si s�lectionn�e)
-		tempColor.a = 255;
-		if (m_data->charaSelected[i] == true)
-		{
-			// Si le joueur a valid� son choix, afficher en noir
-			m_data->ui.iconsChara.setColor(sf::Color(150, 150, 150, 255));
-		}
-		else
-		{
-			// Sinon afficher normalement
-			m_data->ui.iconsChara.setColor(tempColor);
-		}
-		m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[centerIndex]);
-		m_data->ui.iconsChara.setPosition(iconPos[1]);
-		_renderWindow->draw(m_data->ui.iconsChara);
-
-		// Ic�ne de droite (semi-transparente)
-		tempColor.a = 100;
-		m_data->ui.iconsChara.setColor(tempColor);
-		m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[rightIndex]);
-		m_data->ui.iconsChara.setPosition(iconPos[2]);
-		_renderWindow->draw(m_data->ui.iconsChara);
-	}
-
-	// R�initialiser la couleur � blanc opaque
-	m_data->ui.iconsChara.setColor(sf::Color(255, 255, 255, 255));
-}
-void Menu::PrintOptions(sfMod::RenderWindow* _renderWindow)
-{
-	m_data->ui.playerCount.setCharacterSize(50u);
-	m_data->ui.playerCount.setOrigin({ 0.f,0.f });
-	m_data->ui.playerCount.setPosition(0.f, 1.8f / 4.f * SCREEN_HEIGHT);
-	m_data->ui.playerCount.setCharacterSize(100u);
-	char buffer[100];
-	std::snprintf(buffer, 100, "Game volume : %0.0f", m_data->audio->GetMusicVolume());
-	m_data->ui.playerCount.setString(buffer);
-	_renderWindow->draw(m_data->ui.playerCount);
-
-	m_data->ui.playerCount.setCharacterSize(150u);
-	m_data->ui.playerCount.setOrigin({ 0.6f,0.8f });
-	m_data->ui.playerCount.setPosition(SCREEN_WIDTH / 2.f, 1.f / 4.f * SCREEN_HEIGHT);
-	m_data->ui.playerCount.setString("Settings");
-	_renderWindow->draw(m_data->ui.playerCount);
-
-	_renderWindow->draw(m_data->ui.buttonMap["plusBtn"]);
-	_renderWindow->draw(m_data->ui.buttonMap["moinsBtn"]);
-	_renderWindow->draw(m_data->ui.buttonMap["playBtn"]);
+    if (totalPlayers == 1)
+    {
+        // 1 joueur : peut avoir 1, 2 ou 3 bots (total = 2, 3 ou 4)
+        return 3;
+    }
+    else if (totalPlayers == 2)
+    {
+        // 2 joueurs : peut avoir 0, 1 ou 2 bots (total = 2, 3 ou 4)
+        return 2;
+    }
+    else if (totalPlayers == 3)
+    {
+        // 3 joueurs : peut avoir 0 ou 1 bot (total = 3 ou 4)
+        return 1;
+    }
+    else if (totalPlayers == 4)
+    {
+        // 4 joueurs : pas de bots
+        return 0;
+    }
+    
+    return 0;
 }
 
 void Menu::ReturnPressed(void)
@@ -731,26 +702,240 @@ void Menu::ReturnPressed(void)
 	{
 		m_data->state = MAIN_MENU;
 		sf::FloatRect buttonRect = m_data->ui.buttonMap["playBtn"].getGlobalBounds();
-		m_data->ui.buttonMap["playBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 });
-		m_data->ui.buttonMap["settingsBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + buttonRect.height });
-		m_data->ui.buttonMap["leaveBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 2 * buttonRect.height });
-		m_data->ui.buttonMap["creditsBtn"].setPosition({ SCREEN_WIDTH - buttonRect.width / 2, SCREEN_HEIGHT / 2 + 2 * buttonRect.height });
+		m_data->ui.buttonMap["playBtn"].setPosition({SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2});
+		m_data->ui.buttonMap["settingsBtn"].setPosition({SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + buttonRect.height});
+		m_data->ui.buttonMap["leaveBtn"].setPosition({SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 2 * buttonRect.height});
+		m_data->ui.buttonMap["creditsBtn"].setPosition({SCREEN_WIDTH - buttonRect.width / 2, SCREEN_HEIGHT / 2 + 2 * buttonRect.height});
 	}
 	break;
 
-	case PLAYER_SELECTION:
-
+	// NOUVEAU : Retour depuis l'écran de sélection des bots
+	case BOT_SELECTION:
 		m_data->state = PLAYER_NB_SELECTION;
 		m_data->controlerBtn = PLAY_SELECTION;
 		m_data->ui.buttonMap["plusBtn"].setScale(1, 1);
 		m_data->ui.buttonMap["moinsBtn"].setScale(1, 1);
-		m_data->ui.buttonMap["playBtn"].setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.5 });
-		m_data->ui.buttonMap["moinsBtn"].setPosition({ SCREEN_WIDTH / 2 - 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2 });
-		m_data->ui.buttonMap["plusBtn"].setPosition({ SCREEN_WIDTH / 2 + 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2 });
+		m_data->ui.buttonMap["playBtn"].setPosition({SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.5});
+		m_data->ui.buttonMap["moinsBtn"].setPosition({SCREEN_WIDTH / 2 - 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2});
+		m_data->ui.buttonMap["plusBtn"].setPosition({SCREEN_WIDTH / 2 + 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2});
 		m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
 		m_data->ui.playerCount.setCharacterSize(200u);
-		m_data->ui.playerCount.setOrigin({ 0.6f,0.8f });
-		m_data->ui.playerCount.setPosition({ SCREEN_WIDTH / 2 , SCREEN_HEIGHT / 2 });
+		m_data->ui.playerCount.setOrigin({0.6f, 0.8f});
+		m_data->ui.playerCount.setPosition({SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2});
+		break;
+
+	case PLAYER_SELECTION:
+		// Retour vers la sélection des bots ou du nombre de joueurs
+		{
+			int totalPlayers = m_data->gameSettings.playerCount + 1;
+			
+			// Nettoyer les données des joueurs
+			m_data->gameData->m_playerDataList.clear();
+			m_data->charaSelected.clear();
+			m_data->currentCharaSelected.clear();
+			
+			if (totalPlayers == 4)
+			{
+				// 4 joueurs : retour direct à la sélection du nombre
+				m_data->state = PLAYER_NB_SELECTION;
+			}
+			else
+			{
+				// 1 ou 2 joueurs : retour à la sélection des bots
+				m_data->state = BOT_SELECTION;
+			}
+			
+			m_data->controlerBtn = PLAY_SELECTION;
+			m_data->ui.buttonMap["plusBtn"].setScale(1, 1);
+			m_data->ui.buttonMap["moinsBtn"].setScale(1, 1);
+			m_data->ui.buttonMap["playBtn"].setPosition({SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.5});
+			m_data->ui.buttonMap["moinsBtn"].setPosition({SCREEN_WIDTH / 2 - 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2});
+			m_data->ui.buttonMap["plusBtn"].setPosition({SCREEN_WIDTH / 2 + 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2});
+			
+			if (m_data->state == PLAYER_NB_SELECTION)
+			{
+				m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
+				m_data->ui.playerCount.setCharacterSize(200u);
+				m_data->ui.playerCount.setOrigin({0.6f, 0.8f});
+				m_data->ui.playerCount.setPosition({SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2});
+			}
+		}
 		break;
 	}
+}
+
+void Menu::ChangeSelection(int _value, int _joystick)
+{
+    m_data->audio->PlaySound("uiSoundON");
+
+    switch (m_data->state)
+    {
+        case MAIN_MENU:
+            HandleMainMenuSelection(_value);
+            break;
+        case OPTIONS:
+        case PLAYER_NB_SELECTION:
+        case BOT_SELECTION: // NOUVEAU : Même gestion que les options
+            HandleOptionsSelection(_value);
+            break;
+        case PLAYER_SELECTION:
+            HandlePlayerSelection(_value, _joystick);
+            break;
+    }
+}
+
+void Menu::HandleMainMenuSelection(int _value)
+{
+    int newBtn = m_data->controlerBtn + _value;
+    
+    // Wrap circulaire
+    if (newBtn < PLAY)
+        m_data->controlerBtn = CREDITS_BTN;
+    else if (newBtn > CREDITS_BTN)
+        m_data->controlerBtn = PLAY;
+    else
+        m_data->controlerBtn = (ControlerCurrentButton)newBtn;
+
+    sf::Vector2f mouseNewPos = GetButtonPosition(m_data->controlerBtn);
+    sf::Mouse::setPosition(sf::Vector2i(mouseNewPos), *m_data->gameData->m_renderWindow);
+}
+
+void Menu::HandlePlayerSelection(int _value, int _joystick)
+{
+    if (m_data->charaSelected[_joystick])
+        return;
+
+    int totalCharacters = (int)m_data->ui.charaAvaible.size();
+    int newSelection = m_data->currentCharaSelected[_joystick] + _value;
+    
+    // Wrap circulaire
+    m_data->currentCharaSelected[_joystick] = 
+        (newSelection + totalCharacters) % totalCharacters;
+}
+
+sf::Vector2f Menu::GetButtonPosition(ControlerCurrentButton _button) const
+{
+    static const std::map<ControlerCurrentButton, std::string> buttonNameMap = {
+        {PLAY, "playBtn"},
+        {SETTINGS, "settingsBtn"},
+        {LEAVE, "leaveBtn"},
+        {CREDITS_BTN, "creditsBtn"},
+        {MORE, "plusBtn"},
+        {LESS, "moinsBtn"},
+        {PLAY_SELECTION, "playBtn"}
+    };
+
+    auto it = buttonNameMap.find(_button);
+    if (it != buttonNameMap.end())
+    {
+        return m_data->ui.buttonMap.at(it->second).getPosition();
+    }
+    return sf::Vector2f(0, 0);
+}
+
+PlayerData::PlayerSkin Menu::GetPlayerSkinFromIndex(int _index) const
+{
+    static const PlayerData::PlayerSkin skins[] = {
+        PlayerData::CHARACTER_1_1,
+        PlayerData::CHARACTER_2_1,
+        PlayerData::CHARACTER_3_1,
+        PlayerData::CHARACTER_4_1
+    };
+    
+    return (_index >= 0 && _index < 4) ? skins[_index] : PlayerData::CHARACTER_1_1;
+}
+
+void Menu::PrintIcons(sfMod::RenderWindow* _renderWindow)
+{
+    // Sauvegarder la couleur temporaire pour la restaurer après
+    sf::Color tempColor = m_data->ui.iconsChara.getColor();
+
+    // Calcul du placement des icônes
+    float border = 200.f;
+    float iconSpacing = (SCREEN_WIDTH - 2 * border) / m_data->gameSettings.playerCount;
+
+    for (int i = 0; i < m_data->gameSettings.playerCount + 1; i++)
+    {
+        // Positions des 3 icônes (gauche, centre, droite)
+        sf::Vector2f iconPos[] =
+        {
+            {(float)(border + i * iconSpacing), SCREEN_HEIGHT / 2.f - SCREEN_HEIGHT / 4.f},
+            {(float)(border + i * iconSpacing), SCREEN_HEIGHT / 2.f },
+            {(float)(border + i * iconSpacing), SCREEN_HEIGHT / 2.f + SCREEN_HEIGHT / 4.f}
+        };
+
+        // Afficher le texte "Player : X"
+        sf::Vector2f pos = { iconPos[0].x, iconPos[0].y - 70.f };
+        m_data->ui.playerCount.setPosition(pos);
+
+        char buffer[30];
+        std::snprintf(buffer, 30, "Player : %d", i + 1);
+        m_data->ui.playerCount.setString(buffer);
+        m_data->ui.playerCount.setCharacterSize(60u);
+        _renderWindow->draw(m_data->ui.playerCount);
+
+        // Index de l'animation sélectionnée pour ce joueur
+        int currentSelection = m_data->currentCharaSelected[i];
+        int totalCharacters = (int)m_data->ui.charaAvaible.size();
+
+        // Calculer les index des 3 icônes (avec wrap)
+        int leftIndex = (currentSelection - 1 + totalCharacters) % totalCharacters;
+        int centerIndex = currentSelection;
+        int rightIndex = (currentSelection + 1) % totalCharacters;
+
+        // Icône de gauche (semi-transparente)
+        tempColor.a = 100;
+        m_data->ui.iconsChara.setColor(tempColor);
+        m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[leftIndex]);
+        m_data->ui.iconsChara.setPosition(iconPos[0]);
+        _renderWindow->draw(m_data->ui.iconsChara);
+
+        // Icône du centre (opaque ou sombre si sélectionnée)
+        tempColor.a = 255;
+        if (m_data->charaSelected[i] == true)
+        {
+            // Si le joueur a validé son choix, afficher en gris
+            m_data->ui.iconsChara.setColor(sf::Color(150, 150, 150, 255));
+        }
+        else
+        {
+            // Sinon afficher normalement
+            m_data->ui.iconsChara.setColor(tempColor);
+        }
+        m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[centerIndex]);
+        m_data->ui.iconsChara.setPosition(iconPos[1]);
+        _renderWindow->draw(m_data->ui.iconsChara);
+
+        // Icône de droite (semi-transparente)
+        tempColor.a = 100;
+        m_data->ui.iconsChara.setColor(tempColor);
+        m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[rightIndex]);
+        m_data->ui.iconsChara.setPosition(iconPos[2]);
+        _renderWindow->draw(m_data->ui.iconsChara);
+    }
+
+    // Réinitialiser la couleur à blanc opaque
+    m_data->ui.iconsChara.setColor(sf::Color(255, 255, 255, 255));
+}
+
+void Menu::PrintOptions(sfMod::RenderWindow* _renderWindow)
+{
+    m_data->ui.playerCount.setCharacterSize(50u);
+    m_data->ui.playerCount.setOrigin({ 0.f,0.f });
+    m_data->ui.playerCount.setPosition(0.f, 1.8f / 4.f * SCREEN_HEIGHT);
+    m_data->ui.playerCount.setCharacterSize(100u);
+    char buffer[100];
+    std::snprintf(buffer, 100, "Game volume : %0.0f", m_data->audio->GetMusicVolume());
+    m_data->ui.playerCount.setString(buffer);
+    _renderWindow->draw(m_data->ui.playerCount);
+
+    m_data->ui.playerCount.setCharacterSize(150u);
+    m_data->ui.playerCount.setOrigin({ 0.6f,0.8f });
+    m_data->ui.playerCount.setPosition(SCREEN_WIDTH / 2.f, 1.f / 4.f * SCREEN_HEIGHT);
+    m_data->ui.playerCount.setString("Settings");
+    _renderWindow->draw(m_data->ui.playerCount);
+
+    _renderWindow->draw(m_data->ui.buttonMap["plusBtn"]);
+    _renderWindow->draw(m_data->ui.buttonMap["moinsBtn"]);
+    _renderWindow->draw(m_data->ui.buttonMap["playBtn"]);
 }
