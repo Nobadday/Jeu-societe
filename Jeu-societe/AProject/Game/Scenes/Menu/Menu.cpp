@@ -106,6 +106,17 @@ void Menu::LoadText()
 	m_data->ui.playerCount.setPosition({SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2});
 	m_data->ui.playerCount.setOrigin({0.6f, 0.8f});
 	m_data->ui.playerCount.setString(std::to_string(m_data->gameSettings.playerCount + 1));
+	
+    
+    m_data->ui.playerText.setFont(
+		*m_data->gameData->m_assetManager->GetAsset<sf::Font>("MenuFont")
+	);
+	m_data->ui.playerText.setOutlineColor(sf::Color::Black);
+	m_data->ui.playerText.setOutlineThickness(1.5f);
+	m_data->ui.playerText.setCharacterSize(100u);
+	m_data->ui.playerText.setPosition({SCREEN_WIDTH / 2 + 150, SCREEN_HEIGHT / 4});
+	m_data->ui.playerText.setOrigin({0.6f, 0.8f});
+	m_data->ui.playerText.setString("Select Number Of Player");
 }
 
 void Menu::PositionMainMenuButtons()
@@ -314,6 +325,7 @@ void Menu::DrawUI(sfMod::RenderWindow* _renderWindow)
 		_renderWindow->draw(m_data->ui.buttonMap["playBtn"]);
 		_renderWindow->draw(m_data->ui.buttonMap["moinsBtn"]);
 		_renderWindow->draw(m_data->ui.playerCount);
+		_renderWindow->draw(m_data->ui.playerText);
 		_renderWindow->draw(m_data->ui.buttonMap["plusBtn"]);
 		break;
 
@@ -334,14 +346,15 @@ void Menu::PrintBotSelection(sfMod::RenderWindow* _renderWindow)
 	// Titre
 	m_data->ui.botCountText.setCharacterSize(100u);
 	m_data->ui.botCountText.setOrigin({ 0.6f, 0.8f });
-	m_data->ui.botCountText.setPosition(SCREEN_WIDTH / 2.f - 400 , SCREEN_HEIGHT / 4.f);
+	m_data->ui.botCountText.setPosition(SCREEN_WIDTH / 2.f + 100, SCREEN_HEIGHT / 4.f);
 	m_data->ui.botCountText.setString("How many bots?");
 	_renderWindow->draw(m_data->ui.botCountText);
 
 	// Nombre de bots
-	m_data->ui.botCountText.setCharacterSize(200u);
-	m_data->ui.botCountText.setOrigin({ 0.6f, 0.8f });
-	m_data->ui.botCountText.setPosition(SCREEN_WIDTH / 2.f - 100 , SCREEN_HEIGHT / 2.f -150);
+    m_data->ui.botCountText.setOutlineThickness(1.5f);
+    m_data->ui.botCountText.setCharacterSize(200u);
+    m_data->ui.botCountText.setPosition({ SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 });
+    m_data->ui.botCountText.setOrigin({ 0.6f, 0.8f });
 	m_data->ui.botCountText.setString(std::to_string(m_data->ui.botCount));
 	_renderWindow->draw(m_data->ui.botCountText);
 
@@ -390,76 +403,26 @@ void Menu::PressSelection(int _id)
         case PLAYER_NB_SELECTION:
             break;
 
-        // NOUVEAU : Gestion de la sélection des bots
-        case BOT_SELECTION:
-        {
-            int totalPlayers = m_data->gameSettings.playerCount + 1;
-            int minBots = (totalPlayers == 1) ? 1 : 0;
-            
-            // NOUVELLE VALIDATION : Vérifier que le nombre de bots est valide
-            if (m_data->ui.botCount < minBots)
-            {
-                std::cout << "Erreur : 1 joueur doit avoir au moins " << minBots << " bot(s)!" << std::endl;
-                m_data->audio->PlaySound("uiSoundError"); // Si vous avez un son d'erreur
-                return; // Ne pas valider
-            }
-            
-            // Créer les joueurs humains + bots
-            int humanPlayers = totalPlayers - m_data->ui.botCount;
-
-            std::cout << "Total players: " << totalPlayers << ", Humans: " << humanPlayers << ", Bots: " << m_data->ui.botCount << std::endl;
-
-            // Créer les joueurs humains
-            for (int i = 0; i < humanPlayers; i++)
-            {
-                PlayerData newPlayer;
-                newPlayer.m_joystickId = i;
-                m_data->gameData->m_playerDataList.push_back(newPlayer);
-                m_data->charaSelected.push_back(false);
-                m_data->currentCharaSelected.push_back(0);
-            }
-
-            // Créer les bots
-            for (int i = humanPlayers; i < totalPlayers; i++)
-            {
-                PlayerData botPlayer;
-                botPlayer.m_joystickId = -1;
-                m_data->gameData->m_playerDataList.push_back(botPlayer);
-                m_data->charaSelected.push_back(true);
-                
-                int randomSkin = randmt::RandomInt(0, 3);
-                m_data->currentCharaSelected.push_back(randomSkin);
-                
-                m_data->gameData->ConfigureBot(i, true, BotDifficulty::MEDIUM);
-            }
-
-            m_data->state = PLAYER_SELECTION;
-            m_data->controlerBtn = PLAY;
-            break;
-        }
-
         case PLAYER_SELECTION:
         {
-            // ... code existant pour la sélection de personnage ...
             std::cout << "id = " << _id << " size of datalist = " << m_data->gameData->m_playerDataList.size() << std::endl;
 
-            if (m_data->gameData->m_playerDataList.size() > m_data->gameSettings.playerCount)
+            // CORRECTION : Vérifier si c'est un joueur humain
+            int totalHumans = m_data->gameSettings.playerCount + 1;
+            
+            if (_id >= totalHumans)
             {
-                if(_id > m_data->gameSettings.playerCount)
-                {
-                    return;
-                }
+                std::cout << "IGNORE : Ceci est un bot (id=" << _id << ", totalHumans=" << totalHumans << ")" << std::endl;
+                return; // Les bots ne peuvent pas sélectionner
             }
 
+            // Sélectionner le skin pour ce joueur humain
             PlayerData::PlayerSkin selectedSkin = GetPlayerSkinFromIndex(m_data->currentCharaSelected[_id]);
-
             m_data->gameData->m_playerDataList[_id].SetPlayerSkin(selectedSkin);
             m_data->charaSelected[_id] = true;
 
-            // Vérifier si tous les joueurs HUMAINS ont sélectionné
+            // Compter les joueurs humains qui ont validé
             int humanPlayersSelected = 0;
-            int totalHumans = m_data->gameSettings.playerCount + 1 - m_data->ui.botCount;
-            
             for (int i = 0; i < totalHumans; i++)
             {
                 if (m_data->charaSelected[i])
@@ -468,16 +431,40 @@ void Menu::PressSelection(int _id)
                 }
             }
 
+            std::cout << "DEBUG: " << humanPlayersSelected << "/" << totalHumans << " joueurs humains ont validé" << std::endl;
+
+            // Si tous les humains ont validé, assigner les skins aux bots
             if (humanPlayersSelected == totalHumans)
             {
-                // Assigner les skins aux bots
-                for (int i = totalHumans; i < m_data->gameData->m_playerDataList.size(); i++)
+                std::cout << "Tous les humains ont validé, attribution des skins aux bots..." << std::endl;
+                
+                // Collecter les skins déjà pris par les humains
+                std::vector<int> takenSkins;
+                for (int i = 0; i < totalHumans; i++)
                 {
-                    PlayerData::PlayerSkin botSkin = GetPlayerSkinFromIndex(m_data->currentCharaSelected[i]);
-                    m_data->gameData->m_playerDataList[i].SetPlayerSkin(botSkin);
+                    takenSkins.push_back(m_data->currentCharaSelected[i]);
                 }
                 
-                std::cout << "All human players have selected, starting game\n";
+                // Assigner des skins aléatoires aux bots (en évitant les doublons)
+                for (int i = totalHumans; i < m_data->gameData->m_playerDataList.size(); i++)
+                {
+                    int botSkin;
+                    int attempts = 0;
+                    do
+                    {
+                        botSkin = randmt::RandomInt(0, 3);
+                        attempts++;
+                    } while (std::find(takenSkins.begin(), takenSkins.end(), botSkin) != takenSkins.end() && attempts < 100);
+                    
+                    takenSkins.push_back(botSkin);
+                    
+                    PlayerData::PlayerSkin skin = GetPlayerSkinFromIndex(botSkin);
+                    m_data->gameData->m_playerDataList[i].SetPlayerSkin(skin);
+                    
+                    std::cout << "Bot " << i << " a reçu le skin " << botSkin << std::endl;
+                }
+                
+                std::cout << "Démarrage du jeu..." << std::endl;
                 SceneBase::ChangeScene("Lo");
             }
             break;
@@ -520,20 +507,19 @@ void Menu::PressSelection(int _id)
             }
             break;
 
-        // CORRECTION : Gestion du nombre de bots avec minimum
         case BOT_SELECTION:
         {
             int totalPlayers = m_data->gameSettings.playerCount + 1;
-            int minBots = (totalPlayers == 1) ? 1 : 0; // Minimum 1 bot si 1 joueur seul
+            int minBots = (totalPlayers == 1) ? 1 : 0;
             int maxBots = CalculateMaxBots(totalPlayers);
             
-            if (m_data->ui.botCount > minBots) // CORRECTION : Vérifier le minimum
+            if (m_data->ui.botCount > minBots)
             {
                 m_data->ui.botCount -= 1;
             }
             else
             {
-                m_data->ui.botCount = maxBots; // Boucler vers le maximum
+                m_data->ui.botCount = maxBots;
             }
             break;
         }
@@ -553,23 +539,19 @@ void Menu::PressSelection(int _id)
         {
             int totalPlayers = m_data->gameSettings.playerCount + 1;
             
-            // CORRECTION : Logique mise à jour
             if (totalPlayers == 1)
             {
-                // 1 joueur : OBLIGATOIRE d'avoir au moins 1 bot
-                m_data->ui.botCount = 1; // Par défaut 1 bot
+                m_data->ui.botCount = 1;
                 m_data->state = BOT_SELECTION;
                 m_data->controlerBtn = PLAY_SELECTION;
                 
-                // Repositionner les boutons
                 m_data->ui.buttonMap["playBtn"].setPosition({SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.5});
                 m_data->ui.buttonMap["moinsBtn"].setPosition({SCREEN_WIDTH / 2 - 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2});
                 m_data->ui.buttonMap["plusBtn"].setPosition({SCREEN_WIDTH / 2 + 0.2f * SCREEN_WIDTH, SCREEN_HEIGHT / 2});
             }
             else if (totalPlayers == 2)
             {
-                // 2 joueurs : CHOIX de 0, 1 ou 2 bots
-                m_data->ui.botCount = 0; // Par défaut 0 bot
+                m_data->ui.botCount = 0;
                 m_data->state = BOT_SELECTION;
                 m_data->controlerBtn = PLAY_SELECTION;
                 
@@ -579,7 +561,6 @@ void Menu::PressSelection(int _id)
             }
             else if (totalPlayers == 3)
             {
-                // 3 joueurs : CHOIX de 0 ou 1 bot
                 m_data->ui.botCount = 0;
                 m_data->state = BOT_SELECTION;
                 m_data->controlerBtn = PLAY_SELECTION;
@@ -590,7 +571,6 @@ void Menu::PressSelection(int _id)
             }
             else if (totalPlayers == 4)
             {
-                // 4 joueurs : PAS de bots, passer directement à la sélection
                 m_data->ui.botCount = 0;
                 
                 for (int i = 0; i < totalPlayers; i++)
@@ -605,6 +585,70 @@ void Menu::PressSelection(int _id)
                 m_data->state = PLAYER_SELECTION;
                 m_data->controlerBtn = PLAY;
             }
+            break;
+        }
+
+        // AJOUT DE LA LOGIQUE BOT_SELECTION ICI (là où elle sera vraiment exécutée)
+        case BOT_SELECTION:
+        {
+            int totalPlayers = m_data->gameSettings.playerCount + 1;
+            int minBots = (totalPlayers == 1) ? 1 : 0;
+            int maxBots = CalculateMaxBots(totalPlayers);
+            
+            if (m_data->ui.botCount < minBots)
+            {
+                m_data->ui.botCount = minBots;
+            }
+            //int maxBots = CalculateMaxBots(totalPlayers);
+            
+            if (m_data->ui.botCount > maxBots)
+            {
+                m_data->ui.botCount = maxBots;
+            }
+            
+            // CALCUL CORRECT
+            int totalFinal = totalPlayers + m_data->ui.botCount;  // Total après ajout des bots
+            int humanPlayers = totalPlayers;  // Les joueurs humains
+            
+            std::cout << "Création : Humains=" << humanPlayers 
+                      << ", Bots=" << m_data->ui.botCount 
+                      << ", Total Final=" << totalFinal << std::endl;
+            
+            // VALIDATION DE SÉCURITÉ
+            if (humanPlayers < 0 || totalFinal < 2 || totalFinal > 4)
+            {
+                std::cout << "ERREUR CRITIQUE : Configuration invalide !" << std::endl;
+                return;
+            }
+
+            // Créer les joueurs humains
+            for (int i = 0; i < humanPlayers; i++)
+            {
+                PlayerData newPlayer;
+                newPlayer.m_joystickId = i;
+                m_data->gameData->m_playerDataList.push_back(newPlayer);
+                m_data->charaSelected.push_back(false);
+                m_data->currentCharaSelected.push_back(0);
+            }
+
+            // Créer les bots
+            for (int i = humanPlayers; i < totalFinal; i++)
+            {
+                PlayerData botPlayer;
+                botPlayer.m_joystickId = -1;
+                m_data->gameData->m_playerDataList.push_back(botPlayer);
+                m_data->charaSelected.push_back(true);
+                
+                int randomSkin = randmt::RandomInt(0, 3);
+                m_data->currentCharaSelected.push_back(randomSkin);
+                
+                m_data->gameData->ConfigureBot(i, true, BotDifficulty::MEDIUM);
+            }
+
+            m_data->state = PLAYER_SELECTION;
+            m_data->controlerBtn = PLAY;
+            std::cout << "Transition vers PLAYER_SELECTION réussie avec " 
+                      << m_data->gameData->m_playerDataList.size() << " joueurs" << std::endl;
             break;
         }
 
@@ -638,11 +682,10 @@ void Menu::PressSelection(int _id)
             }
             break;
 
-        // CORRECTION : Gestion du nombre de bots avec minimum
         case BOT_SELECTION:
         {
             int totalPlayers = m_data->gameSettings.playerCount + 1;
-            int minBots = (totalPlayers == 1) ? 1 : 0; // Minimum 1 bot si 1 joueur seul
+            int minBots = (totalPlayers == 1) ? 1 : 0;
             int maxBots = CalculateMaxBots(totalPlayers);
             
             if (m_data->ui.botCount < maxBots)
@@ -651,7 +694,7 @@ void Menu::PressSelection(int _id)
             }
             else
             {
-                m_data->ui.botCount = minBots; // CORRECTION : Boucler vers le minimum
+                m_data->ui.botCount = minBots;
             }
             break;
         }
@@ -668,24 +711,27 @@ void Menu::PressSelection(int _id)
 // NOUVELLE FONCTION : Calculer le nombre maximum de bots autorisés
 int Menu::CalculateMaxBots(int totalPlayers)
 {
+    // totalPlayers = nombre de joueurs HUMAINS (pas le total final)
+    // On veut un total final de 2 à 4 joueurs
+    
     if (totalPlayers == 1)
     {
-        // 1 joueur : peut avoir 1, 2 ou 3 bots (total = 2, 3 ou 4)
+        // 1 humain : peut avoir 1, 2 ou 3 bots (total final = 2, 3 ou 4)
         return 3;
     }
     else if (totalPlayers == 2)
     {
-        // 2 joueurs : peut avoir 0, 1 ou 2 bots (total = 2, 3 ou 4)
+        // 2 humains : peut avoir 0, 1 ou 2 bots (total final = 2, 3 ou 4)
         return 2;
     }
     else if (totalPlayers == 3)
     {
-        // 3 joueurs : peut avoir 0 ou 1 bot (total = 3 ou 4)
+        // 3 humains : peut avoir 0 ou 1 bot (total final = 3 ou 4)
         return 1;
     }
     else if (totalPlayers == 4)
     {
-        // 4 joueurs : pas de bots
+        // 4 humains : pas de bots
         return 0;
     }
     
@@ -847,14 +893,30 @@ PlayerData::PlayerSkin Menu::GetPlayerSkinFromIndex(int _index) const
 
 void Menu::PrintIcons(sfMod::RenderWindow* _renderWindow)
 {
-    // Sauvegarder la couleur temporaire pour la restaurer après
+    // CORRECTION : Calculer le nombre total de joueurs (humains + bots)
+    int totalPlayers = m_data->gameSettings.playerCount + 1; // Nombre de joueurs humains
+    int totalPlayersWithBots = (int)m_data->gameData->m_playerDataList.size(); // Total incluant bots
+    
+    // CORRECTION : N'afficher que les icônes des joueurs HUMAINS
+    int humanPlayers = totalPlayers;
+    
+    std::cout << "DEBUG PrintIcons: humanPlayers=" << humanPlayers 
+              << ", totalPlayersWithBots=" << totalPlayersWithBots 
+              << ", botCount=" << m_data->ui.botCount << std::endl;
+
+    // Sauvegarder la couleur temporaire
     sf::Color tempColor = m_data->ui.iconsChara.getColor();
 
-    // Calcul du placement des icônes
+    // Calcul du placement des icônes (basé sur les joueurs HUMAINS uniquement)
     float border = 200.f;
-    float iconSpacing = (SCREEN_WIDTH - 2 * border) / m_data->gameSettings.playerCount;
+    float iconSpacing = (SCREEN_WIDTH - 2 * border) / std::max(1, humanPlayers - 1);
+    if (humanPlayers == 1)
+    {
+        iconSpacing = 0; // Centrer si un seul joueur
+    }
 
-    for (int i = 0; i < m_data->gameSettings.playerCount + 1; i++)
+    // AFFICHER UNIQUEMENT LES JOUEURS HUMAINS
+    for (int i = 0; i < humanPlayers; i++)
     {
         // Positions des 3 icônes (gauche, centre, droite)
         sf::Vector2f iconPos[] =
@@ -868,13 +930,13 @@ void Menu::PrintIcons(sfMod::RenderWindow* _renderWindow)
         sf::Vector2f pos = { iconPos[0].x, iconPos[0].y - 70.f };
         m_data->ui.playerCount.setPosition(pos);
 
-        char buffer[30];
-        std::snprintf(buffer, 30, "Player : %d", i + 1);
+        char buffer[50];
+        std::snprintf(buffer, 50, "Player : %d", i + 1);
         m_data->ui.playerCount.setString(buffer);
         m_data->ui.playerCount.setCharacterSize(60u);
         _renderWindow->draw(m_data->ui.playerCount);
 
-        // Index de l'animation sélectionnée pour ce joueur
+        // Index de l'animation sélectionnée
         int currentSelection = m_data->currentCharaSelected[i];
         int totalCharacters = (int)m_data->ui.charaAvaible.size();
 
@@ -890,16 +952,14 @@ void Menu::PrintIcons(sfMod::RenderWindow* _renderWindow)
         m_data->ui.iconsChara.setPosition(iconPos[0]);
         _renderWindow->draw(m_data->ui.iconsChara);
 
-        // Icône du centre (opaque ou sombre si sélectionnée)
+        // Icône du centre (opaque ou grise si validée)
         tempColor.a = 255;
-        if (m_data->charaSelected[i] == true)
+        if (m_data->charaSelected[i])
         {
-            // Si le joueur a validé son choix, afficher en gris
             m_data->ui.iconsChara.setColor(sf::Color(150, 150, 150, 255));
         }
         else
         {
-            // Sinon afficher normalement
             m_data->ui.iconsChara.setColor(tempColor);
         }
         m_data->ui.iconsChara.SetAnimation(m_data->ui.charaAvaible[centerIndex]);
@@ -914,7 +974,20 @@ void Menu::PrintIcons(sfMod::RenderWindow* _renderWindow)
         _renderWindow->draw(m_data->ui.iconsChara);
     }
 
-    // Réinitialiser la couleur à blanc opaque
+    // NOUVEAU : Afficher un indicateur pour les bots en attente
+    if (m_data->ui.botCount > 0)
+    {
+        m_data->ui.playerCount.setCharacterSize(40u);
+        m_data->ui.playerCount.setPosition({SCREEN_WIDTH / 2.f, SCREEN_HEIGHT - 100.f});
+        
+        char botBuffer[100];
+        std::snprintf(botBuffer, 100, "%d Bot(s) en attente (skins aleatoires)", m_data->ui.botCount);
+        m_data->ui.playerCount.setString(botBuffer);
+        m_data->ui.playerCount.setOrigin({m_data->ui.playerCount.getGlobalBounds().width / 2.f, 0});
+        _renderWindow->draw(m_data->ui.playerCount);
+    }
+
+    // Réinitialiser la couleur
     m_data->ui.iconsChara.setColor(sf::Color(255, 255, 255, 255));
 }
 

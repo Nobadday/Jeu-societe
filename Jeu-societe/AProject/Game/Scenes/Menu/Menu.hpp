@@ -55,8 +55,9 @@ private:
 		SpriteAnimated iconsChara;
 		std::vector<std::string> charaAvaible;
 		TextPlus playerCount;
+		TextPlus playerText;
 		Button botToggleBtn;  // Bouton pour activer/désactiver les bots
-		sf::Text botCountText; // Texte affichant le nombre de bots
+		TextPlus botCountText; // Texte affichant le nombre de bots
 		int botCount;          // Nombre de bots (0-2)
 	};
 	struct SceneData
