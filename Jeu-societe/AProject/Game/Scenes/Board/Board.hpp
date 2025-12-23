@@ -176,19 +176,9 @@ class BaseGame : public SceneBase
 			bool waitingBridgeRoll;  // Nouveau : en attente du lancer pour le pont
 			bool firstTime = false;
 
-			// NOUVEAU: Support pour les bots
-			bool isBot;
-			BotAI* botAI;
-			
-			Player() : isBot(false), botAI(nullptr) {}
-			~Player() 
-			{ 
-				if (botAI != nullptr) 
-				{
-					delete botAI;
-					botAI = nullptr;
-				}
-			}
+			// AJOUT : pointeur vers l'IA du bot (pour compatibilité avec le code existant)
+			BotAI* botAI = nullptr;
+			bool isBot = false;
 		};
 
 		struct LuckBonusMalus

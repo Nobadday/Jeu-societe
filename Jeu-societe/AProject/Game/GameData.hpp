@@ -11,9 +11,6 @@
 
 #include "../Utilities/BetterWindow/BetterWindow.hpp"
 
-// Forward declaration de l'enum pour éviter les dépendances circulaires
-enum class BotDifficulty;
-
 class Tiled;
 
 class GameData
@@ -34,14 +31,6 @@ class GameData
 
 		Tiled* m_tile;
 
-		struct BotConfig
-		{
-			bool enabled;
-			BotDifficulty difficulty;
-		};
-
-		std::vector<BotConfig> m_botConfigs;
-
 	public:
 		GameData(void);
 
@@ -59,9 +48,6 @@ class GameData
 		int GetPlayerIDFromJoystick(unsigned int _joystickId);
 
 		bool IsPlayerParticipating(int _playerID);
-
-		// Méthode helper - DÉCLARATION SEULEMENT (l'implémentation doit être dans le .cpp)
-		void ConfigureBot(int playerIndex, bool isBot, BotDifficulty difficulty);
 };
 
 #endif 

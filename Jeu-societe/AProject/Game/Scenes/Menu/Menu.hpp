@@ -21,6 +21,7 @@ private:
 		CREDITS,
 		PLAYER_NB_SELECTION,
 		BOT_SELECTION,
+		BOT_DIFFICULTY_SELECTION, // Sélection individuelle des difficultés
 		PLAYER_SELECTION,
 	};
 	enum ControlerCurrentButton
@@ -56,9 +57,12 @@ private:
 		std::vector<std::string> charaAvaible;
 		TextPlus playerCount;
 		TextPlus playerText;
-		Button botToggleBtn;  // Bouton pour activer/désactiver les bots
-		TextPlus botCountText; // Texte affichant le nombre de bots
-		int botCount;          // Nombre de bots (0-2)
+		Button botToggleBtn;
+		TextPlus botCountText;
+		int botCount;
+		TextPlus botDifficultyText;
+		std::vector<int> botDifficulties; // NOUVEAU : Stocker la difficulté de chaque bot
+		int currentBotIndex; // NOUVEAU : Index du bot en cours de configuration
 	};
 	struct SceneData
 	{
@@ -93,9 +97,10 @@ private:
 	void ChangeSelection(int _value, int _joystick);
 	void HandleMainMenuSelection(int _value);
 	void PrintBotSelection(sfMod::RenderWindow* _renderWindow);
+	void PrintBotDifficultySelection(sfMod::RenderWindow* _renderWindow);
 	void HandleOptionsSelection(int _value);
 	void HandlePlayerSelection(int _value, int _joystick);
-	void PressSelection(int _id);
+		void PressSelection(int _id);
 
 	void PrintIcons(sfMod::RenderWindow* _renderWindow);
 	void PrintOptions(sfMod::RenderWindow* _renderWindow);
@@ -103,6 +108,8 @@ private:
 	sf::Vector2f GetButtonPosition(ControlerCurrentButton _button) const;
 
 	int CalculateMaxBots(int totalPlayers);
+	std::string GetDifficultyName(int difficulty) const;
+	BotDifficulty GetBotDifficultyEnum(int difficulty) const;
 
 	void ReturnPressed(void);
 

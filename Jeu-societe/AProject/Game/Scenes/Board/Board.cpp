@@ -1,7 +1,5 @@
 #include "Board.hpp"
 
-
-
 constexpr unsigned int hash(const char* str, int h);
 
 constexpr unsigned int hash(const char* str, int h = 0)
@@ -205,15 +203,26 @@ void BaseGame::LoadAsync(std::atomic<float>& progress)
 		m_data->players[i].pendingMovement = 0;
 		m_data->players[i].currentPathId = -1;
 
-		if (!sf::Joystick::isConnected(m_gameData->m_playerDataList[i].m_joystickId))
+		// NOUVEAU : Initialisation des bots basée sur PlayerData
+		if (m_gameData->m_playerDataList[i].IsBot())
 		{
 			m_data->players[i].isBot = true;
+			m_data->players[i].botAI = &m_gameData->m_playerDataList[i].m_botAI;
 
-			// Choisir difficulté (vous pouvez ajouter un menu de configuration)
-			BotDifficulty difficulty = BotDifficulty::MEDIUM;
-			m_data->players[i].botAI = new BotAI(i, difficulty);
-
-			std::cout << "Player " << (i + 1) << " is a BOT (Difficulty: MEDIUM)" << std::endl;
+			std::cout << "Player " << (i + 1) << " is a BOT (Difficulty: ";
+			switch (m_gameData->m_playerDataList[i].m_botAI.GetDifficulty())
+			{
+			case BotDifficulty::EASY:
+				std::cout << "EASY";
+				break;
+			case BotDifficulty::MEDIUM:
+				std::cout << "MEDIUM";
+				break;
+			case BotDifficulty::HARD:
+				std::cout << "HARD";
+				break;
+			}
+			std::cout << ")" << std::endl;
 		}
 		else
 		{
@@ -551,7 +560,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 		if (_event.key.code == sf::Keyboard::Numpad5)
 		{
 			std::cout << "[DEBUG] Lancement Roulette Russe" << std::endl;
-		 m_gameData->InitMiniGamePlayer();
+			m_gameData->InitMiniGamePlayer();
 			for (int i = 0; i < m_data->players.size(); i++)
 				m_gameData->AddPlayerPlaying(i);
 			m_gameData->m_nextScene = "RuRoul";
@@ -565,7 +574,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 		if (_event.key.code == sf::Keyboard::Numpad6)
 		{
 			std::cout << "[DEBUG] Prochain lancer forcé à 6" << std::endl;
-			if (m_data->state != DICE_ANIMATION && m_data->state != WIN && 
+			if (m_data->state != DICE_ANIMATION && m_data->state != WIN &&
 				m_data->state != WAITING_BRIDGE_ROLL && m_data->state != WAITING_FIN_ROLL &&
 				m_data->state != DUEL && m_data->state != BATTLE_ACTION)
 			{
@@ -783,7 +792,7 @@ void BaseGame::PollEvent(sf::Event& _event)
 	// Gestion du lancer de dé principal
 	if (_event.type == sf::Event::JoystickButtonPressed and !m_data->texteDisplay.isActive)
 	{
-		if (m_gameData->m_playerDataList[m_data->currentPlayerIndex].m_joystickId == _event.joystickButton.joystickId 
+		if (m_gameData->m_playerDataList[m_data->currentPlayerIndex].m_joystickId == _event.joystickButton.joystickId
 			&& m_data->animator.IsFinished() && m_data->currentDiceVideo->isFinish() &&
 			m_data->state != WAITING_BRIDGE_ROLL && m_data->state != WAITING_FIN_ROLL &&
 			m_data->state != WIN_DEPLACEMENT && m_data->state != WIN && m_data->state != STATE &&
@@ -820,7 +829,7 @@ void BaseGame::Update(float _deltaTime)
 
 	// Gestion des transitions musicales entre Plato1 et Plato2
 	// Condition : joueur actuel a dépassé le pont (position X > case 19 + 100)
-	if (m_data->players[m_data->currentPlayerIndex].boardPosition.x > m_data->posCase[19].GetPosition().x + 100 )
+	if (m_data->players[m_data->currentPlayerIndex].boardPosition.x > m_data->posCase[19].GetPosition().x + 100)
 	{
 		// Ne déclencher la transition que si elle est terminée ET que la musique actuelle n'est pas déjà "Plato2"
 		if (m_audioEngine->IsTransitionFinished() && m_audioEngine->GetMusicName() != "Plato2")
@@ -2077,82 +2086,83 @@ std::string BaseGame::RandomBattle()
 // NOUVEAU : Méthode pour mettre à jour le comportement des bots
 void BaseGame::UpdateBotBehavior(float _deltaTime)
 {
-    auto& currentPlayer = m_data->players[m_data->currentPlayerIndex];
-    
-    if (!currentPlayer.isBot || currentPlayer.botAI == nullptr)
-        return;
-    
-    // Bot attend la fin de l'animation de dé
-    if (m_data->diceAnimationPlaying || !m_data->currentDiceVideo->isFinish())
-        return;
-    
-    // Bot attend la fin des messages
-    if (m_data->texteDisplay.isActive)
-        return;
-    
-    switch (m_data->state)
-    {
-    case START:
-    case PLAY:
-        if (m_data->animator.IsFinished())
-        {
-            if (currentPlayer.botAI->ShouldRollDice(_deltaTime))
-            {
-                ProcessBotDiceRoll();
-            }
-        }
-        break;
-        
-    case WAITING_PATH_CHOICE:
-        ProcessBotPathChoice();
-        break;
-        
-    case WAITING_BRIDGE_ROLL:
-        if (currentPlayer.botAI->ShouldRollDice(_deltaTime))
-        {
-            ProcessBridgeRoll();
-        }
-        break;
-        
-    case WAITING_FIN_ROLL:
-        if (currentPlayer.botAI->ShouldRollDice(_deltaTime))
-        {
-            ProcessFinRoll();
-        }
-        break;
-    }
+	auto& currentPlayer = m_data->players[m_data->currentPlayerIndex];
+
+	// Vérifier si c'est un bot via PlayerData
+	if (!m_gameData->m_playerDataList[m_data->currentPlayerIndex].IsBot() || currentPlayer.botAI == nullptr)
+		return;
+
+	// Bot attend la fin de l'animation de dé
+	if (m_data->diceAnimationPlaying || !m_data->currentDiceVideo->isFinish())
+		return;
+
+	// Bot attend la fin des messages
+	if (m_data->texteDisplay.isActive)
+		return;
+
+	switch (m_data->state)
+	{
+	case START:
+	case PLAY:
+		if (m_data->animator.IsFinished())
+		{
+			if (currentPlayer.botAI->ShouldRollDice(_deltaTime))
+			{
+				ProcessBotDiceRoll();
+			}
+		}
+		break;
+
+	case WAITING_PATH_CHOICE:
+		ProcessBotPathChoice();
+		break;
+
+	case WAITING_BRIDGE_ROLL:
+		if (currentPlayer.botAI->ShouldRollDice(_deltaTime))
+		{
+			ProcessBridgeRoll();
+		}
+		break;
+
+	case WAITING_FIN_ROLL:
+		if (currentPlayer.botAI->ShouldRollDice(_deltaTime))
+		{
+			ProcessFinRoll();
+		}
+		break;
+	}
 }
 
 void BaseGame::ProcessBotDiceRoll()
 {
-    int rando = randmt::RandomInt(1, 6);
-    ProcessDiceRoll(rando);
-    std::cout << "Bot rolled: " << rando << std::endl;
+	int rando = randmt::RandomInt(1, 6);
+	ProcessDiceRoll(rando);
+	std::cout << "Bot rolled: " << rando << std::endl;
 }
 
 void BaseGame::ProcessBotPathChoice()
 {
     auto& player = m_data->players[m_data->currentPlayerIndex];
-    
-    if (player.botAI == nullptr)
+
+    if (!m_gameData->m_playerDataList[m_data->currentPlayerIndex].IsBot() || player.botAI == nullptr)
         return;
-    
+
     // Le bot choisit un chemin
     int choice = player.botAI->ChoosePath(m_data->pathChoices, player.currentCaseIndex);
-    
+
     std::cout << "Bot chose path: " << choice << std::endl;
-    
+
     ProcessPathChoice(choice);
-    
-    // Animation flèche (optionnel)
+
+    // Animation flèche
     if (choice == 0)
         m_data->arrow.setRotation(325);
     else
         m_data->arrow.setRotation(5);
-    
+
     // Petite pause avant de continuer
     sf::sleep(sf::milliseconds(500));
-    
+
     player.sprite.SetAnimation("Idle");
     SetBoardState(DEPLACEMENT_SPLIT);
 }

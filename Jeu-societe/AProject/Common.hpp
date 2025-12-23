@@ -5,6 +5,7 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Main.hpp>
 #include <SFML/Graphics.hpp>
+
 #include "./Utilities/BetterWindow/BetterWindow.hpp"
 
 #include "Screen.hpp"

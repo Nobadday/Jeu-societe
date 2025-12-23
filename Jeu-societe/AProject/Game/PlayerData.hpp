@@ -3,6 +3,10 @@
 
 #include <string>
 
+
+#include "Bot/BotAI.hpp"
+
+
 class PlayerData
 {
 	public:
@@ -24,7 +28,8 @@ class PlayerData
 		int m_joystickId;
 		PlayerSkin m_playerSkin;
 
-
+		bool m_isBot = false;
+		BotAI m_botAI;
 
 	public:
 		PlayerData(void);
@@ -35,6 +40,10 @@ class PlayerData
 
 		void SetPlayerSkin(PlayerSkin _skin);
 		PlayerSkin GetPlayerSkin();
+		bool IsBot();
+		
+		// NOUVEAU : Initialiser le bot avec sa difficulté
+		void InitializeAsBot(int playerIndex, BotDifficulty difficulty);
 
 		static const std::string& GetTextureName(PlayerData::PlayerSkin _skin);
 	private:

@@ -1,7 +1,8 @@
 #ifndef _INC_BOT_AI_HPP
 #define _INC_BOT_AI_HPP
 
-#include "../../Common.hpp"
+#include "../../Utilities/Random.hpp"
+
 #include <functional>
 
 // Niveaux de difficulté des bots
