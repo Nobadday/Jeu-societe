@@ -62,6 +62,10 @@ void BaseGame::SortStart(float _dt)
 
 
 			m_data->state = PLAY;
+			if (m_data->players[m_data->currentPlayerIndex].botAI != nullptr)
+			{
+				m_data->players[m_data->currentPlayerIndex].botAI->ResetForNewTurn();
+			}
 			ShowTextDisplay(m_data->players[m_data->currentPlayerIndex].playeur.getString() + " turn!\nPress A to roll the dice", 2.5f);
 		}
 	}

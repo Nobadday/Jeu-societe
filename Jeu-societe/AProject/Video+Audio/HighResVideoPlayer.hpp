@@ -40,7 +40,7 @@ enum class VideoSizeMode
 // Configuration
 struct HighResConfig
 {
-    VideoSizeMode sizeMode = VideoSizeMode::DownscaleFactor;
+    VideoSizeMode sizeMode = VideoSizeMode::Original;
     int downscaleFactor = 1;
     int customWidth = 0;      // Largeur personnalisée (utilisé si sizeMode == Custom)
     int customHeight = 0;     // Hauteur personnalisée (utilisé si sizeMode == Custom)

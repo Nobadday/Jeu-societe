@@ -1380,10 +1380,13 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 {
 	m_data->state = _state;
 
+	
+
 	switch (m_data->state)
 	{
 	case START:
 		ShowTextDisplay("Roll the dice to determine turn order!\nPress A to roll it", 4.0f);
+		// AJOUT : Réinitialiser le timer du bot actuel
 		break;
 
 	case PLAY:
@@ -1391,9 +1394,9 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
 		m_data->pathChoices.clear();
 		m_data->currentPlayerIndex = (m_data->currentPlayerIndex + 1) % m_data->players.size();
-		//m_data->arrow.setRotation(315);
 		ShowTextDisplay(m_data->players[m_data->currentPlayerIndex].playeur.getString() + " turn!\nPress A to roll the dice", 2.5f);
 		break;
+		
 	case WIN:
 		m_data->players[m_data->currentPlayerIndex].sprite.SetAnimation("Idle");
 		m_data->currentDiceVideo = m_data->diceVideos[TRANSITION_1];
@@ -1526,10 +1529,12 @@ void BaseGame::SetBoardState(State _state, int _newIndex)
 	case WAITING_PATH_CHOICE:
 		// Attente de l'entrée du joueur
 		ShowTextDisplay("Choose your path!\nMove joystick Up or Down", 3.0f);
+		
 		break;
 
 	case WAITING_BRIDGE_ROLL:
 		ShowTextDisplay("Bridge ahead!\nRoll the dice to cross\n(Need 4 or more)", 3.5f);
+		
 		break;
 
 	case WAITING_FIN_ROLL:
@@ -2093,22 +2098,43 @@ void BaseGame::UpdateBotBehavior(float _deltaTime)
 		return;
 
 	// Bot attend la fin de l'animation de dé
-	if (m_data->diceAnimationPlaying || !m_data->currentDiceVideo->isFinish())
+	if (m_data->diceAnimationPlaying)
+		return;
+
+	// CORRECTION CRITIQUE : Attendre que la vidéo soit terminée ET qu'elle ne joue plus
+	if (!m_data->currentDiceVideo->isFinish())
 		return;
 
 	// Bot attend la fin des messages
 	if (m_data->texteDisplay.isActive)
 		return;
 
+	// Vérifier que l'animator est terminé pour tous les états
+	if (!m_data->animator.IsFinished())
+		return;
+
 	switch (m_data->state)
 	{
 	case START:
-	case PLAY:
-		if (m_data->animator.IsFinished())
+		// Vérifier si le bot a déjà lancé le dé
+		if (currentPlayer.startRandom == 0)
 		{
 			if (currentPlayer.botAI->ShouldRollDice(_deltaTime))
 			{
 				ProcessBotDiceRoll();
+				// CORRECTION : Ne PAS réinitialiser ici, sera fait dans SetBoardState
+			}
+		}
+		break;
+
+	case PLAY:
+		// AJOUT : Vérifier que le joueur n'a pas déjà lancé ce tour
+		if (currentPlayer.pendingMovement == 0)
+		{
+			if (currentPlayer.botAI->ShouldRollDice(_deltaTime))
+			{
+				ProcessBotDiceRoll();
+				// CORRECTION : Ne PAS réinitialiser ici, sera fait dans SetBoardState
 			}
 		}
 		break;
@@ -2118,16 +2144,24 @@ void BaseGame::UpdateBotBehavior(float _deltaTime)
 		break;
 
 	case WAITING_BRIDGE_ROLL:
-		if (currentPlayer.botAI->ShouldRollDice(_deltaTime))
+		// AJOUT : Vérifier qu'on n'a pas déjà lancé
+		if (!m_data->diceAnimationPlaying && m_data->diceResult == 0)
 		{
-			ProcessBridgeRoll();
+			if (currentPlayer.botAI->ShouldRollDice(_deltaTime))
+			{
+				ProcessBridgeRoll();
+			}
 		}
 		break;
 
 	case WAITING_FIN_ROLL:
-		if (currentPlayer.botAI->ShouldRollDice(_deltaTime))
+		// AJOUT : Vérifier qu'on n'a pas déjà lancé
+		if (!m_data->diceAnimationPlaying && m_data->diceResult == 0)
 		{
-			ProcessFinRoll();
+			if (currentPlayer.botAI->ShouldRollDice(_deltaTime))
+			{
+				ProcessFinRoll();
+			}
 		}
 		break;
 	}
@@ -2156,12 +2190,19 @@ void BaseGame::ProcessBotPathChoice()
 
     // Animation flèche
     if (choice == 0)
+	{
         m_data->arrow.setRotation(325);
-    else
-        m_data->arrow.setRotation(5);
+		m_gameData->m_renderWindow->draw(m_data->arrow);
+	}
+	else
+	{
+		m_data->arrow.setRotation(5);
+		m_gameData->m_renderWindow->draw(m_data->arrow);
+	}
+        
 
     // Petite pause avant de continuer
-    sf::sleep(sf::milliseconds(500));
+    //sf::sleep(sf::milliseconds(500));
 
     player.sprite.SetAnimation("Idle");
     SetBoardState(DEPLACEMENT_SPLIT);
